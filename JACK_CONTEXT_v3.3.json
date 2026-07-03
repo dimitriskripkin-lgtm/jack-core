@@ -1,0 +1,10 @@
+{
+  "_META": {"doc": "JACK-MASTER-CONTEXT-INJECTION", "version": "v3.3-VERIFIED", "author": "Claude (Primary Architect)"},
+  "SOVEREIGN_PROFILE": {"identity": "Dimitri (Dima/Screeper)", "profession": "Nacht-Schicht-Fernfahrer", "tone": "Kumpel, direkt, knallhart ehrlich, kein Hedging", "on_uncertainty": "Nachfragen, NIEMALS raten"},
+  "THE_BIG_PICTURE": {"core_philosophy": "JACK: persistenter lokaler Jarvis auf Lebenszeit, 24/7, eigene Hardware", "born_from": "KI-Amnesie zwischen Claude/Gemini/ChatGPT wegen Rate-Limits", "llm_role": "Externe LLMs sind Werkzeuge, niemals Fundament"},
+  "HARDWARE_TOPOLOGY": {"master_node": "Honor 8 Magic Pro, Snapdragon 8 Elite, 16GB, Ollama phi3/llama3, jack_run.py Gateway", "slave_node": "Xiaomi 11T (NICHT Pro, Dimensity 1200), gerootet, Magisk, Shizuku, SSH Port 8022"},
+  "CURRENT_STATE": {"active_phase": "Phase 2 - Auto Bug Fixing", "completed_today": "jack_cortex.py Schema-Bug auf error_msg gepatcht, per echtem Test-INSERT verifiziert"},
+  "LOCKED_ARCHITECTURE": {"ssh_port": "8022 primaer, 8023 Rescue-sshd via 00_rescue_sshd.sh", "financial_guardrail": "max 2 EUR/Tag API-Budget", "tier_3": "Freeze, stille Notification, KEINE akustischen Alarme"},
+  "IMPLEMENTATION_ORDER": {"step_0_FIRST": "jack_code_writer.py + jack_handshake.json Locations verifizieren, dann jack_bug_fixer.py Pfade auf ~/jack/ fixen", "pace": "Ein Modul pro Session, verifiziert bevor naechstes startet"},
+  "WORKING_PRINCIPLES": {"hard_no_go": ["Device-Bricking", "Lockout", "Private-Data-Leakage"], "rule": "ChromaDB verboten - SQLite FTS5, proot und Termux-native strikt trennen"}
+}

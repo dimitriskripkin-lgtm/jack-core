@@ -1,0 +1,5 @@
+config.ini
+*.db
+.jack_secrets
+__pycache__/
+*.log
