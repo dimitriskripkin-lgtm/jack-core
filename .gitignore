@@ -5,3 +5,5 @@ __pycache__/
 *.log
 config.ini
 *.db
+.cortex_fail_count
+*.log
