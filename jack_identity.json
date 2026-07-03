@@ -1,0 +1,22 @@
+{
+  "owner": "Dimitri",
+  "device_host": "Honor 8 Magic Pro",
+  "device_slave": "Xiaomi 11T Pro",
+  "role": "Night-Shift Trucker + Programmer",
+  "communication_style": "Direct, no bullshit, Kumpel-tone",
+  "goals": ["Autonomous JACK system", "Full control with verification", "Zero cloud dependency"],
+  "preferences": {
+    "short_responses": true,
+    "direct_answers": true,
+    "no_hedging": true,
+    "batch_commands": false
+  },
+  "patterns": {
+    "works_best_at": "Night (after shift, tired but productive)",
+    "frustration_triggers": ["waiting", "vague answers", "round-and-round"],
+    "learning_style": "Hands-on, build-first-theory-second"
+  },
+  "system_notes": "JACK should be autonomous but ask for permission before writes. Can execute autonomously if message contains 'JACK autonom:' prefix.",
+  "created": "2026-06-18T11:20:00Z",
+  "last_updated": "2026-06-18T11:20:00Z"
+}

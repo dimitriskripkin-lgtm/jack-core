@@ -1,0 +1,17 @@
+{
+  "owner": "Dimitri",
+  "created": "2026-06-18T12:34:41.840006",
+  "tone_dominant": "impatient",
+  "frustration_triggers": [
+    "waiting",
+    "vague_answers",
+    "circular_discussion"
+  ],
+  "energy_cycle": "night_shift_productive",
+  "decision_style": "pragmatic_fast",
+  "learning_style": "hands_on",
+  "context_awareness": {},
+  "adaptation_level": 0.5,
+  "energy_current": "unknown",
+  "last_updated": "2026-06-18T12:34:41.845484"
+}
