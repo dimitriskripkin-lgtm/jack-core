@@ -2,6 +2,13 @@
 cd ~/jack
 FAIL_COUNT_FILE=~/jack/.cortex_fail_count
 
+if ! pgrep -f "ollama serve" > /dev/null; then
+    echo "$(date): Ollama tot, starte neu" >> ~/jack/startup.log
+    nohup ollama serve > ~/jack/ollama.log 2>&1 &
+else
+    echo "$(date): Ollama laeuft bereits" >> ~/jack/startup.log
+fi
+
 if pgrep -f "jack_cortex.py" > /dev/null; then
     echo "$(date): Cortex laeuft bereits" >> ~/jack/startup.log
     echo 0 > "$FAIL_COUNT_FILE"

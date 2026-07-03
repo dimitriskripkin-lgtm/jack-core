@@ -6,7 +6,7 @@ sys.path.append(os.path.expanduser('~/jack'))
 import jack_config
 
 DB_PATH = jack_config.get_param('STORAGE', 'db_path')
-BACKUP_DIR = os.path.expanduser('~/LEGACY_ARCHIVE/')
+BACKUP_DIR = os.path.expanduser('~/jack/backups/')
 LOG_PATH = os.path.expanduser('~/jack/jack_bug_fixer.log')
 HANDSHAKE_PATH = os.path.expanduser('~/jack/jack_handshake.json')
 JACK_SUBDIR = os.path.expanduser('~/jack')
