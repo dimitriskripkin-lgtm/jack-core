@@ -3,3 +3,5 @@ config.ini
 .jack_secrets
 __pycache__/
 *.log
+config.ini
+*.db
