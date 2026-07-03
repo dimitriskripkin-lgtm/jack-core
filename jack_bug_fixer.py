@@ -2,12 +2,14 @@
 import sqlite3, json, subprocess, os, sys, time, shutil
 from datetime import datetime
 
-JACK_HOME = os.path.expanduser("~")
-JACK_SUBDIR = os.path.expanduser("~/jack")
-DB_PATH = f"{JACK_SUBDIR}/jack_errors.db"
-HANDSHAKE_PATH = f"{JACK_HOME}/jack/jack_handshake.json"
-BACKUP_DIR = f"{JACK_HOME}/jack_backups"
-LOG_PATH = f"{JACK_HOME}/jack_bug_fixer.log"
+sys.path.append(os.path.expanduser('~/jack'))
+import jack_config
+
+DB_PATH = jack_config.get_param('STORAGE', 'db_path')
+BACKUP_DIR = os.path.expanduser('~/LEGACY_ARCHIVE/')
+LOG_PATH = os.path.expanduser('~/jack/jack_bug_fixer.log')
+HANDSHAKE_PATH = os.path.expanduser('~/jack/jack_handshake.json')
+JACK_SUBDIR = os.path.expanduser('~/jack')
 
 HIGH_RISK_PATTERNS = [
     "os.remove", "os.unlink", "shutil.rmtree", "shutil.rmdir",
@@ -24,9 +26,6 @@ def log(msg, level="INFO"):
             f.write(line + "\n")
     except Exception:
         pass
-    except Exception:
-        pass
-
 
 class JackBugFixer:
     def __init__(self):
@@ -145,31 +144,25 @@ class JackBugFixer:
         msg = f"JACK: HIGH-RISK Fix wartet auf OK - {os.path.basename(file_path)}"
         try:
             subprocess.run(["termux-toast", "-s", msg], capture_output=True, timeout=5)
-        except Exception:
-            pass
+        except Exception: pass
         try:
-            with open(HANDSHAKE_PATH, "r") as f:
-                hs = json.load(f)
-        except Exception:
-            hs = {}
+            with open(HANDSHAKE_PATH, "r") as f: hs = json.load(f)
+        except Exception: hs = {}
         hs.setdefault("pending_approvals", []).append({
             "error_id": err_id, "file": file_path, "error": err_msg[:200],
             "risk_pattern": risk_pattern, "fix_preview": fix_preview[:300],
             "ts": datetime.now().isoformat(), "status": "waiting"
         })
         try:
-            with open(HANDSHAKE_PATH, "w") as f:
-                json.dump(hs, f, indent=2)
+            with open(HANDSHAKE_PATH, "w") as f: json.dump(hs, f, indent=2)
             log(f"Eskalation eingetragen (ID: {err_id})")
         except Exception as e:
             log(f"Handshake-Schreiben fehlgeschlagen: {e}", "WARN")
 
     def update_handshake_summary(self):
         try:
-            with open(HANDSHAKE_PATH, "r") as f:
-                hs = json.load(f)
-        except Exception:
-            hs = {}
+            with open(HANDSHAKE_PATH, "r") as f: hs = json.load(f)
+        except Exception: hs = {}
         hs["last_bugfix_session"] = {
             "ts": datetime.now().isoformat(),
             "fixed": len(self.session_fixes),
@@ -178,8 +171,7 @@ class JackBugFixer:
             "details": self.session_fixes
         }
         try:
-            with open(HANDSHAKE_PATH, "w") as f:
-                json.dump(hs, f, indent=2)
+            with open(HANDSHAKE_PATH, "w") as f: json.dump(hs, f, indent=2)
         except Exception as e:
             log(f"Handshake-Update fehlgeschlagen: {e}", "WARN")
 
@@ -223,7 +215,6 @@ class JackBugFixer:
         log(f"Fixes: {len(self.session_fixes)}  Eskaliert: {len(self.session_escalated)}  Uebersprungen: {len(self.session_skipped)}")
         self.update_handshake_summary()
         self.db.close()
-
 
 if __name__ == "__main__":
     JackBugFixer().run()
