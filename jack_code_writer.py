@@ -14,17 +14,17 @@ class CodeWriter:
     
     def is_safe_path(self, filepath):
         """Checkt ob Pfad sicher ist"""
-        p = Path(filepath).resolve()
+        p = str(Path(filepath).resolve())
+        
+        # Safe-Check ZUERST - spezifischere Allow-List gewinnt
+        for safe in SAFE_DIRS:
+            if p.startswith(safe):
+                return True, None
         
         # Forbidden paths
         for forbidden in FORBIDDEN_DIRS:
-            if str(p).startswith(forbidden):
+            if p.startswith(forbidden):
                 return False, f"Forbidden: {forbidden}"
-        
-        # Safe paths
-        for safe in SAFE_DIRS:
-            if str(p).startswith(safe):
-                return True, None
         
         return False, "Outside sandbox"
     
