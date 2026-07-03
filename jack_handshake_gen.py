@@ -54,3 +54,17 @@ if __name__ == "__main__":
     hs = generate_handshake()
     print("[HANDSHAKE] ✓ Generated")
     print(json.dumps(hs, indent=2))
+
+def push_to_gist():
+    gist_id = "7cdb7e439f6a9bb1ab03663cbb5c33d2"
+    try:
+        subprocess.run(
+            ["gh", "gist", "edit", gist_id, "-a", HANDSHAKE_FILE],
+            capture_output=True, text=True, timeout=15
+        )
+        print("[HANDSHAKE] ✓ Gist aktualisiert")
+    except Exception as e:
+        print(f"[HANDSHAKE] Gist-Push fehlgeschlagen: {e}")
+
+if __name__ == "__main__":
+    push_to_gist()
