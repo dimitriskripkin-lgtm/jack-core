@@ -45,24 +45,14 @@ class CodeWriter:
         
         return False, None
     
-    def write_code(self, filepath, code, operation="create"):
-        """Schreibt Code mit Approval-Check"""
-        safe, reason = self.is_safe_path(filepath)
-        
-        if not safe:
-            return {"success": False, "error": f"BLOCKED: {reason}"}
-        
-        needs_ask, reason = self.needs_approval(filepath, operation)
-        
-        if needs_ask:
-            print(f"\n[WRITER] Approval needed:")
-            print(f"  File: {filepath}")
-            print(f"  Op: {operation.upper()}")
-            print(f"  Reason: {reason}")
-            response = input("  Proceed? (ja/nein): ").strip().lower()
-            if response not in ["ja", "j", "yes", "y"]:
-                return {"success": False, "error": "User denied"}
-        
+    def write_code(self, filepath, code, operation="create", raw_command="", use_voice=False):
+        """Schreibt Code mit zentralem Approval-Gate (jack_approval.py)"""
+        from jack_approval import check_approval
+        approved, reason = check_approval(filepath, operation=operation, raw_command=raw_command, use_voice=use_voice)
+
+        if not approved:
+            return {"success": False, "error": reason}
+
         try:
             os.makedirs(os.path.dirname(filepath), exist_ok=True)
             with open(filepath, 'w') as f:
@@ -70,6 +60,7 @@ class CodeWriter:
             return {"success": True, "filepath": filepath, "bytes": len(code)}
         except Exception as e:
             return {"success": False, "error": str(e)}
+
 
 if __name__ == "__main__":
     cw = CodeWriter()
