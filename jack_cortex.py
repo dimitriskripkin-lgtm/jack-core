@@ -7,6 +7,8 @@ import jack_config
 ERROR_DB = jack_config.get_param('STORAGE', 'db_path')
 XIAOMI_IP = jack_config.get_param('NETWORK', 'xiaomi_ip')
 XIAOMI_SSH_PORT = 8022
+SSH_FAIL_COUNT = 0
+SSH_FAIL_THRESHOLD = 3
 
 def log_error(msg):
     if os.path.exists(ERROR_DB):
@@ -17,37 +19,51 @@ def log_error(msg):
         except: pass
 
 def check_and_heal():
+    global SSH_FAIL_COUNT
+    
     ping = subprocess.run(["ping", "-c", "1", "-W", "2", XIAOMI_IP], capture_output=True)
     if ping.returncode != 0:
-        log_error(f"[Cortex] Xiaomi nicht erreichbar (Ping fehlgeschlagen, IP {XIAOMI_IP})")
+        SSH_FAIL_COUNT += 1
+        if SSH_FAIL_COUNT == 1 or SSH_FAIL_COUNT % 5 == 0:
+            log_error(f"[Cortex] Xiaomi nicht erreichbar (Ping {SSH_FAIL_COUNT}x fehlgeschlagen)")
+        
+        if SSH_FAIL_COUNT >= SSH_FAIL_THRESHOLD:
+            log_error(f"[Cortex] Versuche WiFi-Recovery auf Xiaomi (Fail #{SSH_FAIL_COUNT})")
+            try:
+                recovery = subprocess.run(
+                    ["ssh", "-p", str(XIAOMI_SSH_PORT), f"root@{XIAOMI_IP}", 
+                     "su -c 'svc wifi disable; sleep 3; svc wifi enable'"],
+                    capture_output=True, text=True, timeout=15
+                )
+                if recovery.returncode == 0:
+                    log_error("[Cortex] WiFi-Recovery erfolgreich")
+                    SSH_FAIL_COUNT = 0
+                else:
+                    log_error(f"[Cortex] WiFi-Recovery fehlgeschlagen: {recovery.stderr.strip()}")
+            except Exception as e:
+                log_error(f"[Cortex] WiFi-Recovery Exception: {str(e)}")
         return
     
-    # SSH statt ADB - zuverlässiger und stabiler
+    # Ping OK, reset counter
+    if SSH_FAIL_COUNT > 0:
+        log_error(f"[Cortex] Xiaomi erreichbar wieder (nach {SSH_FAIL_COUNT} Fails)")
+        SSH_FAIL_COUNT = 0
+    
+    # SSH Test
     try:
         ssh_test = subprocess.run(
             ["ssh", "-p", str(XIAOMI_SSH_PORT), "-o", "ConnectTimeout=3", f"root@{XIAOMI_IP}", "whoami"],
             capture_output=True, text=True, timeout=5
         )
         if ssh_test.returncode != 0:
-            log_error(f"[Cortex] SSH-Verbindung zu Xiaomi fehlgeschlagen: {ssh_test.stderr.strip()}")
+            log_error(f"[Cortex] SSH-Fehler: {ssh_test.stderr.strip()}")
             return
     except subprocess.TimeoutExpired:
-        log_error("[Cortex] SSH-Timeout zu Xiaomi")
+        log_error("[Cortex] SSH-Timeout")
         return
     except Exception as e:
-        log_error(f"[Cortex] SSH-Fehler: {str(e)}")
+        log_error(f"[Cortex] SSH-Exception: {str(e)}")
         return
-    
-    # Shizuku verifizieren
-    try:
-        shizuku_res = subprocess.run(
-            ["ssh", "-p", str(XIAOMI_SSH_PORT), f"root@{XIAOMI_IP}", "pgrep", "-f", "shizuku"],
-            capture_output=True, text=True, timeout=5
-        )
-        if shizuku_res.returncode != 0:
-            log_error("[Cortex] Shizuku auf Xiaomi läuft nicht")
-    except Exception as e:
-        log_error(f"[Cortex] Shizuku-Check fehlgeschlagen: {str(e)}")
 
 def main():
     my_pid = os.getpid()
