@@ -1,7 +1,7 @@
 import os, configparser
 
 DEFAULT = {
-    'NETWORK': {'ssh_port': '8022', 'rescue_port': '8023', 'keepalive_interval': '20', 'xiaomi_ip': '192.168.178.154', 'xiaomi_port': '43199'},
+    'NETWORK': {'ssh_port': '8022', 'rescue_port': '8023', 'keepalive_interval': '20', 'xiaomi_ip': '10.234.166.131', 'xiaomi_port': '43199'},
     'STORAGE': {'db_path': '/data/data/com.termux/files/home/jack/jack_errors.db'}
 }
 
