@@ -2,10 +2,12 @@
 import os, sys, shutil, subprocess, sqlite3, argparse
 from datetime import datetime
 
+sys.path.insert(0, os.path.expanduser("~/jack"))
+import jack_xiaomi
+
 JACK_HOME = "/data/data/com.termux/files/home"
 ERROR_DB = f"{JACK_HOME}/jack/jack_errors.db"
 MEMORY_DB = f"{JACK_HOME}/jack/jack_memory.db"
-XIAOMI_IP = "192.168.178.154"
 
 def get_cortex_status():
     try:
@@ -43,69 +45,11 @@ def get_storage_info():
     except:
         return "UNKNOWN"
 
-def connect_adb(port):
-    print(f"[ADB] Verbindungsversuch mit {XIAOMI_IP}:{port}...")
-    try:
-        res = subprocess.run(["adb", "connect", f"{XIAOMI_IP}:{port}"], capture_output=True, text=True)
-        print(f"[ADB] {res.stdout.strip()}")
-    except:
-        print("[ADB] Fehler: Ist 'android-tools' in Termux installiert?")
-
-def get_xiaomi_node_stats():
-    stats = {"status": "OFFLINE", "storage": "N/A", "shizuku": "N/A"}
-    
-    # 1. Ping Check
-    try:
-        ping_res = subprocess.run(["ping", "-c", "1", "-W", "1", XIAOMI_IP], capture_output=True)
-        if ping_res.returncode != 0:
-            return stats
-        stats["status"] = "ONLINE (Ping ok)"
-    except:
-        stats["status"] = "PING ERROR"
-        return stats
-
-    # 2. ADB Check & Abfrage
-    try:
-        devices_res = subprocess.run(["adb", "devices"], capture_output=True, text=True)
-        device_id = None
-        for line in devices_res.stdout.split("\n"):
-            if XIAOMI_IP in line and "device" in line:
-                device_id = line.split()[0]
-                break
-        
-        if device_id:
-            stats["status"] = f"CONNECTED ({device_id})"
-            
-            # Speicher vom Xiaomi holen (Zeilenbasiert parsen ohne String-Filter)
-            df_res = subprocess.run(["adb", "-s", device_id, "shell", "df", "-h", "/data"], capture_output=True, text=True)
-            lines = [l.strip() for l in df_res.stdout.split("\n") if l.strip()]
-            if len(lines) >= 2:
-                p = lines[1].split()
-                if len(p) >= 4:
-                    stats["storage"] = f"{p[2]} / {p[1]} ({p[3]} frei)"
-            
-            # Shizuku Prozess auf Xiaomi prüfen
-            ps_res = subprocess.run(["adb", "-s", device_id, "shell", "ps", "-A"], capture_output=True, text=True)
-            if "shizuku" in ps_res.stdout.lower():
-                stats["shizuku"] = "RUNNING (Aktiv)"
-            else:
-                stats["shizuku"] = "STOPPED"
-        else:
-            stats["status"] = "ONLINE (ADB nicht gekoppelt)"
-    except Exception as e:
-        pass
-        
-    return stats
-
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--connect", type=int, help="Aktuellen ADB-WLAN-Port des Xiaomis übergeben")
-    args = ap.parse_args()
+    ap.parse_args()
 
-    if args.connect:
-        connect_adb(args.connect)
-
-    x_stats = get_xiaomi_node_stats()
+    x_stats = jack_xiaomi.get_status()
 
     print("\n╔════════════════════════════════════════════════════")
     print(f"║ JACK HEALTH DASHBOARD — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -118,9 +62,11 @@ def main():
     print(f"║   Offene Bugs: {get_pending_errors()}")
     print("╠════════════════════════════════════════════════════")
     print(f"║ [NODE 02] Xiaomi 11T Pro")
-    print(f"║   Status:      {x_stats['status']}")
-    print(f"║   Speicher:    {x_stats['storage']}")
-    print(f"║   Shizuku:     {x_stats['shizuku']}")
+    print(f"║   IP:          {x_stats.get('ip', 'N/A')}")
+    print(f"║   Erreichbar:  {x_stats.get('reachable', 'N/A')}")
+    print(f"║   Akku:        {x_stats.get('battery', 'N/A')}")
+    print(f"║   Uptime:      {x_stats.get('uptime', 'N/A')}")
+    print(f"║   Shizuku:     {'RUNNING' if x_stats.get('shizuku_running') else 'STOPPED'}")
     print("╚════════════════════════════════════════════════════\n")
 
 if __name__ == "__main__":
