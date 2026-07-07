@@ -8,3 +8,4 @@ config.ini
 .cortex_fail_count
 *.log
 *.wav
+.last_xiaomi_ip
