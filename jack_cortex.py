@@ -22,19 +22,35 @@ def log_error(msg):
 
 def find_xiaomi():
     import socket
-    # Fest auf Honor-Hotspot-Subnetz - verifiziert am 07.07.2026 via Screenshot
-    # (Auto-Detect ueber ip route get 1 lieferte faelschlich die WLAN-Route)
-    subnet_prefix = "10.234.166"
+    import os
 
+    cache_file = os.path.expanduser("~/jack/.last_xiaomi_ip")
+
+    # Cache-Hit-First: zuletzt erfolgreiche IP zuerst probieren, spart den vollen Scan
+    if os.path.exists(cache_file):
+        try:
+            cached_ip = open(cache_file).read().strip()
+            if cached_ip:
+                s = socket.create_connection((cached_ip, 8022), timeout=0.3)
+                s.close()
+                return cached_ip
+        except Exception:
+            pass
+
+    # Cache-Miss oder keine Cache-Datei: vollen Scan im verifizierten Subnetz
+    subnet_prefix = "10.234.166"
     for i in range(2, 255):
         ip = f"{subnet_prefix}.{i}"
         try:
             s = socket.create_connection((ip, 8022), timeout=0.2)
             s.close()
+            with open(cache_file, "w") as f:
+                f.write(ip)
             return ip
         except (socket.timeout, ConnectionRefusedError, OSError):
             continue
     return XIAOMI_IP
+
 
 
 def check_and_heal():
