@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from jack_approval import confirm_action
 import os, sys, json, subprocess, re
 from datetime import datetime
 
@@ -96,12 +97,12 @@ class JackOperator:
         
         print("\n" + "="*70)
         print("Soll ich diese Aktionen ausführen?")
-        response = input("(ja/nein/show): ").strip().lower()
+        approved = confirm_action(f"{len(diagnosis['recommended_actions'])} Aktion(en) ausfuehren"); response = "ja" if approved else "nein"
         
         if response == "show":
             print("\n[FULL REPORT]")
             print(json.dumps(diagnosis, indent=2))
-            response = input("\nJetzt ausführen? (ja/nein): ").strip().lower()
+            approved2 = confirm_action("Aktionen nach Full-Report ausfuehren"); response = "ja" if approved2 else "nein"
         
         if response in ["ja", "y", "yes"]:
             return diagnosis["recommended_actions"]
