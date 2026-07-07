@@ -50,11 +50,11 @@ class JackOperator:
                 if "titan" in text.lower() and "crash" in text.lower():
                     diagnosis["issues"].append(f"TITAN: Crash erkannt in {fname}")
                     diagnosis["recommended_actions"].append("Kill TITAN: pkill -f titan")
-                    diagnosis["recommended_actions"].append("Restart JACK: python ~/jack_loop_v3.py")
+                    diagnosis["recommended_actions"].append("Restart Cortex: sv restart jack_cortex")
                 
                 elif "connection" in text.lower() and "lost" in text.lower():
                     diagnosis["issues"].append(f"ADB: Verbindung verloren ({fname})")
-                    diagnosis["recommended_actions"].append("ADB reconnect: adb connect 192.168.178.154:9999")
+                    diagnosis["recommended_actions"].append("SSH reconnect: python3 -c \"import sys; sys.path.insert(0,chr(46)); from jack_xiaomi import get_status; print(get_status())\"")
                 
                 elif "memory" in text.lower() and "error" in text.lower():
                     diagnosis["issues"].append(f"MEMORY: Fehler erkannt ({fname})")
