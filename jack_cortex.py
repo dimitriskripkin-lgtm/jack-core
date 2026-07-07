@@ -18,9 +18,30 @@ def log_error(msg):
                 con.commit()
         except: pass
 
+
+
+def find_xiaomi():
+    import socket
+    # Fest auf Honor-Hotspot-Subnetz - verifiziert am 07.07.2026 via Screenshot
+    # (Auto-Detect ueber ip route get 1 lieferte faelschlich die WLAN-Route)
+    subnet_prefix = "10.234.166"
+
+    for i in range(2, 255):
+        ip = f"{subnet_prefix}.{i}"
+        try:
+            s = socket.create_connection((ip, 8022), timeout=0.2)
+            s.close()
+            return ip
+        except (socket.timeout, ConnectionRefusedError, OSError):
+            continue
+    return XIAOMI_IP
+
+
 def check_and_heal():
     global SSH_FAIL_COUNT
     
+    global XIAOMI_IP
+    XIAOMI_IP = find_xiaomi()
     ping = subprocess.run(["ping", "-c", "1", "-W", "2", XIAOMI_IP], capture_output=True)
     if ping.returncode != 0:
         SSH_FAIL_COUNT += 1
@@ -31,7 +52,7 @@ def check_and_heal():
             log_error(f"[Cortex] Versuche WiFi-Recovery auf Xiaomi (Fail #{SSH_FAIL_COUNT})")
             try:
                 recovery = subprocess.run(
-                    ["ssh", "-p", str(XIAOMI_SSH_PORT), f"root@{XIAOMI_IP}", 
+                    ["ssh", "-i", os.path.expanduser("~/.ssh/id_jack"), "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-p", str(XIAOMI_SSH_PORT), f"root@{XIAOMI_IP}", 
                      "su -c 'svc wifi disable; sleep 3; svc wifi enable'"],
                     capture_output=True, text=True, timeout=15
                 )
@@ -52,7 +73,7 @@ def check_and_heal():
     # SSH Test
     try:
         ssh_test = subprocess.run(
-            ["ssh", "-p", str(XIAOMI_SSH_PORT), "-o", "ConnectTimeout=3", f"root@{XIAOMI_IP}", "whoami"],
+            ["ssh", "-i", os.path.expanduser("~/.ssh/id_jack"), "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-p", str(XIAOMI_SSH_PORT), "-o", "ConnectTimeout=3", f"root@{XIAOMI_IP}", "su -c 'whoami'"],
             capture_output=True, text=True, timeout=5
         )
         if ssh_test.returncode != 0:
