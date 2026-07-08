@@ -50,7 +50,6 @@ class JackOperator:
                 if "ssh" in text.lower() or "kex" in text.lower() or "reset" in text.lower():
                     diagnosis["issues"].append(f"SSH: Xiaomi nicht erreichbar ({fname})")
                     diagnosis["recommended_actions"].append("sv restart jack_cortex")
-                    diagnosis["recommended_actions"].append("Restart Cortex: sv restart jack_cortex")
                 
                 elif "connection" in text.lower() and "lost" in text.lower():
                     diagnosis["issues"].append(f"ADB: Verbindung verloren ({fname})")
