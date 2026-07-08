@@ -52,12 +52,12 @@ class JackOperator:
                     diagnosis["recommended_actions"].append("sv restart jack_cortex")
                 
                 elif "connection" in text.lower() and "lost" in text.lower():
-                    diagnosis["issues"].append(f"ADB: Verbindung verloren ({fname})")
-                    diagnosis["recommended_actions"].append("SSH reconnect: python3 -c \"import sys; sys.path.insert(0,chr(46)); from jack_xiaomi import get_status; print(get_status())\"")
+                    diagnosis["issues"].append(f"SSH: Verbindung verloren ({fname})")
+                    diagnosis["recommended_actions"].append("sv restart jack_cortex")
                 
                 elif "memory" in text.lower() and "error" in text.lower():
                     diagnosis["issues"].append(f"MEMORY: Fehler erkannt ({fname})")
-                    diagnosis["recommended_actions"].append("Check DB: sqlite3 ~/jack/jack_memory.db 'SELECT COUNT(*) FROM vision_log;'")
+                    diagnosis["recommended_actions"].append("sqlite3 ~/jack/jack_errors.db 'SELECT COUNT(*) FROM errors WHERE resolved=0;'")
                 
                 elif "timeout" in text.lower():
                     diagnosis["issues"].append(f"TIMEOUT: {fname}")
