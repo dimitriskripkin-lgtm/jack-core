@@ -11,3 +11,5 @@ config.ini
 .learning_seen
 .learning_rate
 .learning_seen
+.learning_rate
+.learning_seen
