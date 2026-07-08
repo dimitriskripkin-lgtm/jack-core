@@ -20,7 +20,7 @@ API = f"https://api.telegram.org/bot{TOKEN}"
 
 def send(text):
     url = f"{API}/sendMessage"
-    data = json.dumps({"chat_id": CHAT_ID, "text": text, "parse_mode": "Markdown"}).encode()
+    data = json.dumps({"chat_id": CHAT_ID, "text": text}).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
     try:
         urllib.request.urlopen(req, timeout=10)
