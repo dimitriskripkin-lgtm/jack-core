@@ -9,3 +9,4 @@ config.ini
 *.log
 *.wav
 .last_xiaomi_ip
+*.bak*
