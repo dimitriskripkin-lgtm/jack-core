@@ -3,6 +3,16 @@ from datetime import datetime
 
 DB = os.path.expanduser("~/jack/jack_memory.db")
 
+_orig_connect = sqlite3.connect
+
+def _connect_with_wal(*args, **kwargs):
+    conn = _orig_connect(*args, **kwargs)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=5000;")
+    return conn
+
+sqlite3.connect = _connect_with_wal
+
 def init():
     conn = sqlite3.connect(DB)
     c = conn.cursor()
