@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-08T14:07:44.147961",
+  "timestamp": "2026-07-08T14:12:19.381822",
   "identity": {
     "owner": "Dimitri",
     "device_host": "Honor 8 Magic Pro",
@@ -30,7 +30,73 @@
     "created": "2026-06-18T11:20:00Z",
     "last_updated": "2026-06-18T11:20:00Z"
   },
-  "recent_errors": [],
+  "recent_errors": [
+    {
+      "id": 2015,
+      "timestamp": "2026-07-08 12:12:02",
+      "module": "jack_cortex",
+      "error_type": "CORTEX_ERR",
+      "error_msg": "[Cortex] SSH-Fehler: kex_exchange_identification: read: Connection reset by peer\nConnection reset by 10.234.166.52 port 8022",
+      "file_path": null,
+      "line_num": null,
+      "context": null,
+      "resolved": 0,
+      "fix_applied": 0,
+      "fix_ts": null
+    },
+    {
+      "id": 2014,
+      "timestamp": "2026-07-08 12:11:02",
+      "module": "jack_cortex",
+      "error_type": "CORTEX_ERR",
+      "error_msg": "[Cortex] SSH-Fehler: kex_exchange_identification: read: Connection reset by peer\nConnection reset by 10.234.166.52 port 8022",
+      "file_path": null,
+      "line_num": null,
+      "context": null,
+      "resolved": 0,
+      "fix_applied": 0,
+      "fix_ts": null
+    },
+    {
+      "id": 2013,
+      "timestamp": "2026-07-08 12:10:02",
+      "module": "jack_cortex",
+      "error_type": "CORTEX_ERR",
+      "error_msg": "[Cortex] SSH-Fehler: kex_exchange_identification: read: Connection reset by peer\nConnection reset by 10.234.166.52 port 8022",
+      "file_path": null,
+      "line_num": null,
+      "context": null,
+      "resolved": 0,
+      "fix_applied": 0,
+      "fix_ts": null
+    },
+    {
+      "id": 2012,
+      "timestamp": "2026-07-08 12:09:02",
+      "module": "jack_cortex",
+      "error_type": "CORTEX_ERR",
+      "error_msg": "[Cortex] SSH-Fehler: kex_exchange_identification: read: Connection reset by peer\nConnection reset by 10.234.166.52 port 8022",
+      "file_path": null,
+      "line_num": null,
+      "context": null,
+      "resolved": 0,
+      "fix_applied": 0,
+      "fix_ts": null
+    },
+    {
+      "id": 2011,
+      "timestamp": "2026-07-08 12:08:02",
+      "module": "jack_cortex",
+      "error_type": "CORTEX_ERR",
+      "error_msg": "[Cortex] SSH-Fehler: kex_exchange_identification: read: Connection reset by peer\nConnection reset by 10.234.166.52 port 8022",
+      "file_path": null,
+      "line_num": null,
+      "context": null,
+      "resolved": 0,
+      "fix_applied": 0,
+      "fix_ts": null
+    }
+  ],
   "last_screenshot": null,
   "xiaomi_status": {},
   "ready": true

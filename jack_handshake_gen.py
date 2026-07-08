@@ -19,7 +19,7 @@ def get_recent_errors(limit=5):
     try:
         with sqlite3.connect(ERRORS_DB) as con:
             con.row_factory = sqlite3.Row
-            rows = con.execute("SELECT * FROM errors ORDER BY ts DESC LIMIT ?", (limit,)).fetchall()
+            rows = con.execute("SELECT * FROM errors ORDER BY timestamp DESC LIMIT ?", (limit,)).fetchall()
             return [dict(r) for r in rows]
     except:
         return []
