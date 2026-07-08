@@ -91,7 +91,7 @@ class CodeGenerator:
                 model=self.model,
                 contents=[
                     
-                    types.Part.from_text(text=f"Generiere: {prompt}")
+                    types.Part.from_text(f"Generiere: {prompt}")
                 ]
             )
             return response.text.strip()

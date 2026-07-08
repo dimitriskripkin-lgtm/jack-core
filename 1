@@ -1,0 +1,15 @@
+[33m8616355[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m Add .last_xiaomi_ip to gitignore (runtime cache, not source)
+[33m40702ac[m Add IP-cache to find_xiaomi(): 2585x faster on cache-hit (25.85s -> 0.01s)
+[33m086ff85[m Fix dead code references: replace ADB reconnect + non-existent jack_loop_v3.py with current SSH/termux-services equivalents
+[33m397532b[m Wire jack_operator.py to central jack_approval gate via confirm_action()
+[33m1142ec4[m Update xiaomi_ip fallback to verified hotspot address 10.234.166.131
+[33m9a5aff1[m Rewrite jack_health.py to use jack_xiaomi.py (SSH) instead of legacy ADB
+[33m14400d8[m Add jack_xiaomi.py: central SSH command interface (Layer 1 of control expansion)
+[33m6a4cf00[m Fix Xiaomi hotspot connection: correct subnet + disable strict host key checking
+[33m10d8b06[m CONN_01: Cortex-basierter WiFi-Watchdog mit Auto-Recovery fuer Xiaomi
+[33mac98b2d[m Switch cortex health-check from ADB to SSH (stable Xiaomi connection)
+[33mf61013b[m Add timestamps + persistent memory logging to talk loop
+[33mde14448[m Add pytest suite + GitHub Actions CI for jack_approval
+[33m0e7d8b6[m Wire write_code() to central jack_approval gate
+[33m437b29b[m Fix sandbox path-check bug (forbidden /data/data/ blocked own ~/jack) + add central approval gate
+[33m611c7df[m Add gist auto-sync to handshake gen + CLAUDE.md for Claude Code

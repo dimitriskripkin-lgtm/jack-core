@@ -60,3 +60,25 @@ if __name__ == "__main__":
     print(f"Test 2 (autonom-praefix): {ok} ({reason})")
     ok, reason = check_approval("/system/build.prop", operation="edit")
     print(f"Test 3 (unsicherer Pfad): {ok} ({reason})")
+
+
+def confirm_action(description, raw_command="", use_voice=False):
+    """
+    Generische Freigabe fuer Aktionen OHNE Dateipfad (z.B. Aktionslisten
+    aus jack_operator.py). Nutzt dieselbe Autonom-Praefix-Logik wie
+    check_approval(), aber ohne Sandbox-Pfad-Check.
+    Gibt True/False zurueck.
+    """
+    if has_autonom_prefix(raw_command):
+        print(f"[APPROVAL] Autonom-Praefix erkannt, automatisch freigegeben: {description}")
+        return True
+
+    prompt = f"{description} - freigeben?"
+
+    if use_voice:
+        from jack_voice import confirm
+        result = confirm(prompt)
+        return result is True
+    else:
+        response = input(f"{prompt} (ja/nein): ").strip().lower()
+        return response in ("ja", "j", "yes", "y")
