@@ -47,9 +47,9 @@ class JackOperator:
                 text = err.get("text", "")
                 
                 # Pattern-Matching für bekannte Fehler
-                if "titan" in text.lower() and "crash" in text.lower():
-                    diagnosis["issues"].append(f"TITAN: Crash erkannt in {fname}")
-                    diagnosis["recommended_actions"].append("Kill TITAN: pkill -f titan")
+                if "ssh" in text.lower() or "kex" in text.lower() or "reset" in text.lower():
+                    diagnosis["issues"].append(f"SSH: Xiaomi nicht erreichbar ({fname})")
+                    diagnosis["recommended_actions"].append("sv restart jack_cortex")
                     diagnosis["recommended_actions"].append("Restart Cortex: sv restart jack_cortex")
                 
                 elif "connection" in text.lower() and "lost" in text.lower():
