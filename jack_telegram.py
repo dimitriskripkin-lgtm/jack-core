@@ -50,7 +50,7 @@ def handle(text):
         return "\n".join([f"[{r[0]}] {r[1]}: {r[2][:80]}" for r in rows])
     elif text.startswith('/shell '):
         cmd = text[7:]
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
+        return "/shell deaktiviert bis Auth eingebaut (Sicherheit). Naechste Session."
         out = (result.stdout + result.stderr).strip()
         return f"$ {cmd}\n{out[:500]}" if out else f"$ {cmd}\n(kein Output)"
     elif text.startswith('frag gemini'):
