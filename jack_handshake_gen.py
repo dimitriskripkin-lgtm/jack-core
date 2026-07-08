@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 JACK_HOME = "/data/data/com.termux/files/home"
-MEMORY_DB = f"{JACK_HOME}/jack/jack_memory.db"
+ERRORS_DB = f"{JACK_HOME}/jack/jack_errors.db"
 IDENTITY_FILE = f"{JACK_HOME}/jack/jack_identity.json"
 HANDSHAKE_FILE = f"{JACK_HOME}/jack/jack_handshake.json"
 
@@ -17,7 +17,7 @@ def load_identity():
 
 def get_recent_errors(limit=5):
     try:
-        with sqlite3.connect(MEMORY_DB) as con:
+        with sqlite3.connect(ERRORS_DB) as con:
             con.row_factory = sqlite3.Row
             rows = con.execute("SELECT * FROM errors ORDER BY ts DESC LIMIT ?", (limit,)).fetchall()
             return [dict(r) for r in rows]

@@ -11,10 +11,15 @@ SSH_FAIL_COUNT = 0
 SSH_FAIL_THRESHOLD = 3
 
 def log_error(msg):
+    import inspect, linecache
     if os.path.exists(ERROR_DB):
         try:
+            frame = inspect.currentframe().f_back
+            file_path = frame.f_code.co_filename
+            line_num = frame.f_lineno
+            context = linecache.getline(file_path, line_num).strip()
             with sqlite3.connect(ERROR_DB) as con:
-                con.execute("INSERT INTO errors (module, error_type, error_msg, resolved, timestamp) VALUES ('jack_cortex', 'CORTEX_ERR', ?, 0, datetime('now'))", (msg,))
+                con.execute("INSERT INTO errors (module, error_type, error_msg, file_path, line_num, context, resolved, timestamp) VALUES ('jack_cortex', 'CORTEX_ERR', ?, ?, ?, ?, 0, datetime('now'))", (msg, file_path, line_num, context))
                 con.commit()
         except: pass
 
