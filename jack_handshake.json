@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-03T18:06:41.776465",
+  "timestamp": "2026-07-08T14:07:44.147961",
   "identity": {
     "owner": "Dimitri",
     "device_host": "Honor 8 Magic Pro",
@@ -33,12 +33,5 @@
   "recent_errors": [],
   "last_screenshot": null,
   "xiaomi_status": {},
-  "ready": true,
-  "last_bugfix_session": {
-    "ts": "2026-07-05T10:39:20.652332",
-    "fixed": 0,
-    "skipped": 10,
-    "escalated": 0,
-    "details": []
-  }
+  "ready": true
 }
