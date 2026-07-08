@@ -76,6 +76,16 @@ def run_voice_loop():
             print(f'Dima: {user_input}')
             if user_input.lower().strip() in ['beenden', 'stop', 'exit']: break
             
+            # Frag Gemini Trigger
+            if user_input.lower().strip().startswith("frag gemini"):
+                import jack_gemini_bridge
+                question = user_input[11:].strip() or "System-Status analysieren."
+                status = jack_gemini_bridge.collect_status()
+                gemini_response = jack_gemini_bridge.ask_gemini(question, status)
+                print(f"Gemini: {gemini_response}")
+                auto_save_to_memory(user_input, gemini_response)
+                continue
+
             math_res = jack_math.try_direct_calculation(user_input)
             if math_res is not None:
                 print(f'JACK: {math_res}')
