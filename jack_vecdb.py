@@ -3,6 +3,8 @@ import json
 
 def get_ptr(db_path='/data/data/com.termux/files/home/jack/jack_memory.db'):
     conn = sqlite3.connect(db_path)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=5000;")
     conn.enable_load_extension(True)
     conn.load_extension('/data/data/com.termux/files/home/jack/vec0')
     conn.enable_load_extension(False)
@@ -35,9 +37,13 @@ def _async_worker():
     while True:
         data = memory_queue.get()
         if data is None: break
-        text, vector_data = data
-        try: pass 
-        finally: memory_queue.task_done()
+        row_id, vector_data = data
+        try:
+            store_embedding(row_id, vector_data)
+        except Exception as e:
+            print("[VECDB] Async-Speicherfehler: " + str(e))
+        finally:
+            memory_queue.task_done()
 
 worker_thread = threading.Thread(target=_async_worker, daemon=True)
 worker_thread.start()
