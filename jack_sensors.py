@@ -23,7 +23,7 @@ def get_battery():
         return f"Akku unklar ({err or out[:60]})"
 
 def get_motion():
-    out,err=_ssh("termux-sensor -s linear_acceleration -n 1",timeout=15)
+    out,err=_ssh("timeout 8 termux-sensor -s linear_acceleration -n 1; termux-sensor -c >/dev/null 2>&1",timeout=18)
     try:
         d=json.loads(out); vals=list(d.values())[0].get("values",[])
         mag=sum(v*v for v in vals)**0.5
