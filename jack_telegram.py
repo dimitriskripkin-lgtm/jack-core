@@ -97,9 +97,9 @@ def main():
                 
                 try:
                     get_voice(file_id, ogg_path)
-                    resp_wav, text = process_voice_message(ogg_path)
+                    resp_wav, heard, answer = process_voice_message(ogg_path)
                     
-                    send(f"JACK (Audio transkribiert): {text}")
+                    send(f"Verstanden: {heard}\n\nJACK: {answer}")
                     send_voice(resp_wav)
                     
                     for _f in (ogg_path, resp_wav):
