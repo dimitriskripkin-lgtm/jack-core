@@ -26,7 +26,7 @@
   },
   "system_notes": "JACK kann ueber Chat und Sprachnachricht NICHTS ausfuehren und NICHTS schreiben. Er hat KEINEN Shell-Zugriff und KEINEN Dateizugriff aus dem Gespraech heraus. Wenn Dima um Ausfuehrung bittet: ehrlich sagen dass diese Faehigkeit noch nicht verdrahtet ist, und den fertigen Befehl zum Kopieren vorschlagen. NIEMALS behaupten etwas ausgefuehrt zu haben. Das 'jack autonom:'-Praefix existiert nur im Approval-Gate fuer jack_code_writer und jack_operator, nicht im Chat-Pfad.",
   "created": "2026-06-18T11:20:00Z",
-  "last_updated": "2026-07-09T08:44:04.015641",
+  "last_updated": "2026-07-09T20:47:19.240346",
   "hardware": "Honor Magic8 Pro (Host/Gehirn) + Xiaomi 11T Pro (Slave via SSH)",
   "vision": "Lokales autonomes AI-OS, offline-first, JACK als Exit-Vehicle fuer mehr Unabhaengigkeit",
   "fun_facts": [
@@ -50,9 +50,13 @@
     "JACK verwendet Termux als Terminal-Emulator.",
     "JACK beinhaltet das `jack_math.py`-Modul.",
     "Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt.",
-    "Dima hat einen Hund.",
     "JACK wurde am 18. Juni gebaut.",
     "JACK hat über den Chat keinen direkten Shell- oder Dateizugriff."
   ],
-  "last_learned": "2026-07-09T19:23:04.898037"
+  "last_learned": "2026-07-09T19:23:04.898037",
+  "korrekturen": [
+    "Dima hat KEINEN Hund (Rex war nur ein Test)",
+    "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer",
+    "JACK hat KEINEN direkten Shell- oder Dateizugriff ueber den Chat"
+  ]
 }

@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-09T13:33:32.880787
+Stand: 2026-07-09T20:47:19.480710
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -23,12 +23,13 @@ Stand: 2026-07-09T13:33:32.880787
 - JACK verwendet Termux als Terminal-Emulator.
 - JACK beinhaltet das `jack_math.py`-Modul.
 - Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt.
-- Dima hat keinen Hund.
 - JACK wurde am 18. Juni gebaut.
 - JACK hat über den Chat keinen direkten Shell- oder Dateizugriff.
 
-## Aktive Module (33)
+## Aktive Module (39)
+- jack_agent.py
 - jack_approval.py
+- jack_budget.py
 - jack_bug_fixer.py
 - jack_code_writer.py
 - jack_coder.py
@@ -37,15 +38,19 @@ Stand: 2026-07-09T13:33:32.880787
 - jack_gemini_bridge.py
 - jack_handshake_gen.py
 - jack_health.py
+- jack_improve.py
 - jack_learn.py
 - jack_learning_loop.py
+- jack_log.py
 - jack_math.py
 - jack_memory.py
 - jack_memory_engine.py
 - jack_operator.py
 - jack_patch.py
 - jack_personality.py
+- jack_publish.py
 - jack_sensors.py
+- jack_skills.py
 - jack_snapshot.py
 - jack_talk.py
 - jack_telegram.py
@@ -63,30 +68,30 @@ Stand: 2026-07-09T13:33:32.880787
 - test_jack_approval.py
 
 ## System-Status
-- Offene Fehler: 1
-- Erinnerungen: 76
+- Offene Fehler: 0
+- Erinnerungen: 92
 - Dienste:
-run: jack_cortex: (pid 12225) 10573s
-run: jack_telegram: (pid 21720) 5656s
-run: jack_autolearn: (pid 12226) 10573s
-run: ollama: (pid 12229) 10573s
+run: jack_cortex: (pid 11922) 21824s
+run: jack_telegram: (pid 29277) 1815s
+run: jack_autolearn: (pid 29274) 1815s
+run: ollama: (pid 12229) 36600s
 
 ## Letzte Aenderungen
+a98e082 Rate-Limit-Fix: Modellwechsel auf freies Gemini-Modell, Token-Zaehler eingebaut, Agent-Kaskaden-Bug behoben (Fehlermeldung nicht mehr als Code), Runden-Pause
+2cc5b3f Gemini-Bridge: Retry+Backoff gegen HTTP 429 (Rate-Limit) - Agent + Chat laufen jetzt drosselfest
+58360e2 Autonomer Agent: /auto <ziel> - JACK loest Ziele selbststaendig in der Werkstatt (schreibt+testet+verbessert, max 4 Runden), im Hintergrund-Thread, harte Sandbox-Waende bleiben
+b683f1f Skill-Bibliothek: erfolgreiche Code-Bausteine speichern (/skill save) + kostenlos wiederverwenden (/skill <name>) - senkt API-Kosten, macht JACK unabhaengiger
+77a3333 Kosten-Bremse: Tageslimits Gemini Text(300)+Vision(40), /budget-Befehl - schuetzt vor Kosten-Explosion bei Bild-/Sensordaten
+14fb2a3 Entscheidungs-Logbuch: jede JACK-Aktion nachvollziehbar (jack_log), /log in Telegram - Grundstein fuer sichere Autonomie
+b372e98 Selbstverbesserung jack_math.py (JACK-Vorschlag, Dima-Freigabe)
+6768994 Fix: doppelte tote GEMINI-Key-Zeile entfernt (401-Ursache), Bot-Loop + propose_improvement gegen Absturz/Crashloop abgesichert
+6d9284d Selbstverbesserungs-Kreis: /verbessere <modul> -> Gemini-Patch-Vorschlag -> Freigabe -> Patch mit Auto-Rollback + Commit. Sicherheitsnetze doppelt getestet
+6714a4b Selbstverbesserung _improve_demo.py (JACK-Vorschlag, Dima-Freigabe)
+acc20df Cortex: letzte laute Meldung (Recovery-Exception) auf Status gestellt - abwesendes Xiaomi jetzt komplett ruhig
+d4c5a7a Cortex sauber: abwesendes Xiaomi = Status statt Fehleralarm (log_status, kein DB-Eintrag)
+6cca0d1 JACK hat Augen: Xiaomi-Kamera + Gemini Vision live verifiziert, Sensoren laufen
 2093dde JACK hat Augen: Xiaomi-Kamera + Gemini Vision live verifiziert, Sensoren laufen
 cb94747 Sensoren: Motion-Sensor gegen Haenger gehaertet (timeout+cleanup)
-e16299b JACK bekommt Sinne: jack_sensors.py - Xiaomi GPS/Bewegung/Akku + Kamera->Gemini Vision. Telegram /sehen /standort /akku
-892be76 Architektur-Bauanleitung: 7 Schichten, Sicherheitsprinzipien, Roadmap
-f01ba1a Programmierer bequemer: /run ohne Dateiname nimmt letzten Code, /werkstatt listet Inhalt
-e1bba1e JACK als Programmierer: /code schreibt Werkstatt-Code via Gemini, /run fuehrt ihn gesichert aus (Risiko-Gate, Timeout, Werkstatt-only), 6 Haertetests bestanden
-429ea3b Gedaechtnis-Korrektur + Aufraeumen: Widerspruchserkennung, fluechtige Daten raus, alte Modelle entfernt
-fdbfec8 Gedaechtnis: fluechtige Systemdaten vom Langzeit-Lernen ausgeschlossen
-7283bea Gedaechtnis-Korrektur: Lern-Schleife erkennt Widersprueche und Dementis, Dimas Aussage gewinnt, alte falsche Fakten werden ersetzt
-e1a1550 Snapshot: Voll-Test bestanden - Gedaechtnis, Live-Status, Ehrlichkeit, Schreibzugriff, Ausbruchschutz, Bug-Fixer sicher
-7c74bef Bug-Fixer entschaerft: SEARCH/REPLACE statt Ganzdatei-Rewrite, keine 2000-Zeichen-Trunkierung, Groessenwaechter + Volldatei-Syntaxcheck, 4 Haertetests bestanden
-8235164 Schreibzugriff: echter Zeitstempel statt Platzhalter, saubere Dateinamen
-3454f13 Schreibwunsch-Erkennung in handle() verdrahtet
-6678697 JACK hat Haende: sicherer Schreibzugriff via Telegram, Zwei-Schritt-Bestaetigung, nur Werkstatt-Ordner, Ausbruch gehaertet
-51e595a Sicherer Schreibzugriff Teil 1: jack_write.py, nur Werkstatt-Ordner, Ausbruch-Schutz getestet
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.234.166.131:8022).
