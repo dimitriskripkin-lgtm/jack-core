@@ -121,6 +121,13 @@ def get_recent_history(limit=6):
     except Exception:
         return []
 
+def _json_dumps_safe(obj):
+    import json as _j
+    try:
+        return _j.dumps(obj, ensure_ascii=False, indent=2)
+    except Exception:
+        return str(obj)
+
 def talk_to_gemini(prompt):
     import jack_gemini_bridge
     try:
@@ -129,6 +136,17 @@ def talk_to_gemini(prompt):
     except Exception:
         hits = []
     mem_ctx = "\n".join([f"- [{h[4]}] {h[1]} -> {h[2][:150]}" for h in hits]) if hits else "(keine)"
+    _live = ""
+    _sys_words = ["status", "systemcheck", "system check", "fehler", "dienste", "laeuft", "läuft",
+                  "commit", "erinnerungen", "xiaomi", "cortex", "wie geht es dir", "zustand", "check"]
+    if any(w in prompt.lower() for w in _sys_words):
+        try:
+            import jack_gemini_bridge as _gb
+            _st = _gb.collect_status()
+            _live = ("\n\nECHTE LIVE-SYSTEMDATEN (JETZT gemessen, das ist die WAHRHEIT):\n"
+                     + _json_dumps_safe(_st) + "\n")
+        except Exception:
+            _live = ""
     try:
         import json as _json
         _id = _json.load(open("/data/data/com.termux/files/home/jack/jack_identity.json"))
@@ -152,7 +170,8 @@ def talk_to_gemini(prompt):
         f"GRUNDWAHRHEIT ueber Dima und JACK (IMMER korrekt, hat VORRANG vor allem anderen):\n{id_ctx}\n\n"
         f"DEINE ERINNERUNGEN (koennen alte ungenaue Antworten enthalten - Grundwahrheit gewinnt):\n{mem_ctx}\n\n"
         f"LETZTER VERLAUF:\n{hist_ctx}\n\n"
-        f"DIMA FRAGT: {prompt}"
+        + _live +
+        f"\nDIMA FRAGT: {prompt}"
     )
     try:
         return jack_gemini_bridge.ask_gemini(context)
