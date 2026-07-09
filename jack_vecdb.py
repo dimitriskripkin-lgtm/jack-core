@@ -50,3 +50,19 @@ worker_thread.start()
 
 def queue_new_memory(text, vector_data):
     memory_queue.put((text, vector_data))
+
+def search_mem(embedding_vec, limit=5):
+    conn = get_ptr()
+    try:
+        cur = conn.execute(
+            "SELECT m.id, m.cmd, m.result, v.distance, m.timestamp "
+            "FROM memory_vec v JOIN memory m ON m.rowid = v.rowid "
+            "WHERE v.embedding MATCH ? AND k = ? ORDER BY v.distance ASC",
+            (json.dumps(embedding_vec), limit)
+        )
+        return cur.fetchall()
+    except Exception as e:
+        print("[VECDB] search_mem Fehler:", e)
+        return []
+    finally:
+        conn.close()
