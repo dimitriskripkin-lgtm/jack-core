@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-09T12:04:26.571298
+Stand: 2026-07-09T13:33:32.880787
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -23,6 +23,9 @@ Stand: 2026-07-09T12:04:26.571298
 - JACK verwendet Termux als Terminal-Emulator.
 - JACK beinhaltet das `jack_math.py`-Modul.
 - Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt.
+- Dima hat keinen Hund.
+- JACK wurde am 18. Juni gebaut.
+- JACK hat über den Chat keinen direkten Shell- oder Dateizugriff.
 
 ## Aktive Module (33)
 - jack_approval.py
@@ -60,15 +63,16 @@ Stand: 2026-07-09T12:04:26.571298
 - test_jack_approval.py
 
 ## System-Status
-- Offene Fehler: 0
-- Erinnerungen: 74
+- Offene Fehler: 1
+- Erinnerungen: 76
 - Dienste:
-run: jack_cortex: (pid 12225) 5227s
-run: jack_telegram: (pid 21720) 310s
-run: jack_autolearn: (pid 12226) 5227s
-run: ollama: (pid 12229) 5227s
+run: jack_cortex: (pid 12225) 10573s
+run: jack_telegram: (pid 21720) 5656s
+run: jack_autolearn: (pid 12226) 10573s
+run: ollama: (pid 12229) 10573s
 
 ## Letzte Aenderungen
+2093dde JACK hat Augen: Xiaomi-Kamera + Gemini Vision live verifiziert, Sensoren laufen
 cb94747 Sensoren: Motion-Sensor gegen Haenger gehaertet (timeout+cleanup)
 e16299b JACK bekommt Sinne: jack_sensors.py - Xiaomi GPS/Bewegung/Akku + Kamera->Gemini Vision. Telegram /sehen /standort /akku
 892be76 Architektur-Bauanleitung: 7 Schichten, Sicherheitsprinzipien, Roadmap
@@ -83,7 +87,6 @@ e1a1550 Snapshot: Voll-Test bestanden - Gedaechtnis, Live-Status, Ehrlichkeit, S
 3454f13 Schreibwunsch-Erkennung in handle() verdrahtet
 6678697 JACK hat Haende: sicherer Schreibzugriff via Telegram, Zwei-Schritt-Bestaetigung, nur Werkstatt-Ordner, Ausbruch gehaertet
 51e595a Sicherer Schreibzugriff Teil 1: jack_write.py, nur Werkstatt-Ordner, Ausbruch-Schutz getestet
-13f36ae Identitaet ehrlich: JACK behauptet keine Ausfuehrungs-Faehigkeit mehr die er nicht hat
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.234.166.131:8022).
