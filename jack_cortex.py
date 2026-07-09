@@ -9,6 +9,7 @@ XIAOMI_IP = jack_config.get_param('NETWORK', 'xiaomi_ip')
 XIAOMI_SSH_PORT = 8022
 SSH_FAIL_COUNT = 0
 SSH_FAIL_THRESHOLD = 3
+SSH_ERR_COUNT = 0
 
 def log_error(msg):
     import inspect, linecache
@@ -25,41 +26,44 @@ def log_error(msg):
 
 
 
+def _ssh_ok(ip):
+    try:
+        r = subprocess.run(
+            ["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),"-o","BatchMode=yes",
+             "-o","StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null",
+             "-o","ConnectTimeout=3","-p",str(XIAOMI_SSH_PORT),f"root@{ip}","true"],
+            capture_output=True, timeout=6)
+        return r.returncode == 0
+    except Exception:
+        return False
+
+
 def find_xiaomi():
-    import socket
-    import os
-
     cache_file = os.path.expanduser("~/jack/.last_xiaomi_ip")
-
-    # Cache-Hit-First: zuletzt erfolgreiche IP zuerst probieren, spart den vollen Scan
+    known = jack_config.get_param('NETWORK', 'xiaomi_ip')
+    if _ssh_ok(known):
+        with open(cache_file,"w") as f: f.write(known)
+        return known
     if os.path.exists(cache_file):
         try:
-            cached_ip = open(cache_file).read().strip()
-            if cached_ip:
-                s = socket.create_connection((cached_ip, 8022), timeout=0.3)
-                s.close()
-                return cached_ip
+            cached = open(cache_file).read().strip()
+            if cached and cached != known and _ssh_ok(cached):
+                return cached
         except Exception:
             pass
-
-    # Cache-Miss oder keine Cache-Datei: vollen Scan im verifizierten Subnetz
-    subnet_prefix = "10.234.166"
     for i in range(2, 255):
-        ip = f"{subnet_prefix}.{i}"
-        try:
-            s = socket.create_connection((ip, 8022), timeout=0.2)
-            s.close()
-            with open(cache_file, "w") as f:
-                f.write(ip)
-            return ip
-        except (socket.timeout, ConnectionRefusedError, OSError):
+        ip = f"10.234.166.{i}"
+        if ip == known:
             continue
-    return XIAOMI_IP
-
+        if _ssh_ok(ip):
+            with open(cache_file,"w") as f: f.write(ip)
+            log_error(f"[Cortex] Xiaomi auf neuer IP gefunden: {ip}")
+            return ip
+    return known
 
 
 def check_and_heal():
-    global SSH_FAIL_COUNT
+    global SSH_FAIL_COUNT, SSH_ERR_COUNT
     
     global XIAOMI_IP
     XIAOMI_IP = find_xiaomi()
@@ -98,8 +102,11 @@ def check_and_heal():
             capture_output=True, text=True, timeout=5
         )
         if ssh_test.returncode != 0:
-            log_error(f"[Cortex] SSH-Fehler: {ssh_test.stderr.strip()}")
+            SSH_ERR_COUNT += 1
+            if SSH_ERR_COUNT == 1 or SSH_ERR_COUNT % 30 == 0:
+                log_error(f"[Cortex] SSH-Fehler (#{SSH_ERR_COUNT}): {ssh_test.stderr.strip()}")
             return
+        SSH_ERR_COUNT = 0
     except subprocess.TimeoutExpired:
         log_error("[Cortex] SSH-Timeout")
         return
