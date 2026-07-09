@@ -38,6 +38,8 @@ def write_code(task, filename=None):
         f"AUFGABE: {task}"
     )
     code = gb.ask_gemini(prompt).strip()
+    if code.startswith("Gemini") and any(m in code for m in ("Rate-Limit","ueberlastet","Verbindungsfehler")):
+        return None, None, code
     if code.startswith("```"):
         code = "\n".join(code.split("\n")[1:])
     if code.endswith("```"):

@@ -58,7 +58,7 @@ def see(frage="Was ist auf dem Bild? Antworte kurz auf Deutsch."):
     if not b64: return f"Kamera-Fehler: {msg}"
     import jack_gemini_bridge as gb
     key=gb.load_api_key()
-    url=f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={key}"
+    url=f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={key}"
     payload={"contents":[{"parts":[{"text":frage},{"inline_data":{"mime_type":"image/jpeg","data":b64}}]}]}
     req=urllib.request.Request(url,data=json.dumps(payload).encode(),headers={"Content-Type":"application/json"})
     try:

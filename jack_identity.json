@@ -50,9 +50,9 @@
     "JACK verwendet Termux als Terminal-Emulator.",
     "JACK beinhaltet das `jack_math.py`-Modul.",
     "Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt.",
-    "Dima hat keinen Hund.",
+    "Dima hat einen Hund.",
     "JACK wurde am 18. Juni gebaut.",
     "JACK hat über den Chat keinen direkten Shell- oder Dateizugriff."
   ],
-  "last_learned": "2026-07-09T12:37:38.431473"
+  "last_learned": "2026-07-09T19:23:04.898037"
 }

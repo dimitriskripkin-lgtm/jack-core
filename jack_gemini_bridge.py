@@ -34,7 +34,7 @@ def ask_gemini(question, status=None):
     _ok,_m=jack_budget.check_and_count('text')
     if not _ok: return _m
     key = load_api_key()
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={key}"
     system = (
         "Du bist JACKs Reasoning-Layer. JACK laeuft auf Honor Magic8 Pro (Termux). "
         "Slave: Xiaomi 11T Pro via SSH (10.234.166.131:8022, Key ~/.ssh/id_jack). "
@@ -52,6 +52,9 @@ def ask_gemini(question, status=None):
         try:
             with urllib.request.urlopen(req, timeout=30) as res:
                 result = json.loads(res.read())
+                try:
+                    import jack_budget; jack_budget.add_tokens(result.get("usageMetadata",{}).get("totalTokenCount",0))
+                except Exception: pass
                 return result["candidates"][0]["content"]["parts"][0]["text"]
         except Exception as _e:
             _code = getattr(_e, "code", None)
