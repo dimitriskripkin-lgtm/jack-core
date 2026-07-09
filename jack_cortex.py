@@ -11,6 +11,9 @@ SSH_FAIL_COUNT = 0
 SSH_FAIL_THRESHOLD = 3
 SSH_ERR_COUNT = 0
 
+def log_status(msg):
+    print('[Cortex-Status] ' + str(msg))
+
 def log_error(msg):
     import inspect, linecache
     if os.path.exists(ERROR_DB):
@@ -71,10 +74,10 @@ def check_and_heal():
     if ping.returncode != 0:
         SSH_FAIL_COUNT += 1
         if SSH_FAIL_COUNT == 1 or SSH_FAIL_COUNT % 5 == 0:
-            log_error(f"[Cortex] Xiaomi nicht erreichbar (Ping {SSH_FAIL_COUNT}x fehlgeschlagen)")
+            log_status(f"[Cortex] Xiaomi nicht erreichbar (Ping {SSH_FAIL_COUNT}x fehlgeschlagen)")
         
         if SSH_FAIL_COUNT >= SSH_FAIL_THRESHOLD:
-            log_error(f"[Cortex] Versuche WiFi-Recovery auf Xiaomi (Fail #{SSH_FAIL_COUNT})")
+            log_status(f"[Cortex] Versuche WiFi-Recovery auf Xiaomi (Fail #{SSH_FAIL_COUNT})")
             try:
                 recovery = subprocess.run(
                     ["ssh", "-i", os.path.expanduser("~/.ssh/id_jack"), "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-p", str(XIAOMI_SSH_PORT), f"root@{XIAOMI_IP}", 
@@ -82,10 +85,10 @@ def check_and_heal():
                     capture_output=True, text=True, timeout=15
                 )
                 if recovery.returncode == 0:
-                    log_error("[Cortex] WiFi-Recovery erfolgreich")
+                    log_status("[Cortex] WiFi-Recovery erfolgreich")
                     SSH_FAIL_COUNT = 0
                 else:
-                    log_error(f"[Cortex] WiFi-Recovery fehlgeschlagen: {recovery.stderr.strip()}")
+                    log_status(f"[Cortex] WiFi-Recovery fehlgeschlagen: {recovery.stderr.strip()}")
             except Exception as e:
                 log_error(f"[Cortex] WiFi-Recovery Exception: {str(e)}")
         return
