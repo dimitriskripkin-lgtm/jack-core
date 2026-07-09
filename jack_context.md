@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-09T20:47:19.480710
+Stand: 2026-07-09T21:05:53.494820
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -71,12 +71,13 @@ Stand: 2026-07-09T20:47:19.480710
 - Offene Fehler: 0
 - Erinnerungen: 92
 - Dienste:
-run: jack_cortex: (pid 11922) 21824s
-run: jack_telegram: (pid 29277) 1815s
-run: jack_autolearn: (pid 29274) 1815s
-run: ollama: (pid 12229) 36600s
+run: jack_cortex: (pid 11922) 22938s
+run: jack_telegram: (pid 29277) 2929s
+run: jack_autolearn: (pid 12394) 1113s
+run: ollama: (pid 12229) 37714s
 
 ## Letzte Aenderungen
+b56a851 Memory: absolute Korrekturen (kein Hund/LKW-Fahrer) verankert, Publish-Scrub praeziser
 a98e082 Rate-Limit-Fix: Modellwechsel auf freies Gemini-Modell, Token-Zaehler eingebaut, Agent-Kaskaden-Bug behoben (Fehlermeldung nicht mehr als Code), Runden-Pause
 2cc5b3f Gemini-Bridge: Retry+Backoff gegen HTTP 429 (Rate-Limit) - Agent + Chat laufen jetzt drosselfest
 58360e2 Autonomer Agent: /auto <ziel> - JACK loest Ziele selbststaendig in der Werkstatt (schreibt+testet+verbessert, max 4 Runden), im Hintergrund-Thread, harte Sandbox-Waende bleiben
@@ -91,7 +92,6 @@ acc20df Cortex: letzte laute Meldung (Recovery-Exception) auf Status gestellt - 
 d4c5a7a Cortex sauber: abwesendes Xiaomi = Status statt Fehleralarm (log_status, kein DB-Eintrag)
 6cca0d1 JACK hat Augen: Xiaomi-Kamera + Gemini Vision live verifiziert, Sensoren laufen
 2093dde JACK hat Augen: Xiaomi-Kamera + Gemini Vision live verifiziert, Sensoren laufen
-cb94747 Sensoren: Motion-Sensor gegen Haenger gehaertet (timeout+cleanup)
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.234.166.131:8022).
