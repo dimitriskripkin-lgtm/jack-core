@@ -3,7 +3,7 @@ import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
 
 sys.path.append('/data/data/com.termux/files/home/jack')
-import jack_gemini_bridge, jack_config
+import jack_gemini_bridge, jack_config, jack_talk, jack_talk
 
 ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
 
@@ -59,7 +59,7 @@ def handle(text):
         return jack_gemini_bridge.ask_gemini(question, status)[:1000]
     else:
         status = jack_gemini_bridge.collect_status()
-        return jack_gemini_bridge.ask_gemini(text, status)[:1000]
+        return jack_talk.talk_to_gemini(text)[:1500]
 
 def main():
     send("JACK Telegram-Bridge online.")
