@@ -1,6 +1,6 @@
 {
   "owner": "Dimitri",
-  "device_host": "Honor 8 Magic Pro",
+  "device_host": "Honor Magic8 Pro",
   "device_slave": "Xiaomi 11T Pro",
   "role": "Night-Shift Trucker + Programmer",
   "communication_style": "Direct, no bullshit, Kumpel-tone",
@@ -36,21 +36,20 @@
   "wichtig": "Dima ist der MENSCH/Nutzer. JACK ist das SYSTEM/die KI. Niemals verwechseln.",
   "learned_facts": [
     "Dima ist Dimitri, ein Nachtschicht-Fernfahrer und Programmierer.",
+    "Dima ist Nachtschichtfahrer bei Dalhoff Feinkost in Achim.",
+    "Dima arbeitet auf dem ehemaligen Tupperware-Gelände bei Heinrich Staas in der Max-Planck-Strasse.",
+    "Dima arbeitet immer Nachtschicht.",
+    "Dima programmiert nebenbei.",
     "Dimas Lieblings-LKW ist ein Volvo FH16.",
-    "Das JACK-System ist ein autonomes, lokales AI-OS.",
+    "JACK ist ein autonomes, lokales AI-OS.",
+    "JACK soll ein sich selbst lernendes und verbesserndes System werden.",
     "JACK arbeitet komplett offline und ohne Cloud-Abhängigkeit.",
     "JACK steht unter Dimas voller Kontrolle.",
-    "JACK läuft auf einem Honor 8 Android-Smartphone.",
+    "JACK läuft auf einem Honor Magic8 Pro Android-Smartphone.",
     "JACK verwendet Termux als Terminal-Emulator.",
-    "Das JACK-System beinhaltet ein `jack_math.py`-Modul für einfache mathematische Operationen aus Text.",
-    "Dima ist Dimitri, Nachtschichtfahrer bei Dalhoff Feinkost in Achim.",
-    "Dima programmiert nebenbei.",
-    "Dima's Lieblings-LKW ist ein Volvo FH16.",
-    "JACK soll ein autonomes, sich selbst lernendes/verbesserndes System werden.",
-    "JACK wird lokal, komplett offline und ohne Cloud-Abhängigkeit betrieben.",
-    "JACK läuft auf einem Honor Magic8 Pro.",
-    "Dima verwendet Termux als Terminal-Emulator.",
-    "JACK enthält ein `jack_math.py`-Modul für Mathe-Operationen aus Text."
+    "JACK beinhaltet ein `jack_math.py`-Modul.",
+    "Das `jack_math.py`-Modul ist eine Python-Funktion.",
+    "Das `jack_math.py`-Modul erkennt und führt simple mathematische Operationen aus Text aus."
   ],
-  "last_learned": "2026-07-09T04:16:43.846793"
+  "last_learned": "2026-07-09T04:22:07.496636"
 }
