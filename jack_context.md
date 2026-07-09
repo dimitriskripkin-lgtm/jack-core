@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-09T21:05:53.494820
+Stand: 2026-07-09T21:20:27.715538
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -26,11 +26,12 @@ Stand: 2026-07-09T21:05:53.494820
 - JACK wurde am 18. Juni gebaut.
 - JACK hat über den Chat keinen direkten Shell- oder Dateizugriff.
 
-## Aktive Module (39)
+## Aktive Module (40)
 - jack_agent.py
 - jack_approval.py
 - jack_budget.py
 - jack_bug_fixer.py
+- jack_claude.py
 - jack_code_writer.py
 - jack_coder.py
 - jack_config.py
@@ -71,12 +72,13 @@ Stand: 2026-07-09T21:05:53.494820
 - Offene Fehler: 0
 - Erinnerungen: 92
 - Dienste:
-run: jack_cortex: (pid 11922) 22938s
-run: jack_telegram: (pid 29277) 2929s
-run: jack_autolearn: (pid 12394) 1113s
-run: ollama: (pid 12229) 37714s
+run: jack_cortex: (pid 11922) 23812s
+run: jack_telegram: (pid 29277) 3803s
+run: jack_autolearn: (pid 12394) 1987s
+run: ollama: (pid 12229) 38588s
 
 ## Letzte Aenderungen
+ff4ac38 CLAUDE.md Wissensbasis + Publisher pusht ganze Umgebung (Werkstatt/Skills/Logs)
 b56a851 Memory: absolute Korrekturen (kein Hund/LKW-Fahrer) verankert, Publish-Scrub praeziser
 a98e082 Rate-Limit-Fix: Modellwechsel auf freies Gemini-Modell, Token-Zaehler eingebaut, Agent-Kaskaden-Bug behoben (Fehlermeldung nicht mehr als Code), Runden-Pause
 2cc5b3f Gemini-Bridge: Retry+Backoff gegen HTTP 429 (Rate-Limit) - Agent + Chat laufen jetzt drosselfest
@@ -91,7 +93,6 @@ b372e98 Selbstverbesserung jack_math.py (JACK-Vorschlag, Dima-Freigabe)
 acc20df Cortex: letzte laute Meldung (Recovery-Exception) auf Status gestellt - abwesendes Xiaomi jetzt komplett ruhig
 d4c5a7a Cortex sauber: abwesendes Xiaomi = Status statt Fehleralarm (log_status, kein DB-Eintrag)
 6cca0d1 JACK hat Augen: Xiaomi-Kamera + Gemini Vision live verifiziert, Sensoren laufen
-2093dde JACK hat Augen: Xiaomi-Kamera + Gemini Vision live verifiziert, Sensoren laufen
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.234.166.131:8022).
