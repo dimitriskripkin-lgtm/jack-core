@@ -40,4 +40,9 @@ def process_voice_message(ogg_path):
         for chunk in audio:
             f.write(chunk)
             
+    try:
+        os.remove(wav_path)
+    except Exception:
+        pass
+
     return resp_wav, response_text
