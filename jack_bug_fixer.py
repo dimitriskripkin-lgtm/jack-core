@@ -117,12 +117,15 @@ class JackBugFixer:
                 "You are JACK's bug fixer. Fix this Python error precisely.\n\n"
                 f"MODULE: {module}\nFILE: {file_path}\nLINE: {line_num}\n"
                 f"ERROR TYPE: {err_type}\nERROR MESSAGE: {err_msg}\nCONTEXT: {context}\n\n"
-                f"ORIGINAL CODE:\n{original[:2000] if original else '(not available)'}\n\n"
+                f"ORIGINAL CODE (komplett):\n{original if original else '(not available)'}\n\n"
                 "Rules:\n"
-                "- Return ONLY the corrected, complete Python code\n"
-                "- No explanations, no markdown fences\n"
-                "- Minimal change - fix the bug, touch nothing else\n"
-                "- If you cannot fix it safely, return exactly: CANNOT_FIX\n"
+                "- Antworte NUR mit SEARCH/REPLACE-Bloecken in diesem Format:\n"
+                "<<<<<<< SEARCH\n(exakter Originaltext)\n=======\n(neuer Text)\n>>>>>>> REPLACE\n"
+                "- SEARCH-Text muss BUCHSTABENGENAU im Original vorkommen, inkl. Einrueckung\n"
+                "- SEARCH-Text muss EINDEUTIG sein (genug Kontextzeilen)\n"
+                "- NIEMALS die ganze Datei zurueckgeben\n"
+                "- Kleinstmoegliche Aenderung\n"
+                "- Wenn nicht sicher fixbar: antworte exakt CANNOT_FIX\n"
             )
             result = writer.generate(prompt)
             if not result or result.strip() == "CANNOT_FIX":
@@ -198,16 +201,17 @@ class JackBugFixer:
                 self.escalate_to_dimitri(err_id, err_msg, file_path, fix_code, pattern)
                 self.session_escalated.append(label)
                 continue
-            ok, reason = self.sandbox_test(fix_code, label)
-            if not ok:
-                log(f"[SANDBOX FAIL] {reason}", "WARN")
-                self.session_skipped.append(label)
-                continue
             try:
-                backup = self.backup_and_apply(file_path, fix_code)
+                import jack_patch
+                ok2, msg2, preview = jack_patch.safe_patch(file_path, fix_code)
+                if not ok2:
+                    log(f"[PATCH ABGELEHNT] {msg2}", "WARN")
+                    self.session_skipped.append(label)
+                    continue
+                log(f"[DIFF]\n{preview}")
                 self.mark_resolved(err_id, f"AutoFixed {err_type} @ line {line_num}")
                 self.session_fixes.append(f"{label}: fixed {err_type}")
-                log(f"[FIXED] Backup: {backup}")
+                log(f"[FIXED] {msg2}")
             except Exception as e:
                 log(f"[APPLY FAIL] {e}", "ERROR")
                 self.session_skipped.append(label)
