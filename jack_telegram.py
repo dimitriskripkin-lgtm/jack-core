@@ -103,6 +103,10 @@ def main():
                     send_voice(resp_wav)
                     
                     os.remove(ogg_path)
+                    try:
+                        os.remove(resp_wav)
+                    except Exception:
+                        pass
                     os.remove(resp_wav)
                     os.remove(resp_wav.replace("_resp.wav", ".wav"))
                 except Exception as e:
