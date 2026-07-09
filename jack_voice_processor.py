@@ -45,4 +45,4 @@ def process_voice_message(ogg_path):
     except Exception:
         pass
 
-    return resp_wav, response_text
+    return resp_wav, text, response_text
