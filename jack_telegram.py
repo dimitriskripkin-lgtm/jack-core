@@ -3,13 +3,15 @@ import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
 
 sys.path.append('/data/data/com.termux/files/home/jack')
-import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors
+import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors, jack_improve
 from jack_voice_processor import process_voice_message
 
 ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
 PENDING_WRITE = {}
 LAST_CODE = {'file': None}
 BESTAETIGUNG = 'bestaetige schreiben'
+PENDING_IMPROVE = {}
+BESTAETIGUNG_PATCH = 'bestaetige patch'
 
 def load_secrets():
     token, chat_id = None, None
@@ -54,7 +56,7 @@ def get_updates(offset=0):
     except: return []
 
 def handle(text):
-    global PENDING_WRITE
+    global PENDING_WRITE, PENDING_IMPROVE
     raw = text.strip()
     text = raw.lower()
 
@@ -81,6 +83,24 @@ def handle(text):
     if text.strip() == '/sehen' or text.startswith('/sehen '):
         frage = raw[7:].strip() or "Was siehst du? Kurz auf Deutsch."
         return "JACK schaut durch die Kamera...\n\n" + jack_sensors.see(frage)
+
+    if text.strip() == BESTAETIGUNG_PATCH:
+        global PENDING_IMPROVE
+        if not PENDING_IMPROVE:
+            return "Kein Verbesserungs-Vorschlag offen."
+        ok, msg = jack_improve.apply_improvement(PENDING_IMPROVE.get('module'), PENDING_IMPROVE.get('answer'))
+        PENDING_IMPROVE = {}
+        return msg
+
+    if text.startswith('/verbessere '):
+        mod = raw[12:].strip()
+        ans, name = jack_improve.propose_improvement(mod)
+        if not ans:
+            return name
+        PENDING_IMPROVE.clear(); PENDING_IMPROVE.update({'module': name, 'answer': ans})
+        prev = ans if len(ans) < 1200 else ans[:1200] + "\n... (gekuerzt)"
+        return (f"Verbesserungs-Vorschlag fuer {name}:\n\n{prev}\n\n"
+                f"Zum Anwenden antworte exakt: {BESTAETIGUNG_PATCH}\n(rollt automatisch zurueck wenn es bricht)\nOder: abbrechen")
 
     if text.startswith('/code '):
         aufgabe = raw[6:].strip()
