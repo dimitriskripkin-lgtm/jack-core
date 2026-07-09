@@ -3,7 +3,7 @@ import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
 
 sys.path.append('/data/data/com.termux/files/home/jack')
-import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors, jack_improve, jack_log
+import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors, jack_improve, jack_log, jack_budget
 from jack_voice_processor import process_voice_message
 
 ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
@@ -91,6 +91,9 @@ def handle(text):
         ok, msg = jack_improve.apply_improvement(PENDING_IMPROVE.get('module'), PENDING_IMPROVE.get('answer'))
         PENDING_IMPROVE = {}
         return msg
+
+    if text.strip() == '/budget':
+        return jack_budget.status()
 
     if text.strip() == '/log':
         return 'JACKs Logbuch:\n' + jack_log.recent(15)
