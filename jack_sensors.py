@@ -51,6 +51,9 @@ def snap_photo(local_path=None):
     return b64, "OK"
 
 def see(frage="Was ist auf dem Bild? Antworte kurz auf Deutsch."):
+    import jack_budget
+    _ok,_m=jack_budget.check_and_count("vision")
+    if not _ok: return _m
     b64,msg=snap_photo()
     if not b64: return f"Kamera-Fehler: {msg}"
     import jack_gemini_bridge as gb

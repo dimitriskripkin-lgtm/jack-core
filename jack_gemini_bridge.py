@@ -30,6 +30,9 @@ def collect_status():
     return status
 
 def ask_gemini(question, status=None):
+    import jack_budget
+    _ok,_m=jack_budget.check_and_count('text')
+    if not _ok: return _m
     key = load_api_key()
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={key}"
     system = (
