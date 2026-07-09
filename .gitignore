@@ -5,11 +5,9 @@
 .cortex_fail_count
 .jack_secrets
 .last_xiaomi_ip
+.learning_rate
+.learning_seen
 __pycache__/
 config.ini
-.learning_rate
-.learning_seen
-.learning_rate
-.learning_seen
-.learning_rate
-.learning_seen
+voice_*.ogg
+voice_*.wav
