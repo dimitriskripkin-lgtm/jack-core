@@ -3,7 +3,7 @@ import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
 
 sys.path.append('/data/data/com.termux/files/home/jack')
-import jack_gemini_bridge, jack_config, jack_talk, jack_write
+import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder
 from jack_voice_processor import process_voice_message
 
 ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
@@ -69,8 +69,25 @@ def handle(text):
         PENDING_WRITE = {}
         return "Schreibvorschlag verworfen."
 
+    if text.startswith('/code '):
+        aufgabe = raw[6:].strip()
+        if not aufgabe:
+            return "Nutzung: /code <was soll das Programm tun>"
+        fn, code, msg = jack_coder.write_code(aufgabe)
+        if not fn:
+            return f"Fehler: {msg}"
+        vorschau = code if len(code) < 1200 else code[:1200] + "\n... (gekuerzt)"
+        return (f"Code geschrieben: {fn} (in ~/jack_werkstatt)\n\n{vorschau}\n\n"
+                f"Zum Testen: /run {fn}")
+
+    if text.startswith('/run '):
+        fn = raw[5:].strip()
+        ok, out = jack_coder.run_code(fn)
+        status = "OK" if ok else "BLOCKIERT/FEHLER"
+        return f"[{status}] {fn}\n\n{out}"
+
     if text in ['/start', 'hi', 'hallo']:
-        return "JACK online. Befehle: /status /errors /fix /shell <cmd> oder einfach fragen."
+        return "JACK online. Befehle: /status /errors /code <aufgabe> /run <datei> oder einfach fragen (Text+Sprache)."
     elif text == '/status':
         s = jack_gemini_bridge.collect_status()
         return f"Cortex: {s['cortex']}\nXiaomi: {'✓' if s['xiaomi_reachable'] else '✗'}\nOffene Fehler: {s['open_errors']}"
