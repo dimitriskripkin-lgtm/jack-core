@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-09T09:15:47.558149
+Stand: 2026-07-09T12:04:26.571298
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -8,24 +8,27 @@ Stand: 2026-07-09T09:15:47.558149
 - WICHTIG: Dima ist der MENSCH/Nutzer. JACK ist das SYSTEM/die KI. Niemals verwechseln.
 
 ## Was JACK ueber Dima gelernt hat
-- Dima ist Dimitri, ein Nachtschicht-Fernfahrer und Programmierer.
+- Dima ist Dimitri, ein Nachtschicht-LKW-Fahrer und Programmierer.
 - Dima arbeitet immer Nachtschicht.
 - Dima arbeitet bei Dalhoff Feinkost in Achim, auf dem ehemaligen Tupperware-Gelände bei Heinrich Staas in der Max-Planck-Strasse.
+- Dima fährt einen Sprinter (Kühlkoffer) bei Dalhoff Feinkost.
 - Dimas Lieblings-LKW ist ein Volvo FH16.
-- Dimas Hund heißt Rex und ist ein Schäferhund.
+- Dima baute zuvor Titan, den Vorgänger von JACK.
+- Titan, der Vorgänger von JACK, konnte bereits per Sprachnachricht kommunizieren.
 - JACK ist ein autonomes, lokales AI-OS.
+- JACKs Ziel ist komplett offline und ohne Cloud-Abhängigkeit, verwendet aber aktuell Gemini 2.5 Flash als Haupt-Denker.
 - JACK soll sich selbst lernen und verbessern.
-- JACK arbeitet komplett offline und ohne Cloud-Abhängigkeit.
 - JACK steht unter Dimas voller Kontrolle.
 - JACK läuft auf einem Honor Magic8 Pro Android-Smartphone.
 - JACK verwendet Termux als Terminal-Emulator.
 - JACK beinhaltet das `jack_math.py`-Modul.
 - Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt.
 
-## Aktive Module (31)
+## Aktive Module (33)
 - jack_approval.py
 - jack_bug_fixer.py
 - jack_code_writer.py
+- jack_coder.py
 - jack_config.py
 - jack_cortex.py
 - jack_gemini_bridge.py
@@ -39,6 +42,7 @@ Stand: 2026-07-09T09:15:47.558149
 - jack_operator.py
 - jack_patch.py
 - jack_personality.py
+- jack_sensors.py
 - jack_snapshot.py
 - jack_talk.py
 - jack_telegram.py
@@ -57,29 +61,29 @@ Stand: 2026-07-09T09:15:47.558149
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 52
+- Erinnerungen: 74
 - Dienste:
-run: jack_cortex: (pid 31233) 12739s
-run: jack_telegram: (pid 4712) 769s
-run: jack_autolearn: (pid 26679) 17607s
-run: ollama: (pid 30581) 101759s
+run: jack_cortex: (pid 12225) 5227s
+run: jack_telegram: (pid 21720) 310s
+run: jack_autolearn: (pid 12226) 5227s
+run: ollama: (pid 12229) 5227s
 
 ## Letzte Aenderungen
+cb94747 Sensoren: Motion-Sensor gegen Haenger gehaertet (timeout+cleanup)
+e16299b JACK bekommt Sinne: jack_sensors.py - Xiaomi GPS/Bewegung/Akku + Kamera->Gemini Vision. Telegram /sehen /standort /akku
+892be76 Architektur-Bauanleitung: 7 Schichten, Sicherheitsprinzipien, Roadmap
+f01ba1a Programmierer bequemer: /run ohne Dateiname nimmt letzten Code, /werkstatt listet Inhalt
+e1bba1e JACK als Programmierer: /code schreibt Werkstatt-Code via Gemini, /run fuehrt ihn gesichert aus (Risiko-Gate, Timeout, Werkstatt-only), 6 Haertetests bestanden
+429ea3b Gedaechtnis-Korrektur + Aufraeumen: Widerspruchserkennung, fluechtige Daten raus, alte Modelle entfernt
+fdbfec8 Gedaechtnis: fluechtige Systemdaten vom Langzeit-Lernen ausgeschlossen
+7283bea Gedaechtnis-Korrektur: Lern-Schleife erkennt Widersprueche und Dementis, Dimas Aussage gewinnt, alte falsche Fakten werden ersetzt
+e1a1550 Snapshot: Voll-Test bestanden - Gedaechtnis, Live-Status, Ehrlichkeit, Schreibzugriff, Ausbruchschutz, Bug-Fixer sicher
 7c74bef Bug-Fixer entschaerft: SEARCH/REPLACE statt Ganzdatei-Rewrite, keine 2000-Zeichen-Trunkierung, Groessenwaechter + Volldatei-Syntaxcheck, 4 Haertetests bestanden
 8235164 Schreibzugriff: echter Zeitstempel statt Platzhalter, saubere Dateinamen
 3454f13 Schreibwunsch-Erkennung in handle() verdrahtet
 6678697 JACK hat Haende: sicherer Schreibzugriff via Telegram, Zwei-Schritt-Bestaetigung, nur Werkstatt-Ordner, Ausbruch gehaertet
 51e595a Sicherer Schreibzugriff Teil 1: jack_write.py, nur Werkstatt-Ordner, Ausbruch-Schutz getestet
 13f36ae Identitaet ehrlich: JACK behauptet keine Ausfuehrungs-Faehigkeit mehr die er nicht hat
-2568b42 JACK kennt sich selbst: Live-Systemdaten werden bei Status-Fragen automatisch abgefragt statt aus veraltetem Gedaechtnis geraten
-f4aebb0 Voice: whisper auf Deutsch festgenagelt (erkannte faelschlich Englisch), Transkript-Whitespace bereinigt
-60d2ea6 Voice: Transkription und Antwort getrennt anzeigen - Debugging bei Fehlerkennung moeglich
-cad0724 Voice: doppeltes os.remove entfernt (Ursache fuer Fehler bei Sprachverarbeitung). Gemini kennt jetzt aktuelle Uhrzeit, schwindelt nicht mehr bei Systemdaten
-b2200f7 Memory: Source-Tracking + Datum bei Erinnerungen + Anti-Schwindel-Regel gegen veraltete Systemdaten. Voice: WAV-Cleanup
-675ac4c Voice: Sprachdateien aus Repo entfernt + gitignore, Cleanup fuer wav-Leichen eingebaut
-a585ac4 Voice-Pipeline live: jack_voice_processor.py, Telegram Sprachnachricht rein und raus, whisper 6 threads, elevenlabs convert API
-f44f809 Cortex perfekt: SSH-Timeout Rate-Limit, find_xiaomi bombenfest, zero errors verifiziert
-fa8fd05 Cortex: find_xiaomi nutzt echten SSH-Login statt Port-Check, config-IP zuerst - stoppt Fehl-Erkennung von .52 + SSH-Fehler Rate-Limit
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.234.166.131:8022).
