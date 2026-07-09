@@ -52,8 +52,14 @@ def detect_write_request(prompt):
     Gibt dict mit filename+content zurueck, sonst None."""
     import json as _j
     import jack_gemini_bridge as _gb
+    import datetime as _dt
+    _stamp = _dt.datetime.now().strftime("%Y%m%d_%H%M")
     q = (
+        f"AKTUELLES DATUM/ZEIT: {_stamp}\n"
         "Analysiere diese Nachricht von Dima. Will er eine DATEI SCHREIBEN lassen?\n"
+        "Wenn er einen Zeitstempel im Dateinamen will, setze das echte Datum von oben ein. "
+        "NIEMALS Platzhalter wie TIMESTAMP oder geschweifte Klammern verwenden. "
+        "Dateiname nur Buchstaben, Zahlen, Unterstrich, Punkt.\n"
         "Wenn JA: antworte NUR mit JSON: {\"write\": true, \"filename\": \"...\", \"content\": \"...\"}\n"
         "Wenn NEIN: antworte NUR mit JSON: {\"write\": false}\n"
         "Kein Markdown, keine Erklaerung, nur JSON.\n\n"
