@@ -43,7 +43,6 @@ Oeffentlich: jack-context (Live-Umgebung fuer Claude im Chat).
 - jack_autolearn -> laeuft jack_learn.py (Fakten-Extraktion alle 2h) - NICHT jack_learning_loop.py!
 - ollama (lokaler Modell-Server)
 - jack_publisher (Umgebung ins oeffentliche Repo, 3min)
-- jack_taskrunner (holt Ziele aus dem Repo, loest sie im Agenten)
 
 ## TOTE DATEIEN (nicht als lebendig behandeln!)
 - jack_learning_loop.py wurde STILLGELEGT (nach LEGACY_ARCHIVE verschoben). Ersatz: jack_learn.py.
