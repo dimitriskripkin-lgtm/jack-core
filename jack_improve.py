@@ -49,4 +49,5 @@ def apply_improvement(module, gemini_answer):
     subprocess.run(["git","add",name],cwd=JACK,capture_output=True)
     subprocess.run(["git","commit","-m",f"Selbstverbesserung {name} (JACK-Vorschlag, Dima-Freigabe)"],cwd=JACK,capture_output=True)
     subprocess.run(["git","push"],cwd=JACK,capture_output=True)
+    import jack_log; jack_log.log_decision('SELBSTVERBESSERUNG', name, 'angewendet+gesichert')
     return True, f"Verbessert + gesichert: {name}\n\n{preview}"
