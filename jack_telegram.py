@@ -91,7 +91,14 @@ def handle(text):
         status = jack_gemini_bridge.collect_status()
         return jack_gemini_bridge.ask_gemini(question, status)[:1000]
     else:
-        status = jack_gemini_bridge.collect_status()
+        req = jack_write.detect_write_request(raw)
+        if req:
+            PENDING_WRITE.clear()
+            PENDING_WRITE.update(req)
+            pv = jack_write.propose(req["filename"], req["content"])
+            return ("Schreibvorschlag:\nDatei: " + pv["filename"] +
+                    "\nOrdner: ~/jack_werkstatt\nInhalt:\n" + pv["preview"] +
+                    "\n\nZum Ausfuehren antworte exakt: " + BESTAETIGUNG + "\nOder: abbrechen")
         _r = jack_talk.talk_to_gemini(text)
         jack_talk.auto_save_to_memory(text, _r)
         return _r[:1500]
