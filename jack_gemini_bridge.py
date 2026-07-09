@@ -47,9 +47,21 @@ def ask_gemini(question, status=None):
     }
     data = json.dumps(payload).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as res:
-        result = json.loads(res.read())
-        return result["candidates"][0]["content"]["parts"][0]["text"]
+    import time as _t
+    for _a in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as res:
+                result = json.loads(res.read())
+                return result["candidates"][0]["content"]["parts"][0]["text"]
+        except Exception as _e:
+            _code = getattr(_e, "code", None)
+            if _code == 429 and _a < 2:
+                _t.sleep(4 * (_a + 1)); continue
+            if _code == 429:
+                return "Gemini ist gerade ueberlastet (Rate-Limit). Gleich nochmal probieren."
+            if _a < 2:
+                _t.sleep(2); continue
+            return f"Gemini-Verbindungsfehler: {_e}"
 
 def update_identity(new_facts):
     path = "/data/data/com.termux/files/home/jack/jack_identity.json"
