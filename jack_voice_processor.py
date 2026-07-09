@@ -24,8 +24,12 @@ def process_voice_message(ogg_path):
     text = " ".join(result.stdout.split()).strip()
     
     # Gemini antworten lassen
-    from jack_talk import talk_to_gemini
-    response_text = talk_to_gemini(text)
+    if text.lower().strip().startswith("claude"):
+        import jack_claude
+        response_text = jack_claude.ask_claude(text)
+    else:
+        from jack_talk import talk_to_gemini
+        response_text = talk_to_gemini(text)
     
     # Antwort als Sprache generieren (Modern SDK Syntax)
     client = ElevenLabs(api_key=get_secret("ELEVENLABS_API_KEY"))

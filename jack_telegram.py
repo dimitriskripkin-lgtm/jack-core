@@ -3,6 +3,7 @@ import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
 
 sys.path.append('/data/data/com.termux/files/home/jack')
+import jack_claude
 import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors, jack_improve, jack_log, jack_budget, jack_skills, jack_agent
 from jack_voice_processor import process_voice_message
 
@@ -91,6 +92,20 @@ def handle(text):
         ok, msg = jack_improve.apply_improvement(PENDING_IMPROVE.get('module'), PENDING_IMPROVE.get('answer'))
         PENDING_IMPROVE = {}
         return msg
+
+    if text.startswith('/cc '):
+        frage = raw[4:].strip()
+        if not frage:
+            return "Nutzung: /cc <Frage an Claude Code>"
+        import threading
+        def _run(f):
+            try:
+                ans = jack_claude.ask_claude(f)
+                send("Claude Code:\n\n" + ans[:3500])
+            except Exception as e:
+                send(f"Claude-Fehler: {e}")
+        threading.Thread(target=_run, args=(frage,), daemon=True).start()
+        return "Claude Code arbeitet dran (bis zu 2 Min), ich melde mich mit der Antwort."
 
     if text.startswith('/auto '):
         ziel = raw[6:].strip()
