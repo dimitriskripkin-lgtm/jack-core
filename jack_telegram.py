@@ -102,13 +102,11 @@ def main():
                     send(f"JACK (Audio transkribiert): {text}")
                     send_voice(resp_wav)
                     
-                    os.remove(ogg_path)
-                    try:
-                        os.remove(resp_wav)
-                    except Exception:
-                        pass
-                    os.remove(resp_wav)
-                    os.remove(resp_wav.replace("_resp.wav", ".wav"))
+                    for _f in (ogg_path, resp_wav):
+                        try:
+                            os.remove(_f)
+                        except Exception:
+                            pass
                 except Exception as e:
                     print(f"Fehler bei Voice-Verarbeitung: {e}")
                     send("Fehler bei der Sprachverarbeitung.")
