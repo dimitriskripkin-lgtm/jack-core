@@ -11,7 +11,8 @@ def safe_eval(expr):
         ast.Mult: operator.mul,
         ast.Div: operator.truediv,
         ast.Pow: operator.pow,
-        ast.USub: operator.neg
+        ast.USub: operator.neg,
+        ast.UAdd: operator.pos # Erlaubt unäres Plus (+5) für verbesserte Robustheit
     }
     try:
         node = ast.parse(expr, mode='eval')
