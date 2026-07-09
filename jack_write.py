@@ -23,11 +23,13 @@ def propose(filename, content):
     }
 
 def commit_write(filename, content):
+    # roher Pfad OHNE Saeuberung zur echten Grenzkontrolle
+    raw = os.path.realpath(os.path.join(WERKSTATT, filename))
+    root = os.path.realpath(WERKSTATT)
+    if not (raw == root or raw.startswith(root + os.sep)):
+        return False, "BLOCKIERT: Ausbruch aus der Werkstatt verhindert"
     fn = _safe_name(filename)
     path = os.path.join(WERKSTATT, fn)
-    real = os.path.realpath(path)
-    if not real.startswith(os.path.realpath(WERKSTATT) + os.sep):
-        return False, "BLOCKIERT: Pfad ausserhalb der Werkstatt"
     try:
         with open(path, "w") as f:
             f.write(content)
@@ -43,3 +45,29 @@ if __name__ == "__main__":
     # Sicherheitstest: Ausbruch aus der Werkstatt
     ok2, msg2 = commit_write("../../HACK.txt", "sollte blockiert sein")
     print("Ausbruch-Test:", ok2, msg2)
+
+
+def detect_write_request(prompt):
+    """Fragt Gemini ob Dima eine Datei geschrieben haben will.
+    Gibt dict mit filename+content zurueck, sonst None."""
+    import json as _j
+    import jack_gemini_bridge as _gb
+    q = (
+        "Analysiere diese Nachricht von Dima. Will er eine DATEI SCHREIBEN lassen?\n"
+        "Wenn JA: antworte NUR mit JSON: {\"write\": true, \"filename\": \"...\", \"content\": \"...\"}\n"
+        "Wenn NEIN: antworte NUR mit JSON: {\"write\": false}\n"
+        "Kein Markdown, keine Erklaerung, nur JSON.\n\n"
+        f"NACHRICHT: {prompt}"
+    )
+    try:
+        ans = _gb.ask_gemini(q).strip()
+        if ans.startswith("```"):
+            ans = "\n".join(ans.split("\n")[1:])
+        if ans.endswith("```"):
+            ans = "\n".join(ans.split("\n")[:-1])
+        d = _j.loads(ans.strip())
+        if d.get("write") and d.get("filename") and d.get("content") is not None:
+            return {"filename": d["filename"], "content": d["content"]}
+    except Exception:
+        pass
+    return None
