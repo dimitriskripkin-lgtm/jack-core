@@ -3,10 +3,12 @@ import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
 
 sys.path.append('/data/data/com.termux/files/home/jack')
-import jack_gemini_bridge, jack_config, jack_talk
+import jack_gemini_bridge, jack_config, jack_talk, jack_write
 from jack_voice_processor import process_voice_message
 
 ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
+PENDING_WRITE = {}
+BESTAETIGUNG = 'bestaetige schreiben'
 
 def load_secrets():
     token, chat_id = None, None
@@ -51,7 +53,22 @@ def get_updates(offset=0):
     except: return []
 
 def handle(text):
-    text = text.strip().lower()
+    global PENDING_WRITE
+    raw = text.strip()
+    text = raw.lower()
+
+    # Schritt 2: Bestaetigung eines wartenden Schreibvorschlags
+    if text.replace("ä","ae").replace("ü","ue") == BESTAETIGUNG:
+        if not PENDING_WRITE:
+            return "Kein Schreibvorschlag offen."
+        ok, msg = jack_write.commit_write(PENDING_WRITE["filename"], PENDING_WRITE["content"])
+        PENDING_WRITE = {}
+        return msg
+
+    if text in ("abbrechen", "verwerfen"):
+        PENDING_WRITE = {}
+        return "Schreibvorschlag verworfen."
+
     if text in ['/start', 'hi', 'hallo']:
         return "JACK online. Befehle: /status /errors /fix /shell <cmd> oder einfach fragen."
     elif text == '/status':
