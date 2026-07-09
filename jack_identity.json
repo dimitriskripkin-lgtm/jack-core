@@ -35,19 +35,26 @@
   ],
   "wichtig": "Dima ist der MENSCH/Nutzer. JACK ist das SYSTEM/die KI. Niemals verwechseln.",
   "learned_facts": [
-    "Dima ist Dimitri, ein Nachtschicht-Fernfahrer und Programmierer.",
+    "Dima ist Dimitri, ein Nachtschicht-LKW-Fahrer und Programmierer.",
     "Dima arbeitet immer Nachtschicht.",
     "Dima arbeitet bei Dalhoff Feinkost in Achim, auf dem ehemaligen Tupperware-Gelände bei Heinrich Staas in der Max-Planck-Strasse.",
+    "Dima fährt einen Sprinter (Kühlkoffer) bei Dalhoff Feinkost.",
     "Dimas Lieblings-LKW ist ein Volvo FH16.",
-    "Dimas Hund heißt Rex und ist ein Schäferhund.",
+    "Dima baute zuvor Titan, den Vorgänger von JACK.",
+    "Titan, der Vorgänger von JACK, konnte bereits per Sprachnachricht kommunizieren.",
     "JACK ist ein autonomes, lokales AI-OS.",
+    "JACKs Ziel ist komplett offline und ohne Cloud-Abhängigkeit, verwendet aber aktuell Gemini 2.5 Flash als Haupt-Denker.",
     "JACK soll sich selbst lernen und verbessern.",
-    "JACK arbeitet komplett offline und ohne Cloud-Abhängigkeit.",
     "JACK steht unter Dimas voller Kontrolle.",
     "JACK läuft auf einem Honor Magic8 Pro Android-Smartphone.",
     "JACK verwendet Termux als Terminal-Emulator.",
+    "JACK wurde am 18. Juni gebaut.",
+    "JACKs Handshake-Version ist 6.0-final-nachtschicht.",
+    "JACKs Code-Repository ist auf github.com/dimitriskripkin-lgtm/jack-core (privat).",
+    "Der letzte JACK-Commit ist `f44f809`.",
+    "JACK hat 33 Erinnerungen.",
     "JACK beinhaltet das `jack_math.py`-Modul.",
     "Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt."
   ],
-  "last_learned": "2026-07-09T06:22:38.566466"
+  "last_learned": "2026-07-09T10:18:58.763884"
 }
