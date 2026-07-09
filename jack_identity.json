@@ -48,11 +48,6 @@
     "JACK steht unter Dimas voller Kontrolle.",
     "JACK läuft auf einem Honor Magic8 Pro Android-Smartphone.",
     "JACK verwendet Termux als Terminal-Emulator.",
-    "JACK wurde am 18. Juni gebaut.",
-    "JACKs Handshake-Version ist 6.0-final-nachtschicht.",
-    "JACKs Code-Repository ist auf github.com/dimitriskripkin-lgtm/jack-core (privat).",
-    "Der letzte JACK-Commit ist `f44f809`.",
-    "JACK hat 33 Erinnerungen.",
     "JACK beinhaltet das `jack_math.py`-Modul.",
     "Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt."
   ],
