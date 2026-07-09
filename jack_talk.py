@@ -59,12 +59,12 @@ def talk_to_ollama(prompt, context_memories):
             else: return message['content']
     except Exception as e: return f"System-Error: {e}"
 
-def auto_save_to_memory(cmd, result):
+def auto_save_to_memory(cmd, result, source='dima_chat'):
     hex_id = secrets.token_hex(8)
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     try:
         conn = sqlite3.connect(DB_PATH)
-        cur = conn.execute('INSERT INTO memory (id, cmd, result, timestamp) VALUES (?, ?, ?, ?);', (hex_id, cmd, result, timestamp))
+        cur = conn.execute('INSERT INTO memory (id, cmd, result, timestamp, source) VALUES (?, ?, ?, ?, ?);', (hex_id, cmd, result, timestamp, source))
         rowid = cur.lastrowid
         conn.commit()
         conn.close()
@@ -128,7 +128,7 @@ def talk_to_gemini(prompt):
         hits = jack_vecdb.search_mem(mv, limit=3) if mv else []
     except Exception:
         hits = []
-    mem_ctx = "\n".join([f"- {h[1]} -> {h[2][:150]}" for h in hits]) if hits else "(keine)"
+    mem_ctx = "\n".join([f"- [{h[4]}] {h[1]} -> {h[2][:150]}" for h in hits]) if hits else "(keine)"
     try:
         import json as _json
         _id = _json.load(open("/data/data/com.termux/files/home/jack/jack_identity.json"))
@@ -141,7 +141,10 @@ def talk_to_gemini(prompt):
         "Du bist JACK, Dimas System auf dem Honor. Die Erinnerungen und der Verlauf unten "
         "sind DEIN eigenes Wissen - nutze sie, sag NIE dass du dich nicht erinnerst. "
         "Dima ist der Nutzer (Nachtschicht-Fernfahrer), DU bist JACK - verwechsle das nie. "
-        "Antworte kurz, direkt, Kumpel-Ton, Deutsch.\n\n"
+        "Antworte kurz, direkt, Kumpel-Ton, Deutsch. "
+        "WICHTIG: Erinnerungen sind HISTORISCH und koennen veraltet sein (Datum steht in eckigen Klammern). "
+        "Zahlen, Commit-Hashes, Fehlerzahlen, Dienst-Status aus Erinnerungen NIEMALS als aktuellen Stand behaupten. "
+        "Wenn nach aktuellem Systemzustand gefragt: sag ehrlich dass du das aus dem Gedaechtnis nicht sicher wissen kannst.\n\n"
         f"GRUNDWAHRHEIT ueber Dima und JACK (IMMER korrekt, hat VORRANG vor allem anderen):\n{id_ctx}\n\n"
         f"DEINE ERINNERUNGEN (koennen alte ungenaue Antworten enthalten - Grundwahrheit gewinnt):\n{mem_ctx}\n\n"
         f"LETZTER VERLAUF:\n{hist_ctx}\n\n"
