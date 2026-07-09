@@ -37,7 +37,7 @@ def talk_to_ollama(prompt, context_memories):
         _hits = jack_vecdb.search_mem(_mv, limit=3) if _mv else []
         if _hits:
             _ctx = "\n".join([f"- Frueher: {h[1]} -> {h[2][:120]}" for h in _hits])
-            system_prompt = system_prompt + "\n\nRELEVANTE ERINNERUNGEN:\n" + _ctx
+            system_prompt = system_prompt + "\n\nDEINE EIGENEN ERINNERUNGEN aus frueheren Gespraechen mit Dima (nutze sie als DEIN Wissen, sag NIE dass du dich nicht erinnerst):\n" + _ctx
     except Exception:
         pass
     messages = [{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': prompt}]
