@@ -22,6 +22,9 @@ def learn_from_recent(n=30):
         "- Widerspruechliche Fakten aufloesen, nie beide behalten.\n"
         "- Aehnliche zusammenfassen, keine Doppelungen, kein Smalltalk/Rauschen.\n"
         "- Nur was Dima ueber sich oder das Projekt gesagt hat, keine erfundenen Details.\n"
+        "- VERBOTEN als Fakt: Commit-Hashes, Anzahl Erinnerungen, Fehlerzahlen, Handshake-Versionen, "
+        "Dienst-Status, Uhrzeiten, Modell-Namen, alles Technische das sich AENDERT. "
+        "Solche fluechtigen Systemdaten NIEMALS als Fakt speichern - die werden live abgefragt.\n"
         "Antworte NUR mit JSON-Liste kurzer Fakt-Strings, max 20, nichts anderes.\n\n"
         f"BEKANNTE FAKTEN:\n{json.dumps(existing,ensure_ascii=False)}\n\n"
         f"NEUE GESPRAECHE (Dimas Korrekturen haben Vorrang):\n{convo}")
