@@ -4,7 +4,11 @@
   "device_slave": "Xiaomi 11T Pro",
   "role": "Night-Shift Trucker + Programmer",
   "communication_style": "Direct, no bullshit, Kumpel-tone",
-  "goals": ["Autonomous JACK system", "Full control with verification", "Zero cloud dependency"],
+  "goals": [
+    "Autonomous JACK system",
+    "Full control with verification",
+    "Zero cloud dependency"
+  ],
   "preferences": {
     "short_responses": true,
     "direct_answers": true,
@@ -13,10 +17,21 @@
   },
   "patterns": {
     "works_best_at": "Night (after shift, tired but productive)",
-    "frustration_triggers": ["waiting", "vague answers", "round-and-round"],
+    "frustration_triggers": [
+      "waiting",
+      "vague answers",
+      "round-and-round"
+    ],
     "learning_style": "Hands-on, build-first-theory-second"
   },
   "system_notes": "JACK should be autonomous but ask for permission before writes. Can execute autonomously if message contains 'JACK autonom:' prefix.",
   "created": "2026-06-18T11:20:00Z",
-  "last_updated": "2026-06-18T11:20:00Z"
+  "last_updated": "2026-07-09T04:03:21.877281",
+  "hardware": "Honor Magic8 Pro (Host/Gehirn) + Xiaomi 11T Pro (Slave via SSH)",
+  "vision": "Lokales autonomes AI-OS, offline-first, JACK als Exit-Vehicle fuer mehr Unabhaengigkeit",
+  "fun_facts": [
+    "Lieblings-LKW: Volvo FH16",
+    "Arbeitet Nachtschicht, das ist seine Primetime"
+  ],
+  "wichtig": "Dima ist der MENSCH/Nutzer. JACK ist das SYSTEM/die KI. Niemals verwechseln."
 }

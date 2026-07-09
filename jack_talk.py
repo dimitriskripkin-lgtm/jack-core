@@ -129,6 +129,12 @@ def talk_to_gemini(prompt):
     except Exception:
         hits = []
     mem_ctx = "\n".join([f"- {h[1]} -> {h[2][:150]}" for h in hits]) if hits else "(keine)"
+    try:
+        import json as _json
+        _id = _json.load(open("/data/data/com.termux/files/home/jack/jack_identity.json"))
+        id_ctx = _json.dumps(_id, ensure_ascii=False)
+    except Exception:
+        id_ctx = "(keine)"
     hist = get_recent_history(6)
     hist_ctx = "\n".join([f"Dima: {c} | JACK: {r[:150]}" for c, r in hist]) if hist else "(keiner)"
     context = (
@@ -136,7 +142,8 @@ def talk_to_gemini(prompt):
         "sind DEIN eigenes Wissen - nutze sie, sag NIE dass du dich nicht erinnerst. "
         "Dima ist der Nutzer (Nachtschicht-Fernfahrer), DU bist JACK - verwechsle das nie. "
         "Antworte kurz, direkt, Kumpel-Ton, Deutsch.\n\n"
-        f"DEINE ERINNERUNGEN:\n{mem_ctx}\n\n"
+        f"GRUNDWAHRHEIT ueber Dima und JACK (IMMER korrekt, hat VORRANG vor allem anderen):\n{id_ctx}\n\n"
+        f"DEINE ERINNERUNGEN (koennen alte ungenaue Antworten enthalten - Grundwahrheit gewinnt):\n{mem_ctx}\n\n"
         f"LETZTER VERLAUF:\n{hist_ctx}\n\n"
         f"DIMA FRAGT: {prompt}"
     )
