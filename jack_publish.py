@@ -13,6 +13,15 @@ def sh(c,cwd=None):
 def scrub(t):
     return "\n".join("[ZEILE ENTFERNT: Secret]" if BAD.search(l) else l for l in t.split("\n"))
 
+def _copytree_scrub(src, dst):
+    if not os.path.isdir(src): return
+    os.makedirs(dst, exist_ok=True)
+    for fn in os.listdir(src):
+        sp=os.path.join(src,fn)
+        if os.path.isfile(sp) and fn.rsplit(".",1)[-1] in ("py","txt","md","log","json"):
+            try: open(os.path.join(dst,fn),"w").write(scrub(open(sp,encoding="utf-8",errors="ignore").read()))
+            except Exception: pass
+
 def build():
     sh(f"cd {H} && python3 jack_snapshot.py")
     p=[f"# JACK LIVE-KONTEXT (auto, {datetime.datetime.now().isoformat()})\n"]
@@ -26,6 +35,13 @@ def build():
     text=scrub("\n".join(p))
     os.makedirs(OUT,exist_ok=True)
     open(f"{OUT}/context.md","w").write(text)
+    _copytree_scrub(os.path.expanduser("~/jack_werkstatt"), f"{OUT}/werkstatt")
+    _copytree_scrub(os.path.expanduser("~/jack_skills"), f"{OUT}/skills")
+    try: open(f"{OUT}/decisions.log","w").write(scrub(open(f"{H}/jack_decisions.log").read()))
+    except Exception: pass
+    try: open(f"{OUT}/CLAUDE.md","w").write(scrub(open(f"{H}/CLAUDE.md").read()))
+    except Exception: pass
+    open(f"{OUT}/module_list.txt","w").write(sh(f"ls -la {H}/*.py"))
     return text
 
 if __name__=="__main__":
