@@ -3,7 +3,7 @@ import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
 
 sys.path.append('/data/data/com.termux/files/home/jack')
-import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors, jack_improve, jack_log, jack_budget, jack_skills
+import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors, jack_improve, jack_log, jack_budget, jack_skills, jack_agent
 from jack_voice_processor import process_voice_message
 
 ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
@@ -91,6 +91,20 @@ def handle(text):
         ok, msg = jack_improve.apply_improvement(PENDING_IMPROVE.get('module'), PENDING_IMPROVE.get('answer'))
         PENDING_IMPROVE = {}
         return msg
+
+    if text.startswith('/auto '):
+        ziel = raw[6:].strip()
+        if not ziel:
+            return "Nutzung: /auto <ziel>"
+        import threading
+        def _run(z):
+            try:
+                ok, msg = jack_agent.autonomous_task(z)
+                send(("AGENT FERTIG: " if ok else "AGENT (nicht geschafft): ") + msg)
+            except Exception as e:
+                send(f"Agent-Fehler: {e}")
+        threading.Thread(target=_run, args=(ziel,), daemon=True).start()
+        return "Alles klar, ich arbeite selbststaendig dran (max 4 Runden, nur Werkstatt) und melde mich, wenn ich fertig bin."
 
     if text.strip() == '/skills':
         return jack_skills.list_skills()
