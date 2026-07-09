@@ -23,6 +23,7 @@ def propose(filename, content):
     }
 
 def commit_write(filename, content):
+    import jack_log; jack_log.log_decision('DATEI-SCHREIBEN', filename, str(len(content))+' Zeichen')
     # roher Pfad OHNE Saeuberung zur echten Grenzkontrolle
     raw = os.path.realpath(os.path.join(WERKSTATT, filename))
     root = os.path.realpath(WERKSTATT)
