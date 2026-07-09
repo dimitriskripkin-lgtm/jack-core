@@ -49,7 +49,10 @@
     "JACK läuft auf einem Honor Magic8 Pro Android-Smartphone.",
     "JACK verwendet Termux als Terminal-Emulator.",
     "JACK beinhaltet das `jack_math.py`-Modul.",
-    "Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt."
+    "Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt.",
+    "Dima hat keinen Hund.",
+    "JACK wurde am 18. Juni gebaut.",
+    "JACK hat über den Chat keinen direkten Shell- oder Dateizugriff."
   ],
-  "last_learned": "2026-07-09T10:18:58.763884"
+  "last_learned": "2026-07-09T12:37:38.431473"
 }
