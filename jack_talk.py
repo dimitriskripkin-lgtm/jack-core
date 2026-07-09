@@ -32,6 +32,14 @@ def talk_to_ollama(prompt, context_memories):
         f"Datum/Zeit: {current_time}."
     )
     
+    try:
+        _mv = get_embedding(prompt)
+        _hits = jack_vecdb.search_mem(_mv, limit=3) if _mv else []
+        if _hits:
+            _ctx = "\n".join([f"- Frueher: {h[1]} -> {h[2][:120]}" for h in _hits])
+            system_prompt = system_prompt + "\n\nRELEVANTE ERINNERUNGEN:\n" + _ctx
+    except Exception:
+        pass
     messages = [{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': prompt}]
     math_signals = ['wieviel', 'wie viel', 'rechnen', 'berechne', 'geteil', 'mal', 'plus', 'minus', 'ladun', 'lkw', 'verteil', 'durch', 'anzahl', 'uhrzeit', 'datum', 'check']
     has_math_signal = any(sig in prompt.lower() for sig in math_signals)
@@ -56,12 +64,13 @@ def auto_save_to_memory(cmd, result):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     try:
         conn = sqlite3.connect(DB_PATH)
-        conn.execute('INSERT INTO memory (id, cmd, result, timestamp) VALUES (?, ?, ?, ?);', (hex_id, cmd, result, timestamp))
+        cur = conn.execute('INSERT INTO memory (id, cmd, result, timestamp) VALUES (?, ?, ?, ?);', (hex_id, cmd, result, timestamp))
+        rowid = cur.lastrowid
         conn.commit()
         conn.close()
         combined = f"Frage: {cmd} | Antwort: {result}"
         vec = get_embedding(combined)
-        if vec: jack_vecdb.store_embedding(hex_id, vec)
+        if vec: jack_vecdb.store_embedding(rowid, vec)
     except Exception: pass
 
 def run_voice_loop():
