@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-09T21:29:33.127227
+Stand: 2026-07-09T21:32:34.835545
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -26,9 +26,10 @@ Stand: 2026-07-09T21:29:33.127227
 - JACK wurde am 18. Juni gebaut.
 - JACK hat über den Chat keinen direkten Shell- oder Dateizugriff.
 
-## Aktive Module (39)
+## Aktive Module (40)
 - jack_agent.py
 - jack_approval.py
+- jack_autonomous.py
 - jack_budget.py
 - jack_bug_fixer.py
 - jack_claude.py
@@ -71,12 +72,13 @@ Stand: 2026-07-09T21:29:33.127227
 - Offene Fehler: 0
 - Erinnerungen: 92
 - Dienste:
-run: jack_cortex: (pid 11922) 24358s
-run: jack_telegram: (pid 23044) 494s
-run: jack_autolearn: (pid 12394) 2533s
-run: ollama: (pid 12229) 39134s
+run: jack_cortex: (pid 11922) 24539s
+run: jack_telegram: (pid 23044) 675s
+run: jack_autolearn: (pid 12394) 2714s
+run: ollama: (pid 12229) 39315s
 
 ## Letzte Aenderungen
+c088322 Nacht-Waechter: regelbasierte Selbstueberwachung, meldet nur echte Probleme per Telegram, restartet tote Dienste, erster Lauf nur Baseline (weckt nicht)
 60f557c Aufraeumen: jack_learning_loop.py + Backups stillgelegt, CLAUDE.md mit echter Dienstliste - verhindert dass Claude Code aus toten Dateien liest
 61694b6 Claude Code Bruecke: /cc im Telegram (Text) + Sprach-Routing (Voice startet mit 'claude'). Read-only Berater kennt die ganze Umgebung, laeuft ueber Abo
 ff4ac38 CLAUDE.md Wissensbasis + Publisher pusht ganze Umgebung (Werkstatt/Skills/Logs)
@@ -91,7 +93,6 @@ b372e98 Selbstverbesserung jack_math.py (JACK-Vorschlag, Dima-Freigabe)
 6768994 Fix: doppelte tote GEMINI-Key-Zeile entfernt (401-Ursache), Bot-Loop + propose_improvement gegen Absturz/Crashloop abgesichert
 6d9284d Selbstverbesserungs-Kreis: /verbessere <modul> -> Gemini-Patch-Vorschlag -> Freigabe -> Patch mit Auto-Rollback + Commit. Sicherheitsnetze doppelt getestet
 6714a4b Selbstverbesserung _improve_demo.py (JACK-Vorschlag, Dima-Freigabe)
-acc20df Cortex: letzte laute Meldung (Recovery-Exception) auf Status gestellt - abwesendes Xiaomi jetzt komplett ruhig
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.234.166.131:8022).
