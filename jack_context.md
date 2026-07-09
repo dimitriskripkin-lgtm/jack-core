@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-09T21:24:19.893623
+Stand: 2026-07-09T21:29:33.127227
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -71,12 +71,13 @@ Stand: 2026-07-09T21:24:19.893623
 - Offene Fehler: 0
 - Erinnerungen: 92
 - Dienste:
-run: jack_cortex: (pid 11922) 24044s
-run: jack_telegram: (pid 23044) 180s
-run: jack_autolearn: (pid 12394) 2219s
-run: ollama: (pid 12229) 38820s
+run: jack_cortex: (pid 11922) 24358s
+run: jack_telegram: (pid 23044) 494s
+run: jack_autolearn: (pid 12394) 2533s
+run: ollama: (pid 12229) 39134s
 
 ## Letzte Aenderungen
+60f557c Aufraeumen: jack_learning_loop.py + Backups stillgelegt, CLAUDE.md mit echter Dienstliste - verhindert dass Claude Code aus toten Dateien liest
 61694b6 Claude Code Bruecke: /cc im Telegram (Text) + Sprach-Routing (Voice startet mit 'claude'). Read-only Berater kennt die ganze Umgebung, laeuft ueber Abo
 ff4ac38 CLAUDE.md Wissensbasis + Publisher pusht ganze Umgebung (Werkstatt/Skills/Logs)
 b56a851 Memory: absolute Korrekturen (kein Hund/LKW-Fahrer) verankert, Publish-Scrub praeziser
@@ -91,7 +92,6 @@ b372e98 Selbstverbesserung jack_math.py (JACK-Vorschlag, Dima-Freigabe)
 6d9284d Selbstverbesserungs-Kreis: /verbessere <modul> -> Gemini-Patch-Vorschlag -> Freigabe -> Patch mit Auto-Rollback + Commit. Sicherheitsnetze doppelt getestet
 6714a4b Selbstverbesserung _improve_demo.py (JACK-Vorschlag, Dima-Freigabe)
 acc20df Cortex: letzte laute Meldung (Recovery-Exception) auf Status gestellt - abwesendes Xiaomi jetzt komplett ruhig
-d4c5a7a Cortex sauber: abwesendes Xiaomi = Status statt Fehleralarm (log_status, kein DB-Eintrag)
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.234.166.131:8022).
