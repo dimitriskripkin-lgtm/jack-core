@@ -102,7 +102,7 @@ def run_voice_loop():
                 auto_save_to_memory(user_input, str(math_res))
                 continue
                 
-            response = talk_to_ollama(user_input, [])
+            response = talk_to_gemini(user_input)
             print(f'JACK: {response}')
             
             # Truncate for TTS to prevent timeout
@@ -112,10 +112,43 @@ def run_voice_loop():
             auto_save_to_memory(user_input, response)
         except KeyboardInterrupt: break
 
+def get_recent_history(limit=6):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        rows = conn.execute("SELECT cmd, result FROM memory ORDER BY timestamp DESC LIMIT ?", (limit,)).fetchall()
+        conn.close()
+        return list(reversed(rows))
+    except Exception:
+        return []
+
+def talk_to_gemini(prompt):
+    import jack_gemini_bridge
+    try:
+        mv = get_embedding(prompt)
+        hits = jack_vecdb.search_mem(mv, limit=3) if mv else []
+    except Exception:
+        hits = []
+    mem_ctx = "\n".join([f"- {h[1]} -> {h[2][:150]}" for h in hits]) if hits else "(keine)"
+    hist = get_recent_history(6)
+    hist_ctx = "\n".join([f"Dima: {c} | JACK: {r[:150]}" for c, r in hist]) if hist else "(keiner)"
+    context = (
+        "Du bist JACK, Dimas System auf dem Honor. Die Erinnerungen und der Verlauf unten "
+        "sind DEIN eigenes Wissen - nutze sie, sag NIE dass du dich nicht erinnerst. "
+        "Dima ist der Nutzer (Nachtschicht-Fernfahrer), DU bist JACK - verwechsle das nie. "
+        "Antworte kurz, direkt, Kumpel-Ton, Deutsch.\n\n"
+        f"DEINE ERINNERUNGEN:\n{mem_ctx}\n\n"
+        f"LETZTER VERLAUF:\n{hist_ctx}\n\n"
+        f"DIMA FRAGT: {prompt}"
+    )
+    try:
+        return jack_gemini_bridge.ask_gemini(context)
+    except Exception:
+        return talk_to_ollama(prompt, [])
+
 if __name__ == '__main__':
     if len(sys.argv) < 2: run_voice_loop()
     else:
         u = sys.argv[1]
-        r = talk_to_ollama(u, [])
+        r = talk_to_gemini(u)
         print(r)
         auto_save_to_memory(u, r)
