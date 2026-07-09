@@ -200,7 +200,10 @@ def main():
             text = msg.get('text', '')
             if not text: continue
             print(f"[TG] {text}")
-            reply = handle(text)
+            try:
+                reply = handle(text)
+            except Exception as e:
+                reply = f"Fehler beim Verarbeiten: {e}"
             send(reply)
         time.sleep(1)
 
