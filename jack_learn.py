@@ -6,20 +6,25 @@ import jack_gemini_bridge
 DB="/data/data/com.termux/files/home/jack/jack_memory.db"
 IDENTITY="/data/data/com.termux/files/home/jack/jack_identity.json"
 
-def learn_from_recent(n=20):
+def learn_from_recent(n=30):
     con=sqlite3.connect(DB)
     rows=con.execute("SELECT cmd,result FROM memory ORDER BY timestamp DESC LIMIT ?",(n,)).fetchall()
     con.close()
     convo="\n".join([f"Dima: {c} | JACK: {r[:200]}" for c,r in rows])
     idn=json.load(open(IDENTITY))
     existing=idn.get("learned_facts",[])
-    prompt=("Du pflegst das Faktengedaechtnis ueber Dima (Mensch, Nachtschicht-Fernfahrer) "
-        "und sein JACK-Projekt (autonomes lokales AI-OS). Unten BEKANNTE FAKTEN und neue "
-        "GESPRAECHE. Gib eine SAUBERE Gesamtliste zurueck: bekannte + neue echte Fakten, "
-        "aehnliche ZUSAMMENGEFASST, KEINE Doppelungen, kein Smalltalk/Mathe-Test/Rauschen. "
+    prompt=("Du pflegst das Faktengedaechtnis ueber Dima (Mensch) und sein JACK-Projekt. "
+        "Unten die BEKANNTEN FAKTEN und die NEUEN GESPRAECHE.\n"
+        "WICHTIGE REGELN:\n"
+        "- Wenn Dima in den Gespraechen etwas KORRIGIERT oder DEMENTIERT (z.B. 'ich habe keinen Hund', "
+        "'das war nur ein Test', 'ich bin kein X sondern Y'): entferne den alten falschen Fakt KOMPLETT "
+        "und ersetze ihn durch die Korrektur. Die AUSSAGE VON DIMA GEWINNT immer.\n"
+        "- Widerspruechliche Fakten aufloesen, nie beide behalten.\n"
+        "- Aehnliche zusammenfassen, keine Doppelungen, kein Smalltalk/Rauschen.\n"
+        "- Nur was Dima ueber sich oder das Projekt gesagt hat, keine erfundenen Details.\n"
         "Antworte NUR mit JSON-Liste kurzer Fakt-Strings, max 20, nichts anderes.\n\n"
         f"BEKANNTE FAKTEN:\n{json.dumps(existing,ensure_ascii=False)}\n\n"
-        f"NEUE GESPRAECHE:\n{convo}")
+        f"NEUE GESPRAECHE (Dimas Korrekturen haben Vorrang):\n{convo}")
     ans=jack_gemini_bridge.ask_gemini(prompt).strip()
     if ans.startswith("```"): ans="\n".join(ans.split("\n")[1:])
     if ans.endswith("```"): ans="\n".join(ans.split("\n")[:-1])
