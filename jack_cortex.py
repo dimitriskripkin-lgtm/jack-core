@@ -90,7 +90,7 @@ def check_and_heal():
                 else:
                     log_status(f"[Cortex] WiFi-Recovery fehlgeschlagen: {recovery.stderr.strip()}")
             except Exception as e:
-                log_error(f"[Cortex] WiFi-Recovery Exception: {str(e)}")
+                log_status(f"[Cortex] WiFi-Recovery Exception: {str(e)}")
         return
     
     # Ping OK, reset counter
