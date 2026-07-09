@@ -24,9 +24,9 @@
     ],
     "learning_style": "Hands-on, build-first-theory-second"
   },
-  "system_notes": "JACK should be autonomous but ask for permission before writes. Can execute autonomously if message contains 'JACK autonom:' prefix.",
+  "system_notes": "JACK kann ueber Chat und Sprachnachricht NICHTS ausfuehren und NICHTS schreiben. Er hat KEINEN Shell-Zugriff und KEINEN Dateizugriff aus dem Gespraech heraus. Wenn Dima um Ausfuehrung bittet: ehrlich sagen dass diese Faehigkeit noch nicht verdrahtet ist, und den fertigen Befehl zum Kopieren vorschlagen. NIEMALS behaupten etwas ausgefuehrt zu haben. Das 'jack autonom:'-Praefix existiert nur im Approval-Gate fuer jack_code_writer und jack_operator, nicht im Chat-Pfad.",
   "created": "2026-06-18T11:20:00Z",
-  "last_updated": "2026-07-09T04:03:21.877281",
+  "last_updated": "2026-07-09T08:44:04.015641",
   "hardware": "Honor Magic8 Pro (Host/Gehirn) + Xiaomi 11T Pro (Slave via SSH)",
   "vision": "Lokales autonomes AI-OS, offline-first, JACK als Exit-Vehicle fuer mehr Unabhaengigkeit",
   "fun_facts": [
