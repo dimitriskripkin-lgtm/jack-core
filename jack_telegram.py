@@ -3,7 +3,7 @@ import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
 
 sys.path.append('/data/data/com.termux/files/home/jack')
-import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder
+import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors
 from jack_voice_processor import process_voice_message
 
 ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
@@ -69,6 +69,18 @@ def handle(text):
     if text in ("abbrechen", "verwerfen"):
         PENDING_WRITE = {}
         return "Schreibvorschlag verworfen."
+
+    if text.strip() in ('/akku','/sensor'):
+        return jack_sensors.get_battery() + " | " + jack_sensors.get_motion()
+
+    if text.strip() == '/standort':
+        d = jack_sensors.get_location()
+        if 'error' in d: return "Standort: " + str(d['error'])
+        return f"Standort: {d.get('latitude')}, {d.get('longitude')} (+-{d.get('accuracy')}m)"
+
+    if text.strip() == '/sehen' or text.startswith('/sehen '):
+        frage = raw[7:].strip() or "Was siehst du? Kurz auf Deutsch."
+        return "JACK schaut durch die Kamera...\n\n" + jack_sensors.see(frage)
 
     if text.startswith('/code '):
         aufgabe = raw[6:].strip()
