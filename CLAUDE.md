@@ -35,3 +35,16 @@ jack_coder (/code+/run, Risiko-Gate), jack_agent (autonom, Werkstatt), jack_impr
 ## Repos
 Privat: github.com/dimitriskripkin-lgtm/jack-core (Code).
 Oeffentlich: jack-context (Live-Umgebung fuer Claude im Chat).
+
+
+## AKTUELLE DIENSTE (runit, das ist die Wahrheit)
+- jack_cortex (Watchdog Xiaomi-Verbindung, 60s)
+- jack_telegram (Bot, Text+Sprache, alle Befehle)
+- jack_autolearn -> laeuft jack_learn.py (Fakten-Extraktion alle 2h) - NICHT jack_learning_loop.py!
+- ollama (lokaler Modell-Server)
+- jack_publisher (Umgebung ins oeffentliche Repo, 3min)
+- jack_taskrunner (holt Ziele aus dem Repo, loest sie im Agenten)
+
+## TOTE DATEIEN (nicht als lebendig behandeln!)
+- jack_learning_loop.py wurde STILLGELEGT (nach LEGACY_ARCHIVE verschoben). Ersatz: jack_learn.py.
+- Fuer LIVE-Zustand immer messen (sv status), nie aus Datei-Namen raten.
