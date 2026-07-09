@@ -33,5 +33,24 @@
     "Lieblings-LKW: Volvo FH16",
     "Arbeitet Nachtschicht, das ist seine Primetime"
   ],
-  "wichtig": "Dima ist der MENSCH/Nutzer. JACK ist das SYSTEM/die KI. Niemals verwechseln."
+  "wichtig": "Dima ist der MENSCH/Nutzer. JACK ist das SYSTEM/die KI. Niemals verwechseln.",
+  "learned_facts": [
+    "Dima ist Dimitri, ein Nachtschicht-Fernfahrer und Programmierer.",
+    "Dimas Lieblings-LKW ist ein Volvo FH16.",
+    "Das JACK-System ist ein autonomes, lokales AI-OS.",
+    "JACK arbeitet komplett offline und ohne Cloud-Abhängigkeit.",
+    "JACK steht unter Dimas voller Kontrolle.",
+    "JACK läuft auf einem Honor 8 Android-Smartphone.",
+    "JACK verwendet Termux als Terminal-Emulator.",
+    "Das JACK-System beinhaltet ein `jack_math.py`-Modul für einfache mathematische Operationen aus Text.",
+    "Dima ist Dimitri, Nachtschichtfahrer bei Dalhoff Feinkost in Achim.",
+    "Dima programmiert nebenbei.",
+    "Dima's Lieblings-LKW ist ein Volvo FH16.",
+    "JACK soll ein autonomes, sich selbst lernendes/verbesserndes System werden.",
+    "JACK wird lokal, komplett offline und ohne Cloud-Abhängigkeit betrieben.",
+    "JACK läuft auf einem Honor Magic8 Pro.",
+    "Dima verwendet Termux als Terminal-Emulator.",
+    "JACK enthält ein `jack_math.py`-Modul für Mathe-Operationen aus Text."
+  ],
+  "last_learned": "2026-07-09T04:16:43.846793"
 }
