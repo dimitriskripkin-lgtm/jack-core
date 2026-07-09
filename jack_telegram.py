@@ -8,6 +8,7 @@ from jack_voice_processor import process_voice_message
 
 ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
 PENDING_WRITE = {}
+LAST_CODE = {'file': None}
 BESTAETIGUNG = 'bestaetige schreiben'
 
 def load_secrets():
@@ -74,17 +75,28 @@ def handle(text):
         if not aufgabe:
             return "Nutzung: /code <was soll das Programm tun>"
         fn, code, msg = jack_coder.write_code(aufgabe)
+        LAST_CODE['file'] = fn
         if not fn:
             return f"Fehler: {msg}"
         vorschau = code if len(code) < 1200 else code[:1200] + "\n... (gekuerzt)"
         return (f"Code geschrieben: {fn} (in ~/jack_werkstatt)\n\n{vorschau}\n\n"
                 f"Zum Testen: /run {fn}")
 
-    if text.startswith('/run '):
-        fn = raw[5:].strip()
+    if text.strip() == '/run' or text.startswith('/run '):
+        fn = raw[5:].strip() if len(raw) > 4 else ""
+        if not fn:
+            fn = LAST_CODE.get('file')
+        if not fn:
+            return "Noch kein Code da. Erst /code <aufgabe>."
         ok, out = jack_coder.run_code(fn)
         status = "OK" if ok else "BLOCKIERT/FEHLER"
         return f"[{status}] {fn}\n\n{out}"
+
+    if text.strip() == '/werkstatt':
+        import os as _os
+        d = _os.path.expanduser("~/jack_werkstatt")
+        files = sorted(_os.listdir(d)) if _os.path.isdir(d) else []
+        return "Werkstatt-Inhalt:\n" + ("\n".join(files) if files else "(leer)")
 
     if text in ['/start', 'hi', 'hallo']:
         return "JACK online. Befehle: /status /errors /code <aufgabe> /run <datei> oder einfach fragen (Text+Sprache)."
