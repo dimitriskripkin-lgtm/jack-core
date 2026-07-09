@@ -23,7 +23,10 @@ def propose_improvement(module):
         "Wenn nichts sinnvoll ist: antworte exakt NICHTS_ZU_TUN.\n\n"
         f"MODUL {name}:\n{code}"
     )
-    ans=gb.ask_gemini(prompt).strip()
+    try:
+        ans=gb.ask_gemini(prompt).strip()
+    except Exception as e:
+        return None, f"Gemini-Fehler: {e}"
     if "NICHTS_ZU_TUN" in ans and "SEARCH" not in ans:
         return None, "JACK sieht gerade nichts sinnvoll zu verbessern."
     return ans, name
