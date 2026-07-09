@@ -36,20 +36,18 @@
   "wichtig": "Dima ist der MENSCH/Nutzer. JACK ist das SYSTEM/die KI. Niemals verwechseln.",
   "learned_facts": [
     "Dima ist Dimitri, ein Nachtschicht-Fernfahrer und Programmierer.",
-    "Dima ist Nachtschichtfahrer bei Dalhoff Feinkost in Achim.",
-    "Dima arbeitet auf dem ehemaligen Tupperware-Gelände bei Heinrich Staas in der Max-Planck-Strasse.",
     "Dima arbeitet immer Nachtschicht.",
-    "Dima programmiert nebenbei.",
+    "Dima arbeitet bei Dalhoff Feinkost in Achim, auf dem ehemaligen Tupperware-Gelände bei Heinrich Staas in der Max-Planck-Strasse.",
     "Dimas Lieblings-LKW ist ein Volvo FH16.",
+    "Dimas Hund heißt Rex und ist ein Schäferhund.",
     "JACK ist ein autonomes, lokales AI-OS.",
-    "JACK soll ein sich selbst lernendes und verbesserndes System werden.",
+    "JACK soll sich selbst lernen und verbessern.",
     "JACK arbeitet komplett offline und ohne Cloud-Abhängigkeit.",
     "JACK steht unter Dimas voller Kontrolle.",
     "JACK läuft auf einem Honor Magic8 Pro Android-Smartphone.",
     "JACK verwendet Termux als Terminal-Emulator.",
-    "JACK beinhaltet ein `jack_math.py`-Modul.",
-    "Das `jack_math.py`-Modul ist eine Python-Funktion.",
-    "Das `jack_math.py`-Modul erkennt und führt simple mathematische Operationen aus Text aus."
+    "JACK beinhaltet das `jack_math.py`-Modul.",
+    "Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt."
   ],
-  "last_learned": "2026-07-09T04:22:07.496636"
+  "last_learned": "2026-07-09T06:22:38.566466"
 }
