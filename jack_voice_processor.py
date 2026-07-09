@@ -20,8 +20,8 @@ def process_voice_message(ogg_path):
     subprocess.run(["ffmpeg", "-y", "-i", ogg_path, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav_path], check=True, capture_output=True)
     
     # Audio transkribieren mit 6 CPU-Threads für maximale Geschwindigkeit
-    result = subprocess.run([WHISPER_PATH, "-m", MODEL_PATH, "-f", wav_path, "-nt", "-t", "6"], capture_output=True, text=True)
-    text = result.stdout.strip()
+    result = subprocess.run([WHISPER_PATH, "-m", MODEL_PATH, "-f", wav_path, "-l", "de", "-nt", "-t", "6"], capture_output=True, text=True)
+    text = " ".join(result.stdout.split()).strip()
     
     # Gemini antworten lassen
     from jack_talk import talk_to_gemini
