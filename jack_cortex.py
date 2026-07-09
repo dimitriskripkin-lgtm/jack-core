@@ -108,7 +108,9 @@ def check_and_heal():
             return
         SSH_ERR_COUNT = 0
     except subprocess.TimeoutExpired:
-        log_error("[Cortex] SSH-Timeout")
+        SSH_ERR_COUNT += 1
+        if SSH_ERR_COUNT == 1 or SSH_ERR_COUNT % 30 == 0:
+            log_error(f"[Cortex] SSH-Timeout (#{SSH_ERR_COUNT})")
         return
     except Exception as e:
         log_error(f"[Cortex] SSH-Exception: {str(e)}")

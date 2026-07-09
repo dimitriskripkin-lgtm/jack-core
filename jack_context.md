@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-09T04:51:09.389230
+Stand: 2026-07-09T05:46:29.523427
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -55,15 +55,17 @@ Stand: 2026-07-09T04:51:09.389230
 - test_jack_approval.py
 
 ## System-Status
-- Offene Fehler: 642
-- Erinnerungen: 33
+- Offene Fehler: 1
+- Erinnerungen: 34
 - Dienste:
-run: jack_cortex: (pid 29754) 78433s
-run: jack_telegram: (pid 26433) 1742s
-run: jack_autolearn: (pid 26679) 1729s
-run: ollama: (pid 30581) 85881s
+run: jack_cortex: (pid 31233) 181s
+run: jack_telegram: (pid 26433) 5062s
+run: jack_autolearn: (pid 26679) 5049s
+run: ollama: (pid 30581) 89201s
 
 ## Letzte Aenderungen
+fa8fd05 Cortex: find_xiaomi nutzt echten SSH-Login statt Port-Check, config-IP zuerst - stoppt Fehl-Erkennung von .52 + SSH-Fehler Rate-Limit
+e23f8fe Kontext-Bibel: jack_snapshot.py generiert jack_context.md aus Live-Zustand als GitHub-Backup
 f47891b identity: device_host Name korrigiert
 8034be2 Auto-learning: Telegram speichert Gespraeche, jack_learn dedupliziert via Gemini, autolearn-Dienst alle 2h
 efe20e2 Self-learning live: neue Fakten (Job/Ort) via Lernschleife ins Core-Memory, Honor8-String gefixt
@@ -77,8 +79,6 @@ acf5baa gitignore: learning loop runtime files
 1476f1e gitignore: add learning loop runtime files
 0dfd466 Telegram: fix parse_mode Markdown crash
 ecb3f12 Add Telegram bot: status/errors/shell/Gemini bridge via @JackDimaChat_bot
-bab1b48 Add autonomous learning loop: Gemini API → embed → auto-fix with heartbeat
-74ca498 Operator: remove last ADB/TITAN remnants, fix DB reference
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.234.166.131:8022).
