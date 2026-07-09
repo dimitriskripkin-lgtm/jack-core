@@ -22,6 +22,11 @@ def check_and_count(kind="text"):
     except Exception: pass
     return True, f"{kind} {d[kind]}/{LIMITS[kind]}"
 
+def add_tokens(n):
+    d=_load(); d["tokens"]=d.get("tokens",0)+int(n or 0)
+    try: json.dump(d,open(F,"w"))
+    except Exception: pass
+
 def status():
     d=_load()
-    return f"Heute: Text {d.get('text',0)}/{LIMITS['text']} | Vision {d.get('vision',0)}/{LIMITS['vision']}"
+    return f"Heute: Text {d.get('text',0)}/{LIMITS['text']} | Vision {d.get('vision',0)}/{LIMITS['vision']} | Tokens {d.get('tokens',0)}"

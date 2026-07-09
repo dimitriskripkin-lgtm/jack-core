@@ -12,7 +12,9 @@ def _failed(out):
 def autonomous_task(goal, max_iter=4):
     jack_log.log_decision("AGENT-START", goal[:80])
     aufgabe=goal; letzte=None
+    import time as _t
     for i in range(1, max_iter+1):
+        if i>1: _t.sleep(6)
         okb, _=jack_budget.check_and_count("text")
         if not okb:
             jack_log.log_decision("AGENT-STOP","Budget")
