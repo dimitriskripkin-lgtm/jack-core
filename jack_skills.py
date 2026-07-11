@@ -34,7 +34,7 @@ def run_skill(name, timeout=10):
     n=_safe(name); path=os.path.join(DIR, n+".py")
     if not os.path.exists(path):
         return False, f"Skill '{n}' gibt es nicht. /skills zeigt alle."
-    risk=jack_coder.assess_risk(open(path).read())
+    risk=assess_skill_risk(open(path).read())
     if risk: return False, f"BLOCKIERT - gefaehrliches Muster: {risk!r}"
     try:
         p=subprocess.run(["python3",path],capture_output=True,text=True,timeout=timeout,cwd=DIR)
@@ -45,3 +45,37 @@ def run_skill(name, timeout=10):
         return False, f"Abgebrochen (>{timeout}s)"
     except Exception as e:
         return False, str(e)
+
+# === SKILL-GATE (Weg 1): eigenes engeres Gate. subprocess erlaubt, aber nur Whitelist-Befehle ===
+SKILL_KILL = [
+ "rm -rf","rmtree","os.remove","os.unlink","os.rmdir","shutil.rmtree","shutil.move",
+ "drop table","delete from",":(){","mkfs","dd if=","> /dev","chmod -r","chown -r",
+ "eval(","exec(","__import__","compile(","os.environ","getenv","jack_secrets",
+ "api_key",".env","id_jack","authorized_keys",".ssh/","socket","urllib","requests.",
+ "http.client","ftplib","paramiko","curl","wget"," nc ","netcat","scp ","telnet","ssh ",
+]
+SKILL_ALLOW = {
+ "sv","free","df","ls","cat","head","tail","grep","wc","echo","date","uptime","pwd",
+ "ollama","git","sqlite3","termux-battery-status","termux-wifi-connectioninfo",
+ "termux-wifi-scaninfo","termux-telephony-signalstrength","termux-torch","termux-volume",
+ "termux-notification","termux-tts-speak","termux-clipboard-get","termux-vibrate",
+ "termux-toast","termux-location","termux-sensor","termux-brightness",
+}
+_SP = re.compile(r"(subprocess\.\w+|os\.system|os\.popen)\s*\(")
+_CS = re.compile(r"""(?:subprocess\.\w+|os\.system|os\.popen)\s*\(\s*\[?\s*["']([^"']+)["']""")
+
+def assess_skill_risk(code):
+    low = code.lower()
+    for p in SKILL_KILL:
+        if p in low: return "KILLER: " + p.strip()
+    calls = _SP.findall(code)
+    if calls:
+        cmds = _CS.findall(code)
+        if len(cmds) < len(calls):
+            return "Shell-Aufruf ohne direktes Kommando (fail-closed)"
+        for c in cmds:
+            w = c.strip().split()
+            first = w[0] if w else ""
+            if first not in SKILL_ALLOW:
+                return "Befehl nicht auf Whitelist: " + first
+    return None
