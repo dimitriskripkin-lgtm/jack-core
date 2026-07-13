@@ -11,3 +11,4 @@ __pycache__/
 config.ini
 voice_*.ogg
 voice_*.wav
+.last_audit
