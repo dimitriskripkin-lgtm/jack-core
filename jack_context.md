@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-09T21:35:15.141909
+Stand: 2026-07-13T05:03:00.382793
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -8,27 +8,31 @@ Stand: 2026-07-09T21:35:15.141909
 - WICHTIG: Dima ist der MENSCH/Nutzer. JACK ist das SYSTEM/die KI. Niemals verwechseln.
 
 ## Was JACK ueber Dima gelernt hat
-- Dima ist Dimitri, ein Nachtschicht-LKW-Fahrer und Programmierer.
-- Dima arbeitet immer Nachtschicht.
-- Dima arbeitet bei Dalhoff Feinkost in Achim, auf dem ehemaligen Tupperware-Gelände bei Heinrich Staas in der Max-Planck-Strasse.
-- Dima fährt einen Sprinter (Kühlkoffer) bei Dalhoff Feinkost.
-- Dimas Lieblings-LKW ist ein Volvo FH16.
-- Dima baute zuvor Titan, den Vorgänger von JACK.
-- Titan, der Vorgänger von JACK, konnte bereits per Sprachnachricht kommunizieren.
+- Dima ist Dimitri.
+- Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht).
+- Dima ist Hobby-Programmierer.
+- Dima nutzt Gemini Plus und Claude.ai.
 - JACK ist ein autonomes, lokales AI-OS.
-- JACKs Ziel ist komplett offline und ohne Cloud-Abhängigkeit, verwendet aber aktuell Gemini 2.5 Flash als Haupt-Denker.
+- JACK läuft auf einem Honor Magic8 Pro mit Termux.
+- JACK nutzt Gemini 2.5 Flash (Lite) als Hauptdenker.
 - JACK soll sich selbst lernen und verbessern.
 - JACK steht unter Dimas voller Kontrolle.
-- JACK läuft auf einem Honor Magic8 Pro Android-Smartphone.
-- JACK verwendet Termux als Terminal-Emulator.
-- JACK beinhaltet das `jack_math.py`-Modul.
-- Das `jack_math.py`-Modul ist eine Python-Funktion, die simple mathematische Operationen aus Text erkennt und ausführt.
 - JACK wurde am 18. Juni gebaut.
-- JACK hat über den Chat keinen direkten Shell- oder Dateizugriff.
+- JACK verwendet `jack_learn.py` als Lerner.
+- JACK nutzt ein Xiaomi 11T Pro als Slave-Gerät via SSH.
+- JACK's kostenlose KI-Modelle haben Tageslimits.
+- JACK's Chef-KI 'Claude Code' ist ein read-only Berater.
+- JACK hat Fähigkeiten wie Text- und Sprachchat, sicheres Code schreiben, autonomes Handeln und Selbstverbesserung.
+- JACK nutzt `jack_waechter` für regelbasierte Überwachung und Neustarts.
+- JACK's Konfiguration und Logs werden in einem öffentlichen Repo (`jack-context`) geteilt.
+- Dima hat KEINEN Hund.
+- JACK hat KEINEN direkten Shell- oder Dateizugriff über den Chat.
+- Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer
 
-## Aktive Module (40)
+## Aktive Module (41)
 - jack_agent.py
 - jack_approval.py
+- jack_audit.py
 - jack_autonomous.py
 - jack_budget.py
 - jack_bug_fixer.py
@@ -39,7 +43,6 @@ Stand: 2026-07-09T21:35:15.141909
 - jack_cortex.py
 - jack_gemini_bridge.py
 - jack_handshake_gen.py
-- jack_health.py
 - jack_improve.py
 - jack_learn.py
 - jack_log.py
@@ -63,6 +66,7 @@ Stand: 2026-07-09T21:35:15.141909
 - jack_write.py
 - jack_xiaomi.py
 - kortex_controller.py
+- kortex_memory.py
 - kortex_profiler.py
 - kortex_sensor_daemon.py
 - quick_bridge.py
@@ -70,29 +74,29 @@ Stand: 2026-07-09T21:35:15.141909
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 92
+- Erinnerungen: 104
 - Dienste:
-run: jack_cortex: (pid 11922) 24700s
-run: jack_telegram: (pid 23044) 836s
-run: jack_autolearn: (pid 12394) 2875s
-run: ollama: (pid 12229) 39476s
+run: jack_cortex: (pid 20695) 186781s
+run: jack_telegram: (pid 30438) 159s
+run: jack_autolearn: (pid 20689) 186781s
+run: ollama: (pid 20694) 186781s
 
 ## Letzte Aenderungen
+1528de5 fix: letzte Silent Fails geloggt, alle except:pass im Repo eliminiert
+8d5848b fix: restliche 4 Silent Fails geloggt (jack_publish/bug_fixer/sensors/gemini)
+4e2ae04 fix: Silent Fails ausgeraeumt - alle except:pass loggen jetzt nach jack_decisions.log
+dcc487f feat: kortex_bridge runit-Service, Bridge startet automatisch nach Reboot
+c883aae feat: /merke /suche /gedaechtnis - Gedaechtnis per Telegram live
+e5138fe feat: kortex_profile.json v2.0 - strukturiertes Wissen, Profiler schreibt nur sensoren-Block
+94b1dcd fix: Shebang-Position + psutil aus Setup entfernt
+7fc9e3c feat: kortex_memory.py - semantisches Gedaechtnis mit FTS5, 3 Flask-Routen live
+98e2044 Fix: _sec() Token-Parse auf Bot-Logik angeglichen, notify() funktioniert wieder
+a35bb6e jack_audit: Gesundheits+Sicherheits-Check (Dienste/Secrets/Scrubber/Gate); verwaistes jack_health nach LEGACY_ARCHIVE
+aebe902 Skill-Gate (Weg 1): assess_skill_risk - subprocess via Whitelist erlaubt, Killer-Muster hart geblockt, /code-Gate unberuehrt
+f724f96 ARCHITEKTUR.md: auf Live-Stand - erledigte Baustellen (Keys/SSH/Log/Augen/Selbstverbesserung) raus, neue Schichten+Befehle rein, ehrliche OFFEN-Liste
+b55f1d6 CLAUDE.md: auf Live-Stand konsolidiert - jack_waechter->jack_autonomous Mapping, alle 6 Dienste, DB-Schemas, erledigte Baustellen raus
+60a9c28 Fix: jack_taskrunner-Gespenst entfernt (nie gebaut), Waechter + CLAUDE.md sauber. Notiz: Xiaomi-Status pushen + Claude-Schreibrechte Xiaomi = spaeter
 3641e51 taskrunner neu gestartet, Waechter-Baseline frisch
-c088322 Nacht-Waechter: regelbasierte Selbstueberwachung, meldet nur echte Probleme per Telegram, restartet tote Dienste, erster Lauf nur Baseline (weckt nicht)
-60f557c Aufraeumen: jack_learning_loop.py + Backups stillgelegt, CLAUDE.md mit echter Dienstliste - verhindert dass Claude Code aus toten Dateien liest
-61694b6 Claude Code Bruecke: /cc im Telegram (Text) + Sprach-Routing (Voice startet mit 'claude'). Read-only Berater kennt die ganze Umgebung, laeuft ueber Abo
-ff4ac38 CLAUDE.md Wissensbasis + Publisher pusht ganze Umgebung (Werkstatt/Skills/Logs)
-b56a851 Memory: absolute Korrekturen (kein Hund/LKW-Fahrer) verankert, Publish-Scrub praeziser
-a98e082 Rate-Limit-Fix: Modellwechsel auf freies Gemini-Modell, Token-Zaehler eingebaut, Agent-Kaskaden-Bug behoben (Fehlermeldung nicht mehr als Code), Runden-Pause
-2cc5b3f Gemini-Bridge: Retry+Backoff gegen HTTP 429 (Rate-Limit) - Agent + Chat laufen jetzt drosselfest
-58360e2 Autonomer Agent: /auto <ziel> - JACK loest Ziele selbststaendig in der Werkstatt (schreibt+testet+verbessert, max 4 Runden), im Hintergrund-Thread, harte Sandbox-Waende bleiben
-b683f1f Skill-Bibliothek: erfolgreiche Code-Bausteine speichern (/skill save) + kostenlos wiederverwenden (/skill <name>) - senkt API-Kosten, macht JACK unabhaengiger
-77a3333 Kosten-Bremse: Tageslimits Gemini Text(300)+Vision(40), /budget-Befehl - schuetzt vor Kosten-Explosion bei Bild-/Sensordaten
-14fb2a3 Entscheidungs-Logbuch: jede JACK-Aktion nachvollziehbar (jack_log), /log in Telegram - Grundstein fuer sichere Autonomie
-b372e98 Selbstverbesserung jack_math.py (JACK-Vorschlag, Dima-Freigabe)
-6768994 Fix: doppelte tote GEMINI-Key-Zeile entfernt (401-Ursache), Bot-Loop + propose_improvement gegen Absturz/Crashloop abgesichert
-6d9284d Selbstverbesserungs-Kreis: /verbessere <modul> -> Gemini-Patch-Vorschlag -> Freigabe -> Patch mit Auto-Rollback + Commit. Sicherheitsnetze doppelt getestet
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.234.166.131:8022).
