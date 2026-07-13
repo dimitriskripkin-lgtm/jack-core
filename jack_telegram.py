@@ -293,7 +293,17 @@ def handle(text):
             return f"Fix ausgefuehrt:\n{output}"
         except Exception as _e:
             return f"Fehler bei Fix-Ausfuehrung: {str(_e)[:200]}"
-    if raw.strip() == "/test_button":
+    if raw.strip() in ["/m", "/menu", "/schnellzugriff", "/test_button"]:
+        send_keyboard(
+            "JACK Schnellzugriff:",
+            [
+                [("📊 Status", "status:now"), ("🧠 Gedaechtnis", "suche:kortex")],
+                [("🔍 Suche JACK", "suche:JACK"), ("🔍 Suche Projekt", "suche:projekt")],
+                [("⚙️ Waechter", "status:waechter"), ("📋 Logs", "status:logs")]
+            ]
+        )
+        return None
+    if False and raw.strip() == "/test_button_disabled":
         send_keyboard(
             "JACK Schnellzugriff:",
             [[("📊 Status", "status:now"), ("🔍 JACK suchen", "suche:JACK")],
