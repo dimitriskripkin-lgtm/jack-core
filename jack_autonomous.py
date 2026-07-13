@@ -13,8 +13,10 @@ HEARTBEAT=300
 def _sec(k):
     try:
         for l in open(SEC):
-            if k in l and "=" in l: return l.split("=",1)[1].strip().strip('"').strip("'")
-    except Exception: pass
+            if k in l and "=" in l:
+                return l.split('"')[1] if '"' in l else l.split("=",1)[1].strip()
+    except Exception:
+        pass
     return None
 
 def notify(t):
@@ -67,6 +69,21 @@ def cycle(dry=False):
         json.dump({"dienste":dienste,"xiaomi":xi,"errors":err},open(STATE,"w"))
     return {"erster_lauf":first,"dienste":dienste,"xiaomi":xi,"errors":err,"wuerde_tun":akt}
 
+def _maybe_audit():
+    try:
+        import jack_audit, time as _t
+        lf = os.path.expanduser("~/jack/.last_audit")
+        try: last = float(open(lf).read().strip())
+        except Exception: last = 0.0
+        if _t.time() - last >= 604800:
+            notify("Woechentlicher Audit:" + chr(10) + jack_audit.report())
+            open(lf,"w").write(str(_t.time()))
+            import jack_log; jack_log.log_decision("WAECHTER-AUDIT","woechentlich verschickt")
+    except Exception as e:
+        try:
+            import jack_log; jack_log.log_decision("WAECHTER-AUDIT-FEHLER", str(e)[:100])
+        except Exception: pass
+
 def main():
     import jack_log; jack_log.log_decision("WAECHTER-START","Nacht-Ueberwachung laeuft")
     while True:
@@ -75,6 +92,7 @@ def main():
             try:
                 import jack_log; jack_log.log_decision("WAECHTER-FEHLER",str(e)[:100])
             except Exception: pass
+        _maybe_audit()
         time.sleep(HEARTBEAT)
 
 if __name__=="__main__":
