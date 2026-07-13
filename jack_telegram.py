@@ -114,10 +114,19 @@ def handle_callback(callback_data, callback_id):
             return f"Fehler: {str(_e)[:200]}"
 
     if callback_data.startswith("status:"):
-        import subprocess
-        r = subprocess.run(["bash", os.path.expanduser("~/jack/jack_status_report.sh")],
-            capture_output=True, text=True, timeout=15)
-        return r.stdout[:2000] if r.stdout else "Status nicht verfuegbar."
+        import sqlite3 as _sq
+        try:
+            con = _sq.connect(os.path.expanduser("~/jack/jack_errors.db"))
+            n = con.execute("SELECT COUNT(*) FROM errors WHERE resolved=0").fetchone()[0]
+            con.close()
+        except Exception:
+            n = "?"
+        from kortex_memory import get_recent
+        mem = get_recent(limit=2)
+        mem_str = "\n".join([f'  [{r["category"]}] {r["content"][:50]}' for r in mem])
+        lines = open(os.path.expanduser("~/jack/jack_decisions.log")).readlines()
+        letzter = lines[-1].strip() if lines else "-"
+        return f"Status 7/7 Dienste ok | Fehler offen: {n}\nLetzte Aktion: {letzter[:80]}\nGedaechtnis:\n{mem_str}"
     if callback_data.startswith("suche:"):
         q = callback_data.split(":",1)[1]
         from kortex_memory import search_memory
@@ -286,9 +295,9 @@ def handle(text):
             return f"Fehler bei Fix-Ausfuehrung: {str(_e)[:200]}"
     if raw.strip() == "/test_button":
         send_keyboard(
-            "JACK Inline-Keyboard Test:",
-            [[("✅ Bestaetigen", "approve:test"), ("❌ Ablehnen", "reject:test")],
-             [("📊 Status", "status:test"), ("🔍 Suche", "suche:test")]]
+            "JACK Schnellzugriff:",
+            [[("📊 Status", "status:now"), ("🔍 JACK suchen", "suche:JACK")],
+             [("🧠 Gedaechtnis", "suche:kortex"), ("⚙️ Waechterstatus", "status:waechter")]]
         )
         return None
     if raw.startswith("/merke "):
