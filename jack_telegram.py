@@ -113,6 +113,18 @@ def handle_callback(callback_data, callback_id):
         except Exception as _e:
             return f"Fehler: {str(_e)[:200]}"
 
+    if callback_data.startswith("status:"):
+        import subprocess
+        r = subprocess.run(["bash", os.path.expanduser("~/jack/jack_status_report.sh")],
+            capture_output=True, text=True, timeout=15)
+        return r.stdout[:2000] if r.stdout else "Status nicht verfuegbar."
+    if callback_data.startswith("suche:"):
+        q = callback_data.split(":",1)[1]
+        from kortex_memory import search_memory
+        results = search_memory(q, limit=3)
+        if not results or isinstance(results, dict):
+            return f"Nichts gefunden fuer: {q}"
+        return "\n".join([f'[{r["category"]}] {r["content"][:80]}' for r in results])
     return f"Unbekannter Button: {callback_data}"
 
 def get_updates(offset=0):
