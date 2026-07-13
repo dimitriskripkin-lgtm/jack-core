@@ -144,7 +144,7 @@ def get_updates(offset=0):
     except: return []
 
 def handle(text):
-    if text.strip() == "/audit":
+    if raw.strip().split("@")[0] == "/audit":
         import jack_audit; return jack_audit.report()
     global PENDING_WRITE, PENDING_IMPROVE
     raw = text.strip()
@@ -267,7 +267,7 @@ def handle(text):
         files = sorted(_os.listdir(d)) if _os.path.isdir(d) else []
         return "Werkstatt-Inhalt:\n" + ("\n".join(files) if files else "(leer)")
 
-    if raw.strip() == "/status_report":
+    if raw.strip().split("@")[0] == "/status_report":
         import subprocess
         result = subprocess.run(
             ["bash", "/data/data/com.termux/files/home/jack/jack_status_report.sh"],
@@ -329,7 +329,7 @@ def handle(text):
         for r in results:
             lines.append(f"[{r['category']}] {r['content'][:100]}")
         return "\n".join(lines)
-    if text.strip() == "/gedaechtnis":
+    if raw.strip().split("@")[0] == "/gedaechtnis":
         recent = get_recent(limit=5)
         if not recent:
             return "Gedaechtnis ist leer."
@@ -337,7 +337,7 @@ def handle(text):
         for r in recent:
             lines.append(f"[{r['category']}] {r['content'][:80]}")
         return "\n".join(lines)
-    if text in ['/start', 'hi', 'hallo']:
+    if raw.strip().split("@")[0] in ['/start', '/help', 'hi', 'hallo']:
         return "JACK online. Befehle: /status /errors /code <aufgabe> /run <datei> oder einfach fragen (Text+Sprache)."
     elif text == '/status':
         s = jack_gemini_bridge.collect_status()
