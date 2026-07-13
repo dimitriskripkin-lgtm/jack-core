@@ -47,11 +47,17 @@ def analyze_data():
         }
     }
     
-    with open(PROFILE_PATH, "w") as f:
-        json.dump(profile, f, indent=2)
-    
-    print(f"[PROFILER] Profile updated: {PROFILE_PATH}")
-    print(json.dumps(profile, indent=2))
-
-if __name__ == "__main__":
-    analyze_data()
+    try:
+        with open(PROFILE_PATH, "r") as fh:
+            existing = json.load(fh)
+    except Exception:
+        existing = {}
+    existing["sensoren"] = {
+        "top_locations": profile["top_locations"],
+        "bluetooth_patterns": profile["bluetooth_patterns"],
+        "ambient": profile["ambient"]
+    }
+    existing.setdefault("meta", {})["sensor_updated"] = profile["generated"]
+    with open(PROFILE_PATH, "w") as fh:
+        json.dump(existing, fh, indent=2, ensure_ascii=False)
+    print(f"[PROFILER] Sensoren-Block aktualisiert: {PROFILE_PATH}")
