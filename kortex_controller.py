@@ -159,4 +159,110 @@ def memory_search():
 def memory_recent():
     return jsonify({"results": get_recent(int(request.args.get('limit', 20)))})
 
+
+@app.route('/radar/webapp')
+def radar_webapp():
+    import sqlite3, json as _j
+    try:
+        conn = sqlite3.connect(os.path.expanduser("~/jack/jack_vinted.db"))
+        rows = conn.execute(
+            "SELECT titel, preis, url, keyword, timestamp FROM gesehen ORDER BY timestamp DESC LIMIT 50"
+        ).fetchall()
+        conn.close()
+    except Exception:
+        rows = []
+
+    items_html = ""
+    for r in rows:
+        items_html += f"""
+        <tr>
+            <td><a href="{r[2]}" target="_blank">{r[0]}</a></td>
+            <td>{r[1]}</td>
+            <td>{r[3]}</td>
+            <td>{r[4][:16]}</td>
+        </tr>"""
+
+    html = f"""<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JACK Vinted Radar</title>
+<style>
+  body {{ font-family: system-ui; background: #1a1a2e; color: #eee; margin: 0; padding: 10px; }}
+  h2 {{ color: #00d4ff; margin-bottom: 10px; }}
+  table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
+  th {{ background: #16213e; color: #00d4ff; padding: 8px; text-align: left; }}
+  td {{ padding: 7px 8px; border-bottom: 1px solid #333; }}
+  tr:hover {{ background: #16213e; }}
+  a {{ color: #00d4ff; text-decoration: none; }}
+  .count {{ color: #888; font-size: 12px; }}
+</style>
+</head>
+<body>
+<h2>JACK Vinted Radar</h2>
+<p class="count">{len(rows)} Anzeigen gespeichert</p>
+<table>
+<tr><th>Titel</th><th>Preis</th><th>Keyword</th><th>Gefunden</th></tr>
+{items_html}
+</table>
+</body>
+</html>"""
+
+    from flask import Response
+    return Response(html, mimetype="text/html")
+
+
+@app.route('/radar/kleinanzeigen')
+def radar_kleinanzeigen_webapp():
+    import sqlite3
+    try:
+        conn = sqlite3.connect(os.path.expanduser("~/jack/jack_radar.db"))
+        rows = conn.execute(
+            "SELECT titel, preis, url, keyword, timestamp FROM gesehen ORDER BY timestamp DESC LIMIT 50"
+        ).fetchall()
+        conn.close()
+    except Exception:
+        rows = []
+
+    items_html = ""
+    for r in rows:
+        items_html += f"""
+        <tr>
+            <td><a href="{r[2]}" target="_blank">{r[0]}</a></td>
+            <td>{r[1]}</td>
+            <td>{r[3]}</td>
+            <td>{r[4][:16]}</td>
+        </tr>"""
+
+    html = f"""<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JACK Kleinanzeigen Radar</title>
+<style>
+  body {{ font-family: system-ui; background: #1a2e1a; color: #eee; margin: 0; padding: 10px; }}
+  h2 {{ color: #00ff88; margin-bottom: 10px; }}
+  table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
+  th {{ background: #162e16; color: #00ff88; padding: 8px; text-align: left; }}
+  td {{ padding: 7px 8px; border-bottom: 1px solid #333; }}
+  tr:hover {{ background: #162e16; }}
+  a {{ color: #00ff88; text-decoration: none; }}
+  .count {{ color: #888; font-size: 12px; }}
+</style>
+</head>
+<body>
+<h2>JACK Kleinanzeigen Radar</h2>
+<p class="count">{len(rows)} Anzeigen gespeichert</p>
+<table>
+<tr><th>Titel</th><th>Preis</th><th>Keyword</th><th>Gefunden</th></tr>
+{items_html}
+</table>
+</body>
+</html>"""
+
+    from flask import Response
+    return Response(html, mimetype="text/html")
+
 app.run(host="0.0.0.0", port=5005, debug=False)
