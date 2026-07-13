@@ -68,6 +68,17 @@ def send_keyboard(text, buttons):
     except Exception as _e:
         import jack_log; jack_log.log_decision("KEYBOARD-FEHLER", str(_e)[:100])
 
+def send_webapp(text, url, button_text="Ergebnisse anzeigen"):
+    import json as _j
+    keyboard = {"inline_keyboard": [[{"text": button_text, "url": url}]]}
+    data = _j.dumps({"chat_id": CHAT_ID, "text": text, "reply_markup": keyboard}).encode()
+    try:
+        req = urllib.request.Request(API + "/sendMessage", data=data,
+            headers={"Content-Type": "application/json"})
+        urllib.request.urlopen(req, timeout=10)
+    except Exception as _e:
+        import jack_log; jack_log.log_decision("WEBAPP-FEHLER", str(_e)[:100])
+
 def answer_callback(callback_id, text="OK"):
     """Bestaetigt Callback-Query damit Telegram Ladeanimation entfernt."""
     data = json.dumps({"callback_query_id": callback_id, "text": text}).encode()
@@ -274,6 +285,18 @@ def handle(text):
             capture_output=True, text=True, timeout=15
         )
         return result.stdout[:3000] if result.stdout else "Fehler beim Status-Report."
+    if raw.strip().split("@")[0] == "/radar_ergebnisse":
+        send_webapp(
+            "JACK Radar Ergebnisse:",
+            "http://127.0.0.1:5005/radar/webapp",
+            "Vinted anzeigen"
+        )
+        send_webapp(
+            "Kleinanzeigen:",
+            "http://127.0.0.1:5005/radar/kleinanzeigen",
+            "Kleinanzeigen anzeigen"
+        )
+        return None
     if raw.strip().split("@")[0] in ["/radar_aus", "/vinted_aus", "/radar_an", "/vinted_an",
                                         "/radar_intervall", "/vinted_intervall"]:
         import json as _j
