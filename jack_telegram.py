@@ -144,10 +144,10 @@ def get_updates(offset=0):
     except: return []
 
 def handle(text):
-    if raw.strip().split("@")[0] == "/audit":
-        import jack_audit; return jack_audit.report()
     global PENDING_WRITE, PENDING_IMPROVE
     raw = text.strip()
+    if raw.strip().split("@")[0] == "/audit":
+        import jack_audit; return jack_audit.report()
     text = raw.lower()
 
     # Schritt 2: Bestaetigung eines wartenden Schreibvorschlags
