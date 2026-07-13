@@ -45,3 +45,7 @@ llama3.2:3b (lokal, Xiaomi), whisper.cpp, ElevenLabs, Telegram-Bot
 - Fix-Skripte landen in ~/jack_werkstatt/ und warten auf /approve_fix_
 - Nur nicht-laufende Module werden automatisch gepatcht
 - Sicherheits-relevante Dateien (secrets, runit-Services) werden nie autonom veraendert
+
+## Persoenlichkeits-Profil
+Pflicht: ~/jack/jack_persona.json lesen bevor mit Dima gearbeitet wird.
+Kurzfassung: Kumpel-Ton, keine Annahmen, keine Pausen-Empfehlungen, Fehler sofort zugeben und fixen, Hoerbuch-Format (Text vor Code).
