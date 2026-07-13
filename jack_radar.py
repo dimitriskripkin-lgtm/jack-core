@@ -79,49 +79,41 @@ def suche_kleinanzeigen(keyword, max_preis=None):
         jack_log.log_decision("RADAR-FETCH-FEHLER", f"{keyword}: {str(e)[:80]}")
         return []
 
-    # Einfaches HTML-Parsing ohne externe Libraries
+    import re
     results = []
-    # Suche nach Artikel-Bloecken
     parts = html.split('data-adid="')
     for part in parts[1:]:
         try:
             ad_id = part.split('"')[0]
-            # Titel extrahieren
+            if not ad_id.isdigit():
+                continue
             titel = ""
-            if 'class="text-module-begin">' in part:
-                titel = part.split('class="text-module-begin">')[1].split("<")[0].strip()
-            elif 'class="ellipsis">' in part:
-                titel = part.split('class="ellipsis">')[1].split("<")[0].strip()
-            # Preis extrahieren
-            preis = ""
-            if "Preis" in part and "€" in part:
-                idx = part.find("€")
-                preis_raw = part[max(0,idx-20):idx+5]
-                digits = ''.join(c for c in preis_raw if c.isdigit() or c in ".,")
-                if digits:
-                    preis = digits + " €"
-            # URL
+            m = re.search(r'"name":\s*"([^"]+)"', part)
+            if m:
+                titel = m.group(1).strip()
+            preis = "VB"
+            m2 = re.search(r'(\d[\d\.]+)\s*€', part)
+            if m2:
+                preis = m2.group(0).strip()
             ad_url = f"https://www.kleinanzeigen.de/s-anzeige/{ad_id}"
-
             if ad_id and titel:
-                # Preis-Filter
-                if max_preis and preis:
+                if max_preis and preis != "VB":
                     try:
-                        preis_num = float(preis.replace("€","").replace(".","").replace(",",".").strip())
-                        if preis_num > max_preis:
+                        num = float(preis.replace("€","").replace(".","").replace(",",".").strip())
+                        if num > max_preis:
                             continue
                     except Exception:
                         pass
-                results.append({
-                    "id": ad_id,
-                    "titel": titel[:100],
-                    "preis": preis or "Preis unbekannt",
-                    "url": ad_url
-                })
+                results.append({"id": ad_id, "titel": titel[:100], "preis": preis, "url": ad_url})
         except Exception:
             continue
-    return results[:10]
-
+    seen = set()
+    unique = []
+    for r in results:
+        if r["id"] not in seen:
+            seen.add(r["id"])
+            unique.append(r)
+    return unique[:10]
 def verarbeite_ergebnisse(ergebnisse, keyword):
     """Filtert bereits gesehene Anzeigen, speichert neue."""
     conn = sqlite3.connect(DB)
