@@ -123,10 +123,10 @@ def handle_callback(callback_data, callback_id):
             n = "?"
         from kortex_memory import get_recent
         mem = get_recent(limit=2)
-        mem_str = "\n".join([f'  [{r["category"]}] {r["content"][:50]}' for r in mem])
+        mem_str = "\n".join([f'  [{r["category"]}] {r["content"][:150]}' for r in mem])
         lines = open(os.path.expanduser("~/jack/jack_decisions.log")).readlines()
         letzter = lines[-1].strip() if lines else "-"
-        return f"Status 7/7 Dienste ok | Fehler offen: {n}\nLetzte Aktion: {letzter[:80]}\nGedaechtnis:\n{mem_str}"
+        return f"📊 Status | Fehler offen: {n}\n\nLetzte Aktion:\n{letzter[:150]}\n\nGedaechtnis:\n{mem_str}"
     if callback_data.startswith("suche:"):
         q = callback_data.split(":",1)[1]
         from kortex_memory import search_memory
