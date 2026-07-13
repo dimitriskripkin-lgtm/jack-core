@@ -1,1 +1,1 @@
-{"dienste": {"jack_cortex": true, "jack_telegram": true, "jack_autolearn": true, "ollama": true, "jack_publisher": true}, "xiaomi": true, "errors": 0}
+{"dienste": {"jack_cortex": true, "jack_telegram": true, "jack_autolearn": true, "ollama": true, "jack_publisher": true}, "xiaomi": false, "errors": 0}
