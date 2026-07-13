@@ -46,12 +46,21 @@ def learn_from_recent(n=30):
     # Neue Fakten in kortex_memory.db schreiben
     try:
         from kortex_memory import add_memory
-        alte = set(existing)
+        alte_set = set(existing)
         for fakt in facts:
-            if fakt not in alte:
+            if fakt not in alte_set:
                 add_memory(fakt, category="fakt", source="jack_learn", tags="auto gelernt")
     except Exception as _e:
         import jack_log; jack_log.log_decision("LEARN-MEMORY-FEHLER", str(_e)[:120])
+
+    # kortex_profile.json automatisch aktualisieren
+    try:
+        from kortex_profile_updater import update_from_facts
+        n = update_from_facts(facts, existing)
+        if n > 0:
+            import jack_log; jack_log.log_decision("PROFIL-UPDATE", f"{n} neue Eintraege in kortex_profile.json")
+    except Exception as _e:
+        import jack_log; jack_log.log_decision("PROFIL-UPDATE-FEHLER", str(_e)[:120])
 
     return facts
 
