@@ -48,7 +48,11 @@ def search_memory(query, limit=10):
             FROM memories_fts
             JOIN memories m ON memories_fts.rowid = m.id
             WHERE memories_fts MATCH ?
-            ORDER BY (m.importance * (m.access_count + 1)) DESC, rank LIMIT ?""", (query, limit))
+            ORDER BY (
+                m.importance
+                * (m.access_count + 1)
+                * MAX(0.1, 1.0 - (CAST((julianday('now') - julianday(COALESCE(m.last_accessed, m.timestamp))) AS REAL) / 14.0))
+            ) DESC, rank LIMIT ?""", (query, limit))
         rows = c.fetchall()
         if rows:
             ids = ",".join(str(r[0]) for r in rows)
