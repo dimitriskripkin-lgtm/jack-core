@@ -274,6 +274,44 @@ def handle(text):
             capture_output=True, text=True, timeout=15
         )
         return result.stdout[:3000] if result.stdout else "Fehler beim Status-Report."
+    if raw.strip().split("@")[0] in ["/radar_aus", "/vinted_aus", "/radar_an", "/vinted_an",
+                                        "/radar_intervall", "/vinted_intervall"]:
+        import json as _j
+        cmd = raw.strip().split("@")[0]
+        parts = raw.strip().split()
+
+        if cmd in ["/radar_an", "/radar_aus"]:
+            cfg_path = os.path.expanduser("~/jack/jack_radar_config.json")
+            cfg = _j.load(open(cfg_path))
+            cfg["aktiv"] = (cmd == "/radar_an")
+            _j.dump(cfg, open(cfg_path,"w"), indent=2)
+            return f"Kleinanzeigen Radar: {'AN' if cfg['aktiv'] else 'AUS'}"
+
+        if cmd in ["/vinted_an", "/vinted_aus"]:
+            cfg_path = os.path.expanduser("~/jack/jack_vinted_config.json")
+            cfg = _j.load(open(cfg_path))
+            cfg["aktiv"] = (cmd == "/vinted_an")
+            _j.dump(cfg, open(cfg_path,"w"), indent=2)
+            return f"Vinted Radar: {'AN' if cfg['aktiv'] else 'AUS'}"
+
+        if cmd == "/radar_intervall":
+            if len(parts) < 2 or not parts[1].isdigit():
+                return "Nutzung: /radar_intervall <minuten>"
+            cfg_path = os.path.expanduser("~/jack/jack_radar_config.json")
+            cfg = _j.load(open(cfg_path))
+            cfg["interval_minutes"] = int(parts[1])
+            _j.dump(cfg, open(cfg_path,"w"), indent=2)
+            return f"Kleinanzeigen Intervall: {parts[1]} Minuten"
+
+        if cmd == "/vinted_intervall":
+            if len(parts) < 2 or not parts[1].isdigit():
+                return "Nutzung: /vinted_intervall <minuten>"
+            cfg_path = os.path.expanduser("~/jack/jack_vinted_config.json")
+            cfg = _j.load(open(cfg_path))
+            cfg["interval_minutes"] = int(parts[1])
+            _j.dump(cfg, open(cfg_path,"w"), indent=2)
+            return f"Vinted Intervall: {parts[1]} Minuten"
+
     if raw.startswith("/approve_fix_"):
         fix_id = raw.strip()[1:]
         try:
