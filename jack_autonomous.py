@@ -89,7 +89,10 @@ def _maybe_audit():
 
 def _maybe_self_improve():
     try:
-        import time as _t
+        import time as _t, datetime as _dt
+        _h = _dt.datetime.now().hour
+        if 16 <= _h < 22:
+            return
         lf = os.path.expanduser("~/jack/.last_self_improve")
         try: last = float(open(lf).read().strip())
         except Exception: last = 0.0

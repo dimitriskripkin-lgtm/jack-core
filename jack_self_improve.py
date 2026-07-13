@@ -52,7 +52,7 @@ def analyse():
     for row in rows:
         modul, etype, emsg, n = row
         for p in PATTERNS:
-            if p["modul"] in modul and p["erkennung"] in (emsg or ""):
+            if p["modul"] in modul and p["erkennung"] in (emsg or "") and n >= 5:
                 treffer.append({
                     "pattern_id": p["id"],
                     "modul": modul,
