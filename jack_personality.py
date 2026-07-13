@@ -209,8 +209,8 @@ class JackPersonality:
             try:
                 with open(PERSONALITY_JSON) as f:
                     return json.load(f)
-            except:
-                pass
+            except Exception as _e:
+                import jack_log; jack_log.log_decision("SILENT-FAIL jack_personality.py", str(_e)[:120])
         return self._init_profile()
     
     def _init_profile(self):
