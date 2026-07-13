@@ -1,19 +1,44 @@
 #!/usr/bin/env python3
 """
-JACK Morgen-Briefing - 08:00 Uhr
+JACK Morgen-Briefing - 07:55 Uhr
 Nur senden wenn etwas zu melden ist. Stiller Fixmann.
 """
-import sqlite3, os, sys, json
+import sqlite3, os, sys, json, subprocess
 from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.expanduser("~/jack"))
 ERRORS_DB = os.path.expanduser("~/jack/jack_errors.db")
-PROFILE = os.path.expanduser("~/jack/kortex_profile.json")
+MEMORY_DB = os.path.expanduser("~/jack/kortex_memory.db")
 
-def run():
-    meldungen = []
+def _sec(k):
+    for l in open(os.path.expanduser("~/.jack_secrets")):
+        if k in l and "=" in l:
+            return l.split('"')[1] if '"' in l else l.split("=",1)[1].strip()
 
-    # Offene Fehler
+def batteriestand():
+    try:
+        r = subprocess.run(["termux-battery-status"], capture_output=True, text=True, timeout=5)
+        d = json.loads(r.stdout)
+        pct = d.get("percentage", "?")
+        status = d.get("status", "?")
+        return f"Honor: {pct}% ({status})"
+    except Exception:
+        return "Honor: Akku-Daten nicht verfuegbar"
+
+def letzte_sessions():
+    try:
+        conn = sqlite3.connect(MEMORY_DB)
+        rows = conn.execute(
+            "SELECT content FROM memories WHERE category='session' ORDER BY timestamp DESC LIMIT 3"
+        ).fetchall()
+        conn.close()
+        if not rows:
+            return None
+        return "Letzte Sessions:\n" + "\n---\n".join([r[0][:200] for r in rows])
+    except Exception:
+        return None
+
+def offene_fehler():
     try:
         conn = sqlite3.connect(ERRORS_DB)
         seit = (datetime.now() - timedelta(hours=12)).isoformat()
@@ -23,24 +48,65 @@ def run():
             (seit,)
         ).fetchall()
         conn.close()
-        if rows:
-            zeilen = [f"  {r[0]}: {r[2]}x {r[1][:50]}" for r in rows]
-            meldungen.append("Offene Fehler letzte 12h:\n" + "\n".join(zeilen))
+        if not rows:
+            return None
+        zeilen = [f"  {r[0]}: {r[2]}x - {r[1][:60]}" for r in rows]
+        return "Offene Fehler letzte 12h:\n" + "\n".join(zeilen)
     except Exception as e:
-        meldungen.append(f"Fehler-Check fehlgeschlagen: {e}")
+        return f"Fehler-Check fehlgeschlagen: {e}"
 
-    # Selbstverbesserungs-Vorschlaege
+def offene_fixes():
     try:
         fixes = json.load(open(os.path.expanduser("~/jack/jack_fixes.json")))
-        offen = [k for k,v in fixes.items()]
-        if offen:
-            meldungen.append(f"Offene Fix-Vorschlaege: {len(offen)}\n  " + "\n  ".join(
-                [f"/approve_{k}" for k in offen[:3]]
-            ))
+        offen = list(fixes.keys())
+        if not offen:
+            return None
+        return f"Offene Fix-Vorschlaege: {len(offen)}\n" + "\n".join([f"  /approve_{k}" for k in offen[:3]])
     except Exception:
-        pass
+        return None
 
-    # Letzter Log-Eintrag
+def dienste_status():
+    try:
+        r = subprocess.run(
+            ["sv", "status", "jack_telegram", "jack_waechter", "jack_cortex",
+             "jack_autolearn", "jack_publisher", "kortex_bridge", "ollama"],
+            capture_output=True, text=True, timeout=8
+        )
+        tote = [l.split(":")[1].strip() for l in r.stdout.splitlines() if l.startswith("down:")]
+        if tote:
+            return f"DIENSTE TOT: {', '.join(tote)}"
+        return None  # Alles OK -> nicht melden
+    except Exception:
+        return "Dienste-Check fehlgeschlagen"
+
+def run():
+    meldungen = []
+    ts = datetime.now().strftime("%d.%m.%Y %H:%M")
+
+    # Immer: Batteriestand
+    meldungen.append(batteriestand())
+
+    # Nur wenn was nicht stimmt: Dienste
+    d = dienste_status()
+    if d:
+        meldungen.append(d)
+
+    # Offene Fehler
+    f = offene_fehler()
+    if f:
+        meldungen.append(f)
+
+    # Offene Fixes
+    fx = offene_fixes()
+    if fx:
+        meldungen.append(fx)
+
+    # Letzte Sessions (immer, gibt Kontext)
+    s = letzte_sessions()
+    if s:
+        meldungen.append(s)
+
+    # Letzte 3 Log-Eintraege
     try:
         lines = open(os.path.expanduser("~/jack/jack_decisions.log")).readlines()
         letzte = [l.strip() for l in lines[-3:] if l.strip()]
@@ -49,32 +115,25 @@ def run():
     except Exception:
         pass
 
-    if not meldungen:
-        return None  # Alles OK, nichts senden
+    # Nur senden wenn mehr als nur Akku da ist
+    if len(meldungen) <= 1:
+        return None
 
-    ts = datetime.now().strftime("%d.%m.%Y %H:%M")
     return f"[JACK Briefing {ts}]\n\n" + "\n\n".join(meldungen)
 
 if __name__ == "__main__":
     result = run()
     if result:
         import urllib.request, json as _json
-        SEC = os.path.expanduser("~/.jack_secrets")
-        def _sec(k):
-            for l in open(SEC):
-                if k in l and "=" in l:
-                    return l.split('"')[1] if '"' in l else l.split("=",1)[1].strip()
         tok = _sec("TELEGRAM_BOT_TOKEN")
         cid = _sec("TELEGRAM_CHAT_ID")
         if tok and cid:
             d = _json.dumps({"chat_id": cid, "text": result}).encode()
-            r = urllib.request.Request(
+            req = urllib.request.Request(
                 f"https://api.telegram.org/bot{tok}/sendMessage",
                 data=d, headers={"Content-Type": "application/json"}
             )
-            urllib.request.urlopen(r, timeout=10)
+            urllib.request.urlopen(req, timeout=10)
             print("Briefing gesendet.")
-        else:
-            print(result)
     else:
-        print("Nichts zu melden.")
+        print("Nichts kritisches zu melden.")
