@@ -50,6 +50,71 @@ def send_voice(file_path):
         "-F", f"voice=@{file_path}"
     ])
 
+def send_keyboard(text, buttons):
+    """Sendet Nachricht mit Inline-Keyboard. buttons = [[('Label','data'),...],...]"""
+    keyboard = {"inline_keyboard": [
+        [{"text": b[0], "callback_data": b[1]} for b in row]
+        for row in buttons
+    ]}
+    data = json.dumps({
+        "chat_id": CHAT_ID,
+        "text": text,
+        "reply_markup": keyboard
+    }).encode()
+    try:
+        req = urllib.request.Request(API + "/sendMessage", data=data,
+            headers={"Content-Type": "application/json"})
+        urllib.request.urlopen(req, timeout=10)
+    except Exception as _e:
+        import jack_log; jack_log.log_decision("KEYBOARD-FEHLER", str(_e)[:100])
+
+def answer_callback(callback_id, text="OK"):
+    """Bestaetigt Callback-Query damit Telegram Ladeanimation entfernt."""
+    data = json.dumps({"callback_query_id": callback_id, "text": text}).encode()
+    try:
+        req = urllib.request.Request(API + "/answerCallbackQuery", data=data,
+            headers={"Content-Type": "application/json"})
+        urllib.request.urlopen(req, timeout=5)
+    except Exception:
+        pass
+
+def handle_callback(callback_data, callback_id):
+    """Verarbeitet Inline-Button-Klicks."""
+    answer_callback(callback_id)
+    import jack_log
+
+    if callback_data.startswith("approve:"):
+        fix_id = callback_data[8:]
+        try:
+            fixes = json.load(open(os.path.expanduser("~/jack/jack_fixes.json")))
+            fix = fixes.get(fix_id)
+            if not fix:
+                return f"Fix nicht gefunden: {fix_id}"
+            import subprocess
+            r = subprocess.run(["python3", fix["pfad"]],
+                capture_output=True, text=True, timeout=30)
+            output = (r.stdout + r.stderr).strip()[:400]
+            jack_log.log_decision("APPROVE-FIX-BUTTON", f"{fix_id}: {output[:80]}")
+            return f"Fix ausgefuehrt:\n{output}"
+        except Exception as _e:
+            return f"Fehler: {str(_e)[:200]}"
+
+    if callback_data.startswith("reject:"):
+        fix_id = callback_data[7:]
+        try:
+            neg = {}
+            neg_path = os.path.expanduser("~/jack/negative_patterns.json")
+            try: neg = json.load(open(neg_path))
+            except Exception: pass
+            neg[fix_id] = {"rejected": True, "count": neg.get(fix_id, {}).get("count", 0) + 1}
+            json.dump(neg, open(neg_path, "w"), indent=2)
+            jack_log.log_decision("REJECT-FIX-BUTTON", f"{fix_id} abgelehnt")
+            return f"Verstanden. Merke mir: {fix_id} ist unerwuenscht."
+        except Exception as _e:
+            return f"Fehler: {str(_e)[:200]}"
+
+    return f"Unbekannter Button: {callback_data}"
+
 def get_updates(offset=0):
     url = f"{API}/getUpdates?timeout=30&offset={offset}"
     try:
@@ -299,6 +364,15 @@ def main():
                 except Exception as e:
                     print(f"Fehler bei Voice-Verarbeitung: {e}")
                     send("Fehler bei der Sprachverarbeitung.")
+                continue
+
+            # Callback-Query (Inline-Button-Klick)
+            cb = u.get('callback_query', {})
+            if cb:
+                cb_data = cb.get('data', '')
+                cb_id = cb.get('id', '')
+                cb_reply = handle_callback(cb_data, cb_id)
+                send(cb_reply)
                 continue
 
             text = msg.get('text', '')
