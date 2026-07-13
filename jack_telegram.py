@@ -389,7 +389,8 @@ def main():
                 reply = handle(text)
             except Exception as e:
                 reply = f"Fehler beim Verarbeiten: {e}"
-            send(reply)
+            if reply is not None:
+                send(reply)
         time.sleep(1)
 
 if __name__ == "__main__":
