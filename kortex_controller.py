@@ -1,3 +1,4 @@
+from kortex_memory import init_db, add_memory, search_memory, get_recent
 #!/usr/bin/env python3
 from flask import Flask, jsonify, request, Response, stream_with_context
 from threading import Lock
@@ -138,4 +139,24 @@ if __name__ == "__main__":
     log_event("info", "KORTEX Controller startet (mit Token-Auth)...", "system")
     print("[KORTEX] Token: " + KORTEX_TOKEN)
     print("[KORTEX] Header noetig: X-Kortex-Token: " + KORTEX_TOKEN)
-    app.run(host="0.0.0.0", port=5005, debug=False)
+    
+@app.route('/memory/add', methods=['POST'])
+def memory_add():
+    data = request.get_json() or {}
+    content = data.get('content', '')
+    if not content:
+        return jsonify({"error": "content required"}), 400
+    return jsonify(add_memory(content, data.get('category','general'), data.get('source','api'), data.get('tags','')))
+
+@app.route('/memory/search')
+def memory_search():
+    q = request.args.get('q', '')
+    if not q:
+        return jsonify({"error": "q required"}), 400
+    return jsonify({"query": q, "results": search_memory(q, int(request.args.get('limit', 10)))})
+
+@app.route('/memory/recent')
+def memory_recent():
+    return jsonify({"results": get_recent(int(request.args.get('limit', 20)))})
+
+app.run(host="0.0.0.0", port=5005, debug=False)
