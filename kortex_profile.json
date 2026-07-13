@@ -1,7 +1,8 @@
 {
   "meta": {
     "version": "2.0",
-    "generated": "2026-07-13T04:13:12.992555"
+    "generated": "2026-07-13T04:13:12.992555",
+    "profile_updated": "2026-07-13T05:19:49.369692"
   },
   "owner": {
     "name": "Dimitri",
@@ -15,7 +16,7 @@
       "name": "JACK",
       "status": "aktiv",
       "beschreibung": "Persoenliche KI-Betriebsschicht auf Android/Termux",
-      "naechster_schritt": "Schicht 3 Gedaechtnis fertig, dann Voice-Bug fixen"
+      "naechster_schritt": "JACK Projekt naechster Schritt: Voice-Bug fixen auf Xiaomi"
     },
     {
       "name": "Wohnung Essen",
