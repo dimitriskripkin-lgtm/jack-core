@@ -34,7 +34,7 @@ def letzte_sessions():
         conn.close()
         if not rows:
             return None
-        return "Letzte Sessions:\n" + "\n---\n".join([r[0][:200] for r in rows])
+        return "Letzte Sessions:\n" + "\n---\n".join([r[0][:300] for r in rows])
     except Exception:
         return None
 
