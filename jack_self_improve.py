@@ -21,9 +21,9 @@ PATTERNS = [
         "id": "cortex_ssh_timeout",
         "modul": "jack_cortex",
         "erkennung": "SSH-Timeout",
-        "beschreibung": "SSH-Timeout zu kurz. Vorschlag: Timeout von 10 auf 20 Sekunden erhoehen.",
-        "search": 'timeout=10',
-        "replace": 'timeout=20',
+        "beschreibung": "Xiaomi SSH wiederholt nicht erreichbar. WiFi-Recovery-Timeout erhoehen.",
+        "search": "capture_output=True, text=True, timeout=15",
+        "replace": "capture_output=True, text=True, timeout=25",
         "datei": "jack_cortex.py"
     },
     {
