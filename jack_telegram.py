@@ -335,7 +335,7 @@ def handle(text):
             return "Gedaechtnis ist leer."
         lines = ["Letzte 5 Eintraege:"]
         for r in recent:
-            lines.append(f"[{r['category']}] {r['content'][:80]}")
+            lines.append(f"[{r['category']}] {r['content'][:200]}")
         return "\n".join(lines)
     if raw.strip().split("@")[0] in ['/start', '/help', 'hi', 'hallo']:
         return "JACK online. Befehle: /status /errors /code <aufgabe> /run <datei> oder einfach fragen (Text+Sprache)."
