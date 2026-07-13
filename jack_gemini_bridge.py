@@ -54,7 +54,8 @@ def ask_gemini(question, status=None):
                 result = json.loads(res.read())
                 try:
                     import jack_budget; jack_budget.add_tokens(result.get("usageMetadata",{}).get("totalTokenCount",0))
-                except Exception: pass
+                except Exception as _e:
+                    import jack_log; jack_log.log_decision('SILENT-FAIL jack_gemini', str(_e)[:120])
                 return result["candidates"][0]["content"]["parts"][0]["text"]
         except Exception as _e:
             _code = getattr(_e, "code", None)

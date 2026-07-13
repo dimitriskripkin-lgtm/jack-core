@@ -147,7 +147,8 @@ class JackBugFixer:
         msg = f"JACK: HIGH-RISK Fix wartet auf OK - {os.path.basename(file_path)}"
         try:
             subprocess.run(["termux-toast", "-s", msg], capture_output=True, timeout=5)
-        except Exception: pass
+        except Exception as _e:
+            import jack_log; jack_log.log_decision('SILENT-FAIL jack_bug_fixer', str(_e)[:120])
         try:
             with open(HANDSHAKE_PATH, "r") as f: hs = json.load(f)
         except Exception: hs = {}
