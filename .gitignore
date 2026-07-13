@@ -13,3 +13,5 @@ voice_*.ogg
 voice_*.wav
 .last_audit
 .last_self_improve
+jack_vinted_config.json
+jack_radar_config.json
