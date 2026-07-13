@@ -7,7 +7,6 @@ BRIDGE_PID_FILE="$JACK_PATH/.kortex_bridge.pid"
 echo "=== KORTEX Bridge Setup ==="
 
 echo "[1/4] Installing dependencies..."
-pip install psutil --quiet 2>/dev/null || echo "psutil already installed"
 
 echo "[2/4] Stopping old bridge if running..."
 if [ -f "$BRIDGE_PID_FILE" ]; then
