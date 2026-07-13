@@ -42,6 +42,17 @@ def learn_from_recent(n=30):
     idn["learned_facts"]=facts
     idn["last_learned"]=datetime.datetime.now().isoformat()
     json.dump(idn,open(IDENTITY,'w'),indent=2,ensure_ascii=False)
+
+    # Neue Fakten in kortex_memory.db schreiben
+    try:
+        from kortex_memory import add_memory
+        alte = set(existing)
+        for fakt in facts:
+            if fakt not in alte:
+                add_memory(fakt, category="fakt", source="jack_learn", tags="auto gelernt")
+    except Exception as _e:
+        import jack_log; jack_log.log_decision("LEARN-MEMORY-FEHLER", str(_e)[:120])
+
     return facts
 
 if __name__=="__main__":
