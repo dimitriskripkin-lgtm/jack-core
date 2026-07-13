@@ -181,6 +181,13 @@ def handle(text):
         files = sorted(_os.listdir(d)) if _os.path.isdir(d) else []
         return "Werkstatt-Inhalt:\n" + ("\n".join(files) if files else "(leer)")
 
+    if raw.strip() == "/status_report":
+        import subprocess
+        result = subprocess.run(
+            ["bash", "/data/data/com.termux/files/home/jack/jack_status_report.sh"],
+            capture_output=True, text=True, timeout=15
+        )
+        return result.stdout[:3000] if result.stdout else "Fehler beim Status-Report."
     if raw.startswith("/merke "):
         inhalt = raw[7:].strip()
         cat, tags = "general", ""

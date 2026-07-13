@@ -49,6 +49,10 @@ def search_memory(query, limit=10):
             JOIN memories m ON memories_fts.rowid = m.id
             WHERE memories_fts MATCH ? ORDER BY rank LIMIT ?""", (query, limit))
         rows = c.fetchall()
+        if rows:
+            ids = ",".join(str(r[0]) for r in rows)
+            c.execute(f"UPDATE memories SET access_count = access_count + 1 WHERE id IN ({ids})")
+            conn.commit()
     except Exception as e:
         conn.close()
         return {"error": str(e)}
