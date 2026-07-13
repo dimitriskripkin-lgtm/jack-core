@@ -26,7 +26,9 @@ def notify(t):
         d=json.dumps({"chat_id":cid,"text":"[JACK Waechter] "+t}).encode()
         r=urllib.request.Request(f"https://api.telegram.org/bot{tok}/sendMessage",data=d,headers={"Content-Type":"application/json"})
         urllib.request.urlopen(r,timeout=10)
-    except Exception: pass
+    except Exception as e:
+        try: import jack_log; jack_log.log_decision('NOTIFY-FEHLER', str(e)[:100])
+        except: pass
 
 def _up(n):
     try: return subprocess.run(["sv","status",n],capture_output=True,text=True,timeout=8).stdout.strip().startswith("run:")

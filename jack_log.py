@@ -8,7 +8,8 @@ def log_decision(aktion, detail="", ergebnis=""):
     zeile=f"[{ts}] {aktion} | {detail} | {ergebnis}".rstrip(" |")
     try:
         with open(LOG,"a") as f: f.write(zeile+"\n")
-    except Exception: pass
+    except Exception as e:
+        import sys; print(f'[jack_log FEHLER] {e}', file=sys.stderr)
 
 def recent(n=15):
     try:

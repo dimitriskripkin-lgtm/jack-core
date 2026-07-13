@@ -71,7 +71,8 @@ def auto_save_to_memory(cmd, result, source='dima_chat'):
         combined = f"Frage: {cmd} | Antwort: {result}"
         vec = get_embedding(combined)
         if vec: jack_vecdb.store_embedding(rowid, vec)
-    except Exception: pass
+    except Exception as _e:
+        import jack_log; jack_log.log_decision(f"SILENT-FAIL {fname}", str(_e)[:120])
 
 def run_voice_loop():
     import jack_voice, jack_voice_el
