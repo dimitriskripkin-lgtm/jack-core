@@ -19,13 +19,15 @@ def check_and_count(kind="text"):
         return False, f"Tageslimit {kind} erreicht ({LIMITS[kind]}/Tag). Morgen wieder."
     d[kind]=d.get(kind,0)+1
     try: json.dump(d,open(F,"w"))
-    except Exception: pass
+    except Exception as _e:
+        import jack_log; jack_log.log_decision(f"SILENT-FAIL {fname}", str(_e)[:120])
     return True, f"{kind} {d[kind]}/{LIMITS[kind]}"
 
 def add_tokens(n):
     d=_load(); d["tokens"]=d.get("tokens",0)+int(n or 0)
     try: json.dump(d,open(F,"w"))
-    except Exception: pass
+    except Exception as _e:
+        import jack_log; jack_log.log_decision(f"SILENT-FAIL {fname}", str(_e)[:120])
 
 def status():
     d=_load()
