@@ -348,6 +348,14 @@ def main():
         updates = get_updates(offset)
         for u in updates:
             offset = u['update_id'] + 1
+            cb = u.get('callback_query', {})
+            if cb:
+                cb_chat = str(cb.get('message', {}).get('chat', {}).get('id', ''))
+                if cb_chat == CHAT_ID:
+                    cb_reply = handle_callback(cb.get('data', ''), cb.get('id', ''))
+                    if cb_reply:
+                        send(cb_reply)
+                continue
             msg = u.get('message', {})
             if str(msg.get('chat', {}).get('id', '')) != CHAT_ID: continue
             
