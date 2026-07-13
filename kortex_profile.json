@@ -1,21 +1,102 @@
 {
-  "generated": "2026-07-06T14:43:34.852870",
-  "top_locations": [
+  "meta": {
+    "version": "2.0",
+    "generated": "2026-07-13T04:13:12.992555"
+  },
+  "owner": {
+    "name": "Dimitri",
+    "beruf": "LKW-Fahrer Dahlhoff Feinkost Achim, Nachtschicht",
+    "ziel_kurz": "50 EUR passiv",
+    "ziel_lang": "2000 EUR netto passiv/Monat, Ausstieg aus Anstellung",
+    "arbeitszeit": "nachts, Marathon-Pace, iterativ"
+  },
+  "projekte": [
     {
-      "lat": 51.456,
-      "lon": 7.012,
-      "frequency": 7
+      "name": "JACK",
+      "status": "aktiv",
+      "beschreibung": "Persoenliche KI-Betriebsschicht auf Android/Termux",
+      "naechster_schritt": "Schicht 3 Gedaechtnis fertig, dann Voice-Bug fixen"
+    },
+    {
+      "name": "Wohnung Essen",
+      "status": "aktiv",
+      "beschreibung": "Investmentwohnung, bald vermietet",
+      "naechster_schritt": "Vermietung abschliessen"
     }
   ],
-  "bluetooth_patterns": [
+  "hardware": [
     {
-      "device_count": 3,
-      "frequency": 7
+      "name": "Node Beta",
+      "geraet": "Honor Magic8 Pro",
+      "ip": "192.168.178.97",
+      "rolle": "Hauptgeraet, Flask-Bridge Port 5005"
+    },
+    {
+      "name": "Node Alpha",
+      "geraet": "Xiaomi 11T Pro",
+      "ip": "10.234.166.131",
+      "ssh_port": 8022,
+      "rolle": "Ollama, Voice-Pipeline"
+    },
+    {
+      "name": "Node Gamma",
+      "geraet": "Quest 3",
+      "rolle": "VR"
+    },
+    {
+      "name": "Node Omega",
+      "geraet": "EPYC Server",
+      "rolle": "DOWN seit 06.06.2026"
     }
   ],
-  "ambient": {
-    "avg_db": 45.0,
-    "min_db": 45.0,
-    "max_db": 45.0
+  "entscheidungen": [
+    {
+      "datum": "2026-07",
+      "entscheidung": "ChromaDB verboten auf Android, SQLite+FTS5 stattdessen"
+    },
+    {
+      "datum": "2026-07-13",
+      "entscheidung": "Waechter-Token-Fix, notify() wieder aktiv"
+    },
+    {
+      "datum": "2026-07-13",
+      "entscheidung": "kortex_memory.py live, semantisches Gedaechtnis gestartet"
+    }
+  ],
+  "personen": [
+    {
+      "name": "Leon",
+      "rolle": "enger Freund, Referenzton"
+    },
+    {
+      "name": "Fabienne",
+      "rolle": "innerer Kreis"
+    }
+  ],
+  "regeln": [
+    "ChromaDB niemals auf Android/Termux",
+    "Branch heisst master nicht main",
+    "Subprocess-Aufrufe nie wrappen, immer hart als String/Array"
+  ],
+  "sensoren": {
+    "top_locations": [
+      {
+        "lat": 51.456,
+        "lon": 7.012,
+        "frequency": 7
+      }
+    ],
+    "bluetooth_patterns": [
+      {
+        "device_count": 3,
+        "frequency": 7
+      }
+    ],
+    "ambient": {
+      "avg_db": 45.0,
+      "min_db": 45.0,
+      "max_db": 45.0
+    },
+    "sensor_updated": "2026-07-06T14:43:34.852870"
   }
 }
