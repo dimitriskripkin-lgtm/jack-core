@@ -272,6 +272,13 @@ def handle(text):
             return f"Fix ausgefuehrt:\n{output}"
         except Exception as _e:
             return f"Fehler bei Fix-Ausfuehrung: {str(_e)[:200]}"
+    if raw.strip() == "/test_button":
+        send_keyboard(
+            "JACK Inline-Keyboard Test:",
+            [[("✅ Bestaetigen", "approve:test"), ("❌ Ablehnen", "reject:test")],
+             [("📊 Status", "status:test"), ("🔍 Suche", "suche:test")]]
+        )
+        return None
     if raw.startswith("/merke "):
         inhalt = raw[7:].strip()
         cat, tags = "general", ""

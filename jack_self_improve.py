@@ -152,8 +152,19 @@ def run():
             })
             meldung = (f"[JACK Selbstdiagnose] {t['modul']}: "
                       f"{t['n']}x in 7 Tagen.\n"
-                      f"{t['beschreibung']}\n"
-                      f"Fix bereit: /approve_{fix_id}")
+                      f"{t['beschreibung']}")
+            try:
+                import sys as _sys
+                _sys.path.insert(0, os.path.expanduser("~/jack"))
+                import jack_telegram as _tg
+                _tg.send_keyboard(
+                    meldung,
+                    [[("✅ Fix einspielen", f"approve:{fix_id}"),
+                      ("❌ Ablehnen", f"reject:{fix_id}")]]
+                )
+                meldung = meldung + f"\n[Buttons gesendet]"
+            except Exception as _e:
+                meldung = meldung + f"\nFix bereit: /approve_{fix_id}"
         else:
             meldung = (f"[JACK Selbstdiagnose] {t['modul']}: "
                       f"{t['n']}x Fehler in 7 Tagen.\n"
