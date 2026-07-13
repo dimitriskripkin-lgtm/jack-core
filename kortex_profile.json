@@ -2,14 +2,18 @@
   "meta": {
     "version": "2.0",
     "generated": "2026-07-13T04:13:12.992555",
-    "profile_updated": "2026-07-13T05:19:49.369692"
+    "profile_updated": "2026-07-13T09:02:29.012681"
   },
   "owner": {
     "name": "Dimitri",
     "beruf": "LKW-Fahrer Dahlhoff Feinkost Achim, Nachtschicht",
     "ziel_kurz": "50 EUR passiv",
     "ziel_lang": "2000 EUR netto passiv/Monat, Ausstieg aus Anstellung",
-    "arbeitszeit": "nachts, Marathon-Pace, iterativ"
+    "arbeitszeit": "nachts, Marathon-Pace, iterativ",
+    "notizen": [
+      "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer.",
+      "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht)."
+    ]
   },
   "projekte": [
     {
@@ -35,7 +39,7 @@
     {
       "name": "Node Alpha",
       "geraet": "Xiaomi 11T Pro",
-      "ip": "10.234.166.131",
+      "ip": "10.244.147.131",
       "ssh_port": 8022,
       "rolle": "Ollama, Voice-Pipeline"
     },
