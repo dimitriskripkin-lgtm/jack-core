@@ -82,7 +82,7 @@ def check_and_heal():
                 recovery = subprocess.run(
                     ["ssh", "-i", os.path.expanduser("~/.ssh/id_jack"), "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-p", str(XIAOMI_SSH_PORT), f"root@{XIAOMI_IP}", 
                      "su -c 'svc wifi disable; sleep 3; svc wifi enable'"],
-                    capture_output=True, text=True, timeout=15
+                    capture_output=True, text=True, timeout=25
                 )
                 if recovery.returncode == 0:
                     log_status("[Cortex] WiFi-Recovery erfolgreich")
