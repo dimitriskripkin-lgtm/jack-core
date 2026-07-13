@@ -1,3 +1,4 @@
+from kortex_memory import add_memory, search_memory, get_recent
 #!/usr/bin/env python3
 import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
@@ -57,6 +58,8 @@ def get_updates(offset=0):
     except: return []
 
 def handle(text):
+    if text.strip() == "/audit":
+        import jack_audit; return jack_audit.report()
     global PENDING_WRITE, PENDING_IMPROVE
     raw = text.strip()
     text = raw.lower()
@@ -178,6 +181,33 @@ def handle(text):
         files = sorted(_os.listdir(d)) if _os.path.isdir(d) else []
         return "Werkstatt-Inhalt:\n" + ("\n".join(files) if files else "(leer)")
 
+    if raw.startswith("/merke "):
+        inhalt = raw[7:].strip()
+        cat, tags = "general", ""
+        worte = inhalt.split()
+        for w in worte:
+            if w.startswith("#"):
+                cat = w[1:]; tags = w[1:]
+                inhalt = inhalt.replace(w, "").strip()
+        r = add_memory(inhalt, category=cat, source="telegram", tags=tags)
+        return f"Gespeichert (ID {r['id']}): {inhalt[:80]}"
+    if raw.startswith("/suche "):
+        q = raw[7:].strip()
+        results = search_memory(q, limit=5)
+        if not results or isinstance(results, dict):
+            return f"Nichts gefunden fuer: {q}"
+        lines = [f"Suche '{q}':"]
+        for r in results:
+            lines.append(f"[{r['category']}] {r['content'][:100]}")
+        return "\n".join(lines)
+    if text.strip() == "/gedaechtnis":
+        recent = get_recent(limit=5)
+        if not recent:
+            return "Gedaechtnis ist leer."
+        lines = ["Letzte 5 Eintraege:"]
+        for r in recent:
+            lines.append(f"[{r['category']}] {r['content'][:80]}")
+        return "\n".join(lines)
     if text in ['/start', 'hi', 'hallo']:
         return "JACK online. Befehle: /status /errors /code <aufgabe> /run <datei> oder einfach fragen (Text+Sprache)."
     elif text == '/status':
