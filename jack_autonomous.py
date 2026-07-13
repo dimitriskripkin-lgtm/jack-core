@@ -86,6 +86,26 @@ def _maybe_audit():
             import jack_log; jack_log.log_decision("WAECHTER-AUDIT-FEHLER", str(e)[:100])
         except Exception: pass
 
+
+def _maybe_self_improve():
+    try:
+        import time as _t
+        lf = os.path.expanduser("~/jack/.last_self_improve")
+        try: last = float(open(lf).read().strip())
+        except Exception: last = 0.0
+        if _t.time() - last >= 86400:
+            import sys; sys.path.insert(0, os.path.expanduser("~/jack"))
+            import jack_self_improve
+            result = jack_self_improve.run()
+            if result and "Keine" not in result:
+                notify(result[:1000])
+            open(lf,"w").write(str(_t.time()))
+            import jack_log; jack_log.log_decision("SELF-IMPROVE","Tagescheck abgeschlossen")
+    except Exception as e:
+        try:
+            import jack_log; jack_log.log_decision("SELF-IMPROVE-FEHLER", str(e)[:100])
+        except Exception: pass
+
 def main():
     import jack_log; jack_log.log_decision("WAECHTER-START","Nacht-Ueberwachung laeuft")
     while True:
@@ -95,6 +115,7 @@ def main():
                 import jack_log; jack_log.log_decision("WAECHTER-FEHLER",str(e)[:100])
             except Exception: pass
         _maybe_audit()
+        _maybe_self_improve()
         time.sleep(HEARTBEAT)
 
 if __name__=="__main__":
