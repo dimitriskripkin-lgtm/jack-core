@@ -20,7 +20,8 @@ def _copytree_scrub(src, dst):
         sp=os.path.join(src,fn)
         if os.path.isfile(sp) and fn.rsplit(".",1)[-1] in ("py","txt","md","log","json"):
             try: open(os.path.join(dst,fn),"w").write(scrub(open(sp,encoding="utf-8",errors="ignore").read()))
-            except Exception: pass
+            except Exception as _e:
+                import jack_log; jack_log.log_decision('SILENT-FAIL jack_publish', str(_e)[:120])
 
 def build():
     sh(f"cd {H} && python3 jack_snapshot.py")

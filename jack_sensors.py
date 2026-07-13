@@ -47,7 +47,8 @@ def snap_photo(local_path=None):
         return None, f"Kein Foto ({err})"
     if local_path:
         try: open(local_path,"wb").write(base64.b64decode(b64))
-        except Exception: pass
+        except Exception as _e:
+            import jack_log; jack_log.log_decision('SILENT-FAIL jack_sensors', str(_e)[:120])
     return b64, "OK"
 
 def see(frage="Was ist auf dem Bild? Antworte kurz auf Deutsch."):
