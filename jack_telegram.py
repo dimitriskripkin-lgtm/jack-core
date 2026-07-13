@@ -188,6 +188,25 @@ def handle(text):
             capture_output=True, text=True, timeout=15
         )
         return result.stdout[:3000] if result.stdout else "Fehler beim Status-Report."
+    if raw.startswith("/approve_fix_"):
+        fix_id = raw.strip()[1:]
+        try:
+            import json, subprocess
+            fixes = json.load(open(os.path.expanduser("~/jack/jack_fixes.json")))
+            fix = fixes.get(fix_id.replace("approve_","",1))
+            if not fix:
+                return f"Fix nicht gefunden: {fix_id}"
+            pfad = fix.get("pfad","")
+            if not os.path.exists(pfad):
+                return f"Fix-Datei fehlt: {pfad}"
+            r = subprocess.run(["python3", pfad],
+                capture_output=True, text=True, timeout=30)
+            output = (r.stdout + r.stderr).strip()[:500]
+            import jack_log
+            jack_log.log_decision("APPROVE-FIX", f"{fix_id}: {output[:80]}")
+            return f"Fix ausgefuehrt:\n{output}"
+        except Exception as _e:
+            return f"Fehler bei Fix-Ausfuehrung: {str(_e)[:200]}"
     if raw.startswith("/merke "):
         inhalt = raw[7:].strip()
         cat, tags = "general", ""
