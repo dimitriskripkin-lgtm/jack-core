@@ -52,8 +52,22 @@ def _sec(key):
 
 def toast(msg):
     """Visuelles Feedback auf Xiaomi-Display."""
-    _sh(f"termux-toast -s '{str(msg)[:80]}'")
+    _sh(f"termux-toast -g middle -s '{str(msg)[:80]}'")
 
+
+
+def _adb(cmd):
+    import subprocess
+    r = subprocess.run(f'adb -s 127.0.0.1:5555 shell {cmd}',
+                      shell=True, capture_output=True, text=True)
+    return r.stdout.strip(), r.stderr.strip(), r.returncode
+
+def adb_setup():
+    import subprocess, time
+    _sh('setprop service.adb.tcp.port 5555', root=True)
+    _sh('stop adbd && start adbd', root=True)
+    time.sleep(2)
+    subprocess.run('adb connect 127.0.0.1:5555', shell=True, capture_output=True)
 
 # ─── ANDROID SYSTEM ───────────────────────────────────────────────────────────
 
@@ -95,19 +109,19 @@ def launch_app(package, activity=None):
 
 def tap(x, y):
     toast(f"JACK: Tippe {x},{y}")
-    _sh(f"input tap {x} {y}", root=True)
+    _adb(f"input tap {x} {y}")
     time.sleep(0.3)
 
 def swipe(x1, y1, x2, y2, ms=300):
-    _sh(f"input swipe {x1} {y1} {x2} {y2} {ms}", root=True)
+    _adb(f"input swipe {x1} {y1} {x2} {y2} {ms}")
     time.sleep(0.5)
 
 def type_text(text):
     safe = text.replace("'", "").replace('"', "").replace(" ", "%s")
-    _sh(f"input text '{safe}'", root=True)
+    _adb(f"input text '{safe}'")
 
 def keyevent(code):
-    _sh(f"input keyevent {code}", root=True)
+    _adb(f"input keyevent {code}")
 
 
 # ─── UI BAUM ──────────────────────────────────────────────────────────────────
@@ -117,6 +131,9 @@ def get_ui_tree():
     out = ""
     code = 1  # MIUI: kein stdout, immer via Datei
     if code != 0 or "<hierarchy" not in out:
+        _sh("pkill -9 uiautomator", root=True)
+        import time
+        time.sleep(1.5)
         _sh("uiautomator dump /sdcard/jack_ui.xml", root=True)
         out, _, _ = _sh("cat /sdcard/jack_ui.xml", root=True)
     if not out or "<hierarchy" not in out:
@@ -161,13 +178,8 @@ def xml_state_diff(tree1, tree2):
     return set(e["text"] for e in tree1) != set(e["text"] for e in tree2)
 
 def wait_for_ui_change(prev_tree, timeout=8, interval=0.5):
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        time.sleep(interval)
-        new_tree = get_ui_tree()
-        if xml_state_diff(prev_tree, new_tree):
-            return new_tree
-    return None
+    time.sleep(5)
+    return get_ui_tree()
 
 
 # ─── SCREENSHOT + SOM ─────────────────────────────────────────────────────────
@@ -207,8 +219,7 @@ def add_som_markers(img, elements):
     scale_x = w_img / DISPLAY_W
     scale_y = h_img / DISPLAY_H
     for el in elements:
-        if not el["clickable"]:
-            continue
+        pass  # clickable nicht filtern - MIUI setzt clickable oft falsch
         x1, y1, x2, y2 = el["bounds"]
         bx1,by1 = int(x1*scale_x), int(y1*scale_y)
         bx2,by2 = int(x2*scale_x), int(y2*scale_y)
@@ -302,13 +313,20 @@ def analyze_screen(goal, elements=None, img=None):
     url = (f"https://generativelanguage.googleapis.com/v1beta/"
            f"models/gemini-2.5-flash-lite:generateContent?key={api_key}")
     try:
-        req = urllib.request.Request(url, data=payload,
-                                     headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            data = json.loads(resp.read())
-        text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-        text = text.replace("```json","").replace("```","").strip()
-        return json.loads(text)
+        for versuch in range(3):
+            try:
+                import time
+                req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'})
+                with urllib.request.urlopen(req, timeout=20) as resp:
+                    data = json.loads(resp.read())
+                text = data['candidates'][0]['content']['parts'][0]['text'].strip()
+                text = text.replace('```json','').replace('```','').strip()
+                return json.loads(text)
+            except Exception as e:
+                if versuch < 2:
+                    time.sleep(2 ** versuch)
+                else:
+                    return {'action':'error','reason':str(e)[:200]}
     except Exception as e:
         return {"action": "error", "reason": str(e)[:200]}
 
@@ -358,6 +376,23 @@ def execute_action(action_dict, elements):
     return None, None  # Weiter
 
 
+
+def find_element_smart(elements, goal):
+    """Lokale Suche im XML bevor Gemini gerufen wird.
+    Gibt Element zurueck wenn Treffer, sonst None."""
+    import re
+    keywords = [w.lower() for w in re.split(r"[ ,.-]+", goal) if len(w) > 2]
+    best, best_score = None, 0
+    for el in elements:
+        pass  # clickable nicht filtern - MIUI setzt clickable oft falsch
+        haystack = (el["text"] + " " + el["desc"]).lower()
+        score = sum(1 for kw in keywords if kw in haystack)
+        if score > best_score:
+            best, best_score = el, score
+    if best_score >= 1:
+        return best
+    return None
+
 # ─── HAUPTSCHLEIFE ────────────────────────────────────────────────────────────
 
 def run(goal, app_package=None, app_activity=None, max_rounds=10):
@@ -366,6 +401,7 @@ def run(goal, app_package=None, app_activity=None, max_rounds=10):
     Beispiel: run("Oeffne WhatsApp und lies letzte Nachricht",
                   app_package="com.whatsapp")
     """
+    adb_setup()
     toast(f"JACK: {goal[:50]}")
 
     if app_package:
@@ -386,6 +422,22 @@ def run(goal, app_package=None, app_activity=None, max_rounds=10):
         if prev_tree and not xml_state_diff(prev_tree, elements):
             time.sleep(0.8)
             elements = get_ui_tree()
+
+        # Erst lokal suchen - kein API-Call wenn Treffer
+        local_hit = find_element_smart(elements, goal)
+        if local_hit:
+            toast(f"JACK: Lokal gefunden - {local_hit['text'][:25]}")
+            tap(*local_hit["center"])
+            prev_tree = elements
+            wait_for_ui_change(elements, timeout=5)
+            elements = get_ui_tree()
+            # Pruefen ob Ziel erreicht
+            result = analyze_screen(f"Wurde das Ziel erreicht? Ziel war: {goal}", elements)
+            done, msg = execute_action(result, elements)
+            if done is True:
+                cleanup_screenshots()
+                return True, msg
+            continue
 
         result = analyze_screen(goal, elements)
         done, msg = execute_action(result, elements)
