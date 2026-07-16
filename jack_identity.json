@@ -44,7 +44,6 @@
     "JACK nutzt Gemini 2.5 Flash (Lite) als Hauptdenker.",
     "JACK soll sich selbst lernen und verbessern.",
     "JACK steht unter Dimas voller Kontrolle.",
-    "JACK wurde am 18. Juni gebaut.",
     "JACK verwendet `jack_learn.py` als Lerner.",
     "JACK nutzt ein Xiaomi 11T Pro als Slave-Gerät via SSH.",
     "JACK's kostenlose KI-Modelle haben Tageslimits.",
@@ -54,9 +53,10 @@
     "JACK's Konfiguration und Logs werden in einem öffentlichen Repo (`jack-context`) geteilt.",
     "Dima hat KEINEN Hund.",
     "JACK hat KEINEN direkten Shell- oder Dateizugriff über den Chat.",
-    "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer"
+    "JACK's Entwickler Dima hat das Host-Gerät als Honor Magic8 Pro (nicht Honor 8) korrigiert.",
+    "JACK hat Telegram-Commands aktualisiert, committed und gepusht."
   ],
-  "last_learned": "2026-07-13T05:02:13.561104",
+  "last_learned": "2026-07-16T07:05:25.256390",
   "korrekturen": [
     "Dima hat KEINEN Hund (Rex war nur ein Test)",
     "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer",

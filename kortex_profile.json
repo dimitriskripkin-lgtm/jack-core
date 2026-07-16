@@ -2,7 +2,7 @@
   "meta": {
     "version": "2.0",
     "generated": "2026-07-13T04:13:12.992555",
-    "profile_updated": "2026-07-13T09:02:29.012681"
+    "profile_updated": "2026-07-14T23:04:37.146931"
   },
   "owner": {
     "name": "Dimitri",
@@ -12,7 +12,10 @@
     "arbeitszeit": "nachts, Marathon-Pace, iterativ",
     "notizen": [
       "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer.",
-      "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht)."
+      "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht).",
+      "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht), KEIN Fernfahrer.",
+      "Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht), KEIN Fernfahrer.",
+      "Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht)."
     ]
   },
   "projekte": [
@@ -20,7 +23,7 @@
       "name": "JACK",
       "status": "aktiv",
       "beschreibung": "Persoenliche KI-Betriebsschicht auf Android/Termux",
-      "naechster_schritt": "JACK Projekt naechster Schritt: Voice-Bug fixen auf Xiaomi"
+      "naechster_schritt": "JACK hat Telegram-Commands aktualisiert, committed und gepusht."
     },
     {
       "name": "Wohnung Essen",

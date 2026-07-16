@@ -4,7 +4,7 @@ import os, re, socket, subprocess, sqlite3, shutil
 from datetime import datetime
 
 H = os.path.expanduser("~/jack")
-XIP, XPORT = "10.234.166.131", 8022
+XIP, XPORT = "10.244.147.131", 8022
 
 def _dienste():
     r = subprocess.run("sv status jack_cortex jack_telegram jack_autolearn jack_publisher jack_waechter ollama", shell=True, capture_output=True, text=True)

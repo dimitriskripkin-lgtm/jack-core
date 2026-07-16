@@ -42,7 +42,7 @@ Stand: {datetime.datetime.now().isoformat()}
 {gitlog}
 
 ## Architektur
-Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.234.166.131:8022).
+Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
 Gehirn: Gemini 2.5 Flash + llama3.2:3b Fallback + nomic-embed-text.
 Gedaechtnis 3-Tier (MemGPT-Muster): Core=identity.json, Recall=Verlauf, Archival=sqlite-vec.
 Selbstlernen: jack_learn.py alle 2h. Interfaces: Telegram + Voice.

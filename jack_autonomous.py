@@ -37,7 +37,7 @@ def _up(n):
 def _xi():
     try:
         return subprocess.run(["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),"-o","BatchMode=yes",
-          "-o","StrictHostKeyChecking=no","-o","ConnectTimeout=6","-p","8022","root@10.234.166.131","true"],
+          "-o","StrictHostKeyChecking=no","-o","ConnectTimeout=6","-p","8022","root@10.244.147.131","true"],
           capture_output=True,timeout=12).returncode==0
     except Exception: return False
 
