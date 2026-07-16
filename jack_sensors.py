@@ -2,7 +2,7 @@
 """JACK Sinne: Xiaomi-Sensoren via SSH + Gemini Vision (Augen)."""
 import os, json, base64, subprocess, urllib.request
 
-XIAOMI="10.234.166.131"; PORT="8022"; KEY=os.path.expanduser("~/.ssh/id_jack")
+XIAOMI="10.244.147.131"; PORT="8022"; KEY=os.path.expanduser("~/.ssh/id_jack")
 
 def _ssh(cmd, timeout=30):
     full=["ssh","-i",KEY,"-o","BatchMode=yes","-o","StrictHostKeyChecking=no",

@@ -55,7 +55,7 @@ def find_xiaomi():
         except Exception:
             pass
     for i in range(2, 255):
-        ip = f"10.234.166.{i}"
+        ip = f"10.244.147.{i}"
         if ip == known:
             continue
         if _ssh_ok(ip):

@@ -25,7 +25,7 @@ def collect_status():
         status["recent_errors"] = [r[0][:100] for r in recent]
         con.close()
     except: status["open_errors"] = "unknown"
-    ping = subprocess.run(["ping", "-c", "1", "-W", "2", "10.234.166.131"], capture_output=True)
+    ping = subprocess.run(["ping", "-c", "1", "-W", "2", "10.244.147.131"], capture_output=True)
     status["xiaomi_reachable"] = ping.returncode == 0
     return status
 
@@ -37,7 +37,7 @@ def ask_gemini(question, status=None):
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={key}"
     system = (
         "Du bist JACKs Reasoning-Layer. JACK laeuft auf Honor Magic8 Pro (Termux). "
-        "Slave: Xiaomi 11T Pro via SSH (10.234.166.131:8022, Key ~/.ssh/id_jack). "
+        "Slave: Xiaomi 11T Pro via SSH (10.244.147.131:8022, Key ~/.ssh/id_jack). "
         "Antworten: kurz, technisch, direkt. Kein Bullshit. Deutsch."
     )
     content = f"SYSTEM-STATUS:\n{json.dumps(status, indent=2)}\n\nFRAGE: {question}" if status else question
