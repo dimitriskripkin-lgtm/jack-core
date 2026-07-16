@@ -45,7 +45,7 @@ def _sec(key):
                 if "=" in line and not line.startswith("#"):
                     k, v = line.split("=", 1)
                     if k.strip() == key:
-                        return v.strip()
+                        return v.strip().strip('"').strip("'") 
     except Exception:
         pass
     return ""
@@ -67,7 +67,7 @@ def get_display_size():
         return DISPLAY_W, DISPLAY_H
 
 def get_current_focus():
-    out, _, _ = _sh("dumpsys window windows | grep mCurrentFocus", root=True)
+    out, _, _ = _sh("dumpsys window windows | grep -E 'mCurrentFocus|mFocusedApp'", root=True)
     return out.strip()
 
 def clear_popups(max_tries=5):
@@ -114,7 +114,8 @@ def keyevent(code):
 
 def get_ui_tree():
     """uiautomator XML dump -> geparste Element-Liste."""
-    out, _, code = _sh("uiautomator dump /dev/stdout", root=True)
+    out = ""
+    code = 1  # MIUI: kein stdout, immer via Datei
     if code != 0 or "<hierarchy" not in out:
         _sh("uiautomator dump /sdcard/jack_ui.xml", root=True)
         out, _, _ = _sh("cat /sdcard/jack_ui.xml", root=True)
@@ -299,7 +300,7 @@ def analyze_screen(goal, elements=None, img=None):
     }).encode()
 
     url = (f"https://generativelanguage.googleapis.com/v1beta/"
-           f"models/gemini-2.0-flash-lite:generateContent?key={api_key}")
+           f"models/gemini-2.5-flash-lite:generateContent?key={api_key}")
     try:
         req = urllib.request.Request(url, data=payload,
                                      headers={"Content-Type": "application/json"})
