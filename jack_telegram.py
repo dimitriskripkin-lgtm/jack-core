@@ -410,6 +410,17 @@ def handle(text):
         con.close()
         if not rows: return "Keine offenen Fehler."
         return "\n".join([f"[{r[0]}] {r[1]}: {r[2][:80]}" for r in rows])
+    elif text.startswith('/xiaomi '):
+        goal = text[8:].strip().lstrip('/').replace('xiaomi ','').strip()
+        if not goal:
+            return "Benutzung: /xiaomi <was soll getan werden>"
+        send("Xiaomi bekommt Auftrag: " + goal + " ...")
+        import jack_xiaomi_cmd
+        result = jack_xiaomi_cmd.xiaomi(goal)
+        if result.get('ok'):
+            return "Xiaomi: erledigt. Getippt auf: " + result.get('aktion','?') + " -> danach: " + result.get('danach','?')
+        else:
+            return "Xiaomi: " + result.get('grund', result.get('gemini', {}).get('reason', 'Fehler'))
     elif text.startswith('/shell '):
         cmd = text[7:]
         return "/shell deaktiviert bis Auth eingebaut (Sicherheit). Naechste Session."
