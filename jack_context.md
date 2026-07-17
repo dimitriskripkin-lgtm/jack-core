@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-16T08:46:19.723882
+Stand: 2026-07-17T08:37:53.196419
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -24,13 +24,14 @@ Stand: 2026-07-16T08:46:19.723882
 - JACK hat Fähigkeiten wie Text- und Sprachchat, sicheres Code schreiben, autonomes Handeln und Selbstverbesserung.
 - JACK nutzt `jack_waechter` für regelbasierte Überwachung und Neustarts.
 - JACK's Konfiguration und Logs werden in einem öffentlichen Repo (`jack-context`) geteilt.
-- Dima hat KEINEN Hund.
+- Dima hat KEINEN Hund (Rex war nur ein Test).
+- Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer.
 - JACK hat KEINEN direkten Shell- oder Dateizugriff über den Chat.
-- JACK's Entwickler Dima hat das Host-Gerät als Honor Magic8 Pro (nicht Honor 8) korrigiert.
 - JACK hat Telegram-Commands aktualisiert, committed und gepusht.
 
-## Aktive Module (49)
+## Aktive Module (52)
 - jack_agent.py
+- jack_android.py
 - jack_approval.py
 - jack_audit.py
 - jack_autonomous.py
@@ -52,6 +53,7 @@ Stand: 2026-07-16T08:46:19.723882
 - jack_memory.py
 - jack_memory_engine.py
 - jack_memory_maintenance.py
+- jack_node_alpha.py
 - jack_operator.py
 - jack_patch.py
 - jack_personality.py
@@ -71,6 +73,7 @@ Stand: 2026-07-16T08:46:19.723882
 - jack_voice_processor.py
 - jack_write.py
 - jack_xiaomi.py
+- jack_xiaomi_cmd.py
 - kortex_controller.py
 - kortex_memory.py
 - kortex_profile_updater.py
@@ -81,15 +84,23 @@ Stand: 2026-07-16T08:46:19.723882
 - voice_service_v2.py
 
 ## System-Status
-- Offene Fehler: 1
+- Offene Fehler: 4
 - Erinnerungen: 121
 - Dienste:
-run: jack_cortex: (pid 21793) 232876s
-run: jack_telegram: (pid 28408) 81715s
-run: jack_autolearn: (pid 20689) 459380s
-run: ollama: (pid 20694) 459380s
+run: jack_cortex: (pid 21793) 318770s
+run: jack_telegram: (pid 11956) 72426s
+run: jack_autolearn: (pid 20689) 545274s
+run: ollama: (pid 20694) 545274s
 
 ## Letzte Aenderungen
+a7ea6e2 Merge branch 'master' of https://github.com/dimitriskripkin-lgtm/jack-core
+3dcb140 fix: /xiaomi handler + telegram fixes
+0ed075c feat: Node Alpha Lern-System, Skill-Generator gefixt
+340dba9 feat: jack_xiaomi_cmd - Telegram /xiaomi Loop komplett, ADB tap funktioniert
+7299e40 feat: jack_node_alpha daemon + ADB tap funktioniert autonom
+6435547 fix: MIUI uiautomator via Datei, Gemini 2.5-flash-lite, Quote-Strip
+f52ad49 feat: jack_android
+a84c96e fix: IP 10.234.166.x -> 10.244.147.x in allen Modulen
 6913a0a feat: Circuit Breaker in jack_agent - Abbruch nach 3x gleichem Fehler
 e213119 chore: Karpathy-Guidelines in AGENTS.md integriert
 6e0e880 feat: voice_poller.sh + record_trigger.sh - Mikrofon-Trigger fuer Xiaomi
@@ -97,14 +108,6 @@ e213119 chore: Karpathy-Guidelines in AGENTS.md integriert
 37f5dec feat: voice_service_v2 Poller-Ansatz - non-blocking Aufnahme funktioniert
 2602703 feat: send_webapp + /radar_ergebnisse Telegram-Button
 cf8bb21 feat: WebApp-Routen /radar/webapp und /radar/kleinanzeigen
-08306dd fix: Xiaomi IP 10.234->10.244 in jack_config.py
-9cfeba1 chore: Xiaomi IP auf 10.244.147.131 aktualisiert
-9e6b605 feat: /radar_an /radar_aus /vinted_an /vinted_aus /radar_intervall /vinted_intervall
-8459198 chore: Config-Dateien mit Tokens aus Git entfernt
-859f8bd feat: jack_vinted_radar.py - Vinted Radar live, 96 Items gefunden
-592e323 feat: Radar Parser JSON-LD, 20 Treffer live - vorerst deaktiviert
-529f84c feat: jack_radar.py - Kleinanzeigen Radar Grundgeruest
-c7a1a38 feat: FTS5 Zeitdaempfung - Score sinkt nach 14 Tagen ohne Abruf
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
