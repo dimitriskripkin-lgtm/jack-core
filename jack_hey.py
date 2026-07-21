@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.expanduser("~/jack"))
 
 HOME = os.path.expanduser("~")
 WHISPER = HOME + "/whisper.cpp/build/bin/whisper-cli"
-MODEL = HOME + "/whisper.cpp/models/ggml-base.bin"
+MODEL = HOME + "/whisper.cpp/models/ggml-small.bin"
 REC = HOME + "/.jack_hey.m4a"
 WAV = HOME + "/.jack_hey.wav"
 RESP = HOME + "/.jack_hey_resp.mp3"
@@ -35,6 +35,19 @@ def verstehen():
 
 def denken(text):
     low = text.lower()
+    if any(w in low for w in ("merk dir","merke dir","notiz","vergiss nicht","speicher")):
+        notiz = text
+        for prefix in ("merk dir","merke dir","notiz","vergiss nicht","speicher","jack"):
+            notiz = notiz.lower().replace(prefix,"").strip(" ,:")
+        import jack_memory
+        jack_memory.save("Notiz von Dima", notiz, "notiz")
+        return "Notiert. Ich hab mir gemerkt: " + notiz
+    if any(w in low for w in ("skill","fuehr aus","mach einen","ram","disk","fehler","budget","modell")):
+        import jack_skills
+        for name in ["ram_check","disk_check","fehler_report","budget_rest","modell_check","gedaechtnis_stats","jack_status"]:
+            if name.replace("_"," ") in low or name.split("_")[0] in low:
+                ok, out = jack_skills.run_skill(name)
+                if ok: return "Hier das Ergebnis: " + out[:300]
     if any(w in low for w in ("status","audit","systemcheck","laeuft alles","läuft alles","wie steht")):
         import jack_audit
         r = jack_audit.report()
