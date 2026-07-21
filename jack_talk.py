@@ -107,7 +107,7 @@ def run_voice_loop():
             print(f'JACK: {response}')
             
             # Truncate for TTS to prevent timeout
-            speak_text = response if len(response) < 400 else (response[:397] + "...")
+            speak_text = response if len(response) < 3000 else (response[:2997] + "...")
             jack_voice_el.speak(speak_text)
             
             auto_save_to_memory(user_input, response)
