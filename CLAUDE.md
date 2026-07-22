@@ -32,6 +32,7 @@ Nachtschicht = Primetime. Hobby-Programmierer, will ALLES verstehen (kein Black-
 - jack_publisher-> jack_publish.py     (sanitierte Umgebung ins oeffentliche Repo, alle 3min)
 - jack_waechter -> jack_autonomous.py  (regelbasierter Nacht-Waechter, KEIN LLM, restartet
                                         tote Dienste, meldet echte Probleme per Telegram)
+- jack_oracle   -> jack_oracle.py     (Claude<->JACK Kanal via jack-commands, pollt 60s)
 - ollama        -> lokaler Modell-Server
 
 ## Module (Landkarte)

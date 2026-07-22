@@ -23,7 +23,8 @@ Offline-first, unter Dimas voller Kontrolle. Exit-Vehicle fuer Unabhaengigkeit.
    (/verbessere Selbstverbesserung mit Auto-Rollback), jack_patch (SEARCH/REPLACE), jack_bug_fixer.
 7. AUTONOM (regelbasiert, KEIN freies LLM): jack_cortex (Watchdog Xiaomi+Heilung),
    jack_waechter=jack_autonomous.py (Nacht-Waechter, restartet tote Dienste, meldet echte
-   Probleme), jack_autolearn (Heartbeat 2h), jack_publisher (Live-Umgebung ins Repo, 3min).
+   Probleme), jack_autolearn (Heartbeat 2h), jack_publisher (Live-Umgebung ins Repo, 3min),
+   jack_oracle (Claude<->JACK bidirekt. Kanal via GitHub, pollt 60s).
 
 ## Interfaces
 Telegram-Bot @JackDimaChat_bot: Text + Sprache (whisper.cpp -> Gemini -> ElevenLabs).
