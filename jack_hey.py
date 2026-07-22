@@ -47,7 +47,7 @@ def denken(text):
         for name in ["ram_check","disk_check","fehler_report","budget_rest","modell_check","gedaechtnis_stats","jack_status"]:
             if name.replace("_"," ") in low or name.split("_")[0] in low:
                 ok, out = jack_skills.run_skill(name)
-                if ok: return "Hier das Ergebnis: " + out[:300]
+                if ok: return "Hier das Ergebnis: " + out[:300] + "\n\n⚡ Direkt (kein API)"
     if any(w in low for w in ("status","audit","systemcheck","laeuft alles","läuft alles","wie steht")):
         import jack_audit
         r = jack_audit.report()
