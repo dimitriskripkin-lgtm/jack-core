@@ -3,7 +3,7 @@ import subprocess
 from elevenlabs.client import ElevenLabs
 
 WHISPER_PATH = os.path.expanduser("~/whisper.cpp/build/bin/whisper-cli")
-MODEL_PATH = os.path.expanduser("~/whisper.cpp/models/ggml-base.bin")
+MODEL_PATH = os.path.expanduser("~/whisper.cpp/models/ggml-small.bin")
 SECRETS = os.path.expanduser("~/.jack_secrets")
 
 def get_secret(key):
@@ -14,6 +14,41 @@ def get_secret(key):
     return None
 
 def process_voice_message(ogg_path):
+    wav_path = ogg_path.replace(".ogg", ".wav")
+    resp_wav = ogg_path.replace(".ogg", "_resp.wav")
+    try:
+        subprocess.run(["ffmpeg","-y","-i",ogg_path,"-ar","16000","-ac","1","-c:a","pcm_s16le",wav_path], check=True, capture_output=True)
+    except Exception as e:
+        return None, "", f"ffmpeg-Fehler: {e}"
+    try:
+        result = subprocess.run([WHISPER_PATH,"-m",MODEL_PATH,"-f",wav_path,"-l","de","-nt","-t","6"], capture_output=True, text=True)
+        text = " ".join(result.stdout.split()).strip()
+    except Exception as e:
+        return None, "", f"Whisper-Fehler: {e}"
+    if not text:
+        return None, "", "Nichts verstanden - nochmal?"
+    try:
+        if text.lower().strip().startswith("claude"):
+            import jack_claude
+            response_text = jack_claude.ask_claude(text)
+        else:
+            from jack_talk import talk_to_gemini
+            response_text = talk_to_gemini(text)
+    except Exception as e:
+        return None, text, f"Denk-Fehler: {e}"
+    try:
+        client = ElevenLabs(api_key=get_secret("ELEVENLABS_API_KEY"))
+        audio = client.text_to_speech.convert(text=response_text, voice_id=get_secret("ELEVENLABS_VOICE_ID"), model_id="eleven_flash_v2_5")
+        with open(resp_wav,"wb") as f:
+            for chunk in audio: f.write(chunk)
+    except Exception as e:
+        return None, text, f"TTS-Fehler: {e}"
+    try:
+        os.remove(wav_path)
+    except Exception:
+        pass
+    return resp_wav, text, response_text
+def _DEAD_ORIGINAL_process_voice_message(ogg_path):
     wav_path = ogg_path.replace(".ogg", ".wav")
     
     # Audio konvertieren
