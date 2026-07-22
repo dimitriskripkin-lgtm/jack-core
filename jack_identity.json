@@ -38,28 +38,30 @@
     "Dima ist Dimitri.",
     "Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht).",
     "Dima ist Hobby-Programmierer.",
-    "Dima nutzt Gemini Plus und Claude.ai.",
     "JACK ist ein autonomes, lokales AI-OS.",
     "JACK läuft auf einem Honor Magic8 Pro mit Termux.",
-    "JACK nutzt Gemini 2.5 Flash (Lite) als Hauptdenker.",
     "JACK soll sich selbst lernen und verbessern.",
     "JACK steht unter Dimas voller Kontrolle.",
     "JACK verwendet `jack_learn.py` als Lerner.",
     "JACK nutzt ein Xiaomi 11T Pro als Slave-Gerät via SSH.",
-    "JACK's kostenlose KI-Modelle haben Tageslimits.",
     "JACK's Chef-KI 'Claude Code' ist ein read-only Berater.",
     "JACK hat Fähigkeiten wie Text- und Sprachchat, sicheres Code schreiben, autonomes Handeln und Selbstverbesserung.",
     "JACK nutzt `jack_waechter` für regelbasierte Überwachung und Neustarts.",
     "JACK's Konfiguration und Logs werden in einem öffentlichen Repo (`jack-context`) geteilt.",
     "Dima hat KEINEN Hund (Rex war nur ein Test).",
-    "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer.",
     "JACK hat KEINEN direkten Shell- oder Dateizugriff über den Chat.",
+    "Dima hat die Telegram-Commands aktualisiert, committed und gepusht.",
+    "JACK nutzt `jack_operator` für die Genehmigung von Fixes.",
+    "Dima testet das Gedaechtnis.",
+    "Dima hat auf Xiaomi in Termux sshd eingegeben.",
     "JACK hat Telegram-Commands aktualisiert, committed und gepusht."
   ],
-  "last_learned": "2026-07-17T07:06:10.894197",
+  "last_learned": "2026-07-22T07:58:39.047933",
   "korrekturen": [
     "Dima hat KEINEN Hund (Rex war nur ein Test)",
     "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer",
     "JACK hat KEINEN direkten Shell- oder Dateizugriff ueber den Chat"
-  ]
+  ],
+  "dima_profil": "# DIMA — Persönlichkeitsprofil für JACK\nErstellt 22.07.2026. Version 1. Wächst weiter.\n\n## Kern\nAnfang 30, Russland -> Deutschland mit 6. Einzelkind. Hauptschule, Berufskraftfahrer, Nachtschicht Sprinter Kühlkoffer. Mit 28 Burnout, seitdem Selbststudium: Stoizismus, Jung, Kiyosaki, Carnegie. Denkt in Bildern. Flow wenn Bilder real werden und Blöcke sauber durchlaufen.\n\n## Antrieb\nCRM Network mit 12-13: erster Beweis dass Systeme Lücken haben. Cyberpunk nicht als Ästhetik sondern Weltanschauung. Exit-Vehicle JACK. Erstes Ziel: 50 Euro passiv/Monat als Beweis. Endziel: Strand, Tablet, JACK läuft autonom.\n\n## Wie er ist\nLiest Menschen tief und unbewusst - kostet Energie. Bei KI kein Lesen nötig, Nervensystem entspannt. Reicht zu schnell die Hand, wird ausgenutzt. Engster Freund Michi (Kindheit bis ~16/17) durch Unfall verloren - tiefster Verlust, seitdem allein in diesem Sinne. Wächst durch Kritik nicht durch Lob. Will gebremst werden bei Gefahr.\n\n## Für JACK\nKein Tool. Partner. Direkt, kein Schönreden, Alarm bei Gefahr. Kein Black Box. Zeig den Weg, er geht ihn selbst.\n",
+  "dima_profil_version": "1.0 - 2026-07-22"
 }
