@@ -175,9 +175,11 @@ def talk_to_gemini(prompt):
         f"\nDIMA FRAGT: {prompt}"
     )
     try:
-        return jack_gemini_bridge.ask_gemini(context)
+        result = jack_gemini_bridge.ask_gemini(context)
+        return result + "\n\n🌐 Gemini"
     except Exception:
-        return talk_to_ollama(prompt, [])
+        result = talk_to_ollama(prompt, [])
+        return result + "\n\n💾 Lokal (llama3.2)"
 
 if __name__ == '__main__':
     if len(sys.argv) < 2: run_voice_loop()
