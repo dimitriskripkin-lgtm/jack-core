@@ -156,7 +156,10 @@ def talk_to_gemini(prompt):
         id_ctx = "(keine)"
     hist = get_recent_history(6)
     hist_ctx = "\n".join([f"Dima: {c} | JACK: {r[:150]}" for c, r in hist]) if hist else "(keiner)"
-    _now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    _dt = datetime.datetime.now()
+    _wochentage = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"]
+    _monate = ["","Januar","Februar","Maerz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"]
+    _now = f"{_wochentage[_dt.weekday()]}, {_dt.day}. {_monate[_dt.month]} {_dt.year}, {_dt.strftime('%H Uhr %M')}"
     context = (
         f"AKTUELLE UHRZEIT JETZT: {_now}. Alles andere unten ist Vergangenheit.\n"
         "Du bist JACK, Dimas System auf dem Honor. Die Erinnerungen und der Verlauf unten "
