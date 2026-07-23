@@ -474,7 +474,10 @@ def handle_callback(callback_query):
         d = _json.dumps({"callback_query_id": cbid, "text": "Wird ausgefuehrt..."}).encode()
         req = urllib.request.Request(API+"/answerCallbackQuery", data=d, headers={"Content-Type":"application/json"})
         urllib.request.urlopen(req, timeout=5)
-    except: pass
+    except Exception as _e:
+        try:
+            import jack_log; jack_log.log_decision("TG-EXCEPT", str(_e)[:100])
+        except: pass
     if cid == "oracle_result":
         try:
             r = _json.load(open(os.path.expanduser("~/jack-commands/jack_result.json")))
@@ -497,7 +500,11 @@ def main():
     try:
         _init = get_updates(-1)
         offset = _init[-1]["update_id"] + 1 if _init else 0
-    except: offset = 0
+    except Exception as _e:
+        offset = 0
+        try:
+            import jack_log; jack_log.log_decision("TG-OFFSET-ERR", str(_e)[:100])
+        except: pass
     while True:
         updates = get_updates(offset)
         for u in updates:

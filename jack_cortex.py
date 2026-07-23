@@ -25,7 +25,10 @@ def log_error(msg):
             with sqlite3.connect(ERROR_DB) as con:
                 con.execute("INSERT INTO errors (module, error_type, error_msg, file_path, line_num, context, resolved, timestamp) VALUES ('jack_cortex', 'CORTEX_ERR', ?, ?, ?, ?, 0, datetime('now'))", (msg, file_path, line_num, context))
                 con.commit()
-        except: pass
+        except Exception as _e:
+            try:
+                import jack_log; jack_log.log_decision("CORTEX-EXCEPT", str(_e)[:100])
+            except: pass
 
 
 
