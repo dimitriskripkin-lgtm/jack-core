@@ -40,7 +40,9 @@ def resolve_alias(cmd):
 def is_safe(cmd):
     KILL=["rm -rf","rmtree","os.remove","os.unlink","drop table","delete from",
           "mkfs","dd if=","eval(","exec(","os.environ","jack_secrets","api_key",
-          ".ssh/","urllib","requests.","socket","curl","wget","nc ","netcat"]
+          ".ssh/","urllib","requests.","socket","curl","wget","nc ","netcat",
+          "|","&&","||",";","$(","\`",">",">>"]
+    # Shell-Injection-Schutz: Pipes und Chaining verbieten
     ALLOW=["echo","sv","free","df","ls","cat","git","ollama","sqlite3",
            "python3","termux-battery-status","termux-wifi-connectioninfo",
            "pwd","date","uptime","grep","wc","head","tail"]
@@ -86,6 +88,7 @@ def push_result(uuid,cmd,result,status):
         shell=True,capture_output=True,timeout=30)
 
 def cycle():
+    orig_cmd = ""
     d=fetch_cmd()
     if not d: return
     uuid=d.get("uuid",""); cmd=d.get("cmd","").strip()
@@ -100,7 +103,7 @@ def cycle():
         push_result(uuid,cmd,"BLOCKIERT: "+reason,"blocked"); return
     result=run_cmd(cmd)
     push_result(uuid,cmd,result,"ok")
-    _telegram_send("Oracle [" + cmd + "]:" + chr(10) + result[:2000])
+    _telegram_send("Oracle [" + orig_cmd + "]:" + chr(10) + result[:2000])
 
 if __name__=="__main__":
     print("JACK Oracle laeuft. Polling alle 60s...")
