@@ -35,6 +35,14 @@ def send(text):
     except Exception as e:
         print(f"Send-Fehler: {e}")
 
+def send_buttons(text, buttons):
+    """Schickt Nachricht mit Inline-Buttons. buttons = [["Label","callback_data"],...]"""
+    keyboard = {"inline_keyboard": [[{"text": b[0], "callback_data": b[1]}] for b in buttons]}
+    data = json.dumps({"chat_id": CHAT_ID, "text": text, "reply_markup": json.dumps(keyboard)}).encode()
+    req = urllib.request.Request(API+"/sendMessage", data=data, headers={"Content-Type":"application/json"})
+    try: urllib.request.urlopen(req, timeout=10)
+    except Exception as e: print("Button-Fehler:", e)
+
 def get_voice(file_id, out_path):
     url = f"{API}/getFile?file_id={file_id}"
     with urllib.request.urlopen(url) as res:
@@ -158,7 +166,18 @@ def handle(text):
     global PENDING_WRITE, PENDING_IMPROVE
     raw = text.strip()
     if raw.strip().split("@")[0] == "/befehle":
-        return '/oracle dienste - alle Dienste\n/oracle ram - Arbeitsspeicher\n/oracle speicher - Festplatte Termux\n/oracle fehler - offene Fehler\n/oracle datum - Systemzeit\n/oracle uptime - Laufzeit\n/oracle modelle - Ollama Modelle\n/oracle budget - API Verbrauch heute\n/oracle log - letzte 10 Aktionen\nDann: /oracle_result'
+        buttons = [
+            ["Dienste Status", "oracle:dienste"],
+            ["RAM Check", "oracle:ram"],
+            ["Fehler anzeigen", "oracle:fehler"],
+            ["Budget heute", "oracle:budget"],
+            ["Letzte Aktionen", "oracle:log"],
+            ["Datum & Uhrzeit", "oracle:datum"],
+            ["Ollama Modelle", "oracle:modelle"],
+            ["Letztes Ergebnis", "oracle_result"],
+        ]
+        send_buttons("JACK Oracle - was moechtest du wissen?", buttons)
+        return None
     if raw.strip().split("@")[0] == "/audit":
         import jack_audit; return jack_audit.report()
     text = raw.lower()
@@ -444,6 +463,32 @@ def handle(text):
         _r = jack_talk.talk_to_gemini(text)
         jack_talk.auto_save_to_memory(text, _r)
         return _r[:1500]
+
+def handle_callback(callback_query):
+    """Verarbeitet Button-Druecken."""
+    import time, json as _json, os, subprocess
+    cid = callback_query.get("data","")
+    cbid = callback_query.get("id","")
+    # Antwort an Telegram (Pflicht)
+    try:
+        d = _json.dumps({"callback_query_id": cbid, "text": "Wird ausgefuehrt..."}).encode()
+        req = urllib.request.Request(API+"/answerCallbackQuery", data=d, headers={"Content-Type":"application/json"})
+        urllib.request.urlopen(req, timeout=5)
+    except: pass
+    if cid == "oracle_result":
+        try:
+            r = _json.load(open(os.path.expanduser("~/jack-commands/jack_result.json")))
+            send("Ergebnis (" + r.get("uuid","?") + "):\n" + r.get("result","?")[:1500])
+        except Exception as e:
+            send("Kein Ergebnis: " + str(e))
+    elif cid.startswith("oracle:"):
+        cmd = cid[7:]
+        uid = "btn-" + str(int(time.time()))
+        data = {"cmd": cmd, "uuid": uid, "ts": time.strftime("%Y-%m-%d %H:%M:%S")}
+        repo = os.path.expanduser("~/jack-commands")
+        open(os.path.join(repo,"jack_cmd.json"),"w").write(_json.dumps(data))
+        subprocess.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
+        send("Laeuft... druecke in 60s auf 'Letztes Ergebnis'")
 
 def main():
     send("JACK Telegram-Bridge online (mit Voice-Support).")
