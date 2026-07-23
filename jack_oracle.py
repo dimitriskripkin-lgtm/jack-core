@@ -18,6 +18,25 @@ def last_uuid():
 
 def save_uuid(uid): open(SEEN,"w").write(uid)
 
+ALIASES = {
+    "dienste": "sv status jack_cortex jack_telegram jack_autolearn jack_publisher jack_waechter jack_oracle ollama",
+    "ram": "free -h",
+    "speicher": "df -h /data/data/com.termux/files",
+    "fehler": "python3 -c \"import sqlite3,os; con=sqlite3.connect(os.path.expanduser('~/jack/jack_errors.db')); [print(r) for r in con.execute('SELECT timestamp,module,error_msg FROM errors WHERE resolved=0 ORDER BY id DESC LIMIT 5').fetchall()]\"",
+    "datum": "date",
+    "uptime": "uptime",
+    "modelle": "ollama list",
+    "budget": "python3 -c \"import sys,os; sys.path.insert(0,os.path.expanduser('~/jack')); import jack_budget; print(jack_budget.status())\"",
+    "ram_check": "free -h",
+    "log": "tail -10 /data/data/com.termux/files/home/jack/jack_decisions.log",
+}
+
+def resolve_alias(cmd):
+    low = cmd.strip().lower()
+    if low in ALIASES:
+        return ALIASES[low], low
+    return cmd, cmd
+
 def is_safe(cmd):
     KILL=["rm -rf","rmtree","os.remove","os.unlink","drop table","delete from",
           "mkfs","dd if=","eval(","exec(","os.environ","jack_secrets","api_key",
@@ -41,6 +60,12 @@ def run_cmd(cmd):
 def push_result(uuid,cmd,result,status):
     data={"uuid":uuid,"cmd":cmd,"status":status,"result":result,
           "ts":time.strftime("%Y-%m-%d %H:%M:%S")}
+    stack_path=os.path.join(LOCAL,"jack_results_stack.json")
+    try: stack=json.load(open(stack_path))
+    except: stack=[]
+    stack.insert(0,data)
+    stack=stack[:5]
+    json.dump(stack,open(stack_path,"w"),ensure_ascii=False,indent=2)
     open(os.path.join(LOCAL,"jack_result.json"),"w").write(
         json.dumps(data,ensure_ascii=False,indent=2))
     subprocess.run(
@@ -53,6 +78,7 @@ def cycle():
     if not d: return
     uuid=d.get("uuid",""); cmd=d.get("cmd","").strip()
     if not uuid or not cmd or uuid==last_uuid(): return
+    cmd, alias = resolve_alias(cmd)
     save_uuid(uuid)
     try:
         import jack_log; jack_log.log_decision("ORACLE-EINGANG",f"{uuid[:8]}: {cmd[:80]}")
