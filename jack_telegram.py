@@ -493,7 +493,11 @@ def handle_callback(callback_query):
 def main():
     send("JACK Telegram-Bridge online (mit Voice-Support).")
     print(f"[{datetime.now().strftime('%H:%M:%S')}] JACK Telegram läuft...")
-    offset = 0
+    # Beim Start alten Backlog leeren
+    try:
+        _init = get_updates(-1)
+        offset = _init[-1]["update_id"] + 1 if _init else 0
+    except: offset = 0
     while True:
         updates = get_updates(offset)
         for u in updates:
