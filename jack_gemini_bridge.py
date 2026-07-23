@@ -25,8 +25,8 @@ def collect_status():
         status["recent_errors"] = [r[0][:100] for r in recent]
         con.close()
     except: status["open_errors"] = "unknown"
-    ping = subprocess.run(["ping", "-c", "1", "-W", "2", "10.244.147.131"], capture_output=True)
-    status["xiaomi_reachable"] = ping.returncode == 0
+    import jack_cortex
+    status["xiaomi_reachable"] = jack_cortex._ssh_ok(jack_cortex.find_xiaomi())
     return status
 
 def ask_gemini(question, status=None):
