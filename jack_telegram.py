@@ -145,6 +145,22 @@ def handle_callback(callback_data, callback_id):
         if not results or isinstance(results, dict):
             return f"Nichts gefunden fuer: {q}"
         return "\n".join([f'[{r["category"]}] {r["content"][:80]}' for r in results])
+    if callback_data == "oracle_result":
+        try:
+            import json as _j, os as _o
+            r = _j.load(open(_o.path.expanduser("~/jack-commands/jack_result.json")))
+            return "Ergebnis (" + r.get("uuid","?") + "):" + chr(10) + r.get("result","?")[:1500]
+        except Exception as e:
+            return "Kein Ergebnis: " + str(e)
+    if callback_data.startswith("oracle:"):
+        import json as _j, os as _o, subprocess as _sp, time as _t
+        cmd = callback_data[7:]
+        uid = "btn-" + str(int(_t.time()))
+        data = {"cmd": cmd, "uuid": uid, "ts": _t.strftime("%Y-%m-%d %H:%M:%S")}
+        repo = _o.path.expanduser("~/jack-commands")
+        open(_o.path.join(repo,"jack_cmd.json"),"w").write(_j.dumps(data))
+        _sp.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
+        return "Laeuft... in ~60s: /oracle_result"
     return f"Unbekannter Button: {callback_data}"
 
 def get_updates(offset=0):
