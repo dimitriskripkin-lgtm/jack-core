@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-17T08:37:53.196419
+Stand: 2026-07-23T05:10:46.562515
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -11,25 +11,22 @@ Stand: 2026-07-17T08:37:53.196419
 - Dima ist Dimitri.
 - Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht).
 - Dima ist Hobby-Programmierer.
-- Dima nutzt Gemini Plus und Claude.ai.
-- JACK ist ein autonomes, lokales AI-OS.
-- JACK läuft auf einem Honor Magic8 Pro mit Termux.
-- JACK nutzt Gemini 2.5 Flash (Lite) als Hauptdenker.
+- Dima ist aus Russland nach Deutschland migriert, Baujahr ca. 1996.
+- Dima ist Einzelkind.
+- JACK ist ein autonomes, lokales AI-OS auf Dimas Honor Magic8 Pro.
+- JACK nutzt Gemini als Gehirn (API-Calls).
+- JACK hat ein lokales Gedächtnis in SQLite.
 - JACK soll sich selbst lernen und verbessern.
 - JACK steht unter Dimas voller Kontrolle.
-- JACK verwendet `jack_learn.py` als Lerner.
-- JACK nutzt ein Xiaomi 11T Pro als Slave-Gerät via SSH.
-- JACK's kostenlose KI-Modelle haben Tageslimits.
-- JACK's Chef-KI 'Claude Code' ist ein read-only Berater.
-- JACK hat Fähigkeiten wie Text- und Sprachchat, sicheres Code schreiben, autonomes Handeln und Selbstverbesserung.
-- JACK nutzt `jack_waechter` für regelbasierte Überwachung und Neustarts.
-- JACK's Konfiguration und Logs werden in einem öffentlichen Repo (`jack-context`) geteilt.
+- JACK speichert alle Fragen und Antworten mit Zeitstempel im Gedächtnis.
 - Dima hat KEINEN Hund (Rex war nur ein Test).
-- Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer.
 - JACK hat KEINEN direkten Shell- oder Dateizugriff über den Chat.
-- JACK hat Telegram-Commands aktualisiert, committed und gepusht.
+- Dima testet das Gedächtnis.
+- Dima hat auf Xiaomi in Termux sshd eingegeben.
+- Dima hat eine autobiographische Information hochgeladen, die JACK durchsuchen soll.
+- Dima hat den Befehl gegeben, ins Verzeichnis `~/jack/titan_legacy` zu wechseln und eine Datei von GitHub zu laden.
 
-## Aktive Module (52)
+## Aktive Module (55)
 - jack_agent.py
 - jack_android.py
 - jack_approval.py
@@ -46,6 +43,7 @@ Stand: 2026-07-17T08:37:53.196419
 - jack_cortex.py
 - jack_gemini_bridge.py
 - jack_handshake_gen.py
+- jack_hey.py
 - jack_improve.py
 - jack_learn.py
 - jack_log.py
@@ -55,10 +53,12 @@ Stand: 2026-07-17T08:37:53.196419
 - jack_memory_maintenance.py
 - jack_node_alpha.py
 - jack_operator.py
+- jack_oracle.py
 - jack_patch.py
 - jack_personality.py
 - jack_publish.py
 - jack_radar.py
+- jack_screen_tracker.py
 - jack_self_improve.py
 - jack_sensors.py
 - jack_skills.py
@@ -85,29 +85,29 @@ Stand: 2026-07-17T08:37:53.196419
 
 ## System-Status
 - Offene Fehler: 4
-- Erinnerungen: 121
+- Erinnerungen: 143
 - Dienste:
-run: jack_cortex: (pid 21793) 318770s
-run: jack_telegram: (pid 11956) 72426s
-run: jack_autolearn: (pid 20689) 545274s
-run: ollama: (pid 20694) 545274s
+run: jack_cortex: (pid 19393) 2709s
+run: jack_telegram: (pid 20543) 5785s
+run: jack_autolearn: (pid 7339) 153298s
+run: ollama: (pid 7342) 153298s
 
 ## Letzte Aenderungen
-a7ea6e2 Merge branch 'master' of https://github.com/dimitriskripkin-lgtm/jack-core
-3dcb140 fix: /xiaomi handler + telegram fixes
-0ed075c feat: Node Alpha Lern-System, Skill-Generator gefixt
-340dba9 feat: jack_xiaomi_cmd - Telegram /xiaomi Loop komplett, ADB tap funktioniert
-7299e40 feat: jack_node_alpha daemon + ADB tap funktioniert autonom
-6435547 fix: MIUI uiautomator via Datei, Gemini 2.5-flash-lite, Quote-Strip
-f52ad49 feat: jack_android
-a84c96e fix: IP 10.234.166.x -> 10.244.147.x in allen Modulen
-6913a0a feat: Circuit Breaker in jack_agent - Abbruch nach 3x gleichem Fehler
-e213119 chore: Karpathy-Guidelines in AGENTS.md integriert
-6e0e880 feat: voice_poller.sh + record_trigger.sh - Mikrofon-Trigger fuer Xiaomi
-7d10661 feat: voice_service_v2 non-blocking funktioniert - Stabilitaets-Check fuer M4A
-37f5dec feat: voice_service_v2 Poller-Ansatz - non-blocking Aufnahme funktioniert
-2602703 feat: send_webapp + /radar_ergebnisse Telegram-Button
-cf8bb21 feat: WebApp-Routen /radar/webapp und /radar/kleinanzeigen
+2f8ddf9 Xiaomi statische IP 10.58.220.131 dokumentiert
+2fcd4fc Telegram: Inline-Buttons fuer /befehle, Callback-Handler
+16c72d3 Telegram: /befehle Uebersicht fix
+9ec19c7 Telegram: /befehle Uebersicht
+f3d1cdd Oracle: deutsche Aliase + Ergebnis-Stack (letzte 5)
+2e72523 oracle_result bugfix: json import
+b494b09 oracle bugfix: import vor json.dumps gezogen
+dcbaff7 oracle bugfix: json import im block
+bc451eb Telegram: /oracle + /oracle_result
+f5c4768 Security: Flask von 0.0.0.0 auf 127.0.0.1 (kein offener Endpoint mehr)
+e374319 7 Dienste: jack_oracle live, Meilenstein 2026-07-22
+9de06fc jack_oracle: bidirektionaler Claude<->JACK Kanal via GitHub, Live-Test erfolgreich (free -h)
+0955315 Prompt: Titan-Lektionen still integriert
+8e20a4e titan_legacy: falsche context.md entfernt, Ordner bleibt leer bis bewusste Entscheidung
+ab0073f titan_legacy: Kern-DNA gesichert (Persona+Anchor+Evolution)
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

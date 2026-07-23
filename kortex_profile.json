@@ -2,7 +2,7 @@
   "meta": {
     "version": "2.0",
     "generated": "2026-07-13T04:13:12.992555",
-    "profile_updated": "2026-07-16T13:05:35.087893"
+    "profile_updated": "2026-07-23T03:20:01.184388"
   },
   "owner": {
     "name": "Dimitri",
@@ -11,12 +11,16 @@
     "ziel_lang": "2000 EUR netto passiv/Monat, Ausstieg aus Anstellung",
     "arbeitszeit": "nachts, Marathon-Pace, iterativ",
     "notizen": [
-      "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer, KEIN Fernfahrer.",
       "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht).",
       "Dima ist LKW-Fahrer mit Sprinter Kuehlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht), KEIN Fernfahrer.",
       "Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht), KEIN Fernfahrer.",
       "Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht).",
-      "Dima hat KEINEN Hund (Rex war nur ein Test)."
+      "Dima hat KEINEN Hund (Rex war nur ein Test).",
+      "Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht), kein Fernfahrer.",
+      "Dima hat KEINEN Hund.",
+      "Dima hat die Telegram-Commands aktualisiert, committed und gepusht.",
+      "Dima hat auf Xiaomi in Termux sshd eingegeben.",
+      "Dima ist Einzelkind."
     ]
   },
   "projekte": [
@@ -24,7 +28,7 @@
       "name": "JACK",
       "status": "aktiv",
       "beschreibung": "Persoenliche KI-Betriebsschicht auf Android/Termux",
-      "naechster_schritt": "JACK hat Telegram-Commands aktualisiert, committed und gepusht."
+      "naechster_schritt": "Dima hat den Befehl gegeben, ins Verzeichnis `~/jack/titan_legacy` zu wechseln und eine Datei von GitHub zu laden."
     },
     {
       "name": "Wohnung Essen",
@@ -70,6 +74,10 @@
     {
       "datum": "2026-07-13",
       "entscheidung": "kortex_memory.py live, semantisches Gedaechtnis gestartet"
+    },
+    {
+      "datum": "2026-07-22",
+      "entscheidung": "Dima ist aus Russland nach Deutschland migriert, Baujahr ca. 1996."
     }
   ],
   "personen": [
