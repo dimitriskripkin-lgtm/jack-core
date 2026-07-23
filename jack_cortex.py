@@ -65,6 +65,20 @@ def find_xiaomi():
     return known
 
 
+XIAOMI_LAST_STATE = None
+
+def notify_xiaomi_state(connected):
+    global XIAOMI_LAST_STATE
+    if XIAOMI_LAST_STATE == connected:
+        return
+    XIAOMI_LAST_STATE = connected
+    try:
+        import jack_telegram
+        msg = "Xiaomi verbunden" if connected else "Xiaomi getrennt"
+        jack_telegram.send(msg)
+    except Exception as e:
+        log_status(f"[Cortex] Notify-Fehler: {e}")
+
 def check_and_heal():
     global SSH_FAIL_COUNT, SSH_ERR_COUNT
     
@@ -72,6 +86,7 @@ def check_and_heal():
     XIAOMI_IP = find_xiaomi()
     ping = subprocess.run(["ssh", "-i", os.path.expanduser("~/.ssh/id_jack"), "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=3", "-p", str(XIAOMI_SSH_PORT), f"u0_a400@{XIAOMI_IP}", "echo ok"], capture_output=True)
     if ping.returncode != 0:
+        notify_xiaomi_state(False)
         SSH_FAIL_COUNT += 1
         if SSH_FAIL_COUNT == 1 or SSH_FAIL_COUNT % 5 == 0:
             log_status(f"[Cortex] Xiaomi nicht erreichbar (Ping {SSH_FAIL_COUNT}x fehlgeschlagen)")
