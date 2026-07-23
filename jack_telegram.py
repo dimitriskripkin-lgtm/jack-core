@@ -35,14 +35,6 @@ def send(text):
     except Exception as e:
         print(f"Send-Fehler: {e}")
 
-def send_buttons(text, buttons):
-    """Schickt Nachricht mit Inline-Buttons. buttons = [["Label","callback_data"],...]"""
-    keyboard = {"inline_keyboard": [[{"text": b[0], "callback_data": b[1]}] for b in buttons]}
-    data = json.dumps({"chat_id": CHAT_ID, "text": text, "reply_markup": json.dumps(keyboard)}).encode()
-    req = urllib.request.Request(API+"/sendMessage", data=data, headers={"Content-Type":"application/json"})
-    try: urllib.request.urlopen(req, timeout=10)
-    except Exception as e: print("Button-Fehler:", e)
-
 def get_voice(file_id, out_path):
     url = f"{API}/getFile?file_id={file_id}"
     with urllib.request.urlopen(url) as res:
@@ -153,22 +145,6 @@ def handle_callback(callback_data, callback_id):
         if not results or isinstance(results, dict):
             return f"Nichts gefunden fuer: {q}"
         return "\n".join([f'[{r["category"]}] {r["content"][:80]}' for r in results])
-    if callback_data == "oracle_result":
-        try:
-            import json as _j, os as _o
-            r = _j.load(open(_o.path.expanduser("~/jack-commands/jack_result.json")))
-            return "Ergebnis (" + r.get("uuid","?") + "):\n" + r.get("result","?")[:1500]
-        except Exception as e:
-            return "Kein Ergebnis: " + str(e)
-    if callback_data.startswith("oracle:"):
-        import json as _j, os as _o, subprocess as _sp, time as _t
-        cmd = callback_data[7:]
-        uid = "btn-" + str(int(_t.time()))
-        data = {"cmd": cmd, "uuid": uid, "ts": _t.strftime("%Y-%m-%d %H:%M:%S")}
-        repo = _o.path.expanduser("~/jack-commands")
-        open(_o.path.join(repo,"jack_cmd.json"),"w").write(_j.dumps(data))
-        _sp.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
-        return "Laeuft... in ~60s: /oracle_result"
     return f"Unbekannter Button: {callback_data}"
 
 def get_updates(offset=0):
@@ -181,19 +157,6 @@ def get_updates(offset=0):
 def handle(text):
     global PENDING_WRITE, PENDING_IMPROVE
     raw = text.strip()
-    if raw.strip().split("@")[0] == "/befehle":
-        buttons = [
-            ["Dienste Status", "oracle:dienste"],
-            ["RAM Check", "oracle:ram"],
-            ["Fehler anzeigen", "oracle:fehler"],
-            ["Budget heute", "oracle:budget"],
-            ["Letzte Aktionen", "oracle:log"],
-            ["Datum & Uhrzeit", "oracle:datum"],
-            ["Ollama Modelle", "oracle:modelle"],
-            ["Letztes Ergebnis", "oracle_result"],
-        ]
-        send_buttons("JACK Oracle - was moechtest du wissen?", buttons)
-        return None
     if raw.strip().split("@")[0] == "/audit":
         import jack_audit; return jack_audit.report()
     text = raw.lower()
@@ -483,15 +446,7 @@ def handle(text):
 def main():
     send("JACK Telegram-Bridge online (mit Voice-Support).")
     print(f"[{datetime.now().strftime('%H:%M:%S')}] JACK Telegram läuft...")
-    # Beim Start alten Backlog leeren
-    try:
-        _init = get_updates(-1)
-        offset = _init[-1]["update_id"] + 1 if _init else 0
-    except Exception as _e:
-        offset = 0
-        try:
-            import jack_log; jack_log.log_decision("TG-OFFSET-ERR", str(_e)[:100])
-        except: pass
+    offset = 0
     while True:
         updates = get_updates(offset)
         for u in updates:
