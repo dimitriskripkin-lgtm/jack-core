@@ -459,7 +459,7 @@ def handle(text):
         return "Oracle abgeschickt (" + uid + "). In ~60s: /oracle_result"
     if text.strip() == "/befehle":
         buttons = [["Dienste Status","oracle:dienste"],["RAM Check","oracle:ram"],["Fehler anzeigen","oracle:fehler"],["Budget heute","oracle:budget"],["Letzte Aktionen","oracle:log"],["Datum & Uhrzeit","oracle:datum"],["Ollama Modelle","oracle:modelle"],["Letztes Ergebnis","oracle_result"]]
-        send_buttons("JACK Oracle - was moechtest du wissen?", buttons)
+        send_keyboard("JACK Oracle - was moechtest du wissen?", buttons)
         return None
         return _r[:1500]
 
