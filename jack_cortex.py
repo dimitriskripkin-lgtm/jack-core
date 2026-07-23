@@ -70,7 +70,7 @@ def check_and_heal():
     
     global XIAOMI_IP
     XIAOMI_IP = find_xiaomi()
-    ping = subprocess.run(["ping", "-c", "1", "-W", "2", XIAOMI_IP], capture_output=True)
+    ping = subprocess.run(["ssh", "-i", os.path.expanduser("~/.ssh/id_jack"), "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=3", "-p", str(XIAOMI_SSH_PORT), f"u0_a400@{XIAOMI_IP}", "echo ok"], capture_output=True)
     if ping.returncode != 0:
         SSH_FAIL_COUNT += 1
         if SSH_FAIL_COUNT == 1 or SSH_FAIL_COUNT % 5 == 0:
