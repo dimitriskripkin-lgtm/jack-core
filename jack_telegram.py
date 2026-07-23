@@ -101,7 +101,7 @@ def handle_callback(callback_data, callback_id):
             fix = fixes.get(fix_id)
             if not fix:
                 return f"Fix nicht gefunden: {fix_id}"
-            import subprocess
+            import subprocess, json
             r = subprocess.run(["python3", fix["pfad"]],
                 capture_output=True, text=True, timeout=30)
             output = (r.stdout + r.stderr).strip()[:400]
