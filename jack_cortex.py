@@ -112,6 +112,7 @@ def check_and_heal():
     if SSH_FAIL_COUNT > 0:
         log_error(f"[Cortex] Xiaomi erreichbar wieder (nach {SSH_FAIL_COUNT} Fails)")
         SSH_FAIL_COUNT = 0
+        notify_xiaomi_state(True)
     
     # SSH Test
     try:
