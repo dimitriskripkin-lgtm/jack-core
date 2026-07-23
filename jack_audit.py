@@ -7,7 +7,7 @@ H = os.path.expanduser("~/jack")
 XIP, XPORT = "10.58.220.131", 8022
 
 def _dienste():
-    r = subprocess.run("sv status jack_cortex jack_telegram jack_autolearn jack_publisher jack_waechter ollama", shell=True, capture_output=True, text=True)
+    r = subprocess.run("sv status jack_cortex jack_telegram jack_autolearn jack_publisher jack_waechter jack_oracle ollama", shell=True, capture_output=True, text=True)
     ls = [l for l in r.stdout.strip().split("\n") if l]
     run = sum(1 for l in ls if l.startswith("run:"))
     out = ["Dienste:        %d/6 laufen%s" % (run, "" if run==6 else "  <-- PRUEFEN!")]
