@@ -173,6 +173,28 @@ def get_updates(offset=0):
 def handle(text):
     global PENDING_WRITE, PENDING_IMPROVE
     raw = text.strip()
+    # Oracle-Dispatcher - IMMER ZUERST prufen, nie Gemini aufrufen
+    if raw.strip().lower() == "/oracle_result":
+        try:
+            import json as _j, os as _o
+            r = _j.load(open(_o.path.expanduser("~/jack-commands/jack_result.json")))
+            return "Ergebnis (" + r.get("uuid","?") + "):" + chr(10) + r.get("result","?")[:1500]
+        except Exception as e:
+            return "Kein Ergebnis: " + str(e)
+    if raw.strip().lower().startswith("/oracle "):
+        import json as _j, os as _o, subprocess as _sp, time as _t
+        cmd = raw.strip()[8:].strip()
+        uid = "tg-" + str(int(_t.time()))
+        data = {"cmd": cmd, "uuid": uid, "ts": _t.strftime("%Y-%m-%d %H:%M:%S")}
+        repo = _o.path.expanduser("~/jack-commands")
+        open(_o.path.join(repo,"jack_cmd.json"),"w").write(_j.dumps(data))
+        _sp.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
+        return "Oracle abgeschickt (" + uid + "). In ~60s: /oracle_result"
+    if raw.strip().lower() == "/befehle":
+        buttons = [[("Dienste Status","oracle:dienste")],[("RAM Check","oracle:ram")],[("Fehler anzeigen","oracle:fehler")],[("Budget heute","oracle:budget")],[("Letzte Aktionen","oracle:log")],[("Datum & Uhrzeit","oracle:datum")],[("Ollama Modelle","oracle:modelle")],[("Letztes Ergebnis","oracle_result")]]
+        send_keyboard("JACK Oracle - was moechtest du wissen?", buttons)
+        return None
+
     if raw.strip().split("@")[0] == "/audit":
         import jack_audit; return jack_audit.report()
     text = raw.lower()
@@ -457,26 +479,6 @@ def handle(text):
                     "\n\nZum Ausfuehren antworte exakt: " + BESTAETIGUNG + "\nOder: abbrechen")
         _r = jack_talk.talk_to_gemini(text)
         jack_talk.auto_save_to_memory(text, _r)
-    if text.strip() == "/oracle_result":
-        try:
-            import json as _j, os as _o
-            r = _j.load(open(_o.path.expanduser("~/jack-commands/jack_result.json")))
-            return "Ergebnis (" + r.get("uuid","?") + "):" + chr(10) + r.get("result","?")[:1500]
-        except Exception as e:
-            return "Kein Ergebnis: " + str(e)
-    if text.strip().startswith("/oracle "):
-        import json as _j, os as _o, subprocess as _sp, time as _t
-        cmd = text.strip()[8:].strip()
-        uid = "tg-" + str(int(_t.time()))
-        data = {"cmd": cmd, "uuid": uid, "ts": _t.strftime("%Y-%m-%d %H:%M:%S")}
-        repo = _o.path.expanduser("~/jack-commands")
-        open(_o.path.join(repo,"jack_cmd.json"),"w").write(_j.dumps(data))
-        _sp.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
-        return "Oracle abgeschickt (" + uid + "). In ~60s: /oracle_result"
-    if text.strip() == "/befehle":
-        buttons = [[("Dienste Status","oracle:dienste")],[("RAM Check","oracle:ram")],[("Fehler anzeigen","oracle:fehler")],[("Budget heute","oracle:budget")],[("Letzte Aktionen","oracle:log")],[("Datum & Uhrzeit","oracle:datum")],[("Ollama Modelle","oracle:modelle")],[("Letztes Ergebnis","oracle_result")]]
-        send_keyboard("JACK Oracle - was moechtest du wissen?", buttons)
-        return None
         return _r[:1500]
 
 def main():
