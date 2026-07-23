@@ -167,6 +167,7 @@ def handle(text):
                 return "Kein Ergebnis: " + str(e)
         cmd = raw[8:].strip()
         if not cmd: return "Syntax: /oracle <befehl>"
+        import subprocess, json
         uid = "tg-" + str(int(time.time()))
         data = {"cmd": cmd, "uuid": uid, "ts": time.strftime("%Y-%m-%d %H:%M:%S")}
         repo = os.path.expanduser("~/jack-commands")
