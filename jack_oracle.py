@@ -100,8 +100,7 @@ def cycle():
         push_result(uuid,cmd,"BLOCKIERT: "+reason,"blocked"); return
     result=run_cmd(cmd)
     push_result(uuid,cmd,result,"ok")
-    _telegram_send("Oracle [" + cmd + "]:
-" + result[:2000])
+    _telegram_send("Oracle [" + cmd + "]:" + chr(10) + result[:2000])
 
 if __name__=="__main__":
     print("JACK Oracle laeuft. Polling alle 60s...")
