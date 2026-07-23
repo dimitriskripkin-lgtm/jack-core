@@ -57,6 +57,18 @@ def run_cmd(cmd):
         return (r.stdout+r.stderr).strip()[:2000]
     except Exception as e: return "FEHLER: "+str(e)
 
+def _telegram_send(msg):
+    try:
+        import urllib.request as _u, json as _j
+        secrets = open(os.path.expanduser('~/.jack_secrets')).read()
+        token = [l.split('=',1)[1].strip().strip('"') for l in secrets.split(chr(10)) if 'TELEGRAM_BOT_TOKEN' in l][0]
+        chat = [l.split('=',1)[1].strip().strip('"') for l in secrets.split(chr(10)) if 'TELEGRAM_CHAT_ID' in l][0]
+        d = _j.dumps({'chat_id': chat, 'text': msg[:3000]}).encode()
+        req = _u.Request(f'https://api.telegram.org/bot{token}/sendMessage', data=d, headers={'Content-Type':'application/json'})
+        _u.urlopen(req, timeout=10)
+    except Exception as e:
+        print('Telegram-Fehler:', e)
+
 def push_result(uuid,cmd,result,status):
     data={"uuid":uuid,"cmd":cmd,"status":status,"result":result,
           "ts":time.strftime("%Y-%m-%d %H:%M:%S")}
@@ -88,6 +100,8 @@ def cycle():
         push_result(uuid,cmd,"BLOCKIERT: "+reason,"blocked"); return
     result=run_cmd(cmd)
     push_result(uuid,cmd,result,"ok")
+    _telegram_send("Oracle [" + cmd + "]:
+" + result[:2000])
 
 if __name__=="__main__":
     print("JACK Oracle laeuft. Polling alle 60s...")
