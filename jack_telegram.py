@@ -161,6 +161,7 @@ def handle(text):
         text_cmd = raw.strip().split("@")[0]
         if text_cmd == "/oracle_result":
             try:
+                import json
                 r = json.load(open(os.path.expanduser("~/jack-commands/jack_result.json")))
                 return "Letztes Ergebnis (" + r.get("uuid","?") + "):\n" + r.get("result","?")[:1500]
             except Exception as e:
