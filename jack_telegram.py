@@ -155,7 +155,7 @@ def handle_callback(callback_data, callback_id):
     if callback_data.startswith("oracle:"):
         import json as _j, os as _o, subprocess as _sp, time as _t
         cmd = callback_data[7:]
-        uid = "btn-" + str(int(_t.time()))
+        uid = "btn-" + str(int(_t.time() * 1000))
         data = {"cmd": cmd, "uuid": uid, "ts": _t.strftime("%Y-%m-%d %H:%M:%S")}
         repo = _o.path.expanduser("~/jack-commands")
         open(_o.path.join(repo,"jack_cmd.json"),"w").write(_j.dumps(data))
