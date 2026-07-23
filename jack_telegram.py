@@ -157,7 +157,25 @@ def get_updates(offset=0):
 def handle(text):
     global PENDING_WRITE, PENDING_IMPROVE
     raw = text.strip()
+    if raw.strip().split("@")[0].startswith("/oracle"):
+        text_cmd = raw.strip().split("@")[0]
+        if text_cmd == "/oracle_result":
+            try:
+                r = json.load(open(os.path.expanduser("~/jack-commands/jack_result.json")))
+                return "Letztes Ergebnis (" + r.get("uuid","?") + "):\n" + r.get("result","?")[:1500]
+            except Exception as e:
+                return "Kein Ergebnis: " + str(e)
+        cmd = raw[8:].strip()
+        if not cmd: return "Syntax: /oracle <befehl>"
+        uid = "tg-" + str(int(time.time()))
+        data = {"cmd": cmd, "uuid": uid, "ts": time.strftime("%Y-%m-%d %H:%M:%S")}
+        repo = os.path.expanduser("~/jack-commands")
+        open(os.path.join(repo,"jack_cmd.json"),"w").write(json.dumps(data))
+        import subprocess
+        subprocess.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
+        return "Oracle abgeschickt (" + uid + "). Ergebnis ~60s: /oracle_result"
     if raw.strip().split("@")[0] == "/audit":
+
         import jack_audit; return jack_audit.report()
     text = raw.lower()
 
