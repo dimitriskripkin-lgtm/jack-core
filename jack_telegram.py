@@ -157,6 +157,8 @@ def get_updates(offset=0):
 def handle(text):
     global PENDING_WRITE, PENDING_IMPROVE
     raw = text.strip()
+    if raw.strip().split("@")[0] == "/befehle":
+        return '/oracle dienste - alle Dienste\n/oracle ram - Arbeitsspeicher\n/oracle speicher - Festplatte Termux\n/oracle fehler - offene Fehler\n/oracle datum - Systemzeit\n/oracle uptime - Laufzeit\n/oracle modelle - Ollama Modelle\n/oracle budget - API Verbrauch heute\n/oracle log - letzte 10 Aktionen\nDann: /oracle_result'
     if raw.strip().split("@")[0] == "/audit":
         import jack_audit; return jack_audit.report()
     text = raw.lower()
