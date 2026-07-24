@@ -61,3 +61,23 @@ Befehle: /status /errors /code <aufgabe> /run /auto <ziel> /verbessere <modul> /
 - GPS-Fahrtenbuch getriggert vom Bewegungssensor (akkuschonend, Tasker vorhanden).
 - GESTUFTE AUTONOMIE: Risiko-Stufen-Matrix (lesend=allein, gefaehrlich=Dima).
 - OFFLINE-HIRN: 7B+ Modell wenn bessere Hardware da (aktuell >3B = OOM).
+
+## HALIZA - Halluzinations-Guard (seit 2026-07-24)
+
+jack_haliza.py sitzt vor jedem Code-Schreibvorgang. Drei Schichten, fail-closed:
+
+1. Sandbox  - jack_approval.is_safe_path(), blockt Pfade ausserhalb ~/jack
+2. Syntax   - py_compile, gratis, faengt kaputtes Python
+3. Semantik - jack_gemini_bridge.ask_gemini(), faengt Scope-Bugs und Logikfehler
+
+Rate-Limit: 10 API-Calls/h, persistent in ~/jack/.haliza_rate (ueberlebt Neustart).
+Bei Gemini-Ausfall oder Nicht-JSON-Antwort wird BLOCKIERT, nie durchgewunken.
+
+Einstieg: haliza.pruefe(datei, alt, neu, beschreibung) -> dict{ok, stufe, risiko, grund}
+Nur Syntax: haliza.syntax_ok(code) -> (bool, grund)
+
+Verdrahtet in:
+- jack_improve.apply_improvement() - voller Guard, nach Import-Test, vor git-Commit, Rollback bei Block
+- jack_coder.write_code() - nur Syntax-Schicht (Werkstatt-Code, API-Kosten sparen)
+
+Verifiziert: faengt UnboundLocalError (Variable vor Zuweisung), laesst sauberen Code durch.
