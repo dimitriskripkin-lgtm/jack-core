@@ -87,7 +87,7 @@ def semantik_ok(alt, neu, beschreibung):
         return False, "unbekannt", "Gemini-Antwort kein JSON: " + txt[:100]
     return bool(d.get("ok")), str(d.get("risiko", "unbekannt")), str(d.get("grund", ""))
 
-def pruefe(datei, alt, neu, beschreibung, mit_gemini=True):
+def _pruefe_roh(datei, alt, neu, beschreibung, mit_gemini=True):
     """Haupteinstieg. Gibt IMMER dict zurueck:
     {ok, stufe, risiko, grund}. ok=True heisst: bereit fuer Dimas Freigabe."""
     _log("HALIZA-START", str(datei) + ": " + str(beschreibung)[:60])
@@ -108,6 +108,42 @@ def pruefe(datei, alt, neu, beschreibung, mit_gemini=True):
         return {"ok": False, "stufe": "semantik", "risiko": risiko, "grund": grund}
     _log("HALIZA-BEREIT", "Risiko " + risiko)
     return {"ok": True, "stufe": "bereit", "risiko": risiko, "grund": grund}
+
+def _mem():
+    try:
+        import jack_patch_memory
+        return jack_patch_memory
+    except Exception:
+        return None
+
+
+def pruefe(datei, alt, neu, beschreibung, mit_gemini=True):
+    """Mit Code-Gedaechtnis. Bekannt gescheiterter Code wird sofort
+    geblockt - ohne API-Call. Urteile werden zurueckgeschrieben."""
+    m = _mem()
+    if m is not None:
+        try:
+            schlecht, frueher = m.war_schlecht(neu)
+        except Exception:
+            schlecht, frueher = False, None
+        if schlecht and frueher:
+            _log("HALIZA-MEM-STOP", str(frueher.get("grund", ""))[:100])
+            return {"ok": False, "stufe": "gedaechtnis", "risiko": "hoch",
+                    "grund": "Kenne ich schon - damals " + str(frueher.get("urteil")) + ": " + str(frueher.get("grund", ""))[:150]}
+    r = _pruefe_roh(datei, alt, neu, beschreibung, mit_gemini)
+    if m is not None:
+        try:
+            if not r.get("ok"):
+                u = r.get("stufe", "semantik")
+                if u not in m.URTEILE:
+                    u = "semantik"
+                m.merke(neu, datei, u, r.get("grund", ""), beschreibung)
+            elif r.get("stufe") == "bereit":
+                m.merke(neu, datei, "bereit", r.get("grund", ""), beschreibung)
+        except Exception:
+            pass
+    return r
+
 
 def selbsttest():
     print("=== HALIZA SELBSTTEST (ohne API-Kosten) ===")
