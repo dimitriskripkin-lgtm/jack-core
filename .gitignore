@@ -16,3 +16,4 @@ voice_*.wav
 jack_vinted_config.json
 jack_radar_config.json
 jack_missions.db
+jack_patch_memory.db
