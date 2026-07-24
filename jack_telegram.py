@@ -203,6 +203,32 @@ def handle(text):
         open(_o.path.join(repo,"jack_cmd.json"),"w").write(_j.dumps(data))
         _sp.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
         return "Oracle abgeschickt (" + uid + "). In ~60s: /oracle_result"
+    if raw.strip().lower() == "/missionen":
+        import jack_missions as _jm
+        z = _jm.liste(limit=8)
+        if not z:
+            return "Keine Missionen. Anlegen mit: /mission <aufgabe>"
+        out = ["Missionen (" + _jm.uebersicht() + ")", ""]
+        for m in z:
+            erg = str(m.get("ergebnis") or "")[:60].replace(chr(10), " ")
+            out.append("#" + str(m["id"]) + " [" + m["typ"] + "/" + m["status"] + "] " + m["aufgabe"][:50])
+            if erg:
+                out.append("    -> " + erg)
+        return chr(10).join(out)
+    if raw.strip().lower().startswith("/mission code "):
+        import jack_missions as _jm
+        auf = raw.strip()[14:].strip()
+        mid, msg = _jm.add(auf, "code", 5)
+        if mid is None:
+            return "Nicht angelegt: " + str(msg)
+        return "Code-Mission #" + str(mid) + " angelegt. JACK schreibt in die Werkstatt, du gibst frei."
+    if raw.strip().lower().startswith("/mission "):
+        import jack_missions as _jm
+        auf = raw.strip()[9:].strip()
+        mid, msg = _jm.add(auf, "befehl", 3)
+        if mid is None:
+            return "Nicht angelegt: " + str(msg)
+        return "Mission #" + str(mid) + " angelegt: " + auf[:60] + chr(10) + "Laeuft in max 5 Min. Status: /missionen"
     if raw.strip().lower() == "/befehle":
         buttons = [[("Dienste Status","oracle:dienste")],[("RAM Check","oracle:ram")],[("Fehler anzeigen","oracle:fehler")],[("Budget heute","oracle:budget")],[("Letzte Aktionen","oracle:log")],[("Datum & Uhrzeit","oracle:datum")],[("Ollama Modelle","oracle:modelle")],[("Letztes Ergebnis","oracle_result")]]
         send_keyboard("JACK Oracle - was moechtest du wissen?", buttons)
