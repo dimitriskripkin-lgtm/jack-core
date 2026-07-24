@@ -1,10 +1,40 @@
 #!/usr/bin/env python3
 """JACK Oracle - bidirektionaler Kanal zwischen Claude und JACK via GitHub."""
-import os, json, subprocess, time, urllib.request
+import os, json, subprocess, time, urllib.request, hmac, hashlib, datetime
 
 REPO = "https://raw.githubusercontent.com/dimitriskripkin-lgtm/jack-commands/master/jack_cmd.json"
 LOCAL = os.path.expanduser("~/jack-commands")
 SEEN = os.path.expanduser("~/jack/.oracle_last_uuid")
+RATE_LOG = []
+RATE_LIMIT = 10  # Max Befehle pro Stunde
+
+def get_oracle_secret():
+    try:
+        s = open(os.path.expanduser("~/.jack_secrets")).read()
+        for l in s.split(chr(10)):
+            if "ORACLE_SECRET=" in l:
+                return l.split("=",1)[1].strip().strip('"')
+    except: pass
+    return None
+
+def verify_sig(cmd, uuid, ts, sig):
+    secret = get_oracle_secret()
+    if not secret: return False, "Kein Secret konfiguriert"
+    if not sig: return False, "Keine Signatur"
+    msg = f"{uuid}:{cmd}:{ts}".encode()
+    expected = hmac.new(secret.encode(), msg, hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(expected, sig):
+        return False, "Signatur ungueltig"
+    return True, "OK"
+
+def check_rate_limit():
+    global RATE_LOG
+    now = datetime.datetime.now()
+    RATE_LOG = [t for t in RATE_LOG if (now-t).seconds < 3600]
+    if len(RATE_LOG) >= RATE_LIMIT:
+        return False, f"Rate-Limit: {RATE_LIMIT}/h erreicht"
+    RATE_LOG.append(now)
+    return True, "OK"
 
 def fetch_cmd():
     try:
@@ -93,6 +123,19 @@ def cycle():
     if not d: return
     uuid=d.get("uuid",""); cmd=d.get("cmd","").strip()
     if not uuid or not cmd or uuid==last_uuid(): return
+    # Rate-Limit pruefen
+    ok, reason = check_rate_limit()
+    if not ok:
+        push_result(uuid, cmd, "BLOCKIERT: "+reason, "blocked")
+        return
+    # HMAC-Signatur pruefen
+    sig = d.get("sig", "")
+    if sig:  # Wenn sig vorhanden, muss sie stimmen
+        ok, reason = verify_sig(cmd, uuid, d.get("ts",""), sig)
+        if not ok:
+            push_result(uuid, cmd, "BLOCKIERT: "+reason, "blocked")
+            _telegram_send("Oracle BLOCKIERT: " + reason)
+            return
     cmd, alias = resolve_alias(cmd)
     save_uuid(uuid)
     try:
