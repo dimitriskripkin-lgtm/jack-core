@@ -49,7 +49,7 @@ def last_uuid():
 def save_uuid(uid): open(SEEN,"w").write(uid)
 
 ALIASES = {
-    "dienste": "sv status jack_cortex jack_telegram jack_autolearn jack_publisher jack_waechter jack_oracle ollama",
+    "dienste": "sv status jack_cortex jack_telegram jack_waechter ollama",
     "ram": "free -h",
     "speicher": "df -h /data/data/com.termux/files",
     "fehler": "python3 -c \"import sqlite3,os; con=sqlite3.connect(os.path.expanduser('~/jack/jack_errors.db')); [print(r) for r in con.execute('SELECT timestamp,module,error_msg FROM errors WHERE resolved=0 ORDER BY id DESC LIMIT 5').fetchall()]\"",
