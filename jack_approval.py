@@ -5,18 +5,27 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.expanduser("~/jack"))
 
-SAFE_DIRS = [os.path.expanduser("~/jack"), "/data/local/tmp"]
+SAFE_DIRS = [os.path.expanduser("~/jack"), os.path.expanduser("~/jack_werkstatt"), "/data/local/tmp"]
 FORBIDDEN_DIRS = ["/system/", "/data/system/", "/data/app/", "/data/data/"]
 AUTONOM_PREFIX = "jack autonom:"
 
 
+def _norm_pfad(p):
+    return os.path.normpath(str(Path(p).resolve()))
+
+
+def _liegt_unter(pfad, basis):
+    b = _norm_pfad(basis)
+    return pfad == b or pfad.startswith(b + os.sep)
+
+
 def is_safe_path(filepath):
-    p = str(Path(filepath).resolve())
+    p = _norm_pfad(filepath)
     for safe in SAFE_DIRS:
-        if p.startswith(safe):
+        if _liegt_unter(p, safe):
             return True, None
     for forbidden in FORBIDDEN_DIRS:
-        if p.startswith(forbidden):
+        if _liegt_unter(p, forbidden):
             return False, f"Forbidden: {forbidden}"
     return False, "Outside sandbox"
 
