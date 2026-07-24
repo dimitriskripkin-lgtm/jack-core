@@ -140,6 +140,24 @@ if __name__ == "__main__":
     selbsttest()
 
 
+MIN_FREI_MB = 800
+
+def ressourcen_ok():
+    """Liest /proc/meminfo direkt - kein Subprozess, gerade bei knappem RAM wichtig."""
+    try:
+        werte = {}
+        for z in open("/proc/meminfo"):
+            t = z.split(":")
+            if len(t) == 2:
+                werte[t[0].strip()] = int(t[1].strip().split()[0])
+        frei_mb = werte.get("MemAvailable", 0) // 1024
+        if frei_mb < MIN_FREI_MB:
+            return False, "RAM knapp: " + str(frei_mb) + "MB frei, brauche " + str(MIN_FREI_MB) + "MB"
+        return True, str(frei_mb) + "MB frei"
+    except Exception as e:
+        return True, "Messung fehlgeschlagen, lasse durch: " + str(e)[:60]
+
+
 def _fehlschlag(mid, versuche_bisher, grund):
     """Zurueck auf offen - oder endgueltig fehler wenn Limit erreicht."""
     if versuche_bisher + 1 >= MAX_VERSUCHE:
@@ -157,6 +175,11 @@ def dispatch_once():
     typ = m["typ"]
     aufgabe = m["aufgabe"]
     vers = m["versuche"]
+    if typ == "code":
+        frei_ok, frei_info = ressourcen_ok()
+        if not frei_ok:
+            _log("MISSION-VERSCHOBEN", "#" + str(mid) + " " + frei_info)
+            return {"id": mid, "typ": typ, "status": "verschoben", "text": frei_info}
     setze_status(mid, "laeuft")
 
     if typ == "notiz":
