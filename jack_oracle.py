@@ -118,7 +118,7 @@ def push_result(uuid,cmd,result,status):
         shell=True,capture_output=True,timeout=30)
 
 def cycle():
-    orig_cmd = ""
+    orig_cmd = cmd  # wird nach resolve_alias ueberschrieben
     d=fetch_cmd()
     if not d: return
     uuid=d.get("uuid",""); cmd=d.get("cmd","").strip()
@@ -137,6 +137,7 @@ def cycle():
             _telegram_send("Oracle BLOCKIERT: " + reason)
             return
     cmd, alias = resolve_alias(cmd)
+    orig_cmd = alias  # Alias-Name fuer Telegram
     save_uuid(uuid)
     try:
         import jack_log; jack_log.log_decision("ORACLE-EINGANG",f"{uuid[:8]}: {cmd[:80]}")
