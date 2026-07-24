@@ -46,6 +46,15 @@ def apply_improvement(module, gemini_answer):
     if r.returncode!=0:
         open(path,"w").write(original)
         return False, f"ZURUECKGEROLLT - Modul liess sich nicht laden:\n{r.stderr.strip()[:300]}"
+    neu_code = open(path).read()
+    try:
+        import jack_haliza as _hz
+        _h = _hz.pruefe(path, original, neu_code, "Selbstverbesserung " + name)
+    except Exception as _e:
+        _h = {"ok": False, "stufe": "haliza", "risiko": "unbekannt", "grund": str(_e)[:100]}
+    if not _h["ok"]:
+        open(path,"w").write(original)
+        return False, "HALIZA BLOCKIERT (" + _h["stufe"] + "/" + _h["risiko"] + ") - zurueckgerollt: " + _h["grund"][:200]
     subprocess.run(["git","add",name],cwd=JACK,capture_output=True)
     subprocess.run(["git","commit","-m",f"Selbstverbesserung {name} (JACK-Vorschlag, Dima-Freigabe)"],cwd=JACK,capture_output=True)
     subprocess.run(["git","push"],cwd=JACK,capture_output=True)

@@ -50,6 +50,13 @@ def write_code(task, filename=None):
     if not _in_werkstatt(path):
         return None, None, "BLOCKIERT: ausserhalb Werkstatt"
     os.makedirs(WERKSTATT, exist_ok=True)
+    try:
+        import jack_haliza as _hz
+        _ok, _grund = _hz.syntax_ok(code)
+    except Exception as _e:
+        return None, None, "HALIZA Fehler: " + str(_e)[:100]
+    if not _ok:
+        return None, None, "HALIZA SYNTAX-STOP: " + str(_grund)[:150]
     with open(path, "w") as f:
         f.write(code)
     return fn, code, "OK"
