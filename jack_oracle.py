@@ -71,7 +71,7 @@ def is_safe(cmd):
     KILL=["rm -rf","rmtree","os.remove","os.unlink","drop table","delete from",
           "mkfs","dd if=","eval(","exec(","os.environ","jack_secrets","api_key",
           ".ssh/","urllib","requests.","socket","curl","wget","nc ","netcat",
-          "|","&&","||",";","$(","\`",">",">>"]
+          "|","&&","||",";","$(","`",">",">>"]
     # Shell-Injection-Schutz: Pipes und Chaining verbieten
     ALLOW=["echo","sv","free","df","ls","cat","git","ollama","sqlite3",
            "python3","termux-battery-status","termux-wifi-connectioninfo",
