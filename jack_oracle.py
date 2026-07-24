@@ -118,7 +118,7 @@ def push_result(uuid,cmd,result,status):
         shell=True,capture_output=True,timeout=30)
 
 def cycle():
-    orig_cmd = cmd  # wird nach resolve_alias ueberschrieben
+    orig_cmd = ""
     d=fetch_cmd()
     if not d: return
     uuid=d.get("uuid",""); cmd=d.get("cmd","").strip()
