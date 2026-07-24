@@ -138,3 +138,59 @@ def selbsttest():
 
 if __name__ == "__main__":
     selbsttest()
+
+
+def _fehlschlag(mid, versuche_bisher, grund):
+    """Zurueck auf offen - oder endgueltig fehler wenn Limit erreicht."""
+    if versuche_bisher + 1 >= MAX_VERSUCHE:
+        setze_status(mid, "fehler", "Aufgegeben nach " + str(MAX_VERSUCHE) + ": " + str(grund)[:300])
+        return "fehler"
+    setze_status(mid, "offen", str(grund)[:300])
+    return "offen"
+
+def dispatch_once():
+    """Arbeitet GENAU EINE offene Mission ab. Gibt dict zurueck oder None."""
+    m = naechste()
+    if not m:
+        return None
+    mid = m["id"]
+    typ = m["typ"]
+    aufgabe = m["aufgabe"]
+    vers = m["versuche"]
+    setze_status(mid, "laeuft")
+
+    if typ == "notiz":
+        setze_status(mid, "fertig", "Notiz vermerkt, keine Ausfuehrung")
+        return {"id": mid, "typ": typ, "status": "fertig", "text": aufgabe[:200]}
+
+    if typ == "befehl":
+        try:
+            import jack_oracle
+            cmd, alias = jack_oracle.resolve_alias(aufgabe)
+            safe, grund = jack_oracle.is_safe(cmd)
+            if not safe:
+                setze_status(mid, "blockiert", "Gate: " + str(grund))
+                return {"id": mid, "typ": typ, "status": "blockiert", "text": str(grund)}
+            ergebnis = jack_oracle.run_cmd(cmd)
+            setze_status(mid, "fertig", ergebnis)
+            return {"id": mid, "typ": typ, "status": "fertig", "text": str(ergebnis)[:500]}
+        except Exception as e:
+            st = _fehlschlag(mid, vers, "Ausfuehrfehler: " + str(e)[:150])
+            return {"id": mid, "typ": typ, "status": st, "text": str(e)[:200]}
+
+    if typ == "code":
+        try:
+            import jack_coder
+            fn, code, msg = jack_coder.write_code(aufgabe)
+            if not fn:
+                st = _fehlschlag(mid, vers, "Coder: " + str(msg)[:150])
+                return {"id": mid, "typ": typ, "status": st, "text": str(msg)[:200]}
+            setze_status(mid, "wartet_freigabe",
+                         "In Werkstatt: " + str(fn) + " (" + str(msg) + ")")
+            return {"id": mid, "typ": typ, "status": "wartet_freigabe", "text": str(fn)}
+        except Exception as e:
+            st = _fehlschlag(mid, vers, "Coderfehler: " + str(e)[:150])
+            return {"id": mid, "typ": typ, "status": st, "text": str(e)[:200]}
+
+    setze_status(mid, "fehler", "Unbekannter Typ: " + str(typ))
+    return {"id": mid, "typ": typ, "status": "fehler", "text": "Unbekannter Typ"}

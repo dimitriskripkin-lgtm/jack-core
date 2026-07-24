@@ -142,10 +142,24 @@ def _publisher_loop():
             except: pass
         _tm.sleep(180)
 
+
+def _missions_loop():
+    while True:
+        try:
+            import jack_missions
+            r = jack_missions.dispatch_once()
+            if r and r.get("status") in ("fertig","blockiert","fehler","wartet_freigabe"):
+                notify("Mission #" + str(r["id"]) + " [" + r["typ"] + "] " + r["status"] + ":" + chr(10) + str(r.get("text",""))[:600])
+        except Exception as e:
+            try:
+                import jack_log; jack_log.log_decision("MISSIONS-ERR", str(e)[:80])
+            except Exception: pass
+        _tm.sleep(300)
 def start_consolidated():
     _th.Thread(target=_autolearn_loop,daemon=True,name="autolearn").start()
     _th.Thread(target=_publisher_loop,daemon=True,name="publisher").start()
-    print("[Konsolidiert] Autolearn+Publisher als Threads gestartet")
+    _th.Thread(target=_missions_loop,daemon=True,name="missions").start()
+    print("[Konsolidiert] Autolearn+Publisher+Missionen als Threads gestartet")
 
 if __name__=="__main__":
     start_consolidated()
