@@ -7,7 +7,7 @@ H=os.path.expanduser("~/jack")
 STATE=os.path.join(H,".waechter_state")
 EDB=os.path.join(H,"jack_errors.db")
 SEC=os.path.expanduser("~/.jack_secrets")
-DIENSTE=["jack_cortex","jack_telegram","jack_oracle","ollama","jack_waechter"]
+DIENSTE=["jack_cortex","jack_telegram","ollama","jack_waechter"]
 HEARTBEAT=300
 
 def _sec(k):
