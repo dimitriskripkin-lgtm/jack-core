@@ -76,9 +76,13 @@ def notify_xiaomi_state(connected):
         return
     XIAOMI_LAST_STATE = connected
     try:
-        import jack_telegram
         msg = "Xiaomi verbunden" if connected else "Xiaomi getrennt"
-        jack_telegram.send(msg)
+        import urllib.request, json, os
+        secrets = open(os.path.expanduser("~/.jack_secrets")).read()
+        t = [l.split("=",1)[1].strip().strip("\"") for l in secrets.split(chr(10)) if "TELEGRAM_BOT_TOKEN" in l][0]
+        c = [l.split("=",1)[1].strip().strip("\"") for l in secrets.split(chr(10)) if "TELEGRAM_CHAT_ID" in l][0]
+        d = json.dumps({"chat_id": c, "text": msg}).encode()
+        urllib.request.urlopen(urllib.request.Request(f"https://api.telegram.org/bot{t}/sendMessage", data=d, headers={"Content-Type":"application/json"}), timeout=5)
     except Exception as e:
         log_status(f"[Cortex] Notify-Fehler: {e}")
 
@@ -112,6 +116,7 @@ def check_and_heal():
         return
     
     # Ping OK, reset counter
+    notify_xiaomi_state(True)
     if SSH_FAIL_COUNT > 0:
         log_error(f"[Cortex] Xiaomi erreichbar wieder (nach {SSH_FAIL_COUNT} Fails)")
         SSH_FAIL_COUNT = 0
@@ -145,9 +150,21 @@ def main():
         for pid in res.stdout.strip().split():
             if int(pid) != my_pid: subprocess.run(["kill", "-9", pid])
     except: pass
+    # Oracle-Polling Counter
+    _oracle_tick = 0
     while True:
         try: check_and_heal()
         except Exception as e: log_error(f"[Cortex] Loop-Error: {str(e)}")
+        _oracle_tick += 1
+        if _oracle_tick >= 1:  # jede Runde = 60s
+            _oracle_tick = 0
+            try:
+                import sys as _sys
+                _sys.path.insert(0, os.path.expanduser("~/jack"))
+                import jack_oracle as _jo
+                _jo.cycle()
+            except Exception as _e:
+                log_error(f"[Cortex] Oracle-Error: {str(_e)[:80]}")
         time.sleep(60)
 
 if __name__ == "__main__":
