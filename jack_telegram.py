@@ -156,7 +156,9 @@ def handle_callback(callback_data, callback_id):
         import json as _j, os as _o, subprocess as _sp, time as _t
         cmd = callback_data[7:]
         uid = "btn-" + str(int(_t.time() * 1000))
-        data = {"cmd": cmd, "uuid": uid, "ts": _t.strftime("%Y-%m-%d %H:%M:%S")}
+        ts = _t.strftime("%Y-%m-%d %H:%M:%S")
+        sig = oracle_sign(cmd, uid, ts)
+        data = {"cmd": cmd, "uuid": uid, "ts": ts, "sig": sig}
         repo = _o.path.expanduser("~/jack-commands")
         open(_o.path.join(repo,"jack_cmd.json"),"w").write(_j.dumps(data))
         _sp.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
@@ -169,6 +171,15 @@ def get_updates(offset=0):
         with urllib.request.urlopen(url, timeout=35) as res:
             return json.loads(res.read())['result']
     except: return []
+
+def oracle_sign(cmd, uuid, ts):
+    try:
+        sec = open(os.path.expanduser("~/.jack_secrets")).read()
+        secret = [l.split("=",1)[1].strip().strip('"') for l in sec.split(chr(10)) if "ORACLE_SECRET=" in l][0]
+        msg = f"{uuid}:{cmd}:{ts}".encode()
+        import hmac as _h, hashlib as _hs
+        return _h.new(secret.encode(), msg, _hs.sha256).hexdigest()
+    except: return ""
 
 def handle(text):
     global PENDING_WRITE, PENDING_IMPROVE
@@ -185,7 +196,9 @@ def handle(text):
         import json as _j, os as _o, subprocess as _sp, time as _t
         cmd = raw.strip()[8:].strip()
         uid = "tg-" + str(int(_t.time()))
-        data = {"cmd": cmd, "uuid": uid, "ts": _t.strftime("%Y-%m-%d %H:%M:%S")}
+        ts = _t.strftime("%Y-%m-%d %H:%M:%S")
+        sig = oracle_sign(cmd, uid, ts)
+        data = {"cmd": cmd, "uuid": uid, "ts": ts, "sig": sig}
         repo = _o.path.expanduser("~/jack-commands")
         open(_o.path.join(repo,"jack_cmd.json"),"w").write(_j.dumps(data))
         _sp.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
