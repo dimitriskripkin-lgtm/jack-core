@@ -121,6 +121,33 @@ def main():
         _maybe_self_improve()
         time.sleep(HEARTBEAT)
 
+
+import threading as _th, time as _tm
+
+def _autolearn_loop():
+    while True:
+        try:
+            import jack_learn; jack_learn.run_once()
+        except Exception as e:
+            try: import jack_log; jack_log.log_decision("AUTOLEARN-ERR",str(e)[:80])
+            except: pass
+        _tm.sleep(7200)
+
+def _publisher_loop():
+    while True:
+        try:
+            import jack_publish; jack_publish.push_context()
+        except Exception as e:
+            try: import jack_log; jack_log.log_decision("PUBLISHER-ERR",str(e)[:80])
+            except: pass
+        _tm.sleep(180)
+
+def start_consolidated():
+    _th.Thread(target=_autolearn_loop,daemon=True,name="autolearn").start()
+    _th.Thread(target=_publisher_loop,daemon=True,name="publisher").start()
+    print("[Konsolidiert] Autolearn+Publisher als Threads gestartet")
+
 if __name__=="__main__":
+    start_consolidated()
     import sys
     print(json.dumps(cycle(dry=True),indent=2,ensure_ascii=False) if (len(sys.argv)>1 and sys.argv[1]=="dry") else main())
