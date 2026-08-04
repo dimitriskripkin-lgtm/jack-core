@@ -27,12 +27,19 @@ def run():
     # Wichtige Eintraege (importance>=8) nie stale
     c.execute("UPDATE memories SET tags = REPLACE(tags, ' stale', '') WHERE importance >= 8")
 
+    # Aufraeumen: Stale-Eintraege endgueltig loeschen
+    c.execute("DELETE FROM memories WHERE tags LIKE '%stale%'")
+    geloescht = c.rowcount
+    if geloescht > 0:
+        bericht.append(f"{geloescht} Stale-Eintraege geloescht")
+
     # Statistik
     total = c.execute("SELECT COUNT(*) FROM memories").fetchone()[0]
-    stale_total = c.execute("SELECT COUNT(*) FROM memories WHERE tags LIKE '%stale%'").fetchone()[0]
-    bericht.append(f"Gesamt: {total} Eintraege | Stale: {stale_total}")
+    bericht.append(f"Verbleibend: {total} Eintraege")
+    
 
     conn.commit()
+    conn.execute("VACUUM") # Physischen Speicher wieder freigeben
     conn.close()
 
     import jack_log
