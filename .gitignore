@@ -19,3 +19,5 @@ jack_missions.db
 jack_patch_memory.db
 jack_skills.db
 jack_cognition.db
+jack_fingerprint.json
+fingerprints/
