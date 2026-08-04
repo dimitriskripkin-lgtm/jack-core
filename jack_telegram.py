@@ -149,7 +149,7 @@ def handle_callback(callback_data, callback_id):
         try:
             import json as _j, os as _o
             r = _j.load(open(_o.path.expanduser("~/jack-commands/jack_result.json")))
-            return "Ergebnis (" + r.get("uuid","?") + "):" + chr(10) + r.get("result","?")[:1500]
+            return "Ergebnis (" + r.get("uuid","?") + "):" + chr(10) + r.get("result","?")[:3000]
         except Exception as e:
             return "Kein Ergebnis: " + str(e)
     if callback_data.startswith("oracle:"):
@@ -189,7 +189,7 @@ def handle(text):
         try:
             import json as _j, os as _o
             r = _j.load(open(_o.path.expanduser("~/jack-commands/jack_result.json")))
-            return "Ergebnis (" + r.get("uuid","?") + "):" + chr(10) + r.get("result","?")[:1500]
+            return "Ergebnis (" + r.get("uuid","?") + "):" + chr(10) + r.get("result","?")[:3000]
         except Exception as e:
             return "Kein Ergebnis: " + str(e)
     if raw.strip().lower().startswith("/oracle "):
@@ -298,6 +298,12 @@ def handle(text):
         threading.Thread(target=_run, args=(ziel,), daemon=True).start()
         return "Alles klar, ich arbeite selbststaendig dran (max 4 Runden, nur Werkstatt) und melde mich, wenn ich fertig bin."
 
+    if text.strip() == '/skill_builder':
+        import jack_skill_builder
+        neue = jack_skill_builder.run()
+        if not neue:
+            return 'Skill-Builder: Keine Luecken gefunden, alle Faehigkeiten haben Skills.'
+        return 'Skill-Builder: ' + str(len(neue)) + ' neue Skills generiert:' + chr(10) + chr(10).join('  - ' + n for n in neue)
     if text.strip() == '/db_skills':
         import jack_skills_db
         return jack_skills_db.list_skills()
@@ -305,7 +311,7 @@ def handle(text):
         import jack_skills_db
         name = raw[10:].strip()
         ok, out = jack_skills_db.run_skill(name)
-        return ("OK [" + name + "]:\n" if ok else "FEHLER [" + name + "]:\n") + out[:1400]
+        return ("OK [" + name + "]:\n" if ok else "FEHLER [" + name + "]:\n") + out[:3000]
     if text.startswith('/db_trace '):
         import jack_skills_db
         name = raw.strip()[10:].strip()
@@ -525,7 +531,7 @@ def handle(text):
     elif text.startswith('frag gemini'):
         question = text[11:].strip() or "System-Status analysieren."
         status = jack_gemini_bridge.collect_status()
-        return jack_gemini_bridge.ask_gemini(question, status)[:1000]
+        return jack_gemini_bridge.ask_gemini(question, status)[:2000]
     else:
         req = jack_write.detect_write_request(raw)
         if req:
@@ -537,7 +543,7 @@ def handle(text):
                     "\n\nZum Ausfuehren antworte exakt: " + BESTAETIGUNG + "\nOder: abbrechen")
         _r = jack_talk.talk_to_gemini(text)
         jack_talk.auto_save_to_memory(text, _r)
-        return _r[:1500]
+        return _r[:3000]
 
 def main():
     send("JACK Telegram-Bridge online (mit Voice-Support).")
