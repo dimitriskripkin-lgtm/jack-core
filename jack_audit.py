@@ -93,7 +93,7 @@ def _scout_status():
         return "Noch kein Fingerabdruck"
 def report():
     L = ["JACK AUDIT  " + datetime.now().strftime("%Y-%m-%d %H:%M"), "-- Gesundheit --",
-         _dienste(), _speicher(), _fehler(), _xiaomi(), "-- Sicherheit --",
+         _dienste(), _speicher(), _fehler(), _xiaomi(), "-- Evolution --", "Scout: " + _scout_status(), "-- Sicherheit --",
          _secrets(), _scrubber(), _gate()]
     return "\n".join(L)
 
