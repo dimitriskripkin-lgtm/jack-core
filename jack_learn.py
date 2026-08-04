@@ -67,3 +67,8 @@ def learn_from_recent(n=30):
 if __name__=="__main__":
     new=learn_from_recent()
     print("Fakten jetzt:",json.dumps(new,ensure_ascii=False,indent=2))
+
+
+def run_once(n=30):
+    """Alias fuer den Waechter-Thread - ruft learn_from_recent auf."""
+    return learn_from_recent(n)
