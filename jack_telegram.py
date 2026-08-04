@@ -145,6 +145,9 @@ def handle_callback(callback_data, callback_id):
         if not results or isinstance(results, dict):
             return f"Nichts gefunden fuer: {q}"
         return "\n".join([f'[{r["category"]}] {r["content"][:80]}' for r in results])
+    if callback_data == "scan_now":
+        import jack_monitor as _mon
+        return _mon.vollscan()
     if callback_data == "oracle_result":
         try:
             import json as _j, os as _o
@@ -230,7 +233,7 @@ def handle(text):
             return "Nicht angelegt: " + str(msg)
         return "Mission #" + str(mid) + " angelegt: " + auf[:60] + chr(10) + "Laeuft in max 5 Min. Status: /missionen"
     if raw.strip().lower() == "/befehle":
-        buttons = [[("Dienste Status","oracle:dienste")],[("RAM Check","oracle:ram")],[("Fehler anzeigen","oracle:fehler")],[("Budget heute","oracle:budget")],[("Letzte Aktionen","oracle:log")],[("Datum & Uhrzeit","oracle:datum")],[("Ollama Modelle","oracle:modelle")],[("Letztes Ergebnis","oracle_result")]]
+        buttons = [[ ("Dienste Status","oracle:dienste")],[("RAM Check","oracle:ram")],[("Fehler anzeigen","oracle:fehler")],[("Budget heute","oracle:budget")],[("Letzte Aktionen","oracle:log")],[("Datum & Uhrzeit","oracle:datum")],[("Ollama Modelle","oracle:modelle")],[("Letztes Ergebnis","oracle_result")],[("Vollscan","scan_now")]]
         send_keyboard("JACK Oracle - was moechtest du wissen?", buttons)
         return None
 
