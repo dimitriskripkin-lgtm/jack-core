@@ -61,6 +61,36 @@ def _gate():
     except Exception as e:
         return "Skill-Gate:     ERR %s" % e
 
+def _skills_status():
+    try:
+        import sqlite3, os
+        c = sqlite3.connect(os.path.expanduser("~/jack/jack_skills.db"))
+        total = c.execute("SELECT COUNT(*) FROM skills").fetchone()[0]
+        ok = c.execute("SELECT COUNT(*) FROM skills WHERE status=\"verifiziert\"").fetchone()[0]
+        defekt = c.execute("SELECT COUNT(*) FROM skills WHERE status=\"defekt\"").fetchone()[0]
+        c.close()
+        return f"{ok}/{total} verifiziert, {defekt} defekt"
+    except Exception as e:
+        return f"Fehler: {str(e)[:40]}"
+
+def _cognition_status():
+    try:
+        import sqlite3, os
+        c = sqlite3.connect(os.path.expanduser("~/jack/jack_cognition.db"))
+        n = c.execute("SELECT COUNT(*) FROM traces").fetchone()[0]
+        ok = c.execute("SELECT COUNT(*) FROM traces WHERE status=\"fertig\"").fetchone()[0]
+        c.close()
+        return f"{n} Traces, {ok} erfolgreich"
+    except Exception as e:
+        return f"Fehler: {str(e)[:40]}"
+
+def _scout_status():
+    try:
+        import json, os
+        fp = json.load(open(os.path.expanduser("~/jack/jack_fingerprint.json")))
+        return f"Hash {fp["hash"]} ({fp["timestamp"][:16]})"
+    except Exception:
+        return "Noch kein Fingerabdruck"
 def report():
     L = ["JACK AUDIT  " + datetime.now().strftime("%Y-%m-%d %H:%M"), "-- Gesundheit --",
          _dienste(), _speicher(), _fehler(), _xiaomi(), "-- Sicherheit --",

@@ -138,6 +138,13 @@ def run():
         speichere_skill(l["skill_name"], l["beschreibung"], l["befehl"], code, erwartet)
         neue.append(l["skill_name"])
 
+
+    # Python-Skills aus Verhaltens-Luecken
+    py_luecken = python_luecken(vorhanden)
+    for l in py_luecken:
+        print("Python-Skill generiere: " + l["name"])
+        speichere_skill(l["name"], l["beschreibung"], "python", l["code"], l["erwartet"])
+        neue.append(l["name"])
     if not neue:
         print("Keine neuen Skills noetig - alle verfuegbaren Faehigkeiten haben Skills.")
     else:
@@ -150,3 +157,59 @@ if __name__ == "__main__":
         print(chr(10) + "Jetzt verifizieren:")
         for n in neu:
             print("  python3 -c \"import jack_skills_db; print(jack_skills_db.run_skill('" + n + "'))\"")
+
+
+def python_luecken(vorhanden):
+    """Findet Python-basierte Luecken - Skills die JACK selbst braucht."""
+    kandidaten = [
+        {
+            "name": "fehler_zusammenfassung",
+            "beschreibung": "Fasst offene Fehler aus jack_errors.db zusammen",
+            "code": chr(10).join([
+                "import sqlite3, os",
+                "c = sqlite3.connect(os.path.expanduser(\"~/jack/jack_errors.db\"))",
+                "rows = c.execute(\"SELECT module, error_msg FROM errors WHERE resolved=0 ORDER BY timestamp DESC LIMIT 5\").fetchall()",
+                "c.close()",
+                "if not rows: print(\"Keine offenen Fehler\")",
+                "else:",
+                "    for r in rows: print(r[0] + \": \" + r[1][:80])",
+            ]),
+            "erwartet": "Liste offener Fehler oder: Keine offenen Fehler",
+            "abh": ["sqlite3"],
+        },
+        {
+            "name": "memory_statistik",
+            "beschreibung": "Zeigt Gedaechtnis-Statistik: Eintraege, stale, Kategorien",
+            "code": chr(10).join([
+                "import sqlite3, os",
+                "dbs = [",
+                "    (\"jack_memory.db\", \"memory\"),",
+                "    (\"kortex_memory.db\", \"memories\"),",
+                "]",
+                "for db_name, tbl in dbs:",
+                "    pfad = os.path.expanduser(\"~/jack/\" + db_name)",
+                "    if not os.path.exists(pfad): continue",
+                "    c = sqlite3.connect(pfad)",
+                "    try:",
+                "        n = c.execute(\"SELECT COUNT(*) FROM \" + tbl).fetchone()[0]",
+                "        print(db_name + \": \" + str(n) + \" Eintraege\")",
+                "    except: pass",
+                "    c.close()",
+            ]),
+            "erwartet": "Anzahl Eintraege pro Gedaechtnis-Datenbank",
+            "abh": ["sqlite3"],
+        },
+        {
+            "name": "api_budget_check",
+            "beschreibung": "Zeigt aktuellen API-Budgetstand",
+            "code": chr(10).join([
+                "import sys, os",
+                "sys.path.insert(0, os.path.expanduser(\"~/jack\"))",
+                "import jack_budget",
+                "print(jack_budget.status())",
+            ]),
+            "erwartet": "Text oder Vision Calls und Token-Verbrauch",
+            "abh": ["jack_budget"],
+        },
+    ]
+    return [k for k in kandidaten if k["name"] not in vorhanden]

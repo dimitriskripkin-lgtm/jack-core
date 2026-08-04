@@ -79,12 +79,23 @@ def dienste_status():
     except Exception:
         return "Dienste-Check fehlgeschlagen"
 
+
+def scan_snapshot():
+    """Vollscan-Snapshot fuer das Briefing."""
+    try:
+        import jack_monitor as _mon
+        return _mon.vollscan()
+    except Exception as e:
+        return f"Scan fehlgeschlagen: {e}"
 def run():
     meldungen = []
     ts = datetime.now().strftime("%d.%m.%Y %H:%M")
 
     # Immer: Batteriestand
     meldungen.append(batteriestand())
+
+    # Vollscan immer mit dabei
+    meldungen.append(scan_snapshot())
 
     # Nur wenn was nicht stimmt: Dienste
     d = dienste_status()
