@@ -167,6 +167,15 @@ def _scout_loop():
         except Exception as e:
             try: import jack_log; jack_log.log_decision('SCOUT-ERR', str(e)[:80])
             except: pass
+            # Skill-Builder: neue Luecken automatisch schliessen
+            try:
+                import jack_skill_builder as _sb
+                neue = _sb.run()
+                if neue:
+                    notify("Skill-Builder: " + str(len(neue)) + " neue Skills generiert: " + ", ".join(neue))
+            except Exception as _sbe:
+                try: jack_log.log_decision("SKILL-BUILDER-ERR", str(_sbe)[:80])
+                except: pass
         _tm.sleep(86400)
 def start_consolidated():
     _th.Thread(target=_autolearn_loop,daemon=True,name="autolearn").start()
