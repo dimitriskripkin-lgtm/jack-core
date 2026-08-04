@@ -308,7 +308,7 @@ def handle(text):
         return ("OK [" + name + "]:\n" if ok else "FEHLER [" + name + "]:\n") + out[:1400]
     if text.startswith('/db_trace '):
         import jack_skills_db
-        name = raw[10:].strip()
+        name = raw.strip()[10:].strip()
         traces = jack_skills_db.get_trace(name, 3)
         if not traces: return "Keine Traces fuer: " + name
         zeilen = ["Traces fuer " + name + ":"]
