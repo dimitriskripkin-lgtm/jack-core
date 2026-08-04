@@ -177,11 +177,26 @@ def _scout_loop():
                 try: jack_log.log_decision("SKILL-BUILDER-ERR", str(_sbe)[:80])
                 except: pass
         _tm.sleep(86400)
+
+def _monitor_loop():
+    """Event-driven Monitor: prueft alle 5 Min auf kritische Zustandsaenderungen."""
+    _tm.sleep(30)
+    while True:
+        try:
+            import jack_monitor as _mon
+            events = _mon.event_check()
+            if events:
+                import jack_log; jack_log.log_decision('MONITOR-EVENT', str(len(events)) + ' Events')
+        except Exception as e:
+            try: import jack_log; jack_log.log_decision('MONITOR-ERR', str(e)[:80])
+            except: pass
+        _tm.sleep(300)
 def start_consolidated():
     _th.Thread(target=_autolearn_loop,daemon=True,name="autolearn").start()
     _th.Thread(target=_publisher_loop,daemon=True,name="publisher").start()
     _th.Thread(target=_missions_loop,daemon=True,name="missions").start()
     _th.Thread(target=_scout_loop,daemon=True,name="scout").start()
+    _th.Thread(target=_monitor_loop,daemon=True,name="monitor").start()
     print("[Konsolidiert] Autolearn+Publisher+Missionen als Threads gestartet")
 
 if __name__=="__main__":

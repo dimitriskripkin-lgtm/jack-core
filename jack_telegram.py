@@ -298,6 +298,9 @@ def handle(text):
         threading.Thread(target=_run, args=(ziel,), daemon=True).start()
         return "Alles klar, ich arbeite selbststaendig dran (max 4 Runden, nur Werkstatt) und melde mich, wenn ich fertig bin."
 
+    if text.strip() == '/scan':
+        import jack_monitor as _mon
+        return _mon.vollscan()
     if text.strip() == '/skill_builder':
         import jack_skill_builder
         neue = jack_skill_builder.run()
