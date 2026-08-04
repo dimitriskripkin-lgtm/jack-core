@@ -298,6 +298,25 @@ def handle(text):
         threading.Thread(target=_run, args=(ziel,), daemon=True).start()
         return "Alles klar, ich arbeite selbststaendig dran (max 4 Runden, nur Werkstatt) und melde mich, wenn ich fertig bin."
 
+    if text.strip() == '/db_skills':
+        import jack_skills_db
+        return jack_skills_db.list_skills()
+    if text.startswith('/db_skill '):
+        import jack_skills_db
+        name = raw[10:].strip()
+        ok, out = jack_skills_db.run_skill(name)
+        return ("OK [" + name + "]:\n" if ok else "FEHLER [" + name + "]:\n") + out[:1400]
+    if text.startswith('/db_trace '):
+        import jack_skills_db
+        name = raw[10:].strip()
+        traces = jack_skills_db.get_trace(name, 3)
+        if not traces: return "Keine Traces fuer: " + name
+        zeilen = ["Traces fuer " + name + ":"]
+        for t in traces:
+            zeilen.append(t["status"] + " | " + str(t["ts_ende"] or "")[:19])
+            if t.get("rueckwaerts_analyse"):
+                zeilen.append("Analyse: " + t["rueckwaerts_analyse"][:200])
+        return chr(10).join(zeilen)
     if text.strip() == '/skills':
         return jack_skills.list_skills()
 
