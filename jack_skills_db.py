@@ -14,6 +14,7 @@ def _con():
 
 def _cog():
     c = sqlite3.connect(COG, timeout=10)
+    c.row_factory = sqlite3.Row
     return c
 
 def list_skills():
