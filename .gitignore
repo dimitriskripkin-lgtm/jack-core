@@ -21,3 +21,10 @@ jack_skills.db
 jack_cognition.db
 jack_fingerprint.json
 fingerprints/
+
+# Runtime State (nicht committen)
+.haliza_rate
+.api_budget
+.monitor_state
+.oracle_last_uuid
+.waechter_state
