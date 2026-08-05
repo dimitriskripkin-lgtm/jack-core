@@ -125,6 +125,7 @@ def event_check():
         if ist_heiss and not war_heiss:
             meldungen.append(f"Temperatur kritisch: {akku['temperatur']}C")
         state["akku_heiss"] = ist_heiss
+        state["akku_temp_zuletzt"] = akku["temperatur"]
 
     # RAM
     ram = check_ram()
