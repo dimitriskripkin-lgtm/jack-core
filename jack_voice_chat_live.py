@@ -64,7 +64,7 @@ async def ein_turn(session, nummer, seconds):
     for i in range(0, len(daten), CHUNK):
         await session.send_realtime_input(
             audio=types.Blob(data=daten[i:i+CHUNK], mime_type="audio/pcm;rate=16000"))
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
     await session.send_realtime_input(audio_stream_end=True)
 
     chunks = []
