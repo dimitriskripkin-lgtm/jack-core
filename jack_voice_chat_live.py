@@ -13,7 +13,7 @@ PREFIX = os.environ.get("PREFIX", "/data/data/com.termux/files/usr")
 M4A = os.path.join(PREFIX, "tmp", "jack_live_in.m4a")
 PCM = os.path.join(PREFIX, "tmp", "jack_live_in.pcm")
 WAV = os.path.join(PREFIX, "tmp", "jack_live_out.wav")
-CHUNK = 4096
+CHUNK = 32768
 
 def hole_bausteine():
     """Client und Config wie in jack_voice_live.single_attempt() gebaut."""
@@ -66,6 +66,8 @@ async def ein_turn(session, nummer, seconds):
             audio=types.Blob(data=daten[i:i+CHUNK], mime_type="audio/pcm;rate=16000"))
         await asyncio.sleep(0.01)
     await session.send_realtime_input(audio_stream_end=True)
+    t_sent = time.time()
+    send_ms = (t_sent - t0) * 1000
 
     chunks = []
     first_ms = None
@@ -90,7 +92,11 @@ async def ein_turn(session, nummer, seconds):
     with wave.open(WAV, "wb") as w:
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(24000)
         w.writeframes(b"".join(chunks))
-    print("Antwort nach " + str(int(first_ms or 0)) + "ms, " + str(len(chunks)) + " Chunks. Spiele ab...")
+    wait_ms = (first_ms or 0) - send_ms
+    anzahl_sendungen = (len(daten) + CHUNK - 1) // CHUNK
+    print("Gesamt " + str(int(first_ms or 0)) + "ms = Senden " + str(int(send_ms)) +
+          "ms (" + str(anzahl_sendungen) + " Sendungen) + Gemini " + str(int(wait_ms)) + "ms")
+    print(str(len(chunks)) + " Audio-Chunks empfangen. Spiele ab...")
     play_blocking()
     return True
 
