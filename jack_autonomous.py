@@ -190,7 +190,7 @@ def _monitor_loop():
         except Exception as e:
             try: import jack_log; jack_log.log_decision('MONITOR-ERR', str(e)[:80])
             except: pass
-        _tm.sleep(300)
+        _tm.sleep(120)
 def start_consolidated():
     _th.Thread(target=_autolearn_loop,daemon=True,name="autolearn").start()
     _th.Thread(target=_publisher_loop,daemon=True,name="publisher").start()
