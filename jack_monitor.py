@@ -9,7 +9,7 @@ STATE_FILE = os.path.join(H, ".monitor_state")
 SCHWELLEN = {
     "akku_min": 20,
     "ram_min_mb": 800,
-    "temp_max": 45,
+    "temp_max": 43,
 }
 
 def _run(cmd, timeout=8):
