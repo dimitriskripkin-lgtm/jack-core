@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-06T10:14:50.424311
+Stand: 2026-08-06T10:53:39.996355
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -25,6 +25,9 @@ Stand: 2026-08-06T10:14:50.424311
 - Dima hat auf Xiaomi in Termux sshd eingegeben.
 - Dima hat eine autobiographische Information hochgeladen, die JACK durchsuchen soll.
 - Dima hat den Befehl gegeben, ins Verzeichnis `~/jack/titan_legacy` zu wechseln und eine Datei von GitHub zu laden.
+- JACK kann das Xiaomi per SSH ansprechen.
+- JACK verfügt über Fähigkeiten wie Speichermanagement, Sicherheit und Automatisierung.
+- JACK kennt Befehle wie `/skill save <name>`.
 
 ## Aktive Module (74)
 - install_litert.py
@@ -106,27 +109,27 @@ Stand: 2026-08-06T10:14:50.424311
 - Offene Fehler: 0
 - Erinnerungen: 173
 - Dienste:
-run: jack_cortex: (pid 10434) 1113635s
-run: jack_telegram: (pid 23660) 115s
+run: jack_cortex: (pid 13264) 378s
+run: jack_telegram: (pid 9439) 704s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 8054) 7631s
+run: ollama: (pid 8054) 9960s
 
 ## Letzte Aenderungen
+a6e20e4 vecdb: vec0.so absoluter pfad mit expanduser
+66eb8c3 memory: save() alle 7 spalten inkl timestamp+source
+af861c5 cortex: ssh statt ping, find_xiaomi nur bei fail, root-user fix | memory: save() spalten fix | vecdb: expanduser
+303fa37 telegram: oracle-block komplett neu ohne kaputte f-strings
+53ea18f telegram: oracle newlines, voice thread, doppel-callback weg | cortex: scan-range fix, find_xiaomi nur bei fail
+ef0f434 oracle: direkte subprocess-ausfuehrung statt git-roundtrip, sofortiges ergebnis
+13219bf telegram: shebang-fix, kortex sicherer import, voice in thread, hardcode-pfade weg
+adbca2b bridge+talk: expanduser statt hardcode, xiaomi-ip fix, fname-nameerror, math-signals bereinigt, doppel-import weg
+71ee032 autonomous: xiaomi-ip aus config statt hardcoded, skill-builder nach scout-erfolg nicht im except
+299ec62 stand 2026-08-06 vor code-review
 194642d telegram: threading fuer langsame calls, sofortige quittung, fast_cmds direkt
 aa1099a telegram: erster befehl nach restart nicht mehr verschluckt - start-ts filter statt get_updates(-1)
 2b5b89d jack_selftest: ein befehl gruen/rot fuer alle kern-checks
 bc6974f publisher: push() loop-fix, thermal: negative sensor filter
 8c08356 publisher: push() statt nur build() im waechter-loop, thermal: negative sensor-werte rausfiltern
-b4ecf05 jack_talk: check aus math_signals entfernt - verhinderte Antworten auf Alltagsfragen
-81d3f6e Cleanup: Muell-Datei entfernt
-951762d Ollama: Vulkan-Env in runit run-Datei, Thermal-Monitor filtert Schwellwerte
-8d1dc8b feat: jack_ui.py - schöne Konsolen-Ausgabe mit Farben + Boxen
-130c329 feat: Stack B mit Vulkan GPU-Beschleunigung (6.6s statt 35-85s)
-67c6321 fix: Watchdog zeigt echtes Limit an (95°C)
-5f65efc feat: litert_watchdog.py - Temperatur-sicherer LLM-Runner (85°C Limit)
-e7fba45 jack_hey: Loop-Overhead weg, Stille-Pruefung schaltet sich bei lauter Umgebung ab
-807a1c3 jack_hey: Standardzeit 5s, Stille-Schwelle -45dB (fahrendes Auto hat -18dB Grundrauschen)
-adfd702 jack_hey: Stille-Erkennung - Aufnahme stoppt automatisch nach 2s Ruhe
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
