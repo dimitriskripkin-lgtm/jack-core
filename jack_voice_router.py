@@ -7,6 +7,18 @@ sys.path.append(os.path.expanduser("~/jack"))
 API_CHECK_URL = "https://www.google.com/generate_204"
 API_TIMEOUT = 2.0
 
+import time as _time
+
+ROUTER_LOG = os.path.join(os.path.expanduser("~/jack/logs"), "router.log")
+def rlog(msg):
+    try:
+        os.makedirs(os.path.dirname(ROUTER_LOG), exist_ok=True)
+        ts = _time.strftime("%Y-%m-%d %H:%M:%S")
+        with open(ROUTER_LOG, "a") as f:
+            f.write(ts + " | " + msg + chr(10))
+    except Exception:
+        pass
+
 def check_connectivity():
     try:
         urllib.request.urlopen(API_CHECK_URL, timeout=API_TIMEOUT)
@@ -203,10 +215,10 @@ async def route_voice(audio_path):
     if not os.path.exists(audio_path):
         return {"success": False, "error": "Datei nicht gefunden"}
 
-    print(f"[ROUTER] Starte Routing für: {audio_path} ({os.path.getsize(audio_path)} Bytes)")
+    print(f"[ROUTER] Starte Routing für: {audio_path} ({os.path.getsize(audio_path)} Bytes)"); rlog("START | " + str(os.path.getsize(audio_path)) + " bytes")
     
     if check_connectivity():
-        print("[ROUTER] Internet verfügbar. Prüfe Stack A...")
+        print("[ROUTER] Internet verfügbar. Prüfe Stack A..."); rlog("ONLINE | -> Stack A")
         
         # Versuche Live-Streaming
         success, wav_out = await process_stack_a_live_stream(audio_path)
@@ -222,7 +234,7 @@ async def route_voice(audio_path):
         
         print("[ROUTER] Stack A fehlgeschlagen. Wechsle zu Stack B.")
     else:
-        print("[ROUTER] Kein Internet. Direkter Wechsel zu Stack B.")
+        print("[ROUTER] Kein Internet. Direkter Wechsel zu Stack B."); rlog("OFFLINE | -> Stack B")
         
     text, audio_or_error = await process_stack_b_offline(audio_path)
     if text:
