@@ -40,7 +40,7 @@ SYSTEM_PROMPT = (
     + chr(10) + load_jack_context()
 )
 
-VOICE_NAME = "Charon"
+VOICE_NAME = "Fenrir"
 VOICE_CONFIG = types.SpeechConfig(voice_config=types.VoiceConfig(
     prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=VOICE_NAME)))
 
