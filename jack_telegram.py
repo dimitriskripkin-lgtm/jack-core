@@ -500,6 +500,21 @@ def handle(text):
             _j.dump(cfg, open(cfg_path,"w"), indent=2)
             return f"Vinted Intervall: {parts[1]} Minuten"
 
+    if raw.lower().startswith("merke dir ") or raw.lower().startswith("merke: "):
+        notiz = raw.split(" ",2)[2].strip() if raw.lower().startswith("merke dir ") else raw[7:].strip()
+        try:
+            import json as _j, os as _o2, datetime as _dt
+            ip = _o2.path.expanduser("~/jack/jack_identity.json")
+            idn = _j.load(open(ip)) if _o2.path.exists(ip) else {}
+            notizen = idn.get("dima_wuensche", [])
+            notizen.append({"text": notiz, "ts": str(_dt.datetime.now())[:16]})
+            idn["dima_wuensche"] = notizen[-10:]
+            _j.dump(idn, open(ip,"w"), indent=2, ensure_ascii=False)
+            import jack_log; jack_log.log_decision("MERKE-DIR", notiz[:80])
+            return "Gemerkt: " + notiz
+        except Exception as _e:
+            return "Fehler beim Merken: " + str(_e)[:100]
+
     if raw.startswith("/approve_fix_"):
         fix_id = raw.strip()[1:]
         try:
