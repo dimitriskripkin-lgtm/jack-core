@@ -1,12 +1,17 @@
-from kortex_memory import add_memory, search_memory, get_recent
 #!/usr/bin/env python3
 import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
 
-sys.path.append('/data/data/com.termux/files/home/jack')
+sys.path.append(os.path.expanduser('~/jack'))
 import jack_claude
 import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors, jack_improve, jack_log, jack_budget, jack_skills, jack_agent
 from jack_voice_processor import process_voice_message
+try:
+    from kortex_memory import add_memory, search_memory, get_recent
+except Exception as _ke:
+    def add_memory(*a,**k): pass
+    def search_memory(*a,**k): return []
+    def get_recent(*a,**k): return []
 
 ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
 PENDING_WRITE = {}
@@ -395,7 +400,7 @@ def handle(text):
     if raw.strip().split("@")[0] == "/status_report":
         import subprocess
         result = subprocess.run(
-            ["bash", "/data/data/com.termux/files/home/jack/jack_status_report.sh"],
+            ["bash", os.path.expanduser("~/jack/jack_status_report.sh")],
             capture_output=True, text=True, timeout=15
         )
         return result.stdout[:3000] if result.stdout else "Fehler beim Status-Report."
