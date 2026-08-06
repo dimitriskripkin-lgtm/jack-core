@@ -40,6 +40,10 @@ SYSTEM_PROMPT = (
     + chr(10) + load_jack_context()
 )
 
+VOICE_NAME = "Charon"
+VOICE_CONFIG = types.SpeechConfig(voice_config=types.VoiceConfig(
+    prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=VOICE_NAME)))
+
 def log_event(etype, detail):
     try:
         os.makedirs(LOG_DIR, exist_ok=True)
@@ -51,7 +55,7 @@ def log_event(etype, detail):
 
 async def single_attempt(pcm):
     client = genai.Client(api_key=API_KEY)
-    config = types.LiveConnectConfig(response_modalities=["AUDIO"], system_instruction=SYSTEM_PROMPT)
+    config = types.LiveConnectConfig(response_modalities=["AUDIO"], system_instruction=SYSTEM_PROMPT, speech_config=VOICE_CONFIG)
     out_chunks = []
     async with client.aio.live.connect(model=MODEL, config=config) as session:
         for i in range(0, len(pcm), CHUNK):
@@ -133,7 +137,7 @@ async def voice_stream(pcm_path, callback):
         return False
     
     client = genai.Client(api_key=API_KEY)
-    config = types.LiveConnectConfig(response_modalities=["AUDIO"], system_instruction=SYSTEM_PROMPT)
+    config = types.LiveConnectConfig(response_modalities=["AUDIO"], system_instruction=SYSTEM_PROMPT, speech_config=VOICE_CONFIG)
     
     async with client.aio.live.connect(model=MODEL, config=config) as session:
         # Audio an API senden
