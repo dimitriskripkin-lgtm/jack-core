@@ -1,105 +1,283 @@
 #!/usr/bin/env python3
-"""Erkennt Aktions-Intent in Dimas Nachrichten."""
-import os, json, subprocess, sys
+"""JACK Intent-Engine: erkennt Aktionswuensche in natuerlicher Sprache.
+Hybrid: Keywords zuerst (instant), Gemini-Semantik als Fallback (praezise).
+Lernt aus Historie welche Aktionen Dima wann will."""
+import os, json, subprocess, sys, sqlite3, datetime, re
 sys.path.insert(0, os.path.expanduser('~/jack'))
 
-LEVEL_FILE = os.path.expanduser('~/jack/.autonomie_level')
+H = os.path.expanduser('~/jack')
+LEVEL_FILE = os.path.join(H, '.autonomie_level')
+INTENT_DB = os.path.join(H, 'jack_intent.db')
+
+# ---------- Autonomie-Level ----------
+LEVEL_NAMEN = {
+    1: 'nur fragen (keine Aktion ohne Bestaetigung)',
+    2: 'lesen erlaubt (Status, Sensoren, Xiaomi lesen)',
+    3: 'schreiben erlaubt (Dienste neustarten, Xiaomi steuern)',
+    4: 'vollautonom (handelt selbst, meldet danach)'
+}
 
 def get_level():
     try: return int(open(LEVEL_FILE).read().strip())
     except: return 1
 
 def set_level(n):
-    open(LEVEL_FILE,'w').write(str(n))
+    open(LEVEL_FILE, 'w').write(str(n))
 
-# Intent-Patterns: keyword -> (aktion, min_level, beschreibung)
-INTENTS = {
-    'ssh': ('ssh_check', 1, 'SSH-Status Xiaomi pruefen'),
-    'xiaomi': ('ssh_check', 1, 'Xiaomi SSH pruefen'),
-    'akku': ('akku_check', 1, 'Akkustand pruefen'),
-    'ram': ('ram_check', 1, 'RAM-Status pruefen'),
-    'dienste': ('dienste_check', 1, 'Dienste pruefen'),
-    'ollama': ('ollama_check', 1, 'Ollama-Status pruefen'),
-    'temperature': ('temp_check', 1, 'Temperatur pruefen'),
-    'heiß': ('temp_check', 1, 'Temperatur pruefen'),
-    'heiss': ('temp_check', 1, 'Temperatur pruefen'),
-    'neustart': ('restart_services', 2, 'Dienste neustarten'),
-    'restart': ('restart_services', 2, 'Dienste neustarten'),
-    'aufräumen': ('cleanup', 2, 'Werkstatt aufraemen'),
+# ---------- DB fuer Intent-Historie ----------
+def _init_db():
+    con = sqlite3.connect(INTENT_DB)
+    con.execute('''CREATE TABLE IF NOT EXISTS intents (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        text TEXT, intent TEXT, methode TEXT,
+        confidence REAL, ausgefuehrt INTEGER,
+        ergebnis TEXT, ts TEXT, stunde INTEGER)''')
+    con.commit(); con.close()
+
+def _log_intent(text, intent, methode, conf, ausgefuehrt, ergebnis):
+    try:
+        _init_db()
+        con = sqlite3.connect(INTENT_DB)
+        now = datetime.datetime.now()
+        con.execute('INSERT INTO intents (text,intent,methode,confidence,ausgefuehrt,ergebnis,ts,stunde) VALUES (?,?,?,?,?,?,?,?)',
+            (text[:200], intent, methode, conf, 1 if ausgefuehrt else 0,
+             str(ergebnis)[:300], now.strftime('%Y-%m-%d %H:%M:%S'), now.hour))
+        con.commit(); con.close()
+    except Exception:
+        pass
+
+def historie(limit=10):
+    try:
+        _init_db()
+        con = sqlite3.connect(INTENT_DB)
+        con.row_factory = sqlite3.Row
+        rows = con.execute('SELECT * FROM intents ORDER BY id DESC LIMIT ?', (limit,)).fetchall()
+        con.close()
+        return [dict(r) for r in rows]
+    except Exception:
+        return []
+
+def muster_analyse():
+    """Findet heraus welche Intents zu welcher Tageszeit haeufig sind."""
+    try:
+        _init_db()
+        con = sqlite3.connect(INTENT_DB)
+        rows = con.execute('''SELECT intent, stunde, COUNT(*) as n FROM intents
+            WHERE ausgefuehrt=1 GROUP BY intent, stunde HAVING n >= 3
+            ORDER BY n DESC LIMIT 5''').fetchall()
+        con.close()
+        return [{'intent': r[0], 'stunde': r[1], 'anzahl': r[2]} for r in rows]
+    except Exception:
+        return []
+
+# ---------- Aktions-Katalog ----------
+AKTIONEN = {
+    'ssh_check':        {'level': 2, 'text': 'Xiaomi SSH pruefen'},
+    'akku_check':       {'level': 2, 'text': 'Akkustand pruefen'},
+    'ram_check':        {'level': 2, 'text': 'RAM pruefen'},
+    'temp_check':       {'level': 2, 'text': 'Temperatur pruefen'},
+    'dienste_check':    {'level': 2, 'text': 'Alle Dienste pruefen'},
+    'ollama_check':     {'level': 2, 'text': 'Ollama pruefen'},
+    'fehler_check':     {'level': 2, 'text': 'Offene Fehler zeigen'},
+    'standort_check':   {'level': 2, 'text': 'Standort abrufen'},
+    'dienst_neustart':  {'level': 3, 'text': 'Toten Dienst neustarten'},
+    'xiaomi_wake':      {'level': 3, 'text': 'Xiaomi WiFi neustarten'},
+    'werkstatt_leeren': {'level': 3, 'text': 'Werkstatt aufraeumen'},
 }
 
-FRUSTRATIONS_SIGNALE = [
-    'nervt', 'macht mich wahnsinnig', 'klappt nicht', 'geht nicht',
-    'funktioniert nicht', 'kaputt', 'buggy', 'scheiß', 'wieder mal'
-]
+KEYWORDS = {
+    'ssh_check':      ['ssh', 'xiaomi', 'slave', 'zweites handy'],
+    'akku_check':     ['akku', 'batterie', 'ladung', 'prozent'],
+    'ram_check':      ['ram', 'speicher', 'arbeitsspeicher', 'memory'],
+    'temp_check':     ['temperatur', 'heiss', 'heiß', 'warm', 'grad', 'thermal'],
+    'dienste_check':  ['dienste', 'services', 'laeuft alles', 'läuft alles', 'systemcheck', 'system check', 'selftest'],
+    'ollama_check':   ['ollama', 'lokales modell', 'llama'],
+    'fehler_check':   ['fehler', 'errors', 'bugs', 'was ist kaputt'],
+    'standort_check': ['standort', 'wo bin ich', 'position', 'gps'],
+    'dienst_neustart':['neustart', 'restart', 'starte neu', 'reboot dienst'],
+    'xiaomi_wake':    ['xiaomi wecken', 'wifi neustart', 'xiaomi neustarten'],
+}
 
-def detect(text):
-    """Gibt Intent-Dict zurueck oder None."""
+FRUST = ['nervt', 'wahnsinnig', 'klappt nicht', 'geht nicht', 'funktioniert nicht',
+         'kaputt', 'buggy', 'scheiss', 'scheiß', 'wieder mal', 'schon wieder',
+         'macht mucken', 'spinnt', 'macht probleme']
+
+FRAGE = ['?', 'wie ', 'was ', 'check', 'pruef', 'prüf', 'zeig', 'schau', 'guck',
+         'ist ', 'sind ', 'laeuft', 'läuft', 'mach ', 'kannst du']
+
+# ---------- Erkennung ----------
+def _keyword_detect(text):
     t = text.lower()
-    level = get_level()
-    
-    # Frustration + Kontext = hohe Confidence
-    frustration = any(s in t for s in FRUSTRATIONS_SIGNALE)
-    
-    for keyword, (aktion, min_level, beschreibung) in INTENTS.items():
-        if keyword in t:
-            confidence = 0.9 if frustration else 0.6
-            ausfuehren = level >= min_level and confidence >= 0.8
-            return {
-                'intent': aktion,
-                'confidence': confidence,
-                'beschreibung': beschreibung,
-                'ausfuehren': ausfuehren,
-                'level': level,
-                'min_level': min_level
-            }
-    return None
+    frust = any(s in t for s in FRUST)
+    frage = any(s in t for s in FRAGE)
+    treffer = []
+    for aktion, keys in KEYWORDS.items():
+        for k in keys:
+            if k in t:
+                conf = 0.5
+                if frust: conf += 0.35
+                if frage: conf += 0.25
+                treffer.append((aktion, min(conf, 0.95), k))
+                break
+    if not treffer:
+        return None
+    treffer.sort(key=lambda x: -x[1])
+    aktion, conf, key = treffer[0]
+    return {'intent': aktion, 'confidence': round(conf, 2), 'methode': 'keyword', 'match': key}
 
-def execute(intent_dict):
-    """Fuehrt die erkannte Aktion aus."""
-    aktion = intent_dict['intent']
+def _gemini_detect(text):
+    """Semantische Erkennung wenn Keywords nichts finden."""
+    try:
+        import jack_gemini_bridge
+        liste = ', '.join(AKTIONEN.keys())
+        prompt = (
+            "Du bist ein Intent-Klassifikator fuer ein Android-KI-System.\n"
+            f"Moegliche Aktionen: {liste}, keine\n\n"
+            "Analysiere ob der Nutzer eine dieser Aktionen ausgefuehrt haben moechte.\n"
+            "Nur wenn es klar erkennbar ist. Bei Smalltalk, persoenlichen Fragen "
+            "oder allgemeinem Gespraech: keine.\n\n"
+            "Antworte NUR mit JSON, nichts anderes:\n"
+            '{"intent":"aktion_oder_keine","confidence":0.0-1.0}\n\n'
+            f"NUTZER: {text}"
+        )
+        ans = jack_gemini_bridge.ask_gemini(prompt)
+        if not ans: return None
+        m = re.search(r'\{[^}]+\}', ans)
+        if not m: return None
+        d = json.loads(m.group(0))
+        if d.get('intent') in ('keine', None, '') or d.get('intent') not in AKTIONEN:
+            return None
+        return {'intent': d['intent'], 'confidence': float(d.get('confidence', 0.5)),
+                'methode': 'gemini', 'match': 'semantisch'}
+    except Exception:
+        return None
+
+def _klingt_nach_aktion(text):
+    """Grober Vorfilter damit wir nicht bei jedem Smalltalk Gemini fragen."""
+    t = text.lower()
+    if len(t) < 8: return False
+    return any(s in t for s in FRAGE) or any(s in t for s in FRUST)
+
+def detect(text, gemini_fallback=True):
+    """Hauptfunktion. Gibt Intent-Dict zurueck oder None."""
+    level = get_level()
+    r = _keyword_detect(text)
+    if not r and gemini_fallback and _klingt_nach_aktion(text):
+        r = _gemini_detect(text)
+    if not r:
+        return None
+    aktion = r['intent']
+    meta = AKTIONEN.get(aktion, {'level': 4, 'text': aktion})
+    min_level = meta['level']
+    conf = r['confidence']
+
+    # Level 4 = handelt selbst ab confidence 0.6
+    # Level 2-3 = handelt bei hoher confidence, fragt sonst
+    if level >= 4:
+        auto = conf >= 0.6 and level >= min_level
+        fragen = False
+    elif level >= min_level:
+        auto = conf >= 0.85
+        fragen = 0.5 <= conf < 0.85
+    else:
+        auto = False
+        fragen = False
+
+    return {
+        'intent': aktion,
+        'beschreibung': meta['text'],
+        'confidence': conf,
+        'methode': r['methode'],
+        'match': r.get('match', ''),
+        'level': level,
+        'min_level': min_level,
+        'ausfuehren': auto,
+        'nachfragen': fragen
+    }
+
+# ---------- Ausfuehrung ----------
+def _ssh(cmd, timeout=10):
+    import jack_config as _jc
+    ip = _jc.get_param('NETWORK', 'xiaomi_ip')
+    return subprocess.run(['ssh','-i',os.path.expanduser('~/.ssh/id_jack'),
+        '-o','BatchMode=yes','-o','StrictHostKeyChecking=no',
+        '-o','ConnectTimeout=4','-p','8022',f'root@{ip}',cmd],
+        capture_output=True, text=True, timeout=timeout)
+
+def execute(d):
+    """Fuehrt Aktion aus, loggt Ergebnis."""
+    aktion = d['intent'] if isinstance(d, dict) else d
+    erg = ''
     try:
         if aktion == 'ssh_check':
-            import jack_config as _jc
-            ip = _jc.get_param('NETWORK', 'xiaomi_ip')
-            r = subprocess.run(['ssh','-i',os.path.expanduser('~/.ssh/id_jack'),
-                '-o','BatchMode=yes','-o','StrictHostKeyChecking=no',
-                '-o','ConnectTimeout=3','-p','8022',f'root@{ip}','true'],
-                capture_output=True, timeout=6)
-            return 'Xiaomi SSH: ' + ('OK' if r.returncode == 0 else 'nicht erreichbar')
+            r = _ssh('true', 8)
+            erg = 'Xiaomi SSH: ' + ('erreichbar' if r.returncode == 0 else 'nicht erreichbar')
         elif aktion == 'akku_check':
-            r = subprocess.run(['termux-battery-status'], capture_output=True, text=True, timeout=10)
-            d = json.loads(r.stdout)
-            return f"Akku: {d.get('percentage')}% | {d.get('status')} | {d.get('temperature')}C"
+            r = subprocess.run(['termux-battery-status'], capture_output=True, text=True, timeout=12)
+            b = json.loads(r.stdout)
+            erg = f"Akku {b.get('percentage')}% | {b.get('status')} | {b.get('temperature')}C"
         elif aktion == 'ram_check':
-            avail = int([l for l in open('/proc/meminfo') if 'MemAvailable' in l][0].split()[1]) // 1024
-            return f"RAM frei: {avail}MB"
+            mi = {l.split(':')[0]: int(l.split()[1])//1024 for l in open('/proc/meminfo') if ':' in l}
+            erg = f"RAM frei {mi.get('MemAvailable',0)}MB von {mi.get('MemTotal',0)}MB | Swap frei {mi.get('SwapFree',0)}MB"
         elif aktion == 'temp_check':
-            import jack_thermal
-            return jack_thermal.zusammenfassung() if hasattr(jack_thermal, 'zusammenfassung') else 'Temp-Check nicht verfuegbar'
+            mx, name = 0, ''
+            for z in os.listdir('/sys/class/thermal'):
+                try:
+                    tp = open(f'/sys/class/thermal/{z}/type').read().strip()
+                    if any(x in tp for x in ('trip','lvl','vbat')): continue
+                    raw = int(open(f'/sys/class/thermal/{z}/temp').read())
+                    if raw < 0: continue
+                    g = raw/1000 if raw > 1000 else float(raw)
+                    if g > mx: mx, name = g, tp
+                except Exception: pass
+            erg = f"Max {mx:.1f}C ({name})"
         elif aktion == 'dienste_check':
-            r = subprocess.run(['python3', os.path.expanduser('~/jack/jack_selftest.py')],
-                capture_output=True, text=True, timeout=20)
-            import re
-            return re.sub(r'\x1b\[[0-9;]*m', '', r.stdout).strip()
-        elif aktion == 'xiaomi_status':
-            import jack_config as _jc
-            ip = _jc.get_param('NETWORK', 'xiaomi_ip')
-            r = subprocess.run(['ssh','-i',os.path.expanduser('~/.ssh/id_jack'),
-                '-o','BatchMode=yes','-o','StrictHostKeyChecking=no',
-                '-o','ConnectTimeout=3','-p','8022',f'root@{ip}','true'],
-                capture_output=True, timeout=6)
-            return 'Xiaomi SSH: ' + ('OK' if r.returncode == 0 else 'nicht erreichbar')
+            r = subprocess.run(['python3', os.path.join(H,'jack_selftest.py')],
+                capture_output=True, text=True, timeout=25)
+            erg = re.sub(r'\x1b\[[0-9;]*m', '', r.stdout).strip()
         elif aktion == 'ollama_check':
             import urllib.request
-            urllib.request.urlopen('http://localhost:11434/api/tags', timeout=3)
-            return 'Ollama: laeuft'
+            d2 = json.loads(urllib.request.urlopen('http://localhost:11434/api/tags', timeout=5).read())
+            namen = [m['name'] for m in d2.get('models', [])]
+            erg = 'Ollama laeuft | Modelle: ' + ', '.join(namen)
+        elif aktion == 'fehler_check':
+            con = sqlite3.connect(os.path.join(H,'jack_errors.db'))
+            rows = con.execute("SELECT error_msg, timestamp FROM errors WHERE resolved=0 ORDER BY timestamp DESC LIMIT 5").fetchall()
+            con.close()
+            erg = 'Keine offenen Fehler' if not rows else chr(10).join(f"[{r[1][:16]}] {r[0][:70]}" for r in rows)
+        elif aktion == 'standort_check':
+            import jack_sensors
+            loc = jack_sensors.get_location()
+            erg = f"{loc.get('latitude')}, {loc.get('longitude')}" if 'error' not in loc else str(loc['error'])
+        elif aktion == 'dienst_neustart':
+            P = os.environ.get('PREFIX','/data/data/com.termux/files/usr')
+            tot = []
+            for s in ('jack_cortex','jack_telegram','jack_waechter','ollama'):
+                st = subprocess.run(['sv','status',f'{P}/var/service/{s}'], capture_output=True, text=True, timeout=8)
+                if 'run:' not in st.stdout:
+                    subprocess.run(['sv','up',f'{P}/var/service/{s}'], capture_output=True, timeout=10)
+                    tot.append(s)
+            erg = ('Neugestartet: ' + ', '.join(tot)) if tot else 'Alle Dienste laufen bereits'
+        elif aktion == 'xiaomi_wake':
+            r = _ssh("su -c 'svc wifi disable; sleep 3; svc wifi enable'", 30)
+            erg = 'Xiaomi WiFi neugestartet' if r.returncode == 0 else 'Xiaomi nicht erreichbar'
+        elif aktion == 'werkstatt_leeren':
+            w = os.path.expanduser('~/jack_werkstatt')
+            n = len([f for f in os.listdir(w)]) if os.path.isdir(w) else 0
+            erg = f'Werkstatt hat {n} Dateien (Loeschen nur manuell, Sicherheit)'
         else:
-            return f'Aktion {aktion} noch nicht implementiert'
+            erg = f'Aktion {aktion} unbekannt'
     except Exception as e:
-        return f'Fehler bei {aktion}: {str(e)[:100]}'
+        erg = f'Fehler bei {aktion}: {str(e)[:150]}'
+
+    if isinstance(d, dict):
+        _log_intent(d.get('_text',''), aktion, d.get('methode','?'),
+                    d.get('confidence',0), True, erg)
+    return erg
 
 if __name__ == '__main__':
-    test = sys.argv[1] if len(sys.argv) > 1 else 'der xiaomi nervt mich'
-    r = detect(test)
-    print(json.dumps(r, ensure_ascii=False, indent=2) if r else 'Kein Intent erkannt')
+    t = ' '.join(sys.argv[1:]) or 'der xiaomi nervt schon wieder'
+    d = detect(t)
+    print(json.dumps(d, ensure_ascii=False, indent=2) if d else 'Kein Intent')
+    if d and (d['ausfuehren'] or d['nachfragen']):
+        print('---'); print(execute(d))

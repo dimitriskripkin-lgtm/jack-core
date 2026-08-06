@@ -182,19 +182,28 @@ def talk_to_gemini(prompt):
     )
     try:
         result = jack_gemini_bridge.ask_gemini(context)
-        # Intent-Detection im Background
+        # Intent-Engine
         try:
             import jack_intent as _ji, threading as _thr
             _det = _ji.detect(prompt)
-            if _det and _det['ausfuehren']:
-                def _do_intent(d=_det):
-                    _res = _ji.execute(d)
-                    import jack_telegram as _jt
-                    _jt.send("[Auto] " + d['beschreibung'] + ":" + chr(10) + _res)
-                _thr.Thread(target=_do_intent, daemon=True).start()
-            elif _det and _det['confidence'] >= 0.6 and not _det['ausfuehren']:
-                if _det['level'] < _det['min_level']:
-                    result = result + chr(10) + chr(10) + "💡 (Level " + str(_det['min_level']) + " noetig fuer: " + _det['beschreibung'] + ")"
+            if _det:
+                _det['_text'] = prompt
+                if _det['ausfuehren']:
+                    def _do(d=_det):
+                        _res = _ji.execute(d)
+                        import jack_telegram as _jt
+                        _jt.send("[JACK handelt] " + d['beschreibung'] + ":" + chr(10) + _res)
+                    _thr.Thread(target=_do, daemon=True).start()
+                elif _det['nachfragen']:
+                    def _ask(d=_det):
+                        import jack_telegram as _jt
+                        _jt.send_keyboard(
+                            "Soll ich " + d['beschreibung'].lower() + "?",
+                            [[("Ja, mach", "intent:" + d['intent']), ("Nein", "intent:abbruch")]]
+                        )
+                    _thr.Thread(target=_ask, daemon=True).start()
+                elif _det['level'] < _det['min_level']:
+                    result += chr(10) + chr(10) + "(Level " + str(_det['min_level']) + " noetig fuer: " + _det['beschreibung'] + " - /level " + str(_det['min_level']) + ")"
         except Exception:
             pass
         return result + "\n\n🌐 Gemini"

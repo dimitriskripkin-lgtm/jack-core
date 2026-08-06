@@ -153,6 +153,17 @@ def handle_callback(callback_data, callback_id):
         if not results or isinstance(results, dict):
             return f"Nichts gefunden fuer: {q}"
         return "\n".join([f'[{r["category"]}] {r["content"][:80]}' for r in results])
+    if callback_data.startswith("intent:"):
+        akt = callback_data[7:]
+        if akt == "abbruch":
+            return "Alles klar, lass ich."
+        try:
+            import jack_intent as _ji
+            res = _ji.execute({'intent': akt, 'methode': 'button', 'confidence': 1.0, '_text': 'Button'})
+            return res
+        except Exception as _e:
+            return "Fehler: " + str(_e)[:150]
+
     if callback_data == "scan_now":
         import jack_monitor as _mon
         return _mon.vollscan()
@@ -356,6 +367,21 @@ def handle(text):
             avail = int([l for l in open("/proc/meminfo") if "MemAvailable" in l][0].split()[1]) // 1024
             lines.append("RAM frei: " + str(avail) + "MB")
         except Exception: pass
+        # Intent-Historie
+        try:
+            import jack_intent as _ji
+            h = _ji.historie(5)
+            if h:
+                lines.append(chr(10) + "Letzte Aktionen von JACK:")
+                for e in h:
+                    lines.append("  " + e['ts'][11:16] + " " + e['intent'] + " (" + e['methode'] + ", " + str(e['confidence']) + ")")
+            m = _ji.muster_analyse()
+            if m:
+                lines.append(chr(10) + "Erkannte Muster:")
+                for x in m:
+                    lines.append("  " + x['intent'] + " meist um " + str(x['stunde']) + " Uhr (" + str(x['anzahl']) + "x)")
+            lines.append(chr(10) + "Autonomie-Level: " + str(_ji.get_level()) + "/4")
+        except Exception: pass
         return chr(10).join(lines)
 
     if text.strip() == '/scan':
@@ -506,13 +532,13 @@ def handle(text):
         import jack_intent as _ji
         if len(parts) == 1:
             lvl = _ji.get_level()
-            beschreibungen = {1:"nur fragen", 2:"Xiaomi lesen", 3:"Xiaomi schreiben", 4:"vollautonomes Handeln"}
+            beschreibungen = _ji.LEVEL_NAMEN
             return f"Autonomie-Level: {lvl}/4 ({beschreibungen.get(lvl,'?')})" + chr(10) + "Aendern: /level <1-4>"
         try:
             n = int(parts[1] if len(parts)>1 else raw_level)
             if 1 <= n <= 4:
                 _ji.set_level(n)
-                beschreibungen = {1:"nur fragen", 2:"Xiaomi lesen", 3:"Xiaomi schreiben", 4:"vollautonomes Handeln"}
+                beschreibungen = _ji.LEVEL_NAMEN
                 return f"Level auf {n} gesetzt: {beschreibungen[n]}"
             return "Level muss 1-4 sein."
         except: return "Nutzung: /level <1-4>"
