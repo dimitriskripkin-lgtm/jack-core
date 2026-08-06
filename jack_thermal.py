@@ -32,7 +32,7 @@ def thermal_zonen():
             typ = open(os.path.join(pfad, "type")).read().strip()
             roh = int(open(os.path.join(pfad, "temp")).read().strip())
             grad = roh / 1000.0 if roh > 1000 else float(roh)
-            if "trip" in typ.lower() or "lvl" in typ.lower() or "vbat" in typ.lower():
+            if roh < 0 or "trip" in typ.lower() or "lvl" in typ.lower() or "vbat" in typ.lower():
                 continue  # Schwellwerte, keine Messwerte
             if 10 < grad < 110:
                 zonen.append((typ, grad))

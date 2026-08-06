@@ -45,6 +45,9 @@ def build():
     open(f"{OUT}/module_list.txt","w").write(sh(f"ls -la {H}/*.py"))
     return text
 
-if __name__=="__main__":
+def push():
     build()
-    print(sh("git add -A && git commit -m auto-context && git branch -M main && git push -u origin main", cwd=OUT) or "(nichts neu)")
+    return sh("git add -A && git commit -m auto-context && git push", cwd=OUT)
+
+if __name__=="__main__":
+    print(push() or "(nichts neu)")
