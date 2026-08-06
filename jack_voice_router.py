@@ -159,12 +159,20 @@ async def process_stack_b_offline(audio_path):
     
     # 2. LLM: Ollama lokal
     try:
-        import ollama
-        response = ollama.chat(model="llama3.2:3b", messages=[{"role": "user", "content": text}])
-        reply = response["message"]["content"].strip()
+        import json as _json
+        with urllib.request.urlopen("http://localhost:11434/api/tags", timeout=5) as r:
+            models = _json.loads(r.read().decode())["models"]
+        model = models[0]["name"] if models else "llama3.2"
+        req = urllib.request.Request(
+            "http://localhost:11434/api/chat",
+            data=_json.dumps({"model": model, "messages": [{"role": "user", "content": text}], "stream": False}).encode(),
+            headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            data = _json.loads(resp.read().decode())
+        reply = data["message"]["content"].strip()
         if not reply:
             reply = text
-        print(f"[ROUTER] Stack B LLM: '{reply[:80]}'")
+        print(f"[ROUTER] Stack B LLM ({model}): '{reply[:80]}'")
     except Exception as e:
         print(f"[ROUTER] Stack B LLM-Fehler: {e}, verwende Originaltext")
         reply = text
@@ -203,8 +211,11 @@ async def route_voice(audio_path):
     else:
         print("[ROUTER] Kein Internet. Direkter Wechsel zu Stack B.")
         
-    text, error = await process_stack_b_offline(audio_path)
+    text, audio_or_error = await process_stack_b_offline(audio_path)
     if text:
+        if audio_or_error and os.path.exists(audio_or_error):
+            play_audio(audio_or_error)
+            return {"success": True, "stack": "B", "text": text, "audio": audio_or_error}
         return {"success": True, "stack": "B", "text": text}
     
     return {"success": False, "error": error or "Beide Stacks fehlgeschlagen"}
