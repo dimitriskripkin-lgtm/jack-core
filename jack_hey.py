@@ -15,9 +15,9 @@ def log_phase(phase):
     elapsed = time.time() - TIMER
     print(f"[TIMER {elapsed:6.2f}s] {phase}")
 
-SEKUNDEN = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 10
+SEKUNDEN = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 5
 
-STILLE_DB = "-35dB"
+STILLE_DB = "-45dB"  # greift nur bei echter Ruhe, im fahrenden Auto nie
 STILLE_SEK = 2.0
 
 def _stille_am_ende(pfad):
