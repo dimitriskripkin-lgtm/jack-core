@@ -19,3 +19,10 @@ def get_param(sec, key, is_int=False):
         return int(val) if is_int else val
     except:
         return int(DEFAULT[sec][key]) if is_int else DEFAULT[sec][key]
+
+def get_val(section, key, fallback=None):
+    """Alias fuer get_param - Kompatibilitaet."""
+    try:
+        return get_param(section, key)
+    except Exception:
+        return fallback

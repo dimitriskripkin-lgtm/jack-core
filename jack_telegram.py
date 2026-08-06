@@ -21,7 +21,7 @@ BESTAETIGUNG = 'bestaetige schreiben'
 PENDING_IMPROVE = {}
 BESTAETIGUNG_PATCH = 'bestaetige patch'
 
-FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/scan','/menu','/m'}
+FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/scan','/menu','/m','/trace'}
 
 def load_secrets():
     token, chat_id = None, None
@@ -335,6 +335,28 @@ def handle(text):
                 send(f"Agent-Fehler: {e}")
         threading.Thread(target=_run, args=(ziel,), daemon=True).start()
         return "Alles klar, ich arbeite selbststaendig dran (max 4 Runden, nur Werkstatt) und melde mich, wenn ich fertig bin."
+
+    if text.strip() == '/trace':
+        import subprocess as _sp, os as _o
+        lines = []
+        # Letzte 5 Logeintraege
+        try:
+            log = open(_o.path.expanduser("~/jack/jack_decisions.log")).readlines()
+            lines.append("Letzte Aktionen:")
+            lines += [l.strip() for l in log[-5:]]
+        except Exception: pass
+        # Laufende Threads
+        try:
+            import threading as _thr
+            names = [th.name for th in _thr.enumerate()]
+            lines.append(chr(10) + "Threads: " + ", ".join(names))
+        except Exception: pass
+        # RAM snapshot
+        try:
+            avail = int([l for l in open("/proc/meminfo") if "MemAvailable" in l][0].split()[1]) // 1024
+            lines.append("RAM frei: " + str(avail) + "MB")
+        except Exception: pass
+        return chr(10).join(lines)
 
     if text.strip() == '/scan':
         import jack_monitor as _mon
