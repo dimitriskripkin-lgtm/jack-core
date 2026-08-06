@@ -15,6 +15,8 @@ def log_phase(phase):
     elapsed = time.time() - TIMER
     print(f"[TIMER {elapsed:6.2f}s] {phase}")
 
+SEKUNDEN = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 10
+
 def aufnehmen(sekunden=10):
     if os.path.exists(REC):
         try: os.remove(REC)
@@ -38,7 +40,7 @@ def aufnehmen(sekunden=10):
 async def main():
     log_phase("=== JACK HEY START ===")
     
-    if not aufnehmen(10):
+    if not aufnehmen(SEKUNDEN):
         log_phase("Keine verwertbare Aufnahme. Abbruch.")
         return
     

@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-07-23T05:10:46.562515
+Stand: 2026-08-06T05:59:22.752274
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -26,7 +26,7 @@ Stand: 2026-07-23T05:10:46.562515
 - Dima hat eine autobiographische Information hochgeladen, die JACK durchsuchen soll.
 - Dima hat den Befehl gegeben, ins Verzeichnis `~/jack/titan_legacy` zu wechseln und eine Datei von GitHub zu laden.
 
-## Aktive Module (55)
+## Aktive Module (72)
 - jack_agent.py
 - jack_android.py
 - jack_approval.py
@@ -42,26 +42,35 @@ Stand: 2026-07-23T05:10:46.562515
 - jack_consolidate.py
 - jack_cortex.py
 - jack_gemini_bridge.py
+- jack_haliza.py
 - jack_handshake_gen.py
 - jack_hey.py
 - jack_improve.py
+- jack_install.py
 - jack_learn.py
 - jack_log.py
 - jack_math.py
 - jack_memory.py
 - jack_memory_engine.py
 - jack_memory_maintenance.py
+- jack_missions.py
+- jack_monitor.py
 - jack_node_alpha.py
 - jack_operator.py
 - jack_oracle.py
 - jack_patch.py
+- jack_patch_memory.py
 - jack_personality.py
 - jack_publish.py
 - jack_radar.py
+- jack_sanity.py
+- jack_scout.py
 - jack_screen_tracker.py
 - jack_self_improve.py
 - jack_sensors.py
+- jack_skill_builder.py
 - jack_skills.py
+- jack_skills_db.py
 - jack_snapshot.py
 - jack_talk.py
 - jack_telegram.py
@@ -69,8 +78,16 @@ Stand: 2026-07-23T05:10:46.562515
 - jack_vecdb.py
 - jack_vinted_radar.py
 - jack_voice.py
+- jack_voice_ab_test.py
+- jack_voice_chat.py
+- jack_voice_chat_live.py
 - jack_voice_el.py
+- jack_voice_live.py
+- jack_voice_live_test.py
+- jack_voice_ping.py
 - jack_voice_processor.py
+- jack_voice_router.py
+- jack_voice_stability.py
 - jack_write.py
 - jack_xiaomi.py
 - jack_xiaomi_cmd.py
@@ -84,30 +101,30 @@ Stand: 2026-07-23T05:10:46.562515
 - voice_service_v2.py
 
 ## System-Status
-- Offene Fehler: 4
-- Erinnerungen: 143
+- Offene Fehler: 0
+- Erinnerungen: 171
 - Dienste:
-run: jack_cortex: (pid 19393) 2709s
-run: jack_telegram: (pid 20543) 5785s
-run: jack_autolearn: (pid 7339) 153298s
-run: ollama: (pid 7342) 153298s
+run: jack_cortex: (pid 10434) 1098307s
+run: jack_telegram: (pid 22987) 132154s
+fail: jack_autolearn: unable to change to service directory: file does not exist
+run: ollama: (pid 7342) 1365814s
 
 ## Letzte Aenderungen
-2f8ddf9 Xiaomi statische IP 10.58.220.131 dokumentiert
-2fcd4fc Telegram: Inline-Buttons fuer /befehle, Callback-Handler
-16c72d3 Telegram: /befehle Uebersicht fix
-9ec19c7 Telegram: /befehle Uebersicht
-f3d1cdd Oracle: deutsche Aliase + Ergebnis-Stack (letzte 5)
-2e72523 oracle_result bugfix: json import
-b494b09 oracle bugfix: import vor json.dumps gezogen
-dcbaff7 oracle bugfix: json import im block
-bc451eb Telegram: /oracle + /oracle_result
-f5c4768 Security: Flask von 0.0.0.0 auf 127.0.0.1 (kein offener Endpoint mehr)
-e374319 7 Dienste: jack_oracle live, Meilenstein 2026-07-22
-9de06fc jack_oracle: bidirektionaler Claude<->JACK Kanal via GitHub, Live-Test erfolgreich (free -h)
-0955315 Prompt: Titan-Lektionen still integriert
-8e20a4e titan_legacy: falsche context.md entfernt, Ordner bleibt leer bis bewusste Entscheidung
-ab0073f titan_legacy: Kern-DNA gesichert (Persona+Anchor+Evolution)
+add6692 feat: Router-Logging für Transparenz
+9ee8d53 feat: Aufnahmezeit 5s -> 10s
+29d4556 fix: mpv überlebt Prozess-Exit (kein Audio-Abriss)
+30a6a23 fix: Streaming-Buffer erhöht (0.1s -> 0.15s)
+736ecf3 revert: Voice-Pinning entfernt (Standard-Stimme war besser)
+124805a feat: Stack A Stimme Fenrir (älter, tiefer)
+1060abb feat: Stack A feste Stimme Charon (konsistent, dunkel)
+fa4c1cb feat: Stack A Kumpel-Ton Overlay (kein Sie, kein Diener-Ton)
+1c219ea feat: Stack A mit JACK-Persönlichkeit (system_instruction)
+1cfd365 feat: espeak langsamer (120) und tiefer (pitch 10)
+ff13eeb feat: Stack B mit JACK-Persönlichkeit und Kontext
+b3f0969 feat: Stack B mit Ollama-Streaming (früherer Start)
+9414c4c feat: System-Prompt fuer kurze Voice-Antworten
+8f96c50 fix: Ollama waehlt Chat-Modell statt Embedding
+60bf212 fix: Stack B spielt Audio ab + Ollama via HTTP-API
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
