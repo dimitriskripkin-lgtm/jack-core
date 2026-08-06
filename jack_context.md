@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-06T08:05:28.357475
+Stand: 2026-08-06T08:14:28.873270
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -105,12 +105,13 @@ Stand: 2026-08-06T08:05:28.357475
 - Offene Fehler: 0
 - Erinnerungen: 171
 - Dienste:
-run: jack_cortex: (pid 10434) 1105873s
-run: jack_telegram: (pid 22987) 139720s
+run: jack_cortex: (pid 10434) 1106413s
+run: jack_telegram: (pid 22987) 140260s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 23910) 1311s
+run: ollama: (pid 8054) 409s
 
 ## Letzte Aenderungen
+951762d Ollama: Vulkan-Env in runit run-Datei, Thermal-Monitor filtert Schwellwerte
 8d1dc8b feat: jack_ui.py - schöne Konsolen-Ausgabe mit Farben + Boxen
 130c329 feat: Stack B mit Vulkan GPU-Beschleunigung (6.6s statt 35-85s)
 67c6321 fix: Watchdog zeigt echtes Limit an (95°C)
@@ -125,7 +126,6 @@ add6692 feat: Router-Logging für Transparenz
 30a6a23 fix: Streaming-Buffer erhöht (0.1s -> 0.15s)
 736ecf3 revert: Voice-Pinning entfernt (Standard-Stimme war besser)
 124805a feat: Stack A Stimme Fenrir (älter, tiefer)
-1060abb feat: Stack A feste Stimme Charon (konsistent, dunkel)
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
