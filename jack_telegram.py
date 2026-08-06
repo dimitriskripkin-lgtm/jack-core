@@ -164,23 +164,24 @@ def handle_callback(callback_data, callback_id):
         except Exception as e:
             return "Kein Ergebnis: " + str(e)
     if callback_data.startswith("oracle:"):
-        import subprocess as _sp, datetime as _dt
+        import subprocess as _sp, datetime as _dt, sqlite3 as _sq, os as _o2
         cmd = callback_data[7:]
         try:
             if cmd == "dienste":
-                r = _sp.run(["sv","status"] + [f"/data/data/com.termux/files/usr/var/service/{s}" for s in ["jack_cortex","jack_telegram","jack_waechter","ollama"]], capture_output=True, text=True, timeout=10)
+                svcs = ["jack_cortex","jack_telegram","jack_waechter","ollama"]
+                paths = ["/data/data/com.termux/files/usr/var/service/"+s for s in svcs]
+                r = _sp.run(["sv","status"]+paths, capture_output=True, text=True, timeout=10)
                 return "Oracle [dienste]:" + chr(10) + r.stdout.strip()
             elif cmd == "ram":
-                lines = [l for l in open("/proc/meminfo") if any(k in l for k in ["MemTotal","MemAvailable","SwapFree"])]
-                return "Oracle [ram]:" + chr(10) + "".join(lines).strip()
+                lines = [l.strip() for l in open("/proc/meminfo") if "MemTotal" in l or "MemAvailable" in l or "SwapFree" in l]
+                return "Oracle [ram]:" + chr(10) + chr(10).join(lines)
             elif cmd == "fehler":
-                import sqlite3 as _sq, os as _o2
                 con = _sq.connect(_o2.path.expanduser("~/jack/jack_errors.db"))
                 rows = con.execute("SELECT error_msg, timestamp FROM errors WHERE resolved=0 ORDER BY timestamp DESC LIMIT 5").fetchall()
                 con.close()
                 if not rows: return "Oracle [fehler]: Keine offenen Fehler"
-                return "Oracle [fehler]:" + chr(10) + "
-".join([f"[{r[1][:16]}] {r[0][:80]}" for r in rows])
+                zeilen = ["[" + r[1][:16] + "] " + r[0][:80] for r in rows]
+                return "Oracle [fehler]:" + chr(10) + chr(10).join(zeilen)
             elif cmd == "budget":
                 import jack_budget
                 return "Oracle [budget]:" + chr(10) + jack_budget.status()
@@ -193,10 +194,10 @@ def handle_callback(callback_data, callback_id):
                 r = _sp.run(["ollama","list"], capture_output=True, text=True, timeout=10)
                 return "Oracle [modelle]:" + chr(10) + r.stdout.strip()
             else:
-                return f"Unbekannter Oracle-Befehl: {cmd}"
+                return "Unbekannter Oracle-Befehl: " + cmd
         except Exception as _e:
-            return f"Oracle [{cmd}] Fehler: {str(_e)[:200]}"
-    return f"Unbekannter Button: {callback_data}"
+            return "Oracle [" + cmd + "] Fehler: " + str(_e)[:200]
+        return f"Unbekannter Button: {callback_data}"
 
 def get_updates(offset=0):
     url = f"{API}/getUpdates?timeout=30&offset={offset}"
