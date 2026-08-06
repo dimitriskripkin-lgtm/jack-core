@@ -15,6 +15,8 @@ BESTAETIGUNG = 'bestaetige schreiben'
 PENDING_IMPROVE = {}
 BESTAETIGUNG_PATCH = 'bestaetige patch'
 
+FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors'}
+
 def load_secrets():
     token, chat_id = None, None
     with open(os.path.expanduser('~/.jack_secrets')) as f:
@@ -612,12 +614,24 @@ def main():
             text = msg.get('text', '')
             if not text: continue
             print(f"[TG] {text}")
-            try:
-                reply = handle(text)
-            except Exception as e:
-                reply = f"Fehler beim Verarbeiten: {e}"
-            if reply is not None:
-                send(reply)
+            cmd = text.strip().split()[0] if text.strip() else ''
+            if cmd in FAST_CMDS:
+                try:
+                    reply = handle(text)
+                except Exception as e:
+                    reply = f"Fehler: {e}"
+                if reply is not None:
+                    send(reply)
+            else:
+                send("⏳")
+                def _run(tx=text):
+                    try:
+                        r = handle(tx)
+                    except Exception as ex:
+                        r = f"Fehler: {ex}"
+                    if r is not None:
+                        send(r)
+                threading.Thread(target=_run, daemon=True).start()
         time.sleep(1)
 
 if __name__ == "__main__":
