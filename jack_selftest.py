@@ -37,3 +37,8 @@ def oll():
 print('\nJACK SELFTEST ---------------')
 rs=[dienste(),ram(),temp(),pub(),oll()]
 n=sum(1 for x in rs if x);print(f'-----------------------------\n{n}/{len(rs)}','ALLES OK'if n==len(rs)else'FEHLER - OBEN PRUEFEN')
+
+def run():
+    import subprocess as _sp, re as _re
+    r = _sp.run(["python3","/data/data/com.termux/files/home/jack/jack_selftest.py"],capture_output=True,text=True,timeout=20)
+    return _re.sub(r"\x1b\[[0-9;]*m","",r.stdout).strip()

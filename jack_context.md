@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-06T09:26:18.924957
+Stand: 2026-08-06T10:14:50.424311
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -26,7 +26,7 @@ Stand: 2026-08-06T09:26:18.924957
 - Dima hat eine autobiographische Information hochgeladen, die JACK durchsuchen soll.
 - Dima hat den Befehl gegeben, ins Verzeichnis `~/jack/titan_legacy` zu wechseln und eine Datei von GitHub zu laden.
 
-## Aktive Module (73)
+## Aktive Module (74)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -68,6 +68,7 @@ Stand: 2026-08-06T09:26:18.924957
 - jack_scout.py
 - jack_screen_tracker.py
 - jack_self_improve.py
+- jack_selftest.py
 - jack_sensors.py
 - jack_skill_builder.py
 - jack_skills.py
@@ -103,14 +104,18 @@ Stand: 2026-08-06T09:26:18.924957
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 171
+- Erinnerungen: 173
 - Dienste:
-run: jack_cortex: (pid 10434) 1110723s
-run: jack_telegram: (pid 22987) 144570s
+run: jack_cortex: (pid 10434) 1113635s
+run: jack_telegram: (pid 23660) 115s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 8054) 4719s
+run: ollama: (pid 8054) 7631s
 
 ## Letzte Aenderungen
+194642d telegram: threading fuer langsame calls, sofortige quittung, fast_cmds direkt
+aa1099a telegram: erster befehl nach restart nicht mehr verschluckt - start-ts filter statt get_updates(-1)
+2b5b89d jack_selftest: ein befehl gruen/rot fuer alle kern-checks
+bc6974f publisher: push() loop-fix, thermal: negative sensor filter
 8c08356 publisher: push() statt nur build() im waechter-loop, thermal: negative sensor-werte rausfiltern
 b4ecf05 jack_talk: check aus math_signals entfernt - verhinderte Antworten auf Alltagsfragen
 81d3f6e Cleanup: Muell-Datei entfernt
@@ -122,10 +127,6 @@ b4ecf05 jack_talk: check aus math_signals entfernt - verhinderte Antworten auf A
 e7fba45 jack_hey: Loop-Overhead weg, Stille-Pruefung schaltet sich bei lauter Umgebung ab
 807a1c3 jack_hey: Standardzeit 5s, Stille-Schwelle -45dB (fahrendes Auto hat -18dB Grundrauschen)
 adfd702 jack_hey: Stille-Erkennung - Aufnahme stoppt automatisch nach 2s Ruhe
-211513e Voice-Aufraeumen: jack_hey Argument-Bug gefixt, 3 tote Module archiviert, Shortcuts beschriftet
-add6692 feat: Router-Logging für Transparenz
-9ee8d53 feat: Aufnahmezeit 5s -> 10s
-29d4556 fix: mpv überlebt Prozess-Exit (kein Audio-Abriss)
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
