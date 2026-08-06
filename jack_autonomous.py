@@ -217,7 +217,12 @@ def _proaktiv_loop():
             _h = _dt2.datetime.now().hour
             # Moin nach Nachtschicht (6-9 Uhr, max einmal pro Tag)
             if 6 <= _h <= 9 and _t2.time() - _last_moin > 86400:
-                notify("Moin Dima. Nachtschicht rum? Alles laeuft. /selftest fuer Systemcheck.")
+                try:
+                    import jack_chains as _jc3
+                    _r = _jc3.run('morgen_briefing')
+                    notify("Moin Dima." + chr(10) + chr(10) + _r['text'])
+                except Exception:
+                    notify("Moin Dima. Nachtschicht rum?")
                 _last_moin = _t2.time()
             # Akku-Warnung
             try:

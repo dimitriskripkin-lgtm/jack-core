@@ -21,7 +21,7 @@ BESTAETIGUNG = 'bestaetige schreiben'
 PENDING_IMPROVE = {}
 BESTAETIGUNG_PATCH = 'bestaetige patch'
 
-FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/scan','/menu','/m','/trace','/level'}
+FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/scan','/menu','/m','/trace','/level','/kette'}
 
 def load_secrets():
     token, chat_id = None, None
@@ -525,6 +525,23 @@ def handle(text):
             cfg["interval_minutes"] = int(parts[1])
             _j.dump(cfg, open(cfg_path,"w"), indent=2)
             return f"Vinted Intervall: {parts[1]} Minuten"
+
+    if raw.strip().lower().startswith('/kette'):
+        rest = raw.strip()[6:].strip()
+        import jack_chains as _jc2
+        if not rest:
+            return _jc2.liste()
+        if rest == 'historie':
+            h = _jc2.historie(5)
+            if not h: return "Noch keine Ketten gelaufen."
+            return "Letzte Ketten:" + chr(10) + chr(10).join(
+                x['ts'][11:16] + " " + x['kette'] + " (" + str(x['schritte']) + " Schritte, " + str(x['dauer']) + "s)" for x in h)
+        import threading as _thr2
+        def _run_chain(name=rest):
+            r = _jc2.run(name)
+            send(r['text'])
+        _thr2.Thread(target=_run_chain, daemon=True).start()
+        return "Kette laeuft: " + rest
 
     if raw.strip().lower().startswith('/level'):
         raw_level = raw.strip().lower().replace('/level','').strip()
