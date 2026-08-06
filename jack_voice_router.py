@@ -67,7 +67,8 @@ async def process_stack_a_live_stream(audio_path):
         ["mpv", "--no-video", "--demuxer=rawaudio", "--demuxer-rawaudio-rate=24000", "--demuxer-rawaudio-channels=1", "-"],
         stdin=subprocess.PIPE,
         stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
+        stderr=subprocess.DEVNULL,
+        start_new_session=True
     )
     
     if not mpv_process.stdin:
