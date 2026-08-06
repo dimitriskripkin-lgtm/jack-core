@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os, sys, json, time, urllib.request, urllib.parse, subprocess
 from datetime import datetime
+import threading
 
 sys.path.append(os.path.expanduser('~/jack'))
 import jack_claude
@@ -168,36 +169,29 @@ def handle_callback(callback_data, callback_id):
         try:
             if cmd == "dienste":
                 r = _sp.run(["sv","status"] + [f"/data/data/com.termux/files/usr/var/service/{s}" for s in ["jack_cortex","jack_telegram","jack_waechter","ollama"]], capture_output=True, text=True, timeout=10)
-                return "Oracle [dienste]:
-" + r.stdout.strip()
+                return "Oracle [dienste]:" + chr(10) + r.stdout.strip()
             elif cmd == "ram":
                 lines = [l for l in open("/proc/meminfo") if any(k in l for k in ["MemTotal","MemAvailable","SwapFree"])]
-                return "Oracle [ram]:
-" + "".join(lines).strip()
+                return "Oracle [ram]:" + chr(10) + "".join(lines).strip()
             elif cmd == "fehler":
                 import sqlite3 as _sq, os as _o2
                 con = _sq.connect(_o2.path.expanduser("~/jack/jack_errors.db"))
                 rows = con.execute("SELECT error_msg, timestamp FROM errors WHERE resolved=0 ORDER BY timestamp DESC LIMIT 5").fetchall()
                 con.close()
                 if not rows: return "Oracle [fehler]: Keine offenen Fehler"
-                return "Oracle [fehler]:
-" + "
+                return "Oracle [fehler]:" + chr(10) + "
 ".join([f"[{r[1][:16]}] {r[0][:80]}" for r in rows])
             elif cmd == "budget":
                 import jack_budget
-                return "Oracle [budget]:
-" + jack_budget.status()
+                return "Oracle [budget]:" + chr(10) + jack_budget.status()
             elif cmd == "log":
                 import jack_log
-                return "Oracle [log]:
-" + jack_log.recent(10)
+                return "Oracle [log]:" + chr(10) + jack_log.recent(10)
             elif cmd == "datum":
-                return "Oracle [datum]:
-" + _dt.datetime.now().strftime("%A, %d.%m.%Y %H:%M:%S")
+                return "Oracle [datum]:" + chr(10) + _dt.datetime.now().strftime("%A, %d.%m.%Y %H:%M:%S")
             elif cmd == "modelle":
                 r = _sp.run(["ollama","list"], capture_output=True, text=True, timeout=10)
-                return "Oracle [modelle]:
-" + r.stdout.strip()
+                return "Oracle [modelle]:" + chr(10) + r.stdout.strip()
             else:
                 return f"Unbekannter Oracle-Befehl: {cmd}"
         except Exception as _e:
@@ -619,31 +613,22 @@ def main():
                 file_id = msg['voice']['file_id']
                 ogg_path = os.path.expanduser(f"~/jack/voice_{file_id}.ogg")
                 
-                try:
-                    get_voice(file_id, ogg_path)
-                    resp_wav, heard, answer = process_voice_message(ogg_path)
-                    
-                    send(f"Verstanden: {heard}\n\nJACK: {answer}")
-                    send_voice(resp_wav)
-                    
-                    for _f in (ogg_path, resp_wav):
-                        try:
-                            os.remove(_f)
-                        except Exception:
-                            pass
-                except Exception as e:
-                    print(f"Fehler bei Voice-Verarbeitung: {e}")
-                    send("Fehler bei der Sprachverarbeitung.")
+                send("🎤")
+                def _vrun(fid=file_id, op=ogg_path):
+                    try:
+                        get_voice(fid, op)
+                        rw, heard, ans = process_voice_message(op)
+                        send("Verstanden: " + heard + chr(10) + chr(10) + "JACK: " + ans)
+                        send_voice(rw)
+                        for _f in (op, rw):
+                            try: os.remove(_f)
+                            except: pass
+                    except Exception as e:
+                        send("Fehler bei Sprachverarbeitung: " + str(e)[:100])
+                threading.Thread(target=_vrun, daemon=True).start()
                 continue
 
-            # Callback-Query (Inline-Button-Klick)
-            cb = u.get('callback_query', {})
-            if cb:
-                cb_data = cb.get('data', '')
-                cb_id = cb.get('id', '')
-                cb_reply = handle_callback(cb_data, cb_id)
-                send(cb_reply)
-                continue
+
 
             text = msg.get('text', '')
             if not text: continue
