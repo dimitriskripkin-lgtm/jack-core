@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+"""JACK Thermal Monitor - zeigt was das Geraet heiss macht.
+Nutzung: python3 ~/jack/jack_thermal.py"""
+import os, json, subprocess, glob
+
+GRN="\033[92m"; YLW="\033[93m"; RED="\033[91m"; CYN="\033[96m"; BLD="\033[1m"; RST="\033[0m"
+
+# Grenzwerte nach Herstellerdaten Snapdragon 8 Elite
+AKKU_GRUEN = 38
+AKKU_GELB  = 43
+AKKU_ROT   = 45
+AKKU_STOP  = 50
+
+def farbe(wert, gruen, gelb, rot):
+    if wert < gruen: return GRN
+    if wert < gelb:  return YLW
+    if wert < rot:   return RED
+    return RED + BLD
+
+def akku():
+    try:
+        r = subprocess.run(["termux-battery-status"], capture_output=True, text=True, timeout=8)
+        return json.loads(r.stdout)
+    except Exception:
+        return {}
+
+def thermal_zonen():
+    """Liest alle Temperatursensoren des Geraets."""
+    zonen = []
+    for pfad in sorted(glob.glob("/sys/class/thermal/thermal_zone*")):
+        try:
+            typ = open(os.path.join(pfad, "type")).read().strip()
+            roh = int(open(os.path.join(pfad, "temp")).read().strip())
+            grad = roh / 1000.0 if roh > 1000 else float(roh)
+            if "trip" in typ.lower() or "lvl" in typ.lower() or "vbat" in typ.lower():
+                continue  # Schwellwerte, keine Messwerte
+            if 10 < grad < 110:
+                zonen.append((typ, grad))
+        except Exception:
+            continue
+    return sorted(zonen, key=lambda x: -x[1])
+
+def top_prozesse(sortier="%cpu", anzahl=8):
+    try:
+        r = subprocess.run(["ps", "-eo", "pid,%cpu,%mem,etime,comm", "--sort=-" + sortier],
+                           capture_output=True, text=True, timeout=8)
+        zeilen = r.stdout.strip().split(chr(10))
+        return zeilen[0], zeilen[1:anzahl+1]
+    except Exception:
+        return "", []
+
+def ram():
+    m = {}
+    try:
+        for l in open("/proc/meminfo"):
+            t = l.split(":")
+            if len(t) == 2:
+                m[t[0].strip()] = int(t[1].strip().split()[0]) // 1024
+    except Exception:
+        pass
+    return m
+
+def cpu_last():
+    try:
+        return open("/proc/loadavg").read().strip().split()[:3]
+    except Exception:
+        return ["?", "?", "?"]
+
+def bericht():
+    print(CYN + BLD + chr(10) + "  JACK THERMAL MONITOR" + RST)
+    print(CYN + "  " + "="*42 + RST)
+
+    a = akku()
+    if a:
+        t = float(a.get("temperature", 0))
+        p = a.get("percentage", "?")
+        st = a.get("status", "?")
+        fc = farbe(t, AKKU_GRUEN, AKKU_GELB, AKKU_ROT)
+        print(chr(10) + BLD + "  AKKU" + RST)
+        print("    Temperatur : " + fc + str(t) + " C" + RST)
+        print("    Ladung     : " + str(p) + " % (" + str(st) + ")")
+        if t >= AKKU_STOP:
+            print("    " + RED + BLD + ">>> SOFORT STOPPEN - Hardware gefaehrdet" + RST)
+        elif t >= AKKU_ROT:
+            print("    " + RED + ">>> Akku altert schneller - Last reduzieren" + RST)
+        elif t >= AKKU_GELB:
+            print("    " + YLW + ">>> Nichts Schweres mehr starten" + RST)
+        else:
+            print("    " + GRN + ">>> Im gruenen Bereich" + RST)
+
+    z = thermal_zonen()
+    if z:
+        print(chr(10) + BLD + "  SENSOREN (heisseste 8)" + RST)
+        for typ, grad in z[:8]:
+            fc = farbe(grad, 45, 60, 75)
+            print("    " + typ[:26].ljust(26) + " " + fc + str(round(grad,1)) + " C" + RST)
+
+    m = ram()
+    print(chr(10) + BLD + "  SPEICHER" + RST)
+    verf = m.get("MemAvailable", 0)
+    fc = GRN if verf > 1500 else YLW if verf > 800 else RED
+    print("    Verfuegbar : " + fc + str(verf) + " MB" + RST + " von " + str(m.get("MemTotal",0)) + " MB")
+    print("    Swap frei  : " + str(m.get("SwapFree",0)) + " MB")
+    l = cpu_last()
+    print("    CPU-Last   : " + l[0] + " (1min) / " + l[1] + " (5min) / " + l[2] + " (15min)")
+
+    kopf, zeilen = top_prozesse("%cpu")
+    print(chr(10) + BLD + "  TOP CPU-FRESSER" + RST)
+    for zl in zeilen:
+        teile = zl.split(None, 4)
+        if len(teile) >= 5:
+            pid, cpu, mem, zeit, name = teile
+            markierung = CYN + " <- JACK" + RST if "python" in name or "ollama" in name else ""
+            fc = RED if float(cpu) > 20 else YLW if float(cpu) > 5 else ""
+            print("    " + fc + cpu.rjust(5) + "%" + RST + " " + mem.rjust(5) + "%  " +
+                  zeit.rjust(11) + "  " + name[:22] + markierung)
+
+    kopf, zeilen = top_prozesse("%mem", 5)
+    print(chr(10) + BLD + "  TOP RAM-FRESSER" + RST)
+    for zl in zeilen:
+        teile = zl.split(None, 4)
+        if len(teile) >= 5:
+            pid, cpu, mem, zeit, name = teile
+            markierung = CYN + " <- JACK" + RST if "python" in name or "ollama" in name else ""
+            print("    " + mem.rjust(5) + "%  " + zeit.rjust(11) + "  " + name[:22] + markierung)
+
+    print(chr(10) + CYN + "  " + "="*42 + RST)
+    print("  Grenzwerte: gruen <" + str(AKKU_GRUEN) + " | gelb <" + str(AKKU_GELB) +
+          " | rot <" + str(AKKU_ROT) + " | STOP >=" + str(AKKU_STOP) + " C" + chr(10))
+
+if __name__ == "__main__":
+    bericht()

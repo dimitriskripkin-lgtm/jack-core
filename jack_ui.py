@@ -39,8 +39,8 @@ def box(lines, width=48, title=None):
     for line in lines:
         if len(line) > width - 4:
             line = line[:width-4]
-        padded = f" {line}".ljust(width - 2)
-        print(f"{C.CYAN}{B['V']}{C.RESET} {padded}")
+        padded = f" {line} ".ljust(width - 2)
+        print(f"{C.CYAN}{B['V']}{C.RESET}{padded}{C.CYAN}{B['V']}{C.RESET}")
     print(f"{C.CYAN}{B['BL'] + B['H'] * (width - 2) + B['BR']}{C.RESET}")
 
 def status(label, value, color=C.WHITE):

@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-06T05:59:22.752274
+Stand: 2026-08-06T08:05:28.357475
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -26,7 +26,8 @@ Stand: 2026-08-06T05:59:22.752274
 - Dima hat eine autobiographische Information hochgeladen, die JACK durchsuchen soll.
 - Dima hat den Befehl gegeben, ins Verzeichnis `~/jack/titan_legacy` zu wechseln und eine Datei von GitHub zu laden.
 
-## Aktive Module (72)
+## Aktive Module (73)
+- install_litert.py
 - jack_agent.py
 - jack_android.py
 - jack_approval.py
@@ -74,14 +75,14 @@ Stand: 2026-08-06T05:59:22.752274
 - jack_snapshot.py
 - jack_talk.py
 - jack_telegram.py
+- jack_thermal.py
+- jack_ui.py
 - jack_v2.py
 - jack_vecdb.py
 - jack_vinted_radar.py
 - jack_voice.py
 - jack_voice_ab_test.py
-- jack_voice_chat.py
 - jack_voice_chat_live.py
-- jack_voice_el.py
 - jack_voice_live.py
 - jack_voice_live_test.py
 - jack_voice_ping.py
@@ -96,20 +97,28 @@ Stand: 2026-08-06T05:59:22.752274
 - kortex_profile_updater.py
 - kortex_profiler.py
 - kortex_sensor_daemon.py
+- litert_watchdog.py
 - quick_bridge.py
 - test_jack_approval.py
-- voice_service_v2.py
 
 ## System-Status
 - Offene Fehler: 0
 - Erinnerungen: 171
 - Dienste:
-run: jack_cortex: (pid 10434) 1098307s
-run: jack_telegram: (pid 22987) 132154s
+run: jack_cortex: (pid 10434) 1105873s
+run: jack_telegram: (pid 22987) 139720s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7342) 1365814s
+run: ollama: (pid 23910) 1311s
 
 ## Letzte Aenderungen
+8d1dc8b feat: jack_ui.py - schöne Konsolen-Ausgabe mit Farben + Boxen
+130c329 feat: Stack B mit Vulkan GPU-Beschleunigung (6.6s statt 35-85s)
+67c6321 fix: Watchdog zeigt echtes Limit an (95°C)
+5f65efc feat: litert_watchdog.py - Temperatur-sicherer LLM-Runner (85°C Limit)
+e7fba45 jack_hey: Loop-Overhead weg, Stille-Pruefung schaltet sich bei lauter Umgebung ab
+807a1c3 jack_hey: Standardzeit 5s, Stille-Schwelle -45dB (fahrendes Auto hat -18dB Grundrauschen)
+adfd702 jack_hey: Stille-Erkennung - Aufnahme stoppt automatisch nach 2s Ruhe
+211513e Voice-Aufraeumen: jack_hey Argument-Bug gefixt, 3 tote Module archiviert, Shortcuts beschriftet
 add6692 feat: Router-Logging für Transparenz
 9ee8d53 feat: Aufnahmezeit 5s -> 10s
 29d4556 fix: mpv überlebt Prozess-Exit (kein Audio-Abriss)
@@ -117,14 +126,6 @@ add6692 feat: Router-Logging für Transparenz
 736ecf3 revert: Voice-Pinning entfernt (Standard-Stimme war besser)
 124805a feat: Stack A Stimme Fenrir (älter, tiefer)
 1060abb feat: Stack A feste Stimme Charon (konsistent, dunkel)
-fa4c1cb feat: Stack A Kumpel-Ton Overlay (kein Sie, kein Diener-Ton)
-1c219ea feat: Stack A mit JACK-Persönlichkeit (system_instruction)
-1cfd365 feat: espeak langsamer (120) und tiefer (pitch 10)
-ff13eeb feat: Stack B mit JACK-Persönlichkeit und Kontext
-b3f0969 feat: Stack B mit Ollama-Streaming (früherer Start)
-9414c4c feat: System-Prompt fuer kurze Voice-Antworten
-8f96c50 fix: Ollama waehlt Chat-Modell statt Embedding
-60bf212 fix: Stack B spielt Audio ab + Ollama via HTTP-API
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
