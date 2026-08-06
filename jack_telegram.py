@@ -21,7 +21,7 @@ BESTAETIGUNG = 'bestaetige schreiben'
 PENDING_IMPROVE = {}
 BESTAETIGUNG_PATCH = 'bestaetige patch'
 
-FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/scan','/menu','/m','/trace'}
+FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/scan','/menu','/m','/trace','/level'}
 
 def load_secrets():
     token, chat_id = None, None
@@ -499,6 +499,23 @@ def handle(text):
             cfg["interval_minutes"] = int(parts[1])
             _j.dump(cfg, open(cfg_path,"w"), indent=2)
             return f"Vinted Intervall: {parts[1]} Minuten"
+
+    if raw.strip().lower().startswith('/level'):
+        raw_level = raw.strip().lower().replace('/level','').strip()
+        parts = ['/level', raw_level] if raw_level else ['/level']
+        import jack_intent as _ji
+        if len(parts) == 1:
+            lvl = _ji.get_level()
+            beschreibungen = {1:"nur fragen", 2:"Xiaomi lesen", 3:"Xiaomi schreiben", 4:"vollautonomes Handeln"}
+            return f"Autonomie-Level: {lvl}/4 ({beschreibungen.get(lvl,'?')})" + chr(10) + "Aendern: /level <1-4>"
+        try:
+            n = int(parts[1] if len(parts)>1 else raw_level)
+            if 1 <= n <= 4:
+                _ji.set_level(n)
+                beschreibungen = {1:"nur fragen", 2:"Xiaomi lesen", 3:"Xiaomi schreiben", 4:"vollautonomes Handeln"}
+                return f"Level auf {n} gesetzt: {beschreibungen[n]}"
+            return "Level muss 1-4 sein."
+        except: return "Nutzung: /level <1-4>"
 
     if raw.lower().startswith("merke dir ") or raw.lower().startswith("merke: "):
         notiz = raw.split(" ",2)[2].strip() if raw.lower().startswith("merke dir ") else raw[7:].strip()

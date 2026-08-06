@@ -206,6 +206,34 @@ def _sanity_loop():
             except: pass
         _t2.sleep(21600)
 
+
+def _proaktiv_loop():
+    """Meldet sich proaktiv bei interessanten Ereignissen."""
+    import time as _t2, datetime as _dt2
+    _t2.sleep(300)  # 5min nach Start warten
+    _last_moin = 0
+    while True:
+        try:
+            _h = _dt2.datetime.now().hour
+            # Moin nach Nachtschicht (6-9 Uhr, max einmal pro Tag)
+            if 6 <= _h <= 9 and _t2.time() - _last_moin > 86400:
+                notify("Moin Dima. Nachtschicht rum? Alles laeuft. /selftest fuer Systemcheck.")
+                _last_moin = _t2.time()
+            # Akku-Warnung
+            try:
+                import subprocess as _sp2, json as _j2
+                r = _sp2.run(['termux-battery-status'], capture_output=True, text=True, timeout=8)
+                d = _j2.loads(r.stdout)
+                pct = d.get('percentage', 100)
+                if pct < 20 and d.get('status') != 'CHARGING':
+                    notify(f"Akku bei {pct}%. Laden oder Ollama pausieren?")
+            except Exception:
+                pass
+        except Exception as _e:
+            try: import jack_log; jack_log.log_decision("PROAKTIV-ERR", str(_e)[:80])
+            except: pass
+        _t2.sleep(1800)  # alle 30min
+
 def start_consolidated():
     _th.Thread(target=_autolearn_loop,daemon=True,name="autolearn").start()
     _th.Thread(target=_publisher_loop,daemon=True,name="publisher").start()
@@ -213,6 +241,7 @@ def start_consolidated():
     _th.Thread(target=_scout_loop,daemon=True,name="scout").start()
     _th.Thread(target=_monitor_loop,daemon=True,name="monitor").start()
     _th.Thread(target=_sanity_loop,daemon=True,name="sanity").start()
+    _th.Thread(target=_proaktiv_loop,daemon=True,name="proaktiv").start()
     print("[Konsolidiert] Autolearn+Publisher+Missionen als Threads gestartet")
 
 if __name__=="__main__":

@@ -182,6 +182,21 @@ def talk_to_gemini(prompt):
     )
     try:
         result = jack_gemini_bridge.ask_gemini(context)
+        # Intent-Detection im Background
+        try:
+            import jack_intent as _ji, threading as _thr
+            _det = _ji.detect(prompt)
+            if _det and _det['ausfuehren']:
+                def _do_intent(d=_det):
+                    _res = _ji.execute(d)
+                    import jack_telegram as _jt
+                    _jt.send("[Auto] " + d['beschreibung'] + ":" + chr(10) + _res)
+                _thr.Thread(target=_do_intent, daemon=True).start()
+            elif _det and _det['confidence'] >= 0.6 and not _det['ausfuehren']:
+                if _det['level'] < _det['min_level']:
+                    result = result + chr(10) + chr(10) + "💡 (Level " + str(_det['min_level']) + " noetig fuer: " + _det['beschreibung'] + ")"
+        except Exception:
+            pass
         return result + "\n\n🌐 Gemini"
     except Exception:
         result = talk_to_ollama(prompt, [])
