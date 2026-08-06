@@ -8,7 +8,7 @@ def get_ptr(db_path=None):
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA busy_timeout=5000;")
     conn.enable_load_extension(True)
-    conn.load_extension('/data/data/com.termux/files/home/jack/vec0')
+    conn.load_extension(os.path.expanduser('~/jack/vec0.so'))
     conn.enable_load_extension(False)
     return conn
 
