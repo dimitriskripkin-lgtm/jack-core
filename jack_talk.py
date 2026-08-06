@@ -41,7 +41,7 @@ def talk_to_ollama(prompt, context_memories):
     except Exception:
         pass
     messages = [{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': prompt}]
-    math_signals = ['wieviel', 'wie viel', 'rechnen', 'berechne', 'geteil', 'mal', 'plus', 'minus', 'ladun', 'lkw', 'verteil', 'durch', 'anzahl', 'uhrzeit', 'datum', 'check']
+    math_signals = ['wieviel', 'wie viel', 'rechnen', 'berechne', 'geteil', 'mal', 'plus', 'minus', 'ladun', 'lkw', 'verteil', 'durch', 'anzahl', 'uhrzeit', 'datum']
     has_math_signal = any(sig in prompt.lower() for sig in math_signals)
     payload = {'model': MODEL_NAME, 'messages': messages, 'stream': False}
     if has_math_signal: payload['tools'] = jack_math.get_ollama_tools()
