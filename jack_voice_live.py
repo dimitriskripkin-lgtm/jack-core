@@ -57,7 +57,7 @@ async def single_attempt(pcm):
         for i in range(0, len(pcm), CHUNK):
             await session.send_realtime_input(
                 audio=types.Blob(data=pcm[i:i+CHUNK], mime_type="audio/pcm;rate=16000"))
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.15)
         await session.send_realtime_input(audio_stream_end=True)
         t_sent = time.perf_counter()
         first_ms = None
