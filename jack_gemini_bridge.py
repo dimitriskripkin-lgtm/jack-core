@@ -2,9 +2,9 @@
 import os, json, subprocess, sqlite3, urllib.request
 from datetime import datetime
 
-JACK_HOME = "/data/data/com.termux/files/home"
+JACK_HOME = os.path.expanduser("~")
 SECRETS_PATH = os.path.expanduser("~/.jack_secrets")
-ERRORS_DB = f"{JACK_HOME}/jack/jack_errors.db"
+ERRORS_DB = os.path.join(JACK_HOME,"jack","jack_errors.db")
 
 def load_api_key():
     with open(SECRETS_PATH) as f:
@@ -25,8 +25,10 @@ def collect_status():
         status["recent_errors"] = [r[0][:100] for r in recent]
         con.close()
     except: status["open_errors"] = "unknown"
-    import jack_cortex
-    status["xiaomi_reachable"] = jack_cortex._ssh_ok(jack_cortex.find_xiaomi())
+    import jack_config as _jc; _xip = _jc.get_param("NETWORK","xiaomi_ip")
+    import subprocess as _sp
+    _r = _sp.run(["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),"-o","BatchMode=yes","-o","StrictHostKeyChecking=no","-o","ConnectTimeout=3","-p","8022",f"root@{_xip}","true"],capture_output=True,timeout=6)
+    status["xiaomi_reachable"] = _r.returncode == 0
     return status
 
 def ask_gemini(question, status=None):
@@ -34,11 +36,11 @@ def ask_gemini(question, status=None):
     _ok,_m=jack_budget.check_and_count('text')
     if not _ok: return _m
     key = load_api_key()
-    model_name = __import__("jack_config").get_val("gemini", "model", "gemini-2.5-flash-lite")
+    model_name = __import__("jack_config").get_param("gemini", "model")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
     system = (
         "Du bist JACK - Dimas persoenliches KI-OS auf seinem Honor Magic8 Pro. Du nutzt Gemini als dein Gehirn (API-Calls) und hast ein lokales Gedaechtnis in SQLite. Das ist kein Widerspruch - du BIST JACK, Gemini ist dein Denkwerkzeug. WER DIMA IST: Nachtschicht-LKW-Fahrer, Sprinter Kuehlkoffer, Dalhoff Feinkost Achim. Hobby-Programmierer, Exit-Vehicle fuer Unabhaengigkeit. WICHTIG: Wenn du nach API-Calls oder Gemini gefragt wirst - sei ehrlich. Ja, du nutzt Gemini zum Denken. Ja, du speicherst Gespraeche mit Zeitstempel. Ja, du erinnerst dich an frueheres. DEIN CHARAKTER: Stiller Kumpel, direkt, trocken-humorvoll, nie Helpdesk. Meinung sagen. Fehler zugeben. SPRACHREGELN: Immer du. Nie Gerne/Sicher/Als KI/Wie kann ich helfen. Bei kurzen Fragen 1-2 Saetze. SPRACHE: Deutsch, Kumpel-Ton. Maximale Informationsdichte, keine Phrasen. Bei technischen Fragen: Antwort zuerst, Erklaerung optional danach. Wenn ein vorheriger Befehl fehlschlug: kurz erklaeren warum, dann naechster Versuch."
-        "Slave: Xiaomi 11T Pro via SSH (10.244.147.131:8022, Key ~/.ssh/id_jack). "
+        "Slave: Xiaomi 11T Pro via SSH (10.58.220.131:8022, Key ~/.ssh/id_jack). "
         "Antworten: kurz, technisch, direkt. Kein Bullshit. Deutsch."
     )
     content = f"SYSTEM-STATUS:\n{json.dumps(status, indent=2)}\n\nFRAGE: {question}" if status else question

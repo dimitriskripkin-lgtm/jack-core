@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 import urllib.request
@@ -8,7 +9,7 @@ import jack_math
 import jack_vecdb
 
 MODEL_NAME = 'llama3.2:3b'
-DB_PATH = '/data/data/com.termux/files/home/jack/jack_memory.db'
+DB_PATH = os.path.expanduser('~/jack/jack_memory.db')
 
 def get_embedding(text):
     url = 'http://localhost:11434/api/embeddings'
@@ -41,7 +42,7 @@ def talk_to_ollama(prompt, context_memories):
     except Exception:
         pass
     messages = [{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': prompt}]
-    math_signals = ['wieviel', 'wie viel', 'rechnen', 'berechne', 'geteil', 'mal', 'plus', 'minus', 'ladun', 'lkw', 'verteil', 'durch', 'anzahl', 'uhrzeit', 'datum']
+    math_signals = ['wieviel', 'wie viel', 'rechnen', 'berechne', 'geteilt', 'mal', 'plus', 'minus', 'durch', 'anzahl']
     has_math_signal = any(sig in prompt.lower() for sig in math_signals)
     payload = {'model': MODEL_NAME, 'messages': messages, 'stream': False}
     if has_math_signal: payload['tools'] = jack_math.get_ollama_tools()
@@ -72,7 +73,7 @@ def auto_save_to_memory(cmd, result, source='dima_chat'):
         vec = get_embedding(combined)
         if vec: jack_vecdb.store_embedding(rowid, vec)
     except Exception as _e:
-        import jack_log; jack_log.log_decision(f"SILENT-FAIL {fname}", str(_e)[:120])
+        import jack_log; jack_log.log_decision("SILENT-FAIL auto_save_to_memory", str(_e)[:120])
 
 def run_voice_loop():
     import jack_voice, jack_voice_el
@@ -142,15 +143,14 @@ def talk_to_gemini(prompt):
                   "commit", "erinnerungen", "xiaomi", "cortex", "wie geht es dir", "zustand", "check"]
     if any(w in prompt.lower() for w in _sys_words):
         try:
-            import jack_gemini_bridge as _gb
-            _st = _gb.collect_status()
+            _st = jack_gemini_bridge.collect_status()
             _live = ("\n\nECHTE LIVE-SYSTEMDATEN (JETZT gemessen, das ist die WAHRHEIT):\n"
                      + _json_dumps_safe(_st) + "\n")
         except Exception:
             _live = ""
     try:
         import json as _json
-        _id = _json.load(open("/data/data/com.termux/files/home/jack/jack_identity.json"))
+        _id = _json.load(open(os.path.expanduser("~/jack/jack_identity.json")))
         id_ctx = _json.dumps(_id, ensure_ascii=False)
     except Exception:
         id_ctx = "(keine)"
