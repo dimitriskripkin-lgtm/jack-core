@@ -28,8 +28,9 @@ def save(cmd, result, intent="unknown"):
     conn = sqlite3.connect(DB)
     c = conn.cursor()
     uid = hashlib.md5((cmd + str(datetime.now())).encode()).hexdigest()[:16]
-    c.execute("INSERT OR REPLACE INTO memory(id,cmd,result,intent,time) VALUES (?,?,?,?,?)",
-              (uid, cmd, result, intent, str(datetime.now())))
+    ts = str(datetime.now())
+    c.execute("INSERT OR REPLACE INTO memory(id,cmd,result,intent,time,timestamp,source) VALUES (?,?,?,?,?,?,?)",
+              (uid, cmd, result, intent, ts, ts, "manual"))
     c.execute("INSERT INTO memory_fts VALUES (?,?)", (cmd, result))
     conn.commit()
     conn.close()
