@@ -160,7 +160,7 @@ async def process_stack_b_offline(audio_path):
         req_data = _json.dumps({
             "model": "llama3.2:3b",
             "messages": [
-                {"role": "system", "content": "Antworte kurz und knapp."},
+                {"role": "system", "content": "Du bist JACK. Antworte kurz und knapp. Du bist Dima's persönlicher KI-Assistent, immer hilfsbereit und direkt. Dima ist LKW-Fahrer auf Nachtschicht. Antworte auf Deutsch, kumpelhaft und ehrlich."},
                 {"role": "user", "content": text}
             ],
             "stream": True
