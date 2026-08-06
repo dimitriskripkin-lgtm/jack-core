@@ -1,7 +1,9 @@
+import os
 import sqlite3
 import json
 
-def get_ptr(db_path='/data/data/com.termux/files/home/jack/jack_memory.db'):
+def get_ptr(db_path=None):
+    if db_path is None: db_path = os.path.expanduser('~/jack/jack_memory.db')
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA busy_timeout=5000;")
