@@ -162,7 +162,7 @@ async def process_stack_b_offline(audio_path):
         import json as _json
         with urllib.request.urlopen("http://localhost:11434/api/tags", timeout=5) as r:
             models = _json.loads(r.read().decode())["models"]
-        model = models[0]["name"] if models else "llama3.2"
+        model = next((m["name"] for m in models if "embed" not in m["name"].lower()), "llama3.2:3b")
         req = urllib.request.Request(
             "http://localhost:11434/api/chat",
             data=_json.dumps({"model": model, "messages": [{"role": "user", "content": text}], "stream": False}).encode(),
