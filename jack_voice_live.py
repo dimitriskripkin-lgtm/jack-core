@@ -42,7 +42,9 @@ async def single_attempt(pcm):
         await session.send_realtime_input(audio_stream_end=True)
         t_sent = time.perf_counter()
         first_ms = None
+        msg_count = 0
         async for message in session.receive():
+            msg_count += 1
             sc = getattr(message, "server_content", None)
             if sc is None:
                 continue
@@ -52,7 +54,7 @@ async def single_attempt(pcm):
                     idat = getattr(p, "inline_data", None)
                     if idat is not None and getattr(idat, "data", None):
                         if first_ms is None:
-                            first_ms = (time.perf_counter() - t_sent) * 1000
+                            first_ms = max(1, int((time.perf_counter() - t_sent) * 1000))
                         out_chunks.append(idat.data)
             if getattr(sc, "turn_complete", False):
                 break
@@ -96,3 +98,48 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+async def voice_stream(pcm_path, callback):
+    """Stream audio chunks in Echtzeit an eine Callback-Funktion.
+    
+    Args:
+        pcm_path: Pfad zur PCM-Datei (16kHz, 16-bit, mono)
+        callback: async Funktion die Audio-Chunks empfängt
+    
+    Returns:
+        True bei Erfolg, False bei Fehler
+    """
+    pcm = open(pcm_path, "rb").read()
+    if not API_KEY:
+        return False
+    
+    client = genai.Client(api_key=API_KEY)
+    config = types.LiveConnectConfig(response_modalities=["AUDIO"])
+    
+    async with client.aio.live.connect(model=MODEL, config=config) as session:
+        # Audio an API senden
+        for i in range(0, len(pcm), CHUNK):
+            await session.send_realtime_input(
+                audio=types.Blob(data=pcm[i:i+CHUNK], mime_type="audio/pcm;rate=16000"))
+            await asyncio.sleep(0.01)
+        
+        await session.send_realtime_input(audio_stream_end=True)
+        
+        # Audio-Chunks in Echtzeit empfangen und an callback weiterleiten
+        async for message in session.receive():
+            sc = getattr(message, "server_content", None)
+            if sc is None:
+                continue
+            
+            mt = getattr(sc, "model_turn", None)
+            if mt is not None and getattr(mt, "parts", None):
+                for p in mt.parts:
+                    idat = getattr(p, "inline_data", None)
+                    if idat is not None and getattr(idat, "data", None):
+                        # Audio-Chunk sofort an callback senden
+                        await callback(idat.data)
+            
+            if getattr(sc, "turn_complete", False):
+                break
+        
+        return True
