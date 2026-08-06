@@ -180,15 +180,31 @@ def talk_to_gemini(prompt):
         + _live +
         f"\nDIMA: {prompt}"
     )
+    # Intent VOR Gemini - Ergebnis fliesst in die Antwort ein
+    _intent_res = ""
+    try:
+        import jack_intent as _ji
+        _pre = _ji.detect(prompt)
+        if _pre and _pre['ausfuehren']:
+            _pre['_text'] = prompt
+            _r = _ji.execute(_pre)
+            _intent_res = _r
+            context += (chr(10) + chr(10) + "JACK HAT GERADE GEPRUEFT (" +
+                        _pre['beschreibung'] + "): " + str(_r) +
+                        chr(10) + "Nutze dieses Ergebnis in deiner Antwort, rate nicht.")
+    except Exception:
+        pass
     try:
         result = jack_gemini_bridge.ask_gemini(context)
-        # Intent-Engine
+        if _intent_res:
+            result = result + chr(10) + chr(10) + "[geprueft] " + str(_intent_res)
+        # Intent-Engine (nur noch nachfragen/level-hinweis)
         try:
             import jack_intent as _ji, threading as _thr
             _det = _ji.detect(prompt)
             if _det:
                 _det['_text'] = prompt
-                if _det['ausfuehren']:
+                if False:
                     def _do(d=_det):
                         _res = _ji.execute(d)
                         import jack_telegram as _jt
