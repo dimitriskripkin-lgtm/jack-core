@@ -1,3 +1,7 @@
+import os
+os.environ['VK_ICD_FILENAMES'] = '/data/data/com.termux/files/usr/share/vulkan/icd.d/freedreno_icd.aarch64.json'
+os.environ['OLLAMA_VULKAN'] = '1'
+
 #!/usr/bin/env python3
 """JACK Voice Router: Vollständiger Dispatcher für Stack A (Gemini Live) und Stack B (Offline).
 Mit Live-Streaming-Support für mpv."""
