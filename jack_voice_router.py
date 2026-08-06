@@ -30,6 +30,14 @@ def write_wav_header(f, sample_rate=24000, channels=1, sample_width=2):
     f.write(b'data')
     f.write(struct.pack('<I', 0xFFFFFFFF))  # Unbekannte Größe (Streaming)
 
+def tts_espeak(text, wav_out):
+    """Offline TTS mit espeak."""
+    try:
+        subprocess.run(["espeak", "-v", "de", "-w", wav_out, text], capture_output=True, check=True)
+        return os.path.exists(wav_out) and os.path.getsize(wav_out) > 100
+    except Exception:
+        return False
+
 def play_audio(wav_path):
     """Fallback: Spielt eine WAV-Datei ab."""
     try:
@@ -125,24 +133,50 @@ async def process_stack_a_live(audio_path):
         return False, None
 
 async def process_stack_b_offline(audio_path):
-    print("[ROUTER] Stack B: Fallback auf Offline Whisper + Ollama...")
+    """Stack B: 100% Offline-Fallback (Whisper + Ollama + espeak)"""
+    print("[ROUTER] Stack B: 100% Offline-Fallback (Whisper + Ollama + espeak)...")
+    base_name = os.path.splitext(audio_path)[0]
+    wav_in = base_name + "_stt.wav"
+    wav_out = base_name + "_tts.wav"
+    
+    # 1. STT: Whisper lokal
     try:
-        import jack_voice_processor as vp
-        base_name = os.path.splitext(audio_path)[0]
-        wav_path = base_name + ".wav"
-            
-        subprocess.run(["ffmpeg", "-y", "-i", audio_path, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav_path], capture_output=True, check=True)
-        
-        text, _, error = vp.process_voice_message(wav_path)
-        if text:
-            print(f"[ROUTER] Stack B ERFOLGREICH: Whisper erkannte: '{text}'")
-            return text, None
-        else:
-            print(f"[ROUTER] Stack B FEHLER: {error}")
-            return None, error
+        subprocess.run(["ffmpeg", "-y", "-i", audio_path, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav_in], capture_output=True, check=True)
+        whisper_path = os.path.expanduser("~/whisper.cpp/build/bin/whisper-cli")
+        model_path = os.path.expanduser("~/whisper.cpp/models/ggml-small.bin")
+        if not os.path.exists(whisper_path) or not os.path.exists(model_path):
+            print("[ROUTER] Stack B FEHLER: whisper.cpp nicht installiert")
+            return None, "Whisper fehlt"
+        result = subprocess.run([whisper_path, "-m", model_path, "-f", wav_in, "-l", "de", "-nt", "-t", "4"], capture_output=True, text=True)
+        text = " ".join(result.stdout.split()).strip()
+        if not text:
+            print("[ROUTER] Stack B: Whisper hat nichts erkannt")
+            return None, "Kein Text erkannt"
+        print(f"[ROUTER] Stack B STT: '{text}'")
     except Exception as e:
-        print(f"[ROUTER] Stack B FEHLER: {type(e).__name__} - {str(e)[:100]}")
-        return None, str(e)
+        print(f"[ROUTER] Stack B STT-Fehler: {e}")
+        return None, f"STT-Fehler: {e}"
+    
+    # 2. LLM: Ollama lokal
+    try:
+        import ollama
+        response = ollama.chat(model="llama3.2:3b", messages=[{"role": "user", "content": text}])
+        reply = response["message"]["content"].strip()
+        if not reply:
+            reply = text
+        print(f"[ROUTER] Stack B LLM: '{reply[:80]}'")
+    except Exception as e:
+        print(f"[ROUTER] Stack B LLM-Fehler: {e}, verwende Originaltext")
+        reply = text
+    
+    # 3. TTS: espeak lokal
+    if tts_espeak(reply, wav_out):
+        print(f"[ROUTER] Stack B ERFOLGREICH: Offline-Antwort erzeugt")
+        return reply, wav_out
+    else:
+        print("[ROUTER] Stack B TTS-Fehler: espeak fehlgeschlagen")
+        return reply, None
+
 
 async def route_voice(audio_path):
     if not os.path.exists(audio_path):
