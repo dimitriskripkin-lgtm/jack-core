@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-06T08:14:28.873270
+Stand: 2026-08-06T09:26:18.924957
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -105,12 +105,15 @@ Stand: 2026-08-06T08:14:28.873270
 - Offene Fehler: 0
 - Erinnerungen: 171
 - Dienste:
-run: jack_cortex: (pid 10434) 1106413s
-run: jack_telegram: (pid 22987) 140260s
+run: jack_cortex: (pid 10434) 1110723s
+run: jack_telegram: (pid 22987) 144570s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 8054) 409s
+run: ollama: (pid 8054) 4719s
 
 ## Letzte Aenderungen
+8c08356 publisher: push() statt nur build() im waechter-loop, thermal: negative sensor-werte rausfiltern
+b4ecf05 jack_talk: check aus math_signals entfernt - verhinderte Antworten auf Alltagsfragen
+81d3f6e Cleanup: Muell-Datei entfernt
 951762d Ollama: Vulkan-Env in runit run-Datei, Thermal-Monitor filtert Schwellwerte
 8d1dc8b feat: jack_ui.py - schöne Konsolen-Ausgabe mit Farben + Boxen
 130c329 feat: Stack B mit Vulkan GPU-Beschleunigung (6.6s statt 35-85s)
@@ -123,9 +126,6 @@ adfd702 jack_hey: Stille-Erkennung - Aufnahme stoppt automatisch nach 2s Ruhe
 add6692 feat: Router-Logging für Transparenz
 9ee8d53 feat: Aufnahmezeit 5s -> 10s
 29d4556 fix: mpv überlebt Prozess-Exit (kein Audio-Abriss)
-30a6a23 fix: Streaming-Buffer erhöht (0.1s -> 0.15s)
-736ecf3 revert: Voice-Pinning entfernt (Standard-Stimme war besser)
-124805a feat: Stack A Stimme Fenrir (älter, tiefer)
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
