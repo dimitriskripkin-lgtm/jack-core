@@ -163,16 +163,45 @@ def handle_callback(callback_data, callback_id):
         except Exception as e:
             return "Kein Ergebnis: " + str(e)
     if callback_data.startswith("oracle:"):
-        import json as _j, os as _o, subprocess as _sp, time as _t
+        import subprocess as _sp, datetime as _dt
         cmd = callback_data[7:]
-        uid = "btn-" + str(int(_t.time() * 1000))
-        ts = _t.strftime("%Y-%m-%d %H:%M:%S")
-        sig = oracle_sign(cmd, uid, ts)
-        data = {"cmd": cmd, "uuid": uid, "ts": ts, "sig": sig}
-        repo = _o.path.expanduser("~/jack-commands")
-        open(_o.path.join(repo,"jack_cmd.json"),"w").write(_j.dumps(data))
-        _sp.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
-        return "Laeuft... in ~60s: /oracle_result"
+        try:
+            if cmd == "dienste":
+                r = _sp.run(["sv","status"] + [f"/data/data/com.termux/files/usr/var/service/{s}" for s in ["jack_cortex","jack_telegram","jack_waechter","ollama"]], capture_output=True, text=True, timeout=10)
+                return "Oracle [dienste]:
+" + r.stdout.strip()
+            elif cmd == "ram":
+                lines = [l for l in open("/proc/meminfo") if any(k in l for k in ["MemTotal","MemAvailable","SwapFree"])]
+                return "Oracle [ram]:
+" + "".join(lines).strip()
+            elif cmd == "fehler":
+                import sqlite3 as _sq, os as _o2
+                con = _sq.connect(_o2.path.expanduser("~/jack/jack_errors.db"))
+                rows = con.execute("SELECT error_msg, timestamp FROM errors WHERE resolved=0 ORDER BY timestamp DESC LIMIT 5").fetchall()
+                con.close()
+                if not rows: return "Oracle [fehler]: Keine offenen Fehler"
+                return "Oracle [fehler]:
+" + "
+".join([f"[{r[1][:16]}] {r[0][:80]}" for r in rows])
+            elif cmd == "budget":
+                import jack_budget
+                return "Oracle [budget]:
+" + jack_budget.status()
+            elif cmd == "log":
+                import jack_log
+                return "Oracle [log]:
+" + jack_log.recent(10)
+            elif cmd == "datum":
+                return "Oracle [datum]:
+" + _dt.datetime.now().strftime("%A, %d.%m.%Y %H:%M:%S")
+            elif cmd == "modelle":
+                r = _sp.run(["ollama","list"], capture_output=True, text=True, timeout=10)
+                return "Oracle [modelle]:
+" + r.stdout.strip()
+            else:
+                return f"Unbekannter Oracle-Befehl: {cmd}"
+        except Exception as _e:
+            return f"Oracle [{cmd}] Fehler: {str(_e)[:200]}"
     return f"Unbekannter Button: {callback_data}"
 
 def get_updates(offset=0):
