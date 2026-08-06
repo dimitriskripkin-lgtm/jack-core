@@ -17,21 +17,93 @@ def log_phase(phase):
 
 SEKUNDEN = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 10
 
+STILLE_DB = "-35dB"
+STILLE_SEK = 2.0
+
+def _stille_am_ende(pfad):
+    """True wenn am Ende der Aufnahme STILLE_SEK Sekunden Ruhe sind."""
+    try:
+        r = subprocess.run(
+            ["ffmpeg", "-hide_banner", "-i", pfad, "-af",
+             "silencedetect=noise=" + STILLE_DB + ":d=" + str(STILLE_SEK),
+             "-f", "null", "-"],
+            capture_output=True, text=True, timeout=10)
+        aus = r.stderr
+        if "silence_start" not in aus:
+            return False, 0.0
+        # Dauer der Datei ermitteln
+        dauer = 0.0
+        for zeile in aus.split(chr(10)):
+            if "Duration:" in zeile:
+                t = zeile.split("Duration:")[1].split(",")[0].strip()
+                h, m, sek = t.split(":")
+                dauer = int(h)*3600 + int(m)*60 + float(sek)
+        # Letzter silence_start
+        letzter = None
+        for zeile in aus.split(chr(10)):
+            if "silence_start:" in zeile:
+                try: letzter = float(zeile.split("silence_start:")[1].strip().split()[0])
+                except Exception: pass
+        if letzter is None or dauer == 0.0:
+            return False, dauer
+        # Stille bis zum Ende? Dann kein silence_end nach letztem start
+        rest = aus.split("silence_start: " + str(letzter))[-1]
+        offen = "silence_end" not in rest
+        return offen, dauer
+    except Exception:
+        return False, 0.0
+
+def _hat_sprache(pfad):
+    """True wenn ueberhaupt etwas ueber der Schwelle war."""
+    try:
+        r = subprocess.run(
+            ["ffmpeg", "-hide_banner", "-i", pfad, "-af", "volumedetect",
+             "-f", "null", "-"],
+            capture_output=True, text=True, timeout=10)
+        for zeile in r.stderr.split(chr(10)):
+            if "max_volume:" in zeile:
+                wert = float(zeile.split("max_volume:")[1].replace("dB","").strip())
+                return wert > -30.0
+    except Exception:
+        pass
+    return True
+
 def aufnehmen(sekunden=10):
+    """Nimmt auf, stoppt frueher wenn zwei Sekunden Stille erkannt werden."""
     if os.path.exists(REC):
         try: os.remove(REC)
         except Exception: pass
-    
-    log_phase(f"Starte Aufnahme für {sekunden} Sekunden... Sprich JETZT!")
-    subprocess.run(["termux-microphone-record", "-f", REC, "-e", "aac", "-r", "16000", "-l", str(sekunden)], capture_output=True)
-    
-    time.sleep(sekunden + 1)
-    
-    subprocess.run(["termux-microphone-record", "-q"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    
+
+    log_phase("Starte Aufnahme (max " + str(sekunden) + "s, stoppt bei Stille)... Sprich JETZT!")
+    subprocess.run(["termux-microphone-record", "-f", REC, "-e", "aac",
+                    "-r", "16000", "-l", str(sekunden)], capture_output=True)
+
+    t0 = time.time()
+    frueh_gestoppt = False
+    gesprochen = False
+    while time.time() - t0 < sekunden + 1:
+        time.sleep(1.0)
+        if not os.path.exists(REC) or os.path.getsize(REC) < 2000:
+            continue
+        if not gesprochen:
+            gesprochen = _hat_sprache(REC)
+            continue
+        still, dauer = _stille_am_ende(REC)
+        if still and dauer >= 2.5:
+            log_phase("Stille erkannt nach " + str(round(time.time()-t0,1)) + "s - stoppe frueher")
+            frueh_gestoppt = True
+            break
+
+    subprocess.run(["termux-microphone-record", "-q"],
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    time.sleep(0.5)
+
     size = os.path.getsize(REC) if os.path.exists(REC) else 0
-    log_phase(f"Aufnahme beendet. Dateigröße: {size} Bytes.")
-    
+    gespart = ""
+    if frueh_gestoppt:
+        gespart = " (" + str(round(sekunden - (time.time()-t0), 1)) + "s gespart)"
+    log_phase("Aufnahme beendet. " + str(size) + " Bytes" + gespart)
+
     if size < 1000:
         log_phase("WARNUNG: Aufnahme zu klein.")
         return False
