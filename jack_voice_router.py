@@ -165,7 +165,7 @@ async def process_stack_b_offline(audio_path):
         model = next((m["name"] for m in models if "embed" not in m["name"].lower()), "llama3.2:3b")
         req = urllib.request.Request(
             "http://localhost:11434/api/chat",
-            data=_json.dumps({"model": model, "messages": [{"role": "user", "content": text}], "stream": False}).encode(),
+            data=_json.dumps({"model": model, "messages": [{"role": "system", "content": "Du bist Jack. Antworte kurz und knapp in maximal 2-3 Saetzen."}, {"role": "user", "content": text}], "stream": False}).encode(),
             headers={"Content-Type": "application/json"})
         with urllib.request.urlopen(req, timeout=60) as resp:
             data = _json.loads(resp.read().decode())
