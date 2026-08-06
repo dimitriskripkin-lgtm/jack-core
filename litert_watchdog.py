@@ -4,7 +4,7 @@ import time
 import threading
 import signal
 
-TEMP_LIMIT = 85.0
+TEMP_LIMIT = 95.0
 stop_flag = False
 process = None
 
@@ -18,7 +18,7 @@ def get_temp():
 def temperature_monitor():
     global stop_flag, process
     start = time.time()
-    print("🔥 Temperatur-Watchdog aktiv (Limit: 85°C)")
+    print(f"🔥 Temperatur-Watchdog aktiv (Limit: {TEMP_LIMIT}°C)")
     while not stop_flag:
         temp = get_temp()
         elapsed = time.time() - start
