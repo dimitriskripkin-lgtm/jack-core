@@ -70,11 +70,26 @@ def find_xiaomi():
 
 XIAOMI_LAST_STATE = None
 
+XIAOMI_PENDING = None
+XIAOMI_PENDING_COUNT = 0
+
 def notify_xiaomi_state(connected):
-    global XIAOMI_LAST_STATE
+    global XIAOMI_LAST_STATE, XIAOMI_PENDING, XIAOMI_PENDING_COUNT
     if XIAOMI_LAST_STATE == connected:
+        XIAOMI_PENDING = None
+        XIAOMI_PENDING_COUNT = 0
+        return
+    # Zustandswechsel muss 3 Zyklen stabil sein bevor gemeldet wird
+    if XIAOMI_PENDING == connected:
+        XIAOMI_PENDING_COUNT += 1
+    else:
+        XIAOMI_PENDING = connected
+        XIAOMI_PENDING_COUNT = 1
+    if XIAOMI_PENDING_COUNT < 3:
         return
     XIAOMI_LAST_STATE = connected
+    XIAOMI_PENDING = None
+    XIAOMI_PENDING_COUNT = 0
     try:
         msg = "Xiaomi verbunden" if connected else "Xiaomi getrennt"
         import urllib.request, json, os
