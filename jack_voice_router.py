@@ -33,7 +33,7 @@ def write_wav_header(f, sample_rate=24000, channels=1, sample_width=2):
 def tts_espeak(text, wav_out):
     """Offline TTS mit espeak."""
     try:
-        subprocess.run(["espeak", "-v", "de", "-w", wav_out, text], capture_output=True, check=True)
+        subprocess.run(["espeak", "-v", "de", "-s", "120", "-p", "10", "-w", wav_out, text], capture_output=True, check=True)
         return os.path.exists(wav_out) and os.path.getsize(wav_out) > 100
     except Exception:
         return False
