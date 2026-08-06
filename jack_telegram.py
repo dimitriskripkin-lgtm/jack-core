@@ -240,6 +240,10 @@ def handle(text):
     if raw.strip().split("@")[0] == "/audit":
         import jack_audit; return jack_audit.report()
     text = raw.lower()
+    if text.strip() == '/selftest':
+        import jack_selftest as _st
+        return _st.run()
+
 
     # Schritt 2: Bestaetigung eines wartenden Schreibvorschlags
     if text.replace("ä","ae").replace("ü","ue") == BESTAETIGUNG:
@@ -552,16 +556,17 @@ def handle(text):
         return _r[:3000]
 
 def main():
-    send("JACK Telegram-Bridge online (mit Voice-Support).")
+    send("JACK Telegram-Bridge online.")
     print(f"[{datetime.now().strftime('%H:%M:%S')}] JACK Telegram läuft...")
-    try:
-        _init = get_updates(-1)
-        offset = _init[-1]["update_id"] + 1 if _init else 0
-    except: offset = 0
+    _start_ts = int(time.time())
+    offset = 0
     while True:
         updates = get_updates(offset)
         for u in updates:
             offset = u['update_id'] + 1
+            _msg_ts = u.get('message', {}).get('date', _start_ts)
+            if _msg_ts < _start_ts - 2:
+                continue
             cb = u.get('callback_query', {})
             if cb:
                 cb_chat = str(cb.get('message', {}).get('chat', {}).get('id', ''))
