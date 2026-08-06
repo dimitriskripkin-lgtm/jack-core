@@ -81,14 +81,19 @@ def aufnehmen(sekunden=10):
     t0 = time.time()
     frueh_gestoppt = False
     gesprochen = False
-    while time.time() - t0 < sekunden + 1:
+    stille_pruefen = True
+    while time.time() - t0 < sekunden:
         time.sleep(1.0)
         if not os.path.exists(REC) or os.path.getsize(REC) < 2000:
             continue
         if not gesprochen:
             gesprochen = _hat_sprache(REC)
             continue
+        if not stille_pruefen:
+            continue
         still, dauer = _stille_am_ende(REC)
+        if dauer > 0 and not still:
+            stille_pruefen = False  # Umgebung zu laut, Pruefung abschalten
         if still and dauer >= 2.5:
             log_phase("Stille erkannt nach " + str(round(time.time()-t0,1)) + "s - stoppe frueher")
             frueh_gestoppt = True
