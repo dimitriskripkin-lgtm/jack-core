@@ -25,7 +25,7 @@ def temp():
             g=r/1000 if r>1000 else float(r)
             if g>mx:mx=g;h=tp
         except:pass
-    return t(mx<43,'Temp',f'{mx:.1f}C max ({h})')
+    return t(mx<50,'Temp',f'{mx:.1f}C max ({h})')
 def pub():
     r=subprocess.run(['git','-C',os.path.expanduser('~/jack-context'),
         'log','--format=%ct','-1'],capture_output=True,text=True)

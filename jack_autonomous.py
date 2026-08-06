@@ -192,12 +192,27 @@ def _monitor_loop():
             try: import jack_log; jack_log.log_decision('MONITOR-ERR', str(e)[:80])
             except: pass
         _tm.sleep(120)
+
+def _sanity_loop():
+    """Prueft Config-Falle und Git-Stand alle 6h."""
+    import time as _t2
+    _t2.sleep(120)
+    while True:
+        try:
+            import jack_sanity as _js
+            _js.check()
+        except Exception as _e:
+            try: import jack_log; jack_log.log_decision("SANITY-ERR", str(_e)[:80])
+            except: pass
+        _t2.sleep(21600)
+
 def start_consolidated():
     _th.Thread(target=_autolearn_loop,daemon=True,name="autolearn").start()
     _th.Thread(target=_publisher_loop,daemon=True,name="publisher").start()
     _th.Thread(target=_missions_loop,daemon=True,name="missions").start()
     _th.Thread(target=_scout_loop,daemon=True,name="scout").start()
     _th.Thread(target=_monitor_loop,daemon=True,name="monitor").start()
+    _th.Thread(target=_sanity_loop,daemon=True,name="sanity").start()
     print("[Konsolidiert] Autolearn+Publisher+Missionen als Threads gestartet")
 
 if __name__=="__main__":
