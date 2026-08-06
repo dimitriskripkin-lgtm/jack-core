@@ -36,8 +36,10 @@ def _up(n):
 
 def _xi():
     try:
+        import jack_config as _jc
+        ip = _jc.get_param('NETWORK','xiaomi_ip')
         return subprocess.run(["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),"-o","BatchMode=yes",
-          "-o","StrictHostKeyChecking=no","-o","ConnectTimeout=6","-p","8022","root@10.244.147.131","true"],
+          "-o","StrictHostKeyChecking=no","-o","ConnectTimeout=6","-p","8022",f"root@{ip}","true"],
           capture_output=True,timeout=12).returncode==0
     except Exception: return False
 
@@ -164,18 +166,17 @@ def _scout_loop():
             import jack_scout as _js
             fp = _js.erstelle_fingerabdruck()
             import jack_log; jack_log.log_decision('SCOUT-LAUF', fp['hash'])
-        except Exception as e:
-            try: import jack_log; jack_log.log_decision('SCOUT-ERR', str(e)[:80])
-            except: pass
-            # Skill-Builder: neue Luecken automatisch schliessen
             try:
                 import jack_skill_builder as _sb
                 neue = _sb.run()
                 if neue:
-                    notify("Skill-Builder: " + str(len(neue)) + " neue Skills generiert: " + ", ".join(neue))
+                    notify("Skill-Builder: " + str(len(neue)) + " neue Skills: " + ", ".join(neue))
             except Exception as _sbe:
                 try: jack_log.log_decision("SKILL-BUILDER-ERR", str(_sbe)[:80])
                 except: pass
+        except Exception as e:
+            try: import jack_log; jack_log.log_decision('SCOUT-ERR', str(e)[:80])
+            except: pass
         _tm.sleep(86400)
 
 def _monitor_loop():
