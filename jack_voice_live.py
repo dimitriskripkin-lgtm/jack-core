@@ -21,6 +21,20 @@ BASE_DELAY = 1.0
 LOG_DIR = os.path.expanduser("~/jack/logs")
 LOG_FILE = os.path.join(LOG_DIR, "voice_live.log")
 
+def load_jack_context():
+    """Lädt JACK-Persönlichkeit aus Context-Dateien."""
+    parts = []
+    for f in [os.path.expanduser("~/jack/jack_context.md"), os.path.expanduser("~/jack/jack_identity.json")]:
+        try:
+            if os.path.exists(f):
+                with open(f) as fh:
+                    parts.append(fh.read())
+        except Exception:
+            pass
+    return chr(10).join(parts)[:6000]
+
+SYSTEM_PROMPT = load_jack_context()
+
 def log_event(etype, detail):
     try:
         os.makedirs(LOG_DIR, exist_ok=True)
@@ -32,7 +46,7 @@ def log_event(etype, detail):
 
 async def single_attempt(pcm):
     client = genai.Client(api_key=API_KEY)
-    config = types.LiveConnectConfig(response_modalities=["AUDIO"])
+    config = types.LiveConnectConfig(response_modalities=["AUDIO"], system_instruction=SYSTEM_PROMPT)
     out_chunks = []
     async with client.aio.live.connect(model=MODEL, config=config) as session:
         for i in range(0, len(pcm), CHUNK):
@@ -114,7 +128,7 @@ async def voice_stream(pcm_path, callback):
         return False
     
     client = genai.Client(api_key=API_KEY)
-    config = types.LiveConnectConfig(response_modalities=["AUDIO"])
+    config = types.LiveConnectConfig(response_modalities=["AUDIO"], system_instruction=SYSTEM_PROMPT)
     
     async with client.aio.live.connect(model=MODEL, config=config) as session:
         # Audio an API senden
