@@ -133,57 +133,69 @@ async def process_stack_a_live(audio_path):
         return False, None
 
 async def process_stack_b_offline(audio_path):
-    """Stack B: 100% Offline-Fallback (Whisper + Ollama + espeak)"""
-    print("[ROUTER] Stack B: 100% Offline-Fallback (Whisper + Ollama + espeak)...")
+    """Stack B: 100% Offline-Fallback mit Ollama-Streaming"""
+    print("[ROUTER] Stack B: 100% Offline (Whisper + Ollama-Stream + espeak)...")
     base_name = os.path.splitext(audio_path)[0]
     wav_in = base_name + "_stt.wav"
     wav_out = base_name + "_tts.wav"
     
-    # 1. STT: Whisper lokal
+    # 1. STT: Whisper
     try:
         subprocess.run(["ffmpeg", "-y", "-i", audio_path, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav_in], capture_output=True, check=True)
         whisper_path = os.path.expanduser("~/whisper.cpp/build/bin/whisper-cli")
         model_path = os.path.expanduser("~/whisper.cpp/models/ggml-small.bin")
         if not os.path.exists(whisper_path) or not os.path.exists(model_path):
-            print("[ROUTER] Stack B FEHLER: whisper.cpp nicht installiert")
             return None, "Whisper fehlt"
         result = subprocess.run([whisper_path, "-m", model_path, "-f", wav_in, "-l", "de", "-nt", "-t", "4"], capture_output=True, text=True)
         text = " ".join(result.stdout.split()).strip()
         if not text:
-            print("[ROUTER] Stack B: Whisper hat nichts erkannt")
             return None, "Kein Text erkannt"
         print(f"[ROUTER] Stack B STT: '{text}'")
     except Exception as e:
-        print(f"[ROUTER] Stack B STT-Fehler: {e}")
         return None, f"STT-Fehler: {e}"
     
-    # 2. LLM: Ollama lokal
+    # 2. LLM: Ollama mit Streaming
     try:
         import json as _json
-        with urllib.request.urlopen("http://localhost:11434/api/tags", timeout=5) as r:
-            models = _json.loads(r.read().decode())["models"]
-        model = next((m["name"] for m in models if "embed" not in m["name"].lower()), "llama3.2:3b")
+        req_data = _json.dumps({
+            "model": "llama3.2:3b",
+            "messages": [
+                {"role": "system", "content": "Antworte kurz und knapp."},
+                {"role": "user", "content": text}
+            ],
+            "stream": True
+        })
         req = urllib.request.Request(
             "http://localhost:11434/api/chat",
-            data=_json.dumps({"model": model, "messages": [{"role": "system", "content": "Du bist Jack. Antworte kurz und knapp in maximal 2-3 Saetzen."}, {"role": "user", "content": text}], "stream": False}).encode(),
-            headers={"Content-Type": "application/json"})
+            data=req_data.encode('utf-8'),
+            headers={"Content-Type": "application/json"}
+        )
+        
+        # Stream lesen und Chunks sammeln
+        reply_parts = []
         with urllib.request.urlopen(req, timeout=60) as resp:
-            data = _json.loads(resp.read().decode())
-        reply = data["message"]["content"].strip()
+            for line in resp:
+                if line.strip():
+                    chunk = _json.loads(line.decode('utf-8'))
+                    if chunk.get("message", {}).get("content"):
+                        reply_parts.append(chunk["message"]["content"])
+                    if chunk.get("done", False):
+                        break
+        
+        reply = "".join(reply_parts).strip()
         if not reply:
             reply = text
-        print(f"[ROUTER] Stack B LLM ({model}): '{reply[:80]}'")
+        print(f"[ROUTER] Stack B LLM: '{reply[:80]}'")
     except Exception as e:
-        print(f"[ROUTER] Stack B LLM-Fehler: {e}, verwende Originaltext")
+        print(f"[ROUTER] Stack B LLM-Fehler: {e}")
         reply = text
     
-    # 3. TTS: espeak lokal
+    # 3. TTS: espeak
     if tts_espeak(reply, wav_out):
-        print(f"[ROUTER] Stack B ERFOLGREICH: Offline-Antwort erzeugt")
         return reply, wav_out
     else:
-        print("[ROUTER] Stack B TTS-Fehler: espeak fehlgeschlagen")
         return reply, None
+
 
 
 async def route_voice(audio_path):
