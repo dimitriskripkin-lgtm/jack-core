@@ -27,7 +27,9 @@ def save(cmd, result, intent='unknown'):
         (uid, cmd, result, intent, ts, ts, 'manual'),
         wait=True)
     if ok:
-        _dq.write(DB, 'INSERT INTO memory_fts(cmd,result) VALUES(?,?)', (cmd, result))
+        # FTS sync: erst loeschen, dann neu einfuegen - verhindert Duplikate
+        _dq.write(DB, 'DELETE FROM memory_fts WHERE rowid IN (SELECT rowid FROM memory WHERE id=?)', (uid,))
+        _dq.write(DB, 'INSERT INTO memory_fts(rowid,cmd,result) SELECT rowid,cmd,result FROM memory WHERE id=?', (uid,))
     return ok
 
 def query(text, n=5):
