@@ -39,15 +39,13 @@ def save_with_parent(cmd, result, kontext_typ='chat', parent_id=None, auto_chain
         parent_id = get_session_parent()
 
     try:
-        con = sqlite3.connect(DB)
-        con.execute('PRAGMA journal_mode=WAL')
-        cur = con.execute(
+        import jack_db_queue as _dq
+        ok, rowid = _dq.write(DB,
             'INSERT INTO memory(id,cmd,result,intent,time,timestamp,source,parent_id,kontext_typ) VALUES(?,?,?,?,?,?,?,?,?)',
-            (hex_id, cmd, result, 'unknown', ts, ts, kontext_typ, parent_id, kontext_typ)
-        )
-        rowid = cur.lastrowid
-        con.commit()
-        con.close()
+            (hex_id, cmd, result, 'unknown', ts, ts, kontext_typ, parent_id, kontext_typ),
+            wait=True)
+        if not ok:
+            return None, None
         if auto_chain:
             set_session_parent(hex_id)
         return hex_id, rowid

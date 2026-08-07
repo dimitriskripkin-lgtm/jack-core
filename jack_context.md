@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-07T07:21:26.829721
+Stand: 2026-08-07T11:39:15.290368
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -28,7 +28,7 @@ Stand: 2026-08-07T07:21:26.829721
 - Die SSH-Verbindung zum Xiaomi ist häufig instabil.
 - JACK verfügt über Fähigkeiten wie Speichermanagement, Sicherheit und Automatisierung.
 
-## Aktive Module (76)
+## Aktive Module (78)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -45,6 +45,7 @@ Stand: 2026-08-07T07:21:26.829721
 - jack_config.py
 - jack_consolidate.py
 - jack_cortex.py
+- jack_db_queue.py
 - jack_gemini_bridge.py
 - jack_haliza.py
 - jack_handshake_gen.py
@@ -59,6 +60,7 @@ Stand: 2026-08-07T07:21:26.829721
 - jack_memory.py
 - jack_memory_engine.py
 - jack_memory_maintenance.py
+- jack_memory_tree.py
 - jack_missions.py
 - jack_monitor.py
 - jack_operator.py
@@ -110,12 +112,16 @@ Stand: 2026-08-07T07:21:26.829721
 - Offene Fehler: 1
 - Erinnerungen: 190
 - Dienste:
-run: jack_cortex: (pid 21685) 972s
-run: jack_telegram: (pid 5190) 55404s
+run: jack_cortex: (pid 31748) 15468s
+run: jack_telegram: (pid 957) 15302s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 11415) 1783s
+run: ollama: (pid 11415) 17252s
 
 ## Letzte Aenderungen
+9457fb2 db_queue: thread-safe write-queue | gemini: bare except geloggt | logging in kernmodulen
+bae4bcf db_queue: thread-safe sqlite write-queue, ein writer pro db
+5409af4 memory-tree: baumstruktur mit parent_id, auto-chaining in sessions, /baum befehl
+9397b65 logging: blinde excepts in 5 kernmodulen geloggt | memory: parent_id baumstruktur
 8a090d0 logging: jack_logging.py gebaut, blinde excepts in cortex/autonomous/intent geloggt, budget fname-fix, code_writer sys_prompt
 44f1655 ruff: 48 autofixes, fname-nameerror in jack_budget gefixt, sys_prompt in code_writer verdrahtet, jack_node_alpha archiviert
 477c233 vulkan: nach fairem benchmark deaktiviert - 66 prozent langsamer als CPU
@@ -127,10 +133,6 @@ b2cea51 intent: xiaomi_status als alias, /level ohne space
 1e815d7 talk: few-shot beispiel + mindestlaenge persoenliche fragen | telegram: merke-dir handler
 081dbf8 talk: context persoenlicher, nicht ausweichen, kumpel-ton
 54df78d bridge: system-prompt reste entfernt, sauber
-dfc28fd bridge: system-prompt persoenlicher kumpel-ton, dima-kontext tief
-32f837e config: get_val als alias | telegram: /trace zeigt live-zustand jack
-1fcafcc session 2026-08-06: 19 bugs gefixt, rag aktiv, oracle instant, voice thread, publisher live
-9cb6fe1 autonomous: sanity-thread alle 6h | selftest: temp-schwelle 43->50C
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
