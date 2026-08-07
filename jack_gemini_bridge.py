@@ -28,7 +28,9 @@ def collect_status():
         status["open_errors"] = count
         status["recent_errors"] = [r[0][:100] for r in recent]
         con.close()
-    except: status["open_errors"] = "unknown"
+    except Exception as _dbe:
+        status["open_errors"] = "unknown"
+        _jlog and _jlog.fehler("gemini","db-status",_dbe)
     import jack_config as _jc; _xip = _jc.get_param("NETWORK","xiaomi_ip")
     import subprocess as _sp
     _r = _sp.run(["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),"-o","BatchMode=yes","-o","StrictHostKeyChecking=no","-o","ConnectTimeout=3","-p","8022",f"root@{_xip}","true"],capture_output=True,timeout=6)
