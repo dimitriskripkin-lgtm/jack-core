@@ -718,6 +718,48 @@ def main():
             msg = u.get('message', {})
             if str(msg.get('chat', {}).get('id', '')) != CHAT_ID: continue
             
+            if 'photo' in msg:
+                file_id = msg['photo'][-1]['file_id']
+                caption = msg.get('caption','Was siehst du? Analysiere Fehler oder Text auf Deutsch.')
+                send('📸 Analysiere...')
+                def _foto(fid=file_id, cap=caption):
+                    try:
+                        import urllib.request as _ur, json as _j, os as _o2, base64, subprocess as _sp2
+                        url = f"{API}/getFile?file_id={fid}"
+                        with _ur.urlopen(url) as res:
+                            path = _j.loads(res.read())['result']['file_path']
+                        dl = f"https://api.telegram.org/file/bot{TOKEN}/{path}"
+                        raw = _o2.path.expanduser(f"~/jack/foto_{fid}.jpg")
+                        small = _o2.path.expanduser(f"~/jack/foto_{fid}_s.jpg")
+                        _ur.urlretrieve(dl, raw)
+                        _sp2.run(['ffmpeg','-y','-i',raw,'-vf','scale=1280:-1','-q:v','5',small],
+                            capture_output=True, timeout=15)
+                        use = small if _o2.path.exists(small) else raw
+                        kb = _o2.path.getsize(use) // 1024
+                        b64 = base64.b64encode(open(use,'rb').read()).decode()
+                        import jack_gemini_bridge as _gb
+                        key = _gb.load_api_key()
+                        import jack_config as _jc
+                        model = _jc.get_param('gemini','model')
+                        payload = _j.dumps({"contents":[{"parts":[
+                            {"text": cap},
+                            {"inline_data":{"mime_type":"image/jpeg","data":b64}}
+                        ]}]}).encode()
+                        req = _ur.Request(
+                            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}",
+                            data=payload, headers={"Content-Type":"application/json"})
+                        with _ur.urlopen(req, timeout=30) as r:
+                            ans = _j.loads(r.read())['candidates'][0]['content']['parts'][0]['text']
+                        send(ans[:3000] + chr(10) + f"({kb}KB)")
+                        for f in [raw, small]:
+                            try: _o2.remove(f)
+                            except: pass
+                    except Exception as _fe:
+                        send("Foto-Fehler: " + str(_fe)[:200])
+                import threading
+                threading.Thread(target=_foto, daemon=True).start()
+                continue
+
             if 'voice' in msg:
                 print("[TG] Eingehende Sprachnachricht erkannt.")
                 file_id = msg['voice']['file_id']
