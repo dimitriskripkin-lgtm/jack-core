@@ -741,10 +741,12 @@ def main():
                         key = _gb.load_api_key()
                         import jack_config as _jc
                         model = _jc.get_param('gemini','model')
-                        payload = _j.dumps({"contents":[{"parts":[
-                            {"text": cap},
-                            {"inline_data":{"mime_type":"image/jpeg","data":b64}}
-                        ]}]}).encode()
+                        payload = _j.dumps({
+                            "system_instruction":{"parts":[{"text":"Du bist JACK, Dimas KI-Assistent. Antworte IMMER auf Deutsch. Kurz und direkt. Bei Fehlermeldungen: Ursache nennen, Loesung vorschlagen."}]},
+                            "contents":[{"parts":[
+                                {"text": cap},
+                                {"inline_data":{"mime_type":"image/jpeg","data":b64}}
+                            ]}]}).encode()
                         req = _ur.Request(
                             f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}",
                             data=payload, headers={"Content-Type":"application/json"})
