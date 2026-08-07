@@ -88,6 +88,7 @@ class CodeGenerator:
         try:
             response = self.client.models.generate_content(
                 model=self.model,
+                config=types.GenerateContentConfig(system_instruction=sys_prompt),
                 contents=[
                     
                     types.Part.from_text(text=f"Generiere: {prompt}")

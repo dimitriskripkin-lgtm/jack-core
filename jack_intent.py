@@ -3,6 +3,10 @@
 Hybrid: Keywords zuerst (instant), Gemini-Semantik als Fallback (praezise).
 Lernt aus Historie welche Aktionen Dima wann will."""
 import os, json, subprocess, sys, sqlite3, datetime, re
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 sys.path.insert(0, os.path.expanduser('~/jack'))
 
 H = os.path.expanduser('~/jack')
@@ -43,8 +47,8 @@ def _log_intent(text, intent, methode, conf, ausgefuehrt, ergebnis):
             (text[:200], intent, methode, conf, 1 if ausgefuehrt else 0,
              str(ergebnis)[:300], now.strftime('%Y-%m-%d %H:%M:%S'), now.hour))
         con.commit(); con.close()
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("intent", "unbenannt", _le)
 
 def historie(limit=10):
     try:
