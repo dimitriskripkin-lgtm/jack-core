@@ -10,12 +10,15 @@ def test_memory_save_und_query():
 
 def test_memory_kein_duplikat():
     import jack_memory, sqlite3
-    jack_memory.save('duplikat_test_xy', 'wert', 'test')
-    jack_memory.save('duplikat_test_xy', 'wert', 'test')
-    con = sqlite3.connect(os.path.expanduser('~/jack/jack_memory.db'))
+    db = os.path.expanduser('~/jack/jack_memory.db')
+    # Aufraumen vor Test
+    con = sqlite3.connect(db); con.execute("DELETE FROM memory WHERE cmd='duplikat_test_xy'"); con.commit(); con.close()
+    jack_memory.save('duplikat_test_xy', 'wert_a', 'test')
+    jack_memory.save('duplikat_test_xy', 'wert_b', 'test')
+    con = sqlite3.connect(db)
     n = con.execute("SELECT COUNT(*) FROM memory WHERE cmd='duplikat_test_xy'").fetchone()[0]
     con.close()
-    assert n <= 2, f'Zu viele Eintraege: {n}'
+    assert n == 2, f'Erwartet 2, got {n}'
 
 def test_intent_erkennung():
     import jack_intent
