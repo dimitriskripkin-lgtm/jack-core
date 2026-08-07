@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-07T06:59:51.813808
+Stand: 2026-08-07T07:21:26.829721
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -54,13 +54,13 @@ Stand: 2026-08-07T06:59:51.813808
 - jack_intent.py
 - jack_learn.py
 - jack_log.py
+- jack_logging.py
 - jack_math.py
 - jack_memory.py
 - jack_memory_engine.py
 - jack_memory_maintenance.py
 - jack_missions.py
 - jack_monitor.py
-- jack_node_alpha.py
 - jack_operator.py
 - jack_oracle.py
 - jack_patch.py
@@ -110,12 +110,14 @@ Stand: 2026-08-07T06:59:51.813808
 - Offene Fehler: 1
 - Erinnerungen: 190
 - Dienste:
-run: jack_cortex: (pid 24341) 69165s
-run: jack_telegram: (pid 5190) 54109s
+run: jack_cortex: (pid 21685) 972s
+run: jack_telegram: (pid 5190) 55404s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 11415) 488s
+run: ollama: (pid 11415) 1783s
 
 ## Letzte Aenderungen
+8a090d0 logging: jack_logging.py gebaut, blinde excepts in cortex/autonomous/intent geloggt, budget fname-fix, code_writer sys_prompt
+44f1655 ruff: 48 autofixes, fname-nameerror in jack_budget gefixt, sys_prompt in code_writer verdrahtet, jack_node_alpha archiviert
 477c233 vulkan: nach fairem benchmark deaktiviert - 66 prozent langsamer als CPU
 7f9ecbf chains: multi-step aktionsketten mit bedingungen, /kette befehl, morgen-briefing als kette
 dc40620 cortex: xiaomi-statuswechsel entprellt, erst nach 3 stabilen zyklen melden
@@ -129,8 +131,6 @@ dfc28fd bridge: system-prompt persoenlicher kumpel-ton, dima-kontext tief
 32f837e config: get_val als alias | telegram: /trace zeigt live-zustand jack
 1fcafcc session 2026-08-06: 19 bugs gefixt, rag aktiv, oracle instant, voice thread, publisher live
 9cb6fe1 autonomous: sanity-thread alle 6h | selftest: temp-schwelle 43->50C
-a6e20e4 vecdb: vec0.so absoluter pfad mit expanduser
-66eb8c3 memory: save() alle 7 spalten inkl timestamp+source
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

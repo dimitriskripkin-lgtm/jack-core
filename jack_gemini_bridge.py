@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 import os, json, subprocess, sqlite3, urllib.request
 from datetime import datetime
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 JACK_HOME = os.path.expanduser("~")
 SECRETS_PATH = os.path.expanduser("~/.jack_secrets")

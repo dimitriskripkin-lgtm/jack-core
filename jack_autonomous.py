@@ -3,6 +3,10 @@
 NUR: Zustand lesen, tote JACK-Dienste neustarten, Dima per Telegram melden.
 NIE: LLM-Entscheidungen, loeschen, bauen. Erster Lauf = nur Baseline, keine Meldung."""
 import os, json, subprocess, time, urllib.request, sqlite3
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 H=os.path.expanduser("~/jack")
 STATE=os.path.join(H,".waechter_state")
 EDB=os.path.join(H,"jack_errors.db")
@@ -15,8 +19,8 @@ def _sec(k):
         for l in open(SEC):
             if k in l and "=" in l:
                 return l.split('"')[1] if '"' in l else l.split("=",1)[1].strip()
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("autonomous","unbenannt",_le)
     return None
 
 def notify(t):
@@ -28,7 +32,7 @@ def notify(t):
         urllib.request.urlopen(r,timeout=10)
     except Exception as e:
         try: import jack_log; jack_log.log_decision('NOTIFY-FEHLER', str(e)[:100])
-        except: pass
+        except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
 
 def _up(n):
     try: return subprocess.run(["sv","status",n],capture_output=True,text=True,timeout=8).stdout.strip().startswith("run:")
@@ -132,7 +136,7 @@ def _autolearn_loop():
             import jack_learn; jack_learn.run_once()
         except Exception as e:
             try: import jack_log; jack_log.log_decision("AUTOLEARN-ERR",str(e)[:80])
-            except: pass
+            except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _tm.sleep(7200)
 
 def _publisher_loop():
@@ -141,7 +145,7 @@ def _publisher_loop():
             import jack_publish; jack_publish.push()
         except Exception as e:
             try: import jack_log; jack_log.log_decision("PUBLISHER-ERR",str(e)[:80])
-            except: pass
+            except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _tm.sleep(180)
 
 
@@ -173,10 +177,10 @@ def _scout_loop():
                     notify("Skill-Builder: " + str(len(neue)) + " neue Skills: " + ", ".join(neue))
             except Exception as _sbe:
                 try: jack_log.log_decision("SKILL-BUILDER-ERR", str(_sbe)[:80])
-                except: pass
+                except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         except Exception as e:
             try: import jack_log; jack_log.log_decision('SCOUT-ERR', str(e)[:80])
-            except: pass
+            except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _tm.sleep(86400)
 
 def _monitor_loop():
@@ -190,7 +194,7 @@ def _monitor_loop():
                 import jack_log; jack_log.log_decision('MONITOR-EVENT', str(len(events)) + ' Events')
         except Exception as e:
             try: import jack_log; jack_log.log_decision('MONITOR-ERR', str(e)[:80])
-            except: pass
+            except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _tm.sleep(120)
 
 def _sanity_loop():
@@ -203,7 +207,7 @@ def _sanity_loop():
             _js.check()
         except Exception as _e:
             try: import jack_log; jack_log.log_decision("SANITY-ERR", str(_e)[:80])
-            except: pass
+            except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _t2.sleep(21600)
 
 
@@ -232,11 +236,11 @@ def _proaktiv_loop():
                 pct = d.get('percentage', 100)
                 if pct < 20 and d.get('status') != 'CHARGING':
                     notify(f"Akku bei {pct}%. Laden oder Ollama pausieren?")
-            except Exception:
-                pass
+            except Exception as _le:
+                _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         except Exception as _e:
             try: import jack_log; jack_log.log_decision("PROAKTIV-ERR", str(_e)[:80])
-            except: pass
+            except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _t2.sleep(1800)  # alle 30min
 
 def start_consolidated():

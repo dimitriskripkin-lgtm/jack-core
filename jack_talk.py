@@ -7,6 +7,10 @@ import secrets
 import datetime
 import jack_math
 import jack_vecdb
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 MODEL_NAME = 'llama3.2:3b'
 DB_PATH = os.path.expanduser('~/jack/jack_memory.db')
@@ -39,8 +43,8 @@ def talk_to_ollama(prompt, context_memories):
         if _hits:
             _ctx = "\n".join([f"- Frueher: {h[1]} -> {h[2][:120]}" for h in _hits])
             system_prompt = system_prompt + "\n\nDEINE EIGENEN ERINNERUNGEN aus frueheren Gespraechen mit Dima (nutze sie als DEIN Wissen, sag NIE dass du dich nicht erinnerst):\n" + _ctx
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("talk","unbenannt",_le)
     messages = [{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': prompt}]
     math_signals = ['wieviel', 'wie viel', 'rechnen', 'berechne', 'geteilt', 'mal', 'plus', 'minus', 'durch', 'anzahl']
     has_math_signal = any(sig in prompt.lower() for sig in math_signals)
@@ -192,8 +196,8 @@ def talk_to_gemini(prompt):
             context += (chr(10) + chr(10) + "JACK HAT GERADE GEPRUEFT (" +
                         _pre['beschreibung'] + "): " + str(_r) +
                         chr(10) + "Nutze dieses Ergebnis in deiner Antwort, rate nicht.")
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("talk","unbenannt",_le)
     try:
         result = jack_gemini_bridge.ask_gemini(context)
         if _intent_res:
@@ -220,8 +224,8 @@ def talk_to_gemini(prompt):
                     _thr.Thread(target=_ask, daemon=True).start()
                 elif _det['level'] < _det['min_level']:
                     result += chr(10) + chr(10) + "(Level " + str(_det['min_level']) + " noetig fuer: " + _det['beschreibung'] + " - /level " + str(_det['min_level']) + ")"
-        except Exception:
-            pass
+        except Exception as _le:
+            _jlog and _jlog.fehler("talk","unbenannt",_le)
         return result + "\n\n🌐 Gemini"
     except Exception:
         result = talk_to_ollama(prompt, [])

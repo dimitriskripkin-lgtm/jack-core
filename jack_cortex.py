@@ -3,6 +3,10 @@ import os, time, subprocess, sqlite3, sys
 
 sys.path.append(os.path.expanduser('~/jack'))
 import jack_config
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 ERROR_DB = jack_config.get_param('STORAGE', 'db_path')
 XIAOMI_IP = jack_config.get_param('NETWORK', 'xiaomi_ip')
@@ -28,7 +32,7 @@ def log_error(msg):
         except Exception as _e:
             try:
                 import jack_log; jack_log.log_decision("CORTEX-EXCEPT", str(_e)[:100])
-            except: pass
+            except Exception as _le: _jlog and _jlog.fehler("cortex","unbenannt",_le)
 
 
 
@@ -55,8 +59,8 @@ def find_xiaomi():
             cached = open(cache_file).read().strip()
             if cached and cached != known and _ssh_ok(cached):
                 return cached
-        except Exception:
-            pass
+        except Exception as _le:
+            _jlog and _jlog.fehler("cortex","unbenannt",_le)
     for i in range(2, 255):
         ip = f"10.244.147.{i}"
         if ip == known:
@@ -166,7 +170,7 @@ def main():
         res = subprocess.run(["pgrep", "-f", "jack_cortex.py"], capture_output=True, text=True)
         for pid in res.stdout.strip().split():
             if int(pid) != my_pid: subprocess.run(["kill", "-9", pid])
-    except: pass
+    except Exception as _le: _jlog and _jlog.fehler("cortex","unbenannt",_le)
     # Oracle-Polling Counter
     _oracle_tick = 0
     while True:
