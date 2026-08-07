@@ -15,7 +15,7 @@ def ram():
     a=int([l for l in open('/proc/meminfo')if'MemAvailable'in l][0].split()[1])//1024
     return t(a>=800,'RAM',f'{a}MB verfuegbar')
 def temp():
-    mx=0;h=''
+    cpu_mx=0;cpu_h=''
     for z in os.listdir('/sys/class/thermal'):
         try:
             tp=open(f'/sys/class/thermal/{z}/type').read().strip()
@@ -23,9 +23,16 @@ def temp():
             r=int(open(f'/sys/class/thermal/{z}/temp').read())
             if r<0:continue
             g=r/1000 if r>1000 else float(r)
-            if g>mx:mx=g;h=tp
+            if g>cpu_mx:cpu_mx=g;cpu_h=tp
         except:pass
-    return t(mx<50,'Temp',f'{mx:.1f}C max ({h})')
+    try:
+        import subprocess as _sp,json as _j
+        _b=_j.loads(_sp.run(['termux-battery-status'],capture_output=True,text=True,timeout=10).stdout)
+        akku_t=float(_b.get('temperature',0))
+    except:akku_t=0
+    if cpu_mx>=91:return t(False,'Temp CPU',f'{cpu_mx:.1f}C (Limit 91C)')
+    if akku_t>=50:return t(False,'Temp Akku',f'{akku_t:.1f}C (Limit 50C)')
+    return t(True,'Temp',f'CPU {cpu_mx:.1f}C | Akku {akku_t:.1f}C')
 def pub():
     r=subprocess.run(['git','-C',os.path.expanduser('~/jack-context'),
         'log','--format=%ct','-1'],capture_output=True,text=True)
