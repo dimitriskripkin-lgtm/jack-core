@@ -53,7 +53,7 @@ def talk_to_ollama(prompt, context_memories):
         with urllib.request.urlopen(req) as res:
             response_json = json.loads(res.read().decode('utf-8'))
             message = response_json['message']
-            if 'tool_calls' in message and message['tool_calls']:
+            if message.get('tool_calls'):
                 tool_call = message['tool_calls'][0]
                 tool_res = jack_math.execute_tool(tool_call['function']['name'], tool_call['function']['arguments'])
                 return str(tool_res)

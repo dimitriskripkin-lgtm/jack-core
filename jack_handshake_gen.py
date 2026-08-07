@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import json, subprocess, os, sqlite3
 from datetime import datetime
-from pathlib import Path
 
 JACK_HOME = "/data/data/com.termux/files/home"
 ERRORS_DB = f"{JACK_HOME}/jack/jack_errors.db"

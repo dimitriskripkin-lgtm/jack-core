@@ -1,4 +1,4 @@
-from kortex_memory import init_db, add_memory, search_memory, get_recent
+from kortex_memory import add_memory, search_memory, get_recent
 #!/usr/bin/env python3
 from flask import Flask, jsonify, request, Response, stream_with_context
 from threading import Lock
@@ -162,7 +162,7 @@ def memory_recent():
 
 @app.route('/radar/webapp')
 def radar_webapp():
-    import sqlite3, json as _j
+    import sqlite3
     try:
         conn = sqlite3.connect(os.path.expanduser("~/jack/jack_vinted.db"))
         rows = conn.execute(

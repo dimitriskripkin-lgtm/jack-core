@@ -4,7 +4,7 @@ JACK Selbstverbesserung - Stiller Fixmann
 Analysiert Fehler, generiert Fix-Vorschlaege, legt sie in Werkstatt ab.
 Fuehrt NICHTS selbst aus. Dima bestaetigt per Telegram.
 """
-import sqlite3, json, os, sys, hashlib, py_compile, shutil
+import sqlite3, json, os, sys
 from datetime import datetime, timedelta
 
 ERRORS_DB = os.path.expanduser("~/jack/jack_errors.db")
@@ -162,7 +162,7 @@ def run():
                     [[("✅ Fix einspielen", f"approve:{fix_id}"),
                       ("❌ Ablehnen", f"reject:{fix_id}")]]
                 )
-                meldung = meldung + f"\n[Buttons gesendet]"
+                meldung = meldung + "\n[Buttons gesendet]"
             except Exception as _e:
                 meldung = meldung + f"\nFix bereit: /approve_{fix_id}"
         else:

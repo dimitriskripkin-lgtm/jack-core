@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """JACK Monitor: Event-driven Ueberwachung + /scan Befehl.
 Kein Dauerloop. Prueft nur was sich aendert und meldet sofort."""
-import os, json, sqlite3, subprocess, time, datetime
+import os, json, sqlite3, subprocess, datetime
 
 H = os.path.expanduser("~/jack")
 STATE_FILE = os.path.join(H, ".monitor_state")

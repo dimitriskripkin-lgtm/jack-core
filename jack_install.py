@@ -131,7 +131,7 @@ def installiere(pakete, extra_args=None):
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print(f"{YLW}Nutzung: python3 jack_install.py <paket> [paket2...]{RST}")
-        print(f"Beispiel: python3 jack_install.py litert-lm")
+        print("Beispiel: python3 jack_install.py litert-lm")
         sys.exit(1)
     pakete = sys.argv[1:]
     ok = installiere(pakete)

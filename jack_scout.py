@@ -3,7 +3,7 @@
 Read-only. Null API-Calls. Kann nichts kaputtmachen.
 Ausfuehren: python3 jack_scout.py
 Ergebnis: ~/jack/jack_fingerprint.json (versioniert, nie ueberschrieben)"""
-import os, json, subprocess, time, datetime, hashlib
+import os, json, subprocess, datetime, hashlib
 
 H = os.path.expanduser("~/jack")
 FP_DIR = os.path.join(H, "fingerprints")
@@ -249,6 +249,6 @@ if __name__ == "__main__":
     print("\n" + "="*50)
     print(zusammenfassung(fp))
     if alter_hash and alter_hash != fp["hash"]:
-        print(f"\nFINGERABDRUCK GEAENDERT seit letztem Scan!")
+        print("\nFINGERABDRUCK GEAENDERT seit letztem Scan!")
         print(f"Alt: {alter_hash} -> Neu: {fp['hash']}")
     print("="*50)

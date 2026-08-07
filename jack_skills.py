@@ -30,7 +30,6 @@ def list_skills():
     return "Skills (kostenlos aufrufbar via /skill <name>):\n"+"\n".join(f"- {k}: {v}" for k,v in idx.items())
 
 def run_skill(name, timeout=10):
-    import jack_coder
     n=_safe(name); path=os.path.join(DIR, n+".py")
     if not os.path.exists(path):
         return False, f"Skill '{n}' gibt es nicht. /skills zeigt alle."

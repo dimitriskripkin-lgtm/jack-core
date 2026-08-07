@@ -67,4 +67,4 @@ if __name__ == '__main__':
     if process.returncode != 0:
         print(f"\n❌ Prozess wurde abgebrochen oder ist fehlgeschlagen (Exit-Code: {process.returncode})")
     else:
-        print(f"\n✅ Prozess erfolgreich abgeschlossen")
+        print("\n✅ Prozess erfolgreich abgeschlossen")

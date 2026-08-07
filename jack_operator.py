@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from jack_approval import confirm_action
-import os, sys, json, subprocess, re
-from datetime import datetime
+import os, json, subprocess
 
 JACK_HOME = "/data/data/com.termux/files/home"
 
@@ -122,7 +121,7 @@ class JackOperator:
                 success = result.returncode == 0
                 
                 if success:
-                    print(f"  ✓ OK")
+                    print("  ✓ OK")
                 else:
                     print(f"  ✗ Error (code {result.returncode})")
                 
@@ -136,7 +135,7 @@ class JackOperator:
                     "success": success
                 })
             except subprocess.TimeoutExpired:
-                print(f"  ✗ TIMEOUT")
+                print("  ✗ TIMEOUT")
                 results.append({"action": action, "success": False, "error": "TIMEOUT"})
             except Exception as e:
                 print(f"  ✗ {e}")

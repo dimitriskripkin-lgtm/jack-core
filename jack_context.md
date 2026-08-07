@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-07T06:50:46.465115
+Stand: 2026-08-07T06:59:51.813808
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -110,12 +110,13 @@ Stand: 2026-08-07T06:50:46.465115
 - Offene Fehler: 1
 - Erinnerungen: 190
 - Dienste:
-run: jack_cortex: (pid 24341) 68620s
-run: jack_telegram: (pid 5190) 53564s
+run: jack_cortex: (pid 24341) 69165s
+run: jack_telegram: (pid 5190) 54109s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 9446) 155s
+run: ollama: (pid 11415) 488s
 
 ## Letzte Aenderungen
+477c233 vulkan: nach fairem benchmark deaktiviert - 66 prozent langsamer als CPU
 7f9ecbf chains: multi-step aktionsketten mit bedingungen, /kette befehl, morgen-briefing als kette
 dc40620 cortex: xiaomi-statuswechsel entprellt, erst nach 3 stabilen zyklen melden
 6d6439d talk: intent vor gemini, ergebnis fliesst in antwort statt raten
@@ -130,7 +131,6 @@ dfc28fd bridge: system-prompt persoenlicher kumpel-ton, dima-kontext tief
 9cb6fe1 autonomous: sanity-thread alle 6h | selftest: temp-schwelle 43->50C
 a6e20e4 vecdb: vec0.so absoluter pfad mit expanduser
 66eb8c3 memory: save() alle 7 spalten inkl timestamp+source
-af861c5 cortex: ssh statt ping, find_xiaomi nur bei fail, root-user fix | memory: save() spalten fix | vecdb: expanduser
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

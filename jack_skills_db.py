@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Adapter: jack_skills.db Skills ueber gleiche Schnittstelle wie jack_skills.py.
 Erweitert den Telegram-Bot um DB-gestuetzte Skills ohne die alte Datei-Logik zu brechen."""
-import os, sqlite3, time, subprocess, json
+import os, sqlite3, time, json
 
 H = os.path.expanduser("~/jack")
 DB = os.path.join(H, "jack_skills.db")

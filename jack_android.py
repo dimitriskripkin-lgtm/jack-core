@@ -7,7 +7,6 @@ Pipeline: Intent -> Focus-Check -> XML -> SoM -> Gemini -> Ausfuehren
 
 import subprocess, os, io, hashlib, json, time, datetime
 import xml.etree.ElementTree as ET
-from pathlib import Path
 
 try:
     from PIL import Image, ImageDraw
@@ -219,7 +218,7 @@ def add_som_markers(img, elements):
     scale_x = w_img / DISPLAY_W
     scale_y = h_img / DISPLAY_H
     for el in elements:
-        pass  # clickable nicht filtern - MIUI setzt clickable oft falsch
+        # clickable nicht filtern - MIUI setzt clickable oft falsch
         x1, y1, x2, y2 = el["bounds"]
         bx1,by1 = int(x1*scale_x), int(y1*scale_y)
         bx2,by2 = int(x2*scale_x), int(y2*scale_y)
@@ -384,7 +383,7 @@ def find_element_smart(elements, goal):
     keywords = [w.lower() for w in re.split(r"[ ,.-]+", goal) if len(w) > 2]
     best, best_score = None, 0
     for el in elements:
-        pass  # clickable nicht filtern - MIUI setzt clickable oft falsch
+        # clickable nicht filtern - MIUI setzt clickable oft falsch
         haystack = (el["text"] + " " + el["desc"]).lower()
         score = sum(1 for kw in keywords if kw in haystack)
         if score > best_score:

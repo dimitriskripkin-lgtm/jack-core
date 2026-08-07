@@ -5,7 +5,7 @@ Liest die letzten Logs und Gedaechtnis-Zugriffe,
 schreibt eine Zusammenfassung als neuen Memory-Eintrag.
 Laeuft automatisch nach jeder Session (Trigger: Waechter oder manuell).
 """
-import sqlite3, os, sys, json
+import sqlite3, os, sys
 from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.expanduser("~/jack"))

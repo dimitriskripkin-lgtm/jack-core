@@ -68,7 +68,7 @@ def execute_tool(name, arguments_json):
             res = safe_eval(expr)
             return str(res) if res is not None else "Fehler: Ungültiger mathematischer Ausdruck."
         except Exception as e:
-            return f"Fehler bei Tool-Ausführung: {str(e)}"
+            return f"Fehler bei Tool-Ausführung: {e!s}"
     return "Fehler: Unbekanntes Tool."
 
 if __name__ == "__main__":

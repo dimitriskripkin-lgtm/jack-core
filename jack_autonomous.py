@@ -2,7 +2,7 @@
 """JACK Nacht-Waechter: regelbasierte Selbstueberwachung.
 NUR: Zustand lesen, tote JACK-Dienste neustarten, Dima per Telegram melden.
 NIE: LLM-Entscheidungen, loeschen, bauen. Erster Lauf = nur Baseline, keine Meldung."""
-import os, json, subprocess, time, urllib.request, datetime, sqlite3
+import os, json, subprocess, time, urllib.request, sqlite3
 H=os.path.expanduser("~/jack")
 STATE=os.path.join(H,".waechter_state")
 EDB=os.path.join(H,"jack_errors.db")

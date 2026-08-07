@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-import json, sqlite3, os, re
+import sqlite3, re
 from datetime import datetime
-from pathlib import Path
 
 JACK_HOME = "/data/data/com.termux/files/home"
 MEMORY_DB = f"{JACK_HOME}/jack/jack_memory.db"

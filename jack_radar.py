@@ -4,7 +4,7 @@ JACK Kleinanzeigen Radar
 Durchsucht Kleinanzeigen.de nach Keywords, meldet neue Treffer per Telegram.
 Speichert gesehene Anzeigen in SQLite um Duplikate zu vermeiden.
 """
-import sqlite3, os, sys, json, time, hashlib, urllib.request, urllib.parse
+import sqlite3, os, sys, json, time, urllib.request, urllib.parse
 from datetime import datetime
 
 sys.path.insert(0, os.path.expanduser("~/jack"))

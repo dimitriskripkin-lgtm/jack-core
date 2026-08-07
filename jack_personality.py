@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-import json, sqlite3, os, re
+import json, sqlite3, os
 from datetime import datetime
-from pathlib import Path
-from collections import Counter
 
 JACK_HOME = "/data/data/com.termux/files/home"
 PERSONALITY_JSON = f"{JACK_HOME}/jack_personality.json"

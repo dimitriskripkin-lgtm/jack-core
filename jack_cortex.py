@@ -129,7 +129,7 @@ def check_and_heal():
                 else:
                     log_status(f"[Cortex] WiFi-Recovery fehlgeschlagen: {recovery.stderr.strip()}")
             except Exception as e:
-                log_status(f"[Cortex] WiFi-Recovery Exception: {str(e)}")
+                log_status(f"[Cortex] WiFi-Recovery Exception: {e!s}")
         return
     
     # Ping OK, reset counter
@@ -157,7 +157,7 @@ def check_and_heal():
             log_error(f"[Cortex] SSH-Timeout (#{SSH_ERR_COUNT})")
         return
     except Exception as e:
-        log_error(f"[Cortex] SSH-Exception: {str(e)}")
+        log_error(f"[Cortex] SSH-Exception: {e!s}")
         return
 
 def main():
@@ -171,7 +171,7 @@ def main():
     _oracle_tick = 0
     while True:
         try: check_and_heal()
-        except Exception as e: log_error(f"[Cortex] Loop-Error: {str(e)}")
+        except Exception as e: log_error(f"[Cortex] Loop-Error: {e!s}")
         _oracle_tick += 1
         if _oracle_tick >= 1:  # jede Runde = 60s
             _oracle_tick = 0

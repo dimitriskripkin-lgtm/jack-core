@@ -6,7 +6,7 @@ Analysiert Sensor-Daten, baut User-Profil
 
 import sqlite3
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 
 DB_PATH = os.path.expanduser("~/jack/kortex_sensors.db")

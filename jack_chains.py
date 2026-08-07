@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, sys, json, sqlite3, datetime, time
+import os, sys, sqlite3, datetime, time
 sys.path.insert(0, os.path.expanduser('~/jack'))
 import jack_intent
 

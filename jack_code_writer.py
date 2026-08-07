@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-import os, json, subprocess, re
-from datetime import datetime
+import os
 from pathlib import Path
 
 JACK_HOME = "/data/data/com.termux/files/home"

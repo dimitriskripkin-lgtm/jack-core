@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, re, datetime
+import os, re
 
 WERKSTATT = os.path.expanduser("~/jack_werkstatt")
 

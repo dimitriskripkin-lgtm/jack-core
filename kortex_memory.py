@@ -1,4 +1,4 @@
-import sqlite3, json, os, sys
+import sqlite3, os
 from datetime import datetime
 
 DB_PATH = os.path.expanduser("~/jack/kortex_memory.db")

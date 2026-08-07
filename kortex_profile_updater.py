@@ -4,7 +4,7 @@ Analysiert neue learned_facts und schreibt relevante
 automatisch in kortex_profile.json (entscheidungen, projekte, owner).
 Regelbasiert - kein LLM noetig.
 """
-import json, os, re
+import json, os
 from datetime import datetime
 
 PROFILE = os.path.expanduser("~/jack/kortex_profile.json")
