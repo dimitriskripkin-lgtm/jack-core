@@ -65,17 +65,13 @@ def talk_to_ollama(prompt, context_memories):
     except Exception as e: return f"System-Error: {e}"
 
 def auto_save_to_memory(cmd, result, source='dima_chat'):
-    hex_id = secrets.token_hex(8)
-    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     try:
-        conn = sqlite3.connect(DB_PATH)
-        cur = conn.execute('INSERT INTO memory (id, cmd, result, timestamp, source) VALUES (?, ?, ?, ?, ?);', (hex_id, cmd, result, timestamp, source))
-        rowid = cur.lastrowid
-        conn.commit()
-        conn.close()
-        combined = f"Frage: {cmd} | Antwort: {result}"
-        vec = get_embedding(combined)
-        if vec: jack_vecdb.store_embedding(rowid, vec)
+        import jack_memory_tree as _mt
+        hex_id, rowid = _mt.save_with_parent(cmd, result, kontext_typ=source, auto_chain=True)
+        if hex_id and rowid:
+            combined = "Frage: " + cmd + " | Antwort: " + result
+            vec = get_embedding(combined)
+            if vec: jack_vecdb.store_embedding(rowid, vec)
     except Exception as _e:
         import jack_log; jack_log.log_decision("SILENT-FAIL auto_save_to_memory", str(_e)[:120])
 

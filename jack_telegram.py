@@ -21,7 +21,7 @@ BESTAETIGUNG = 'bestaetige schreiben'
 PENDING_IMPROVE = {}
 BESTAETIGUNG_PATCH = 'bestaetige patch'
 
-FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/scan','/menu','/m','/trace','/level','/kette'}
+FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/scan','/menu','/m','/trace','/level','/kette','/baum'}
 
 def load_secrets():
     token, chat_id = None, None
@@ -542,6 +542,18 @@ def handle(text):
             send(r['text'])
         _thr2.Thread(target=_run_chain, daemon=True).start()
         return "Kette laeuft: " + rest
+
+    if raw.strip().lower().startswith('/baum'):
+        rest = raw.strip()[5:].strip()
+        import jack_memory_tree as _mt
+        if not rest:
+            return _mt.letzte_kette(5)
+        if rest == 'stat':
+            return _mt.statistik()
+        if rest == 'reset':
+            _mt.reset_session()
+            return 'Session-Kette zurueckgesetzt. Naechste Erinnerung startet neue Kette.'
+        return _mt.baum_text(rest)
 
     if raw.strip().lower().startswith('/level'):
         raw_level = raw.strip().lower().replace('/level','').strip()
