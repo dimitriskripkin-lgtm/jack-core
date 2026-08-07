@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-07T11:39:15.290368
+Stand: 2026-08-07T12:30:46.798755
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -110,14 +110,19 @@ Stand: 2026-08-07T11:39:15.290368
 
 ## System-Status
 - Offene Fehler: 1
-- Erinnerungen: 190
+- Erinnerungen: 197
 - Dienste:
-run: jack_cortex: (pid 31748) 15468s
-run: jack_telegram: (pid 957) 15302s
+run: jack_cortex: (pid 31748) 18559s
+run: jack_telegram: (pid 957) 18393s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 11415) 17252s
+run: ollama: (pid 11415) 20343s
 
 ## Letzte Aenderungen
+f827ff1 selftest: cpu-die 91C, akku 50C - zwei separate sensoren
+cca6d62 tests: 5 kern-tests fuer memory, intent, selftest, chains
+8dbcf19 memory: fts duplikate-fix, rebuild fts index
+e2be96d memory: schema fix 5->7 spalten, monkey-patch weg, schreibt via db_queue
+c51e96d memory_tree: schreibt via db_queue (thread-safe) | offene aenderungen synchronisiert
 9457fb2 db_queue: thread-safe write-queue | gemini: bare except geloggt | logging in kernmodulen
 bae4bcf db_queue: thread-safe sqlite write-queue, ein writer pro db
 5409af4 memory-tree: baumstruktur mit parent_id, auto-chaining in sessions, /baum befehl
@@ -128,11 +133,6 @@ bae4bcf db_queue: thread-safe sqlite write-queue, ein writer pro db
 7f9ecbf chains: multi-step aktionsketten mit bedingungen, /kette befehl, morgen-briefing als kette
 dc40620 cortex: xiaomi-statuswechsel entprellt, erst nach 3 stabilen zyklen melden
 6d6439d talk: intent vor gemini, ergebnis fliesst in antwort statt raten
-3977c63 intent-engine v2: hybrid keyword+gemini, bestaetigungs-buttons, historie mit mustererkennung, 11 aktionen
-b2cea51 intent: xiaomi_status als alias, /level ohne space
-1e815d7 talk: few-shot beispiel + mindestlaenge persoenliche fragen | telegram: merke-dir handler
-081dbf8 talk: context persoenlicher, nicht ausweichen, kumpel-ton
-54df78d bridge: system-prompt reste entfernt, sauber
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
