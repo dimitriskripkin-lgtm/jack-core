@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-06T10:53:39.996355
+Stand: 2026-08-07T06:50:46.465115
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -10,26 +10,25 @@ Stand: 2026-08-06T10:53:39.996355
 ## Was JACK ueber Dima gelernt hat
 - Dima ist Dimitri.
 - Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht).
-- Dima ist Hobby-Programmierer.
-- Dima ist aus Russland nach Deutschland migriert, Baujahr ca. 1996.
-- Dima ist Einzelkind.
+- Dima ist Hobby-Programmierer und Autodidakt.
+- Dima hat mit 28 einen Burnout gehabt und sich selbst daraus gezogen (Stoizismus, Jung, Kiyosaki).
+- Dima möchte mit JACK Unabhängigkeit und Freiheit aufbauen.
+- JACK ist das Exit-Vehicle für Dimas Freiheit und Unabhängigkeit.
 - JACK ist ein autonomes, lokales AI-OS auf Dimas Honor Magic8 Pro.
-- JACK nutzt Gemini als Gehirn (API-Calls).
-- JACK hat ein lokales Gedächtnis in SQLite.
-- JACK soll sich selbst lernen und verbessern.
+- JACK nutzt Gemini als Denkwerkzeug über API-Calls.
 - JACK steht unter Dimas voller Kontrolle.
-- JACK speichert alle Fragen und Antworten mit Zeitstempel im Gedächtnis.
-- Dima hat KEINEN Hund (Rex war nur ein Test).
+- JACK kann das Xiaomi 11T Pro per SSH ansprechen.
+- Dima hat KEINEN Hund.
+- Dima ist KEIN Fernfahrer.
 - JACK hat KEINEN direkten Shell- oder Dateizugriff über den Chat.
-- Dima testet das Gedächtnis.
-- Dima hat auf Xiaomi in Termux sshd eingegeben.
-- Dima hat eine autobiographische Information hochgeladen, die JACK durchsuchen soll.
-- Dima hat den Befehl gegeben, ins Verzeichnis `~/jack/titan_legacy` zu wechseln und eine Datei von GitHub zu laden.
-- JACK kann das Xiaomi per SSH ansprechen.
+- Dima hat die Anweisung gegeben, bei bestimmten Fragen länger zu antworten.
+- Dima ist jemand, der nach der Nachtschicht im Sprinter lieber noch Code schreibt als schläft.
+- Dima hat einen Joint zum Entspannen genehmigt.
+- Das Xiaomi ist oft nicht erreichbar.
+- Die SSH-Verbindung zum Xiaomi ist häufig instabil.
 - JACK verfügt über Fähigkeiten wie Speichermanagement, Sicherheit und Automatisierung.
-- JACK kennt Befehle wie `/skill save <name>`.
 
-## Aktive Module (74)
+## Aktive Module (76)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -39,6 +38,7 @@ Stand: 2026-08-06T10:53:39.996355
 - jack_briefing.py
 - jack_budget.py
 - jack_bug_fixer.py
+- jack_chains.py
 - jack_claude.py
 - jack_code_writer.py
 - jack_coder.py
@@ -51,6 +51,7 @@ Stand: 2026-08-06T10:53:39.996355
 - jack_hey.py
 - jack_improve.py
 - jack_install.py
+- jack_intent.py
 - jack_learn.py
 - jack_log.py
 - jack_math.py
@@ -106,30 +107,30 @@ Stand: 2026-08-06T10:53:39.996355
 - test_jack_approval.py
 
 ## System-Status
-- Offene Fehler: 0
-- Erinnerungen: 173
+- Offene Fehler: 1
+- Erinnerungen: 190
 - Dienste:
-run: jack_cortex: (pid 13264) 378s
-run: jack_telegram: (pid 9439) 704s
+run: jack_cortex: (pid 24341) 68620s
+run: jack_telegram: (pid 5190) 53564s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 8054) 9960s
+run: ollama: (pid 9446) 155s
 
 ## Letzte Aenderungen
+7f9ecbf chains: multi-step aktionsketten mit bedingungen, /kette befehl, morgen-briefing als kette
+dc40620 cortex: xiaomi-statuswechsel entprellt, erst nach 3 stabilen zyklen melden
+6d6439d talk: intent vor gemini, ergebnis fliesst in antwort statt raten
+3977c63 intent-engine v2: hybrid keyword+gemini, bestaetigungs-buttons, historie mit mustererkennung, 11 aktionen
+b2cea51 intent: xiaomi_status als alias, /level ohne space
+1e815d7 talk: few-shot beispiel + mindestlaenge persoenliche fragen | telegram: merke-dir handler
+081dbf8 talk: context persoenlicher, nicht ausweichen, kumpel-ton
+54df78d bridge: system-prompt reste entfernt, sauber
+dfc28fd bridge: system-prompt persoenlicher kumpel-ton, dima-kontext tief
+32f837e config: get_val als alias | telegram: /trace zeigt live-zustand jack
+1fcafcc session 2026-08-06: 19 bugs gefixt, rag aktiv, oracle instant, voice thread, publisher live
+9cb6fe1 autonomous: sanity-thread alle 6h | selftest: temp-schwelle 43->50C
 a6e20e4 vecdb: vec0.so absoluter pfad mit expanduser
 66eb8c3 memory: save() alle 7 spalten inkl timestamp+source
 af861c5 cortex: ssh statt ping, find_xiaomi nur bei fail, root-user fix | memory: save() spalten fix | vecdb: expanduser
-303fa37 telegram: oracle-block komplett neu ohne kaputte f-strings
-53ea18f telegram: oracle newlines, voice thread, doppel-callback weg | cortex: scan-range fix, find_xiaomi nur bei fail
-ef0f434 oracle: direkte subprocess-ausfuehrung statt git-roundtrip, sofortiges ergebnis
-13219bf telegram: shebang-fix, kortex sicherer import, voice in thread, hardcode-pfade weg
-adbca2b bridge+talk: expanduser statt hardcode, xiaomi-ip fix, fname-nameerror, math-signals bereinigt, doppel-import weg
-71ee032 autonomous: xiaomi-ip aus config statt hardcoded, skill-builder nach scout-erfolg nicht im except
-299ec62 stand 2026-08-06 vor code-review
-194642d telegram: threading fuer langsame calls, sofortige quittung, fast_cmds direkt
-aa1099a telegram: erster befehl nach restart nicht mehr verschluckt - start-ts filter statt get_updates(-1)
-2b5b89d jack_selftest: ein befehl gruen/rot fuer alle kern-checks
-bc6974f publisher: push() loop-fix, thermal: negative sensor filter
-8c08356 publisher: push() statt nur build() im waechter-loop, thermal: negative sensor-werte rausfiltern
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

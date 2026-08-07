@@ -77,3 +77,13 @@ Infra: jack_budget (/budget Kosten), jack_log (/log Logbuch), jack_snapshot, jac
 ## Repos
 Privat: github.com/dimitriskripkin-lgtm/jack-core (Code).
 Oeffentlich: github.com/dimitriskripkin-lgtm/jack-context (Live-Umgebung fuer KIs im Chat).
+
+## GitHub Raw URLs (für Claude fetch)
+jack-core Basis: https://raw.githubusercontent.com/dimitriskripkin-lgtm/jack-core/refs/heads/master/
+Wichtige Dateien:
+- jack_telegram.py: https://raw.githubusercontent.com/dimitriskripkin-lgtm/jack-core/refs/heads/master/jack_telegram.py
+- jack_cortex.py: https://raw.githubusercontent.com/dimitriskripkin-lgtm/jack-core/refs/heads/master/jack_cortex.py
+- jack_autonomous.py: https://raw.githubusercontent.com/dimitriskripkin-lgtm/jack-core/refs/heads/master/jack_autonomous.py
+- jack_gemini_bridge.py: https://raw.githubusercontent.com/dimitriskripkin-lgtm/jack-core/refs/heads/master/jack_gemini_bridge.py
+- jack_talk.py: https://raw.githubusercontent.com/dimitriskripkin-lgtm/jack-core/refs/heads/master/jack_talk.py
+jack-context: https://raw.githubusercontent.com/dimitriskripkin-lgtm/jack-context/main/context.md
