@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import sqlite3, re
+try:
+    import jack_db_queue as _dbq
+except Exception:
+    _dbq = None
 from datetime import datetime
 
 JACK_HOME = "/data/data/com.termux/files/home"
