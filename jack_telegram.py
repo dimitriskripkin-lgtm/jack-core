@@ -35,11 +35,8 @@ TOKEN, CHAT_ID = load_secrets()
 API = f"https://api.telegram.org/bot{TOKEN}"
 
 def send(text):
-    from datetime import datetime as _dt
-    ts = _dt.now().strftime("%d.%m.%Y %H:%M:%S")
-    text_mit_ts = str(text) + chr(10) + chr(10) + "[" + ts + "]"
     url = f"{API}/sendMessage"
-    data = json.dumps({"chat_id": CHAT_ID, "text": text_mit_ts}).encode()
+    data = json.dumps({"chat_id": CHAT_ID, "text": text}).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
     try:
         urllib.request.urlopen(req, timeout=10)
@@ -698,15 +695,42 @@ def handle(text):
         jack_talk.auto_save_to_memory(text, _r)
         return _r[:3000]
 
+OFFSET_DATEI = os.path.expanduser("~/jack/.telegram_offset")
+
+def _offset_lesen():
+    try:
+        return int(open(OFFSET_DATEI).read().strip())
+    except Exception:
+        return 0
+
+def _offset_schreiben(wert):
+    try:
+        open(OFFSET_DATEI, "w").write(str(wert))
+    except Exception as e:
+        print("Offset-Schreibfehler: " + str(e)[:60])
+
+def _absturz_log(fehler, kontext=""):
+    """Schreibt Abstuerze mit, damit die Ursache nicht verloren geht."""
+    try:
+        from datetime import datetime as _d
+        pfad = os.path.expanduser("~/jack/logs/absturz.log")
+        os.makedirs(os.path.dirname(pfad), exist_ok=True)
+        with open(pfad, "a") as f:
+            f.write(_d.now().isoformat() + " | " + kontext + " | " + str(fehler)[:300] + chr(10))
+    except Exception:
+        pass
+
 def main():
     send("JACK Telegram-Bridge online.")
     print(f"[{datetime.now().strftime('%H:%M:%S')}] JACK Telegram läuft...")
     _start_ts = int(time.time())
-    offset = 0
+    offset = _offset_lesen()
+    print("[TG] Starte mit Offset " + str(offset))
     while True:
         updates = get_updates(offset)
         for u in updates:
             offset = u['update_id'] + 1
+            _offset_schreiben(offset)  # SOFORT persistieren, vor Verarbeitung
             _msg_ts = u.get('message', {}).get('date', _start_ts)
             if _msg_ts < _start_ts - 2:
                 continue
