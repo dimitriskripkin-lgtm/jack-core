@@ -66,3 +66,8 @@ def bericht():
 
 if __name__ == "__main__":
     print(bericht() + chr(10))
+
+
+def check():
+    """Alias fuer Waechter-Thread."""
+    return preflight()
