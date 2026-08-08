@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+"""JACK Call-Checker: prueft ob jeder modulaebergreifende Aufruf
+im Zielmodul wirklich existiert. Erschlaegt die run_once/check/push-Fehlerklasse.
+Nutzung: python3 ~/jack/jack_calltest.py"""
+import os, re, ast, sys, importlib
+
+H = os.path.expanduser("~/jack")
+sys.path.insert(0, H)
+
+GRN = "\033[92m"; RED = "\033[91m"; YLW = "\033[93m"; RST = "\033[0m"; BLD = "\033[1m"
+
+# Module die wir pruefen (aktive, keine Tests/Archiv)
+IGNORIEREN = ("test_", "archiv", ".bak", "install_", "jack_calltest")
+
+def sammle_module():
+    mods = []
+    for f in sorted(os.listdir(H)):
+        if not f.endswith(".py"):
+            continue
+        if any(f.startswith(i) or i in f for i in IGNORIEREN):
+            continue
+        mods.append(f[:-3])
+    return mods
+
+def finde_aufrufe(datei):
+    """Findet Muster wie modul.funktion() im Quelltext."""
+    treffer = []
+    try:
+        quelle = open(os.path.join(H, datei + ".py")).read()
+    except Exception:
+        return treffer
+
+    # Welche jack-Module werden importiert (auch mit Alias)?
+    aliase = {}
+    for m in re.finditer(r"import\s+(jack_\w+|kortex_\w+)(?:\s+as\s+(\w+))?", quelle):
+        modul = m.group(1)
+        alias = m.group(2) or modul
+        aliase[alias] = modul
+
+    # Aufrufe der Form alias.funktion(
+    for alias, modul in aliase.items():
+        for m in re.finditer(re.escape(alias) + r"\.(\w+)\s*\(", quelle):
+            funktion = m.group(1)
+            zeile = quelle[:m.start()].count(chr(10)) + 1
+            treffer.append((modul, funktion, zeile))
+    return treffer
+
+def hat_attribut(modul, funktion):
+    """Prueft ohne Import ob die Funktion im Zielmodul definiert ist."""
+    pfad = os.path.join(H, modul + ".py")
+    if not os.path.exists(pfad):
+        return None  # Modul existiert nicht
+    try:
+        baum = ast.parse(open(pfad).read())
+    except Exception:
+        return None
+    namen = set()
+    for knoten in ast.walk(baum):
+        if isinstance(knoten, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            namen.add(knoten.name)
+        elif isinstance(knoten, ast.Assign):
+            for ziel in knoten.targets:
+                if isinstance(ziel, ast.Name):
+                    namen.add(ziel.id)
+    return funktion in namen
+
+def pruefe_threads():
+    """Welche Threads werden in start_consolidated() gestartet?"""
+    pfad = os.path.join(H, "jack_autonomous.py")
+    if not os.path.exists(pfad):
+        return [], []
+    quelle = open(pfad).read()
+    definiert = set(re.findall(r"def (_\w+_loop)\(", quelle))
+    gestartet = set(re.findall(r"target=(_\w+_loop)", quelle))
+    return sorted(definiert), sorted(gestartet)
+
+def lauf():
+    print(BLD + chr(10) + "  JACK CALL-CHECKER" + RST)
+    print("  " + "="*46)
+
+    module = sammle_module()
+    print("  Module geprueft: " + str(len(module)))
+    print("")
+
+    kaputt = []
+    fehlend_modul = []
+    gesamt = 0
+
+    for datei in module:
+        for modul, funktion, zeile in finde_aufrufe(datei):
+            gesamt += 1
+            ergebnis = hat_attribut(modul, funktion)
+            if ergebnis is None:
+                fehlend_modul.append((datei, modul, funktion, zeile))
+            elif ergebnis is False:
+                kaputt.append((datei, modul, funktion, zeile))
+
+    print("  " + BLD + "AUFRUFE INS LEERE" + RST)
+    if kaputt:
+        for datei, modul, funktion, zeile in kaputt:
+            print("    " + RED + "FEHLT" + RST + "  " + datei + ".py:" + str(zeile) +
+                  "  ruft  " + modul + "." + funktion + "()")
+    else:
+        print("    " + GRN + "keine" + RST)
+
+    if fehlend_modul:
+        print("")
+        print("  " + BLD + "MODUL NICHT GEFUNDEN" + RST)
+        for datei, modul, funktion, zeile in fehlend_modul[:8]:
+            print("    " + YLW + "?" + RST + "  " + datei + ".py:" + str(zeile) +
+                  "  ruft  " + modul + "." + funktion + "()")
+
+    print("")
+    print("  " + BLD + "WAECHTER-THREADS" + RST)
+    definiert, gestartet = pruefe_threads()
+    for d in definiert:
+        if d in gestartet:
+            print("    " + GRN + "laeuft" + RST + "   " + d)
+        else:
+            print("    " + RED + "TOT   " + RST + "   " + d + "  (definiert, nie gestartet)")
+
+    print("")
+    print("  " + "="*46)
+    print("  " + str(gesamt) + " Aufrufe geprueft | " +
+          (GRN + "0 kaputt" + RST if not kaputt else RED + str(len(kaputt)) + " kaputt" + RST))
+    print("")
+    return len(kaputt)
+
+if __name__ == "__main__":
+    sys.exit(1 if lauf() > 0 else 0)
