@@ -197,6 +197,25 @@ def _monitor_loop():
             except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _tm.sleep(120)
 
+def _reflexion_loop():
+    """Laeuft nachts, reflektiert JACK-Aktionen und lernt daraus."""
+    import time as _t
+    _tm.sleep(3600)  # Erst nach 1h starten
+    while True:
+        try:
+            stunde = __import__("datetime").datetime.now().hour
+            if 2 <= stunde <= 6:  # Nur nachts
+                import jack_reflexion as _jr
+                ergebnis = _jr.nacht_loop()
+                if ergebnis["reflektiert"] > 0:
+                    import jack_log; jack_log.log_decision("REFLEXION",
+                        str(ergebnis["reflektiert"]) + " reflektiert, " +
+                        str(ergebnis["ins_gedaechtnis"]) + " ins Gedaechtnis")
+        except Exception as _e:
+            try: import jack_log; jack_log.log_decision("REFLEXION-ERR", str(_e)[:80])
+            except: pass
+        _tm.sleep(3600)
+
 def _sanity_loop():
     """Prueft Config-Falle und Git-Stand alle 6h."""
     import time as _t2
