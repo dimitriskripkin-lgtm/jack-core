@@ -35,8 +35,11 @@ TOKEN, CHAT_ID = load_secrets()
 API = f"https://api.telegram.org/bot{TOKEN}"
 
 def send(text):
+    from datetime import datetime as _dt
+    ts = _dt.now().strftime("%d.%m.%Y %H:%M:%S")
+    text_mit_ts = str(text) + chr(10) + chr(10) + "[" + ts + "]"
     url = f"{API}/sendMessage"
-    data = json.dumps({"chat_id": CHAT_ID, "text": text}).encode()
+    data = json.dumps({"chat_id": CHAT_ID, "text": text_mit_ts}).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
     try:
         urllib.request.urlopen(req, timeout=10)
