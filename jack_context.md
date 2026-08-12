@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-12T12:13:20.418398
+Stand: 2026-08-12T12:22:25.753920
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -29,7 +29,7 @@ Stand: 2026-08-12T12:13:20.418398
 - JACK verfügt über Fähigkeiten wie Speichermanagement, Sicherheit und Automatisierung.
 - Dima hat Dima als Nutzer und JACK als KI-OS identifiziert.
 
-## Aktive Module (81)
+## Aktive Module (82)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -39,6 +39,7 @@ Stand: 2026-08-12T12:13:20.418398
 - jack_briefing.py
 - jack_budget.py
 - jack_bug_fixer.py
+- jack_bugfix_loop.py
 - jack_calltest.py
 - jack_chains.py
 - jack_claude.py
@@ -113,15 +114,18 @@ Stand: 2026-08-12T12:13:20.418398
 - test_jack_approval.py
 
 ## System-Status
-- Offene Fehler: 1
-- Erinnerungen: 209
+- Offene Fehler: 0
+- Erinnerungen: 210
 - Dienste:
-run: jack_cortex: (pid 24878) 3092s
-run: jack_telegram: (pid 29141) 331s
+run: jack_cortex: (pid 24878) 3637s
+run: jack_telegram: (pid 5675) 231s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 24888) 3092s
+run: ollama: (pid 24888) 3637s
 
 ## Letzte Aenderungen
+6c758d4 bugfix-loop: autonomer bug-fix mit freigabe-button, /bugfix befehl
+03ab41d intent: confidence-schwellen angepasst, bestaetigungsfragen erhoehen confidence
+0513e89 sync: context und identity aktualisiert
 04ea02f telegram: lokalen threading import in main() entfernt - UnboundLocalError fix
 ac156a9 logging: blinde excepts in telegram/oracle/publish/intent/config geloggt
 a7c5d3c sensors: xiaomi-ip aus config statt hardcoded
@@ -134,9 +138,6 @@ be27b3c traceback-parser: fehleranalyse mit loesungshinweisen, /tb befehl in tel
 01c4105 Telegram: Offset persistent + sofortige Bestaetigung + Absturz-Log (behebt Replay-Loop)
 ebb1b09 Telegram: Timestamp am Ende jeder Nachricht
 c766375 jack_reflexion: Aktions-IDs + Nacht-Reflexions-Loop -> Langzeitgedaechtnis
-8fab8e0 jack_sanity: check()-Alias fuer Waechter-Thread (behebt SANITY-ERR)
-030eb0e db_queue: import als fallback in cortex/missions/memory_engine
-c65b048 telegram: foto-analyse immer auf deutsch
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
