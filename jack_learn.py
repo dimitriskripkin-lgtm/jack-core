@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import sys, json, sqlite3, datetime
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 sys.path.append('/data/data/com.termux/files/home/jack')
 import jack_gemini_bridge
 

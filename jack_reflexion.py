@@ -4,6 +4,10 @@ Laeuft nachts wenn JACK idle ist. Geht Aktionen durch,
 bewertet sie, schreibt Schlussfolgerungen, schiebt
 wichtiges ins Langzeitgedaechtnis."""
 import os, sqlite3, uuid, datetime, json
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 H = os.path.expanduser("~/jack")
 COG_DB = os.path.join(H, "jack_cognition.db")
@@ -114,8 +118,8 @@ def ins_langzeitgedaechtnis_schieben():
                 cog2.execute("UPDATE reflexionen SET angewendet=1 WHERE id=?", (r["id"],))
                 cog2.commit(); cog2.close()
                 count += 1
-            except Exception:
-                pass
+            except Exception as _le:
+                _jlog and _jlog.fehler("jack_reflexion","unbenannt",_le)
         mem.commit(); mem.close()
         return count
     except Exception:

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Kosten-Bremse: Tageslimits fuer Gemini Text + Vision (Bilder teurer)."""
 import os, json, datetime
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 F=os.path.expanduser("~/jack/.api_budget")
 LIMITS={"text":300,"vision":40}
 

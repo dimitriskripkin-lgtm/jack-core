@@ -2,6 +2,10 @@
 """Zentraler SQLite Write-Queue: ein Thread schreibt, alle anderen queuen.
 Loest das Thread-Safety Problem ohne Locking."""
 import sqlite3, threading, queue, os, time
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 _queues = {}
 _workers = {}

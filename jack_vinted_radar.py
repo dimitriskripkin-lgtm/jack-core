@@ -4,6 +4,10 @@ JACK Vinted Radar - Eigenstaendiger Bot
 Separater Telegram-Bot fuer Vinted-Suche.
 """
 import sqlite3, os, sys, re, gzip, json, time, urllib.request
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime
 
 DB = os.path.expanduser("~/jack/jack_vinted.db")

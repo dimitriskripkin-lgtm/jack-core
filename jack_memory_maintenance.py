@@ -4,6 +4,10 @@ JACK Gedaechtnis-Wartung
 Laeuft taeglich. Markiert veraltete Eintraege, bereinigt Duplikate.
 """
 import sqlite3, os
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime, timedelta
 
 DB = os.path.expanduser("~/jack/kortex_memory.db")

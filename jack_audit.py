@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """JACK Audit - Gesundheits- und Sicherheits-Check. Kern-Modul (nicht gegated)."""
 import os, re, socket, subprocess, sqlite3, shutil
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime
 
 H = os.path.expanduser("~/jack")

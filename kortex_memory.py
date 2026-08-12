@@ -1,4 +1,8 @@
 import sqlite3, os
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime
 
 DB_PATH = os.path.expanduser("~/jack/kortex_memory.db")

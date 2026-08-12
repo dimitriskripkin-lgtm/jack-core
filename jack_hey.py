@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """JACK Hey - Hands-free Sprach-Interaktion mit End-to-End-Stoppuhr."""
 import os, sys, subprocess, time, asyncio
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 sys.path.append(os.path.expanduser("~/jack"))
 import jack_voice_router as vr
@@ -64,8 +68,8 @@ def _hat_sprache(pfad):
             if "max_volume:" in zeile:
                 wert = float(zeile.split("max_volume:")[1].replace("dB","").strip())
                 return wert > -30.0
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_hey","unbenannt",_le)
     return True
 
 def aufnehmen(sekunden=10):

@@ -1,4 +1,8 @@
 import os, json, time, subprocess
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 XIAOMI_IP = "10.244.147.131"
 SSH_KEY = os.path.expanduser("~/.ssh/id_jack")
@@ -46,8 +50,8 @@ def wait_result(timeout=30):
         if rc == 0 and out.strip().startswith("{"):
             try:
                 return json.loads(out.strip())
-            except Exception:
-                pass
+            except Exception as _le:
+                _jlog and _jlog.fehler("jack_xiaomi_cmd","unbenannt",_le)
     return {"ok": False, "grund": "Timeout"}
 
 def xiaomi(goal, package=None):

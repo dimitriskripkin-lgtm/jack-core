@@ -2,6 +2,10 @@
 """A/B-Test v4: feingranulares Logging pro Run, Abbruch nach erstem Chunk, flush=True.
 Aufruf: python3 jack_voice_ab_test.py [pfad_zu_pcm]"""
 import os, sys, time, asyncio
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 sys.path.append(os.path.expanduser("~/jack"))
 import jack_voice_live as vl
 from google import genai

@@ -5,6 +5,10 @@ Analysiert Sensor-Daten, baut User-Profil
 """
 
 import sqlite3
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import json
 from datetime import datetime
 import os

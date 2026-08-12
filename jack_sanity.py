@@ -1,4 +1,8 @@
 import os
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import subprocess
 import configparser
 

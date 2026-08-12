@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """JACK Entscheidungs-Logbuch: was hat JACK wann getan. Nachvollziehbarkeit."""
 import os, datetime
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 LOG=os.path.expanduser("~/jack/jack_decisions.log")
 
 def log_decision(aktion, detail="", ergebnis=""):

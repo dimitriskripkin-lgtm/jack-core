@@ -2,6 +2,10 @@
 """JACK Install Wrapper - sicheres Installieren mit Live-Monitoring.
 Zeigt Fortschritt, Temperatur, RAM. Stoppt automatisch bei Ueberhitzung."""
 import subprocess, sys, time, os, threading
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 PREFIX = os.environ.get("PREFIX", "/data/data/com.termux/files/usr")
 TEMP_MAX = 43

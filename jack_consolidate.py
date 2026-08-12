@@ -6,6 +6,10 @@ schreibt eine Zusammenfassung als neuen Memory-Eintrag.
 Laeuft automatisch nach jeder Session (Trigger: Waechter oder manuell).
 """
 import sqlite3, os, sys
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.expanduser("~/jack"))

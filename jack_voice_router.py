@@ -1,4 +1,8 @@
 import os
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 os.environ['VK_ICD_FILENAMES'] = '/data/data/com.termux/files/usr/share/vulkan/icd.d/freedreno_icd.aarch64.json'
 os.environ['OLLAMA_VULKAN'] = '1'
 
@@ -20,8 +24,8 @@ def rlog(msg):
         ts = _time.strftime("%Y-%m-%d %H:%M:%S")
         with open(ROUTER_LOG, "a") as f:
             f.write(ts + " | " + msg + chr(10))
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_voice_router","unbenannt",_le)
 
 def check_connectivity():
     try:
@@ -61,8 +65,8 @@ def play_audio(wav_path):
         duration = max(1, int(size / 48000) + 1)
         subprocess.run(["termux-media-player", "play", wav_path], capture_output=True)
         time.sleep(duration)
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_voice_router","unbenannt",_le)
 
 async def process_stack_a_live_stream(audio_path):
     """Stream Audio in Echtzeit über mpv."""

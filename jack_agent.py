@@ -4,6 +4,10 @@ Schreibt Code, testet, verbessert sich, bis es laeuft. HARTE WAENDE bleiben abso
 kein Loeschen, kein Netz, keine Secrets, kein Ausbruch, Timeout, Budget. Diese Waende
 sind KEINE entziehbaren Rechte - sie MACHEN die Sandbox aus."""
 import jack_coder, jack_budget, jack_log
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 def _failed(out):
     low=(out or "").lower()

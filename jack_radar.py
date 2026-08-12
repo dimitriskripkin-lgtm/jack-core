@@ -5,6 +5,10 @@ Durchsucht Kleinanzeigen.de nach Keywords, meldet neue Treffer per Telegram.
 Speichert gesehene Anzeigen in SQLite um Duplikate zu vermeiden.
 """
 import sqlite3, os, sys, json, time, urllib.request, urllib.parse
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime
 
 sys.path.insert(0, os.path.expanduser("~/jack"))
@@ -102,8 +106,8 @@ def suche_kleinanzeigen(keyword, max_preis=None):
                         num = float(preis.replace("€","").replace(".","").replace(",",".").strip())
                         if num > max_preis:
                             continue
-                    except Exception:
-                        pass
+                    except Exception as _le:
+                        _jlog and _jlog.fehler("jack_radar","unbenannt",_le)
                 results.append({"id": ad_id, "titel": titel[:100], "preis": preis, "url": ad_url})
         except Exception:
             continue

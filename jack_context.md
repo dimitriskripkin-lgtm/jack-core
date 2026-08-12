@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-12T12:25:27.400541
+Stand: 2026-08-12T12:31:31.091688
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -115,14 +115,16 @@ Stand: 2026-08-12T12:25:27.400541
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 210
+- Erinnerungen: 211
 - Dienste:
-run: jack_cortex: (pid 24878) 3819s
-run: jack_telegram: (pid 5675) 413s
+run: jack_cortex: (pid 24878) 4183s
+run: jack_telegram: (pid 5675) 777s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 24888) 3819s
+run: ollama: (pid 24888) 4183s
 
 ## Letzte Aenderungen
+fc6e8ef logging: blinde excepts in autonomous/publish/handshake/selftest geloggt
+acc2585 menue: /bugfix eingetragen | logging: 5 weitere module geloggt
 bef1a9d meilenstein: erster autonomer bugfix deployed - bug 2934 jack_cortex
 6c758d4 bugfix-loop: autonomer bug-fix mit freigabe-button, /bugfix befehl
 03ab41d intent: confidence-schwellen angepasst, bestaetigungsfragen erhoehen confidence
@@ -136,8 +138,6 @@ f8647f6 telegram: /menu ganz oben in handle() vor allem anderen
 243dd6c telegram: komplettes menue-system mit kategorien, beschreibungen und beispielen
 be27b3c traceback-parser: fehleranalyse mit loesungshinweisen, /tb befehl in telegram
 2688e1d jack_calltest: prueft alle modulaebergreifenden Aufrufe + tote Waechter-Threads
-01c4105 Telegram: Offset persistent + sofortige Bestaetigung + Absturz-Log (behebt Replay-Loop)
-ebb1b09 Telegram: Timestamp am Ende jeder Nachricht
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

@@ -3,6 +3,10 @@
 Jede Erinnerung kann einen Parent haben -> Kontext-Ketten sind abfragbar.
 Beispiel: Bug -> Fix -> Test -> Deploy als verfolgbare Kette."""
 import os, sqlite3, datetime
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 sys_path = os.path.expanduser('~/jack')
 DB = os.path.expanduser('~/jack/jack_memory.db')
 SESSION_FILE = os.path.expanduser('~/jack/.aktuelle_session_id')
@@ -18,15 +22,15 @@ def set_session_parent(memory_id):
     """Setzt die aktuelle Session-ID."""
     try:
         open(SESSION_FILE, 'w').write(str(memory_id))
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_memory_tree","unbenannt",_le)
 
 def reset_session():
     """Neue Session starten - kein Parent."""
     try:
         os.remove(SESSION_FILE)
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_memory_tree","unbenannt",_le)
 
 def save_with_parent(cmd, result, kontext_typ='chat', parent_id=None, auto_chain=True):
     """Speichert Erinnerung mit optionalem Parent.

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import os
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from pathlib import Path
 
 JACK_HOME = "/data/data/com.termux/files/home"

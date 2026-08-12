@@ -1,6 +1,10 @@
 #!/data/data/com.termux/files/usr/bin/python3
 
 import subprocess
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import json
 import time
 import os

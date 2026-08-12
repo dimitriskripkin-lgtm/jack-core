@@ -1,4 +1,8 @@
 import subprocess
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import sys
 import time
 import threading

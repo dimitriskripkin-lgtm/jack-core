@@ -4,6 +4,10 @@ Duenn gebaut: nutzt jack_approval (Sandbox), py_compile (Syntax),
 jack_gemini_bridge (Semantik). Eigen: nur Rate-Limit + Orchestrierung.
 Fail-closed: Bei Zweifel wird blockiert, nie durchgewunken."""
 import os, json, time, subprocess
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 H = os.path.expanduser("~/jack")
 RATE_FILE = os.path.join(H, ".haliza_rate")
@@ -15,8 +19,8 @@ def _log(tag, msg):
     try:
         import jack_log
         jack_log.log_decision(tag, str(msg)[:120])
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_haliza","unbenannt",_le)
 
 def rate_ok():
     now = time.time()
@@ -30,8 +34,8 @@ def rate_ok():
     stamps.append(now)
     try:
         json.dump(stamps, open(RATE_FILE, "w"))
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_haliza","unbenannt",_le)
     return True, "OK"
 
 def sandbox_ok(datei):
@@ -48,8 +52,8 @@ def syntax_ok(code):
                            capture_output=True, text=True, timeout=20)
         try:
             os.unlink(TMP)
-        except Exception:
-            pass
+        except Exception as _le:
+            _jlog and _jlog.fehler("jack_haliza","unbenannt",_le)
         if r.returncode == 0:
             return True, "Syntax OK"
         return False, r.stderr.strip()[:200]
@@ -140,8 +144,8 @@ def pruefe(datei, alt, neu, beschreibung, mit_gemini=True):
                 m.merke(neu, datei, u, r.get("grund", ""), beschreibung)
             elif r.get("stufe") == "bereit":
                 m.merke(neu, datei, "bereit", r.get("grund", ""), beschreibung)
-        except Exception:
-            pass
+        except Exception as _le:
+            _jlog and _jlog.fehler("jack_haliza","unbenannt",_le)
     return r
 
 

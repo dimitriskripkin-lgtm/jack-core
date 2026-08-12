@@ -2,6 +2,10 @@
 """JACK Thermal Monitor - zeigt was das Geraet heiss macht.
 Nutzung: python3 ~/jack/jack_thermal.py"""
 import os, json, subprocess, glob
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 GRN="\033[92m"; YLW="\033[93m"; RED="\033[91m"; CYN="\033[96m"; BLD="\033[1m"; RST="\033[0m"
 
@@ -56,8 +60,8 @@ def ram():
             t = l.split(":")
             if len(t) == 2:
                 m[t[0].strip()] = int(t[1].strip().split()[0]) // 1024
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_thermal","unbenannt",_le)
     return m
 
 def cpu_last():

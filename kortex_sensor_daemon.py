@@ -4,6 +4,10 @@ KORTEX Sensor Daemon (Simplified für Termux)
 """
 
 import sqlite3
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import time
 from datetime import datetime
 import os

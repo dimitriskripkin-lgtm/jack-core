@@ -1,4 +1,8 @@
 import asyncio, time, os, sys, statistics
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from google import genai
 from google.genai import types
 

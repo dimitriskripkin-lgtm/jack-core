@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Autonomer Bugfix: Bug aus errors.db -> Analyse -> Fix -> Test -> Freigabe."""
 import os, sys, sqlite3, subprocess, datetime, shutil
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 sys.path.insert(0, os.path.expanduser('~/jack'))
 
 DB = os.path.expanduser('~/jack/jack_errors.db')

@@ -3,6 +3,10 @@
 Zweck: nie zweimal derselbe gescheiterte Patch. Wird VOR Gemini gefragt,
 spart damit API-Calls bei bekannten Fehlschlaegen."""
 import os, sqlite3, time, hashlib
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 H = os.path.expanduser("~/jack")
 DB = os.path.join(H, "jack_patch_memory.db")

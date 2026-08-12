@@ -1,4 +1,8 @@
 import sqlite3, os, hashlib
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime
 
 DB = os.path.expanduser('~/jack/jack_memory.db')

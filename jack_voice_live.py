@@ -1,4 +1,8 @@
 import asyncio, os, sys, time, wave
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime
 from google import genai
 from google.genai import types
@@ -29,8 +33,8 @@ def load_jack_context():
             if os.path.exists(f):
                 with open(f) as fh:
                     parts.append(fh.read())
-        except Exception:
-            pass
+        except Exception as _le:
+            _jlog and _jlog.fehler("jack_voice_live","unbenannt",_le)
     return chr(10).join(parts)[:6000]
 
 SYSTEM_PROMPT = (
@@ -46,8 +50,8 @@ def log_event(etype, detail):
         ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with open(LOG_FILE, "a") as f:
             f.write(ts + " | " + etype + " | " + detail + chr(10))
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_voice_live","unbenannt",_le)
 
 async def single_attempt(pcm):
     client = genai.Client(api_key=API_KEY)

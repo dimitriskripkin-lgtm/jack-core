@@ -3,6 +3,10 @@
 Read-only Berater, der die ganze JACK-Umgebung kennt (liest ~/jack + CLAUDE.md).
 Laeuft ueber Dimas claude.ai-Abo - kein API-Geld pro Aufruf."""
 import os, subprocess
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 JACKDIR=os.path.expanduser("~/jack")
 
 def _bin():

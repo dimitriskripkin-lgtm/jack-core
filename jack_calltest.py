@@ -3,6 +3,10 @@
 im Zielmodul wirklich existiert. Erschlaegt die run_once/check/push-Fehlerklasse.
 Nutzung: python3 ~/jack/jack_calltest.py"""
 import os, re, ast, sys, importlib
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 H = os.path.expanduser("~/jack")
 sys.path.insert(0, H)

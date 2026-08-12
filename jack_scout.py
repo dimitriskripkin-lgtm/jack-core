@@ -4,6 +4,10 @@ Read-only. Null API-Calls. Kann nichts kaputtmachen.
 Ausfuehren: python3 jack_scout.py
 Ergebnis: ~/jack/jack_fingerprint.json (versioniert, nie ueberschrieben)"""
 import os, json, subprocess, datetime, hashlib
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 H = os.path.expanduser("~/jack")
 FP_DIR = os.path.join(H, "fingerprints")

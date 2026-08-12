@@ -5,6 +5,10 @@ automatisch in kortex_profile.json (entscheidungen, projekte, owner).
 Regelbasiert - kein LLM noetig.
 """
 import json, os
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime
 
 PROFILE = os.path.expanduser("~/jack/kortex_profile.json")

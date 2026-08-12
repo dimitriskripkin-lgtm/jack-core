@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """JACK verbessert eigenen Code: Vorschlag -> Freigabe -> Patch -> Auto-Rollback."""
 import os, subprocess
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 JACK=os.path.expanduser("~/jack")
 
 def _mod(name):

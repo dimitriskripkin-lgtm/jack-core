@@ -1,4 +1,8 @@
 import os
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import subprocess
 from elevenlabs.client import ElevenLabs
 
@@ -45,8 +49,8 @@ def process_voice_message(ogg_path):
         return None, text, f"TTS-Fehler: {e}"
     try:
         os.remove(wav_path)
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_voice_processor","unbenannt",_le)
     return resp_wav, text, response_text
 def _DEAD_ORIGINAL_process_voice_message(ogg_path):
     wav_path = ogg_path.replace(".ogg", ".wav")
@@ -103,7 +107,7 @@ def _DEAD_ORIGINAL_process_voice_message(ogg_path):
             
     try:
         os.remove(wav_path)
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_voice_processor","unbenannt",_le)
 
     return resp_wav, text, response_text

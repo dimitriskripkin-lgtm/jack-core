@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Sichere SEARCH/REPLACE-Patches. Nie ganze Dateien ueberschreiben."""
 import os, re, shutil, subprocess, time
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 MARK_S = "<<<<<<< SEARCH"
 MARK_M = "======="

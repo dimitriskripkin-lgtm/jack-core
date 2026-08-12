@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import os, sys, sqlite3, datetime, time
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 sys.path.insert(0, os.path.expanduser('~/jack'))
 import jack_intent
 

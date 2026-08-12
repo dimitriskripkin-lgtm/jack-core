@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import os, json, subprocess, sqlite3, datetime
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 H="/data/data/com.termux/files/home/jack"
 def sh(c):
     try: return subprocess.run(c,shell=True,capture_output=True,text=True,timeout=15).stdout.strip()

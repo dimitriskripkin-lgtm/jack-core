@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """JACK Skill-Bibliothek: erfolgreiche Code-Bausteine speichern + kostenlos wiederverwenden."""
 import os, json, subprocess, shutil, re
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 DIR=os.path.expanduser("~/jack_skills")
 IDX=os.path.join(DIR,"index.json")
 WERK=os.path.expanduser("~/jack_werkstatt")

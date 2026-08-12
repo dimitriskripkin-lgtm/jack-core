@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import subprocess
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import os
 import sys
 

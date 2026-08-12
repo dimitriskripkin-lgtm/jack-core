@@ -1,4 +1,8 @@
 from kortex_memory import add_memory, search_memory, get_recent
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 #!/usr/bin/env python3
 from flask import Flask, jsonify, request, Response, stream_with_context
 from threading import Lock

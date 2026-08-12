@@ -4,6 +4,10 @@ Gemini behaelt den Gespraechskontext ueber alle Turns.
 Start: python3 ~/jack/jack_voice_chat_live.py [sekunden] [max_turns]
 Beenden: Strg+C"""
 import os, sys, subprocess, time, wave, asyncio
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 sys.path.append(os.path.expanduser("~/jack"))
 import jack_voice_live as vl
@@ -45,8 +49,8 @@ def play_blocking():
         dauer = max(1, int(size / 48000) + 1)
         subprocess.run(["termux-media-player", "play", WAV], capture_output=True)
         time.sleep(dauer)
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_voice_chat_live","unbenannt",_le)
 
 async def ein_turn(session, nummer, seconds):
     print(chr(10) + "--- Turn " + str(nummer) + " --- SPRICH JETZT (" + str(seconds) + "s)")

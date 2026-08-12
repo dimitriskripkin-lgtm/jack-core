@@ -4,6 +4,10 @@ JACK Morgen-Briefing - 07:55 Uhr
 Nur senden wenn etwas zu melden ist. Stiller Fixmann.
 """
 import sqlite3, os, sys, json, subprocess
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.expanduser("~/jack"))
@@ -123,8 +127,8 @@ def run():
         letzte = [l.strip() for l in lines[-3:] if l.strip()]
         if letzte:
             meldungen.append("Letzte Aktionen:\n  " + "\n  ".join(letzte))
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_briefing","unbenannt",_le)
 
     # Nur senden wenn mehr als nur Akku da ist
     if len(meldungen) <= 1:

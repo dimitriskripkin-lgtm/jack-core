@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import os, re
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 WERKSTATT = os.path.expanduser("~/jack_werkstatt")
 
@@ -75,6 +79,6 @@ def detect_write_request(prompt):
         d = _j.loads(ans.strip())
         if d.get("write") and d.get("filename") and d.get("content") is not None:
             return {"filename": d["filename"], "content": d["content"]}
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_write","unbenannt",_le)
     return None

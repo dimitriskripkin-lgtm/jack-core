@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 import sqlite3, re
 try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
+try:
     import jack_db_queue as _dbq
 except Exception:
     _dbq = None

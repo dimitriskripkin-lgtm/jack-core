@@ -4,6 +4,10 @@ Dima wirft Aufgaben rein, JACK arbeitet sie ab, Ergebnis wartet.
 Sicherheit: Code-Missionen enden IMMER bei wartet_freigabe,
 nie Auto-Apply auf lebende Module. Max 3 Versuche gegen Endlosschleifen."""
 import os, sqlite3, time
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 H = os.path.expanduser("~/jack")
 DB = os.path.join(H, "jack_missions.db")
@@ -40,8 +44,8 @@ def _log(tag, msg):
     try:
         import jack_log
         jack_log.log_decision(tag, str(msg)[:120])
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_missions","unbenannt",_le)
 
 def add(aufgabe, typ="befehl", prioritaet=5):
     if typ not in TYPEN:

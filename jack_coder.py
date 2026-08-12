@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """JACK schreibt und testet Code - NUR in der Werkstatt, mit Risiko-Gate."""
 import os, re, subprocess, time
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 WERKSTATT = os.path.expanduser("~/jack_werkstatt")
 

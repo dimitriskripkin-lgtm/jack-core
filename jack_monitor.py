@@ -2,6 +2,10 @@
 """JACK Monitor: Event-driven Ueberwachung + /scan Befehl.
 Kein Dauerloop. Prueft nur was sich aendert und meldet sofort."""
 import os, json, sqlite3, subprocess, datetime
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 H = os.path.expanduser("~/jack")
 STATE_FILE = os.path.join(H, ".monitor_state")
@@ -33,14 +37,14 @@ def _notify(msg):
     except Exception as e:
         try:
             import jack_log; jack_log.log_decision("MONITOR-NOTIFY-ERR", str(e)[:80])
-        except Exception:
-            pass
+        except Exception as _le:
+            _jlog and _jlog.fehler("jack_monitor","unbenannt",_le)
 
 def _log(tag, msg):
     try:
         import jack_log; jack_log.log_decision(tag, msg[:120])
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_monitor","unbenannt",_le)
 
 def lade_state():
     try:

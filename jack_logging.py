@@ -26,7 +26,7 @@ def get(name):
     return logging.getLogger('jack.' + name)
 
 def fehler(modul, kontext, exc):
-    """Kurzform: statt except: pass -> jack_logging.fehler('cortex','ssh check',e)"""
+    """Kurzform: statt except Exception as _le: _jlog and _jlog.fehler("jack_logging","unbenannt",_le) -> jack_logging.fehler('cortex','ssh check',e)"""
     get(modul).warning('%s: %s: %s', kontext, type(exc).__name__, str(exc)[:200])
 
 def letzte(n=30, nur_fehler=False):

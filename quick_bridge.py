@@ -1,4 +1,8 @@
 from flask import Flask, jsonify
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import subprocess
 import os
 

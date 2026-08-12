@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """JACK Sinne: Xiaomi-Sensoren via SSH + Gemini Vision (Augen)."""
 import os, json, base64, subprocess, urllib.request
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 import jack_config as _jc; XIAOMI=_jc.get_param("NETWORK","xiaomi_ip"); PORT=_jc.get_param("NETWORK","ssh_port"); KEY=os.path.expanduser("~/.ssh/id_jack")
 

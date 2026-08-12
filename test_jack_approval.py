@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import os
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from jack_approval import check_approval, is_safe_path
 
 

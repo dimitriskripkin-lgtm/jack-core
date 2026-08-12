@@ -1,4 +1,8 @@
 import subprocess, sys, time, threading
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 def temp():
     try:

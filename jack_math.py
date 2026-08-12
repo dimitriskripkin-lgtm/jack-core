@@ -1,4 +1,8 @@
 import re
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import ast
 import operator
 import json

@@ -6,6 +6,10 @@ Pipeline: Intent -> Focus-Check -> XML -> SoM -> Gemini -> Ausfuehren
 """
 
 import subprocess, os, io, hashlib, json, time, datetime
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import xml.etree.ElementTree as ET
 
 try:
@@ -45,8 +49,8 @@ def _sec(key):
                     k, v = line.split("=", 1)
                     if k.strip() == key:
                         return v.strip().strip('"').strip("'") 
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_android","unbenannt",_le)
     return ""
 
 def toast(msg):

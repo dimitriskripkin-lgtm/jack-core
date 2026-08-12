@@ -5,6 +5,10 @@ Analysiert Fehler, generiert Fix-Vorschlaege, legt sie in Werkstatt ab.
 Fuehrt NICHTS selbst aus. Dima bestaetigt per Telegram.
 """
 import sqlite3, json, os, sys
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime, timedelta
 
 ERRORS_DB = os.path.expanduser("~/jack/jack_errors.db")
@@ -180,8 +184,8 @@ def run():
     bestehend = {}
     try:
         bestehend = json.load(open(FIXES_LOG))
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_self_improve","unbenannt",_le)
     for f in fixes_heute:
         bestehend[f["fix_id"]] = f
     json.dump(bestehend, open(FIXES_LOG, "w"), indent=2, ensure_ascii=False)

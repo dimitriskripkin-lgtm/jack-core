@@ -2,6 +2,10 @@
 """Adapter: jack_skills.db Skills ueber gleiche Schnittstelle wie jack_skills.py.
 Erweitert den Telegram-Bot um DB-gestuetzte Skills ohne die alte Datei-Logik zu brechen."""
 import os, sqlite3, time, json
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 H = os.path.expanduser("~/jack")
 DB = os.path.join(H, "jack_skills.db")
@@ -54,8 +58,8 @@ def run_skill(name, timeout=15):
         trace_id = cur.lastrowid
         cog.commit()
         cog.close()
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_skills_db","unbenannt",_le)
 
     # Abhaengigkeiten gegen Fingerabdruck pruefen
     fp_pfad = os.path.join(H, "jack_fingerprint.json")
@@ -71,8 +75,8 @@ def run_skill(name, timeout=15):
                 msg = "ABHAENGIGKEIT FEHLT AUF DIESEM GERAET: " + str(fehlend)
                 _trace_update(trace_id, "fehler", None, msg)
                 return False, msg
-        except Exception:
-            pass
+        except Exception as _le:
+            _jlog and _jlog.fehler("jack_skills_db","unbenannt",_le)
 
     # Ausfuehren
     t0 = time.time()
@@ -101,8 +105,8 @@ def run_skill(name, timeout=15):
         try:
             import jack_log
             jack_log.log_decision("SKILL-DB-AUSGEFUEHRT", name + " (" + str(ms) + "ms)")
-        except Exception:
-            pass
+        except Exception as _le:
+            _jlog and _jlog.fehler("jack_skills_db","unbenannt",_le)
         return True, output[:1500] if output else "(kein Output)"
 
     except Exception as e:
@@ -121,8 +125,8 @@ def run_skill(name, timeout=15):
         try:
             import jack_log
             jack_log.log_decision("SKILL-DB-FEHLER", name + ": " + fehler[:80])
-        except Exception:
-            pass
+        except Exception as _le:
+            _jlog and _jlog.fehler("jack_skills_db","unbenannt",_le)
         return False, "FEHLER [" + name + "]: " + fehler[:300]
 
 def _trace_update(trace_id, status, ergebnis, fehler, analyse=None):
@@ -137,8 +141,8 @@ def _trace_update(trace_id, status, ergebnis, fehler, analyse=None):
             (status, ts, ergebnis, fehler, analyse, trace_id))
         cog.commit()
         cog.close()
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("jack_skills_db","unbenannt",_le)
 
 def get_trace(skill_name, limit=3):
     """Letzte Traces fuer einen Skill - fuer den Rueckwaerts-Lauf."""

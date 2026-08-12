@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import re, os, sqlite3, datetime
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 DB = os.path.expanduser('~/jack/jack_errors.db')
 
 def parse(text):

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # ScreenStateTracker + OutcomeEvaluator - kein Vision-API, XML-basiert
 import subprocess, hashlib
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import xml.etree.ElementTree as ET
 UI_XML = "/sdcard/jack_ui.xml"
 ADB = ["adb", "-s", "127.0.0.1:5555", "shell"]
