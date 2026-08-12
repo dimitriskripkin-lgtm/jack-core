@@ -17,25 +17,63 @@ def load_api_key():
                 return line.split('"')[1]
     raise ValueError("GEMINI_API_KEY nicht gefunden")
 
-def collect_status():
+def collect_status(mit_xiaomi=False):
     status = {"timestamp": datetime.now().isoformat()}
-    r = subprocess.run(["sv", "status", "jack_cortex"], capture_output=True, text=True)
-    status["cortex"] = r.stdout.strip()
+    # Dienste
+    try:
+        import subprocess as _sv
+        P = os.environ.get("PREFIX","/data/data/com.termux/files/usr")
+        laufend = []
+        for s in ["jack_cortex","jack_telegram","jack_waechter","ollama"]:
+            r2 = _sv.run(["sv","status",f"{P}/var/service/{s}"],capture_output=True,text=True,timeout=3)
+            if "run:" in r2.stdout: laufend.append(s)
+        status["dienste"] = laufend
+        status["alle_ok"] = len(laufend) == 4
+    except Exception: pass
+    # RAM
+    try:
+        avail = int([l for l in open("/proc/meminfo") if "MemAvailable" in l][0].split()[1])//1024
+        status["ram_frei_mb"] = avail
+    except Exception: pass
+    # Temp
+    try:
+        mx = 0
+        for z in os.listdir("/sys/class/thermal"):
+            try:
+                tp = open(f"/sys/class/thermal/{z}/type").read().strip()
+                if any(x in tp for x in ("trip","lvl","vbat")): continue
+                rv = int(open(f"/sys/class/thermal/{z}/temp").read())
+                if rv < 0: continue
+                g = rv/1000 if rv > 1000 else float(rv)
+                if g > mx: mx = g
+            except Exception: pass
+        status["temp_cpu"] = round(mx,1)
+    except Exception: pass
+    # Fehler
     try:
         con = sqlite3.connect(ERRORS_DB)
         count = con.execute("SELECT COUNT(*) FROM errors WHERE resolved=0").fetchone()[0]
-        recent = con.execute("SELECT error_msg FROM errors WHERE resolved=0 ORDER BY timestamp DESC LIMIT 3").fetchall()
         status["open_errors"] = count
-        status["recent_errors"] = [r[0][:100] for r in recent]
         con.close()
-    except Exception as _dbe:
+    except Exception as _le:
+        _jlog and _jlog.fehler("gemini","db-status",_le)
         status["open_errors"] = "unknown"
-        _jlog and _jlog.fehler("gemini","db-status",_dbe)
-    import jack_config as _jc; _xip = _jc.get_param("NETWORK","xiaomi_ip")
-    import subprocess as _sp
-    _r = _sp.run(["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),"-o","BatchMode=yes","-o","StrictHostKeyChecking=no","-o","ConnectTimeout=3","-p","8022",f"root@{_xip}","true"],capture_output=True,timeout=6)
-    status["xiaomi_reachable"] = _r.returncode == 0
+    # Xiaomi nur wenn explizit benoetigt
+    if mit_xiaomi:
+        try:
+            import jack_config as _jc
+            _xip = _jc.get_param("NETWORK","xiaomi_ip")
+            _r = subprocess.run(["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),
+                "-o","BatchMode=yes","-o","StrictHostKeyChecking=no",
+                "-o","ConnectTimeout=3","-p","8022",f"root@{_xip}","true"],
+                capture_output=True,timeout=6)
+            status["xiaomi_reachable"] = _r.returncode == 0
+        except Exception:
+            status["xiaomi_reachable"] = False
+    else:
+        status["xiaomi_reachable"] = "nicht geprueft"
     return status
+
 
 def ask_gemini(question, status=None):
     import jack_budget
