@@ -31,6 +31,96 @@ def load_secrets():
             if 'TELEGRAM_CHAT_ID' in line: chat_id = line.split('"')[1]
     return token, chat_id
 
+
+MENU = {
+    "status": {
+        "label": "🔴 System & Status",
+        "befehle": [
+            ("/selftest", "Prueft ob alle 5 Kern-Checks OK sind", "/selftest"),
+            ("/trace", "Zeigt was JACK gerade tut - Threads, RAM, letzte Aktionen", "/trace"),
+            ("/scan", "Vollstaendiger System-Scan mit allen Sensoren", "/scan"),
+            ("/level", "Zeigt oder setzt wie autonom JACK handeln darf (1-4)", "/level 2"),
+        ]
+    },
+    "diagnose": {
+        "label": "🔧 Diagnose & Fehler",
+        "befehle": [
+            ("/tb", "Analysiert einen Python-Fehler und gibt Loesungshinweis", "/tb NameError: name x is not defined"),
+            ("/errors", "Zeigt alle offenen Fehler im System", "/errors"),
+            ("/log", "Die letzten 15 Aktionen die JACK gemacht hat", "/log"),
+            ("/budget", "Wie viele API-Calls wurden heute verbraucht", "/budget"),
+            ("/audit", "Vollstaendiger System-Bericht", "/audit"),
+        ]
+    },
+    "autonomie": {
+        "label": "🤖 Autonomie & Aufgaben",
+        "befehle": [
+            ("/kette", "Zeigt alle verfuegbaren Aktionsketten", "/kette"),
+            ("/kette system_vollcheck", "Prueft alles durch: Dienste, RAM, Temp, Akku, SSH", "/kette system_vollcheck"),
+            ("/kette xiaomi_reparieren", "Xiaomi pruefen, bei Problem WiFi neustarten", "/kette xiaomi_reparieren"),
+            ("/mission", "Gibt JACK eine Aufgabe die er selbst ausfuehrt", "/mission pruefe ob alle logs sauber sind"),
+            ("/missionen", "Zeigt alle laufenden und abgeschlossenen Aufgaben", "/missionen"),
+            ("/auto", "JACK arbeitet selbstaendig an einem Ziel (max 4 Runden)", "/auto optimiere jack_selftest.py"),
+        ]
+    },
+    "gedaechtnis": {
+        "label": "🧠 Gedaechtnis & Lernen",
+        "befehle": [
+            ("/baum", "Zeigt die letzte Gespraeches-Kette (was fuehrte wozu)", "/baum"),
+            ("/baum stat", "Statistik: wie viele Erinnerungen sind vernetzt", "/baum stat"),
+            ("/baum reset", "Startet eine neue Gedaechtnis-Kette", "/baum reset"),
+            ("merke dir", "JACK merkt sich eine wichtige Information dauerhaft", "merke dir ich mag keine langen Antworten"),
+        ]
+    },
+    "werkzeug": {
+        "label": "🛠️ Code & Werkzeug",
+        "befehle": [
+            ("/code", "JACK schreibt ein Python-Script fuer dich", "/code schreibe ein script das den akku anzeigt"),
+            ("/run", "Fuehrt das zuletzt geschriebene Script aus", "/run"),
+            ("/werkstatt", "Zeigt alle Scripts die JACK geschrieben hat", "/werkstatt"),
+            ("/cc", "Fragt Claude Code direkt an (fuer komplexe Fragen)", "/cc was ist eine rekursive funktion"),
+            ("/verbessere", "JACK analysiert ein Modul und schlaegt Verbesserungen vor", "/verbessere jack_memory"),
+        ]
+    },
+    "hardware": {
+        "label": "📡 Sensoren & Hardware",
+        "befehle": [
+            ("/akku", "Akkustand, Ladestand und Temperatur", "/akku"),
+            ("/sensor", "Bewegungssensor und weitere Hardware-Daten", "/sensor"),
+            ("/standort", "Aktueller GPS-Standort", "/standort"),
+            ("/sehen", "JACK macht ein Foto und beschreibt was er sieht", "/sehen was liegt auf dem Tisch"),
+            ("Foto schicken", "Foto an JACK schicken - er analysiert Fehler oder Inhalt auf Deutsch", "(einfach Foto schicken, optional Caption: was ist hier das Problem)"),
+        ]
+    },
+    "skills": {
+        "label": "⚙️ Skills & Oracle",
+        "befehle": [
+            ("/befehle", "Oracle-Buttons: Dienste, RAM, Fehler, Budget, Modelle sofort abrufen", "/befehle"),
+            ("/db_skills", "Alle gespeicherten Faehigkeiten die JACK gelernt hat", "/db_skills"),
+            ("/skill_builder", "JACK analysiert sich selbst und baut neue Faehigkeiten", "/skill_builder"),
+            ("/db_trace", "Zeigt den Ausfuehrungs-Verlauf eines Skills", "/db_trace akku_status"),
+        ]
+    },
+}
+
+def menu_hauptseite():
+    """Sendet Hauptmenue mit Kategorie-Buttons."""
+    buttons = [[(_v["label"], "menu:"+_k)] for _k, _v in MENU.items()]
+    return buttons
+
+def menu_kategorie(key):
+    """Text fuer eine Kategorie."""
+    if key not in MENU: return "Unbekannte Kategorie"
+    kat = MENU[key]
+    zeilen = [kat["label"], ""]
+    for befehl, beschreibung, beispiel in kat["befehle"]:
+        zeilen.append(f"• {befehl}")
+        zeilen.append(f"  {beschreibung}")
+        zeilen.append(f"  Beispiel: {beispiel}")
+        zeilen.append("")
+    zeilen.append("← /menu fuer Hauptmenue")
+    return chr(10).join(zeilen)
+
 TOKEN, CHAT_ID = load_secrets()
 API = f"https://api.telegram.org/bot{TOKEN}"
 
