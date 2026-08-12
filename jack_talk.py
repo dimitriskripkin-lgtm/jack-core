@@ -130,6 +130,49 @@ def _json_dumps_safe(obj):
     except Exception:
         return str(obj)
 
+
+def _status_als_text():
+    """Formatiert Live-Status als natuerliche Sprache fuer Gemini."""
+    import jack_gemini_bridge as _gb
+    try:
+        s = _gb.collect_status()
+    except Exception:
+        return ""
+    zeilen = ["=== LIVE UMGEBUNG (gerade gemessen) ==="]
+    # Dienste
+    d = s.get("dienste", [])
+    if d:
+        zeilen.append(f"Dienste laufend: {', '.join(d)} ({'alle OK' if s.get('alle_ok') else 'NICHT ALLE'})")
+    # RAM
+    ram = s.get("ram_frei_mb")
+    if ram:
+        zeilen.append(f"RAM frei: {ram}MB von {s.get('ram_total_mb', '?')}MB")
+    # Temp
+    temp = s.get("temp_cpu")
+    if temp:
+        zeilen.append(f"CPU Temperatur: {temp}C {'(warm)' if temp > 50 else '(normal)'}")
+    # Fehler
+    n_err = s.get("open_errors", 0)
+    zeilen.append(f"Offene Fehler: {n_err}")
+    # Muster aus Intent-Historie
+    try:
+        import jack_intent as _ji
+        muster = _ji.muster_analyse()
+        if muster:
+            zeilen.append("Erkannte Muster (was du oft tust):")
+            for m in muster[:3]:
+                zeilen.append(f"  - {m['intent']} meist um {m['stunde']} Uhr ({m['anzahl']}x)")
+    except Exception: pass
+    # Letzte Aktion
+    try:
+        lines = open(os.path.expanduser("~/jack/jack_decisions.log")).readlines()
+        if lines:
+            zeilen.append(f"Letzte Aktion: {lines[-1].strip()[:100]}")
+    except Exception: pass
+    zeilen.append("=== ENDE LIVE STATUS ===")
+    zeilen.append("Nutze diese Daten aktiv in deiner Antwort. Erwaehne konkrete Werte wenn relevant.")
+    return chr(10).join(zeilen)
+
 def talk_to_gemini(prompt):
     import jack_gemini_bridge
     try:
