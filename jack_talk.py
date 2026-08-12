@@ -177,7 +177,7 @@ def talk_to_gemini(prompt):
         f"WAS DU UEBER IHN WEISST:\n{id_ctx}\n\n"
         f"ERINNERUNGEN:\n{mem_ctx}\n\n"
         f"VERLAUF:\n{hist_ctx}\n\n"
-        + _live +
+        + ("LIVE-SYSTEMSTATUS (gerade gemessen, NUTZE DIESE DATEN in deiner Antwort):" + chr(10) + _live + chr(10) if _live else "") +
         f"\nDIMA: {prompt}"
     )
     # Intent VOR Gemini - Ergebnis fliesst in die Antwort ein
