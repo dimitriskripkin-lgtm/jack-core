@@ -265,6 +265,27 @@ def handle_callback(callback_data, callback_id):
         if not results or isinstance(results, dict):
             return f"Nichts gefunden fuer: {q}"
         return "\n".join([f'[{r["category"]}] {r["content"][:80]}' for r in results])
+    if callback_data.startswith("bugfix_deploy:"):
+        bug_id = int(callback_data.split(":")[1])
+        import jack_bugfix_loop as _bl
+        _bl.markiere_resolved(bug_id, "manuell freigegeben")
+        # Backup loeschen
+        import glob as _gl
+        for bak in _gl.glob(os.path.expanduser("~/jack/*.bugfix_bak")):
+            try: os.remove(bak)
+            except: pass
+        import jack_log; jack_log.log_decision("BUGFIX-DEPLOYED", f"Bug #{bug_id} gefixt und freigegeben")
+        return f"Bug #{bug_id} als geloest markiert. Backup entfernt."
+
+    if callback_data.startswith("bugfix_rollback:"):
+        bug_id = int(callback_data.split(":")[1])
+        import jack_bugfix_loop as _bl, glob as _gl
+        count = 0
+        for bak in _gl.glob(os.path.expanduser("~/jack/*.bugfix_bak")):
+            _bl.rollback(bak.replace(".bugfix_bak",""))
+            count += 1
+        return f"Rollback durchgefuehrt ({count} Dateien). Bug #{bug_id} bleibt offen."
+
     if callback_data.startswith("intent:"):
         akt = callback_data[7:]
         if akt == "abbruch":
@@ -679,6 +700,16 @@ def handle(text):
         r = _jt.parse(tb_text)
         _jt.analyse_und_speichere(tb_text, 'telegram_analyse')
         return _jt.erklaere(r)
+
+    if raw.strip().lower() in ('/bugfix', '/fix'):
+        send("🔍 Analysiere Fehler-Datenbank...")
+        def _bugfix_run():
+            import jack_bugfix_loop as _bl
+            r = _bl.run()
+            send(r[:3000])
+        import threading
+        threading.Thread(target=_bugfix_run, daemon=True).start()
+        return None
 
     if raw.strip().lower().startswith('/level'):
         raw_level = raw.strip().lower().replace('/level','').strip()
