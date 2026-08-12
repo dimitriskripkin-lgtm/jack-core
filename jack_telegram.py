@@ -130,6 +130,12 @@ TOKEN, CHAT_ID = load_secrets()
 API = f"https://api.telegram.org/bot{TOKEN}"
 
 def send(text):
+    if len(str(text)) > 3800:
+        teile = [text[i:i+3800] for i in range(0, len(text), 3800)]
+        for teil in teile:
+            _send_raw(teil)
+        return
+def _send_raw(text):
     url = f"{API}/sendMessage"
     data = json.dumps({"chat_id": CHAT_ID, "text": text}).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})

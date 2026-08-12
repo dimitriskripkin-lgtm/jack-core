@@ -254,7 +254,7 @@ def _status_als_text():
     try:
         import jack_episoden as _ep
         _et = _ep.als_text(4)
-        if _et: zeilen.append(_et)
+        if _et: zeilen.extend(_et.split(chr(10)))
     except Exception: pass
 
     zeilen.append("=== ENDE SITUATIONSBEWUSSTSEIN ===")
