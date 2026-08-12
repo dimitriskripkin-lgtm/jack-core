@@ -319,6 +319,10 @@ def oracle_sign(cmd, uuid, ts):
 def handle(text):
     global PENDING_WRITE, PENDING_IMPROVE
     raw = text.strip()
+    # MENU - muss als erstes geprueft werden
+    if raw.lower() in ('/menu', '/m', '/hilfe'):
+        send_keyboard("JACK Befehlszentrale:", menu_hauptseite())
+        return None
     # Oracle-Dispatcher - IMMER ZUERST prufen, nie Gemini aufrufen
     if raw.strip().lower() == "/oracle_result":
         try:
