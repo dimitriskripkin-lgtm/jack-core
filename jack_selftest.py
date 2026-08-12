@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import os,subprocess,sys,time,urllib.request
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 sys.path.append(os.path.expanduser('~/jack'))
 P=os.environ.get('PREFIX','/data/data/com.termux/files/usr')
 G,R='\033[92m[OK]\033[0m','\033[91m[ER]\033[0m'

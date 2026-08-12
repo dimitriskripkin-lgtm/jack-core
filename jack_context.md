@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-12T12:22:25.753920
+Stand: 2026-08-12T12:25:27.400541
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -117,12 +117,13 @@ Stand: 2026-08-12T12:22:25.753920
 - Offene Fehler: 0
 - Erinnerungen: 210
 - Dienste:
-run: jack_cortex: (pid 24878) 3637s
-run: jack_telegram: (pid 5675) 231s
+run: jack_cortex: (pid 24878) 3819s
+run: jack_telegram: (pid 5675) 413s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 24888) 3637s
+run: ollama: (pid 24888) 3819s
 
 ## Letzte Aenderungen
+bef1a9d meilenstein: erster autonomer bugfix deployed - bug 2934 jack_cortex
 6c758d4 bugfix-loop: autonomer bug-fix mit freigabe-button, /bugfix befehl
 03ab41d intent: confidence-schwellen angepasst, bestaetigungsfragen erhoehen confidence
 0513e89 sync: context und identity aktualisiert
@@ -137,7 +138,6 @@ be27b3c traceback-parser: fehleranalyse mit loesungshinweisen, /tb befehl in tel
 2688e1d jack_calltest: prueft alle modulaebergreifenden Aufrufe + tote Waechter-Threads
 01c4105 Telegram: Offset persistent + sofortige Bestaetigung + Absturz-Log (behebt Replay-Loop)
 ebb1b09 Telegram: Timestamp am Ende jeder Nachricht
-c766375 jack_reflexion: Aktions-IDs + Nacht-Reflexions-Loop -> Langzeitgedaechtnis
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

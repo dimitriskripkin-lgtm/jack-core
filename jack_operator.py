@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 from jack_approval import confirm_action
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 import os, json, subprocess
 
 JACK_HOME = "/data/data/com.termux/files/home"

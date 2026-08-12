@@ -65,6 +65,7 @@ MENU = {
             ("/mission", "Gibt JACK eine Aufgabe die er selbst ausfuehrt", "/mission pruefe ob alle logs sauber sind"),
             ("/missionen", "Zeigt alle laufenden und abgeschlossenen Aufgaben", "/missionen"),
             ("/auto", "JACK arbeitet selbstaendig an einem Ziel (max 4 Runden)", "/auto optimiere jack_selftest.py"),
+            ("/bugfix", "JACK sucht Bugs und repariert sie autonom mit Freigabe-Button", "/bugfix"),
         ]
     },
     "gedaechtnis": {
