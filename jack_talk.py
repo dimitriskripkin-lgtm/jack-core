@@ -132,45 +132,102 @@ def _json_dumps_safe(obj):
 
 
 def _status_als_text():
-    """Formatiert Live-Status als natuerliche Sprache fuer Gemini."""
-    import jack_gemini_bridge as _gb
+    """Vollstaendiges Situationsbewusstsein fuer JACK."""
+    import subprocess as _sp2, sqlite3 as _sq2, datetime as _dt2
+    zeilen = ["=== JACK SITUATIONSBEWUSSTSEIN ==="]
+    zeilen.append(f"Zeitpunkt: {_dt2.datetime.now().strftime('%H:%M Uhr, %A %d.%m.%Y')}")
+
+    # Hardware
     try:
-        s = _gb.collect_status()
-    except Exception:
-        return ""
-    zeilen = ["=== LIVE UMGEBUNG (gerade gemessen) ==="]
-    # Dienste
-    d = s.get("dienste", [])
-    if d:
-        zeilen.append(f"Dienste laufend: {', '.join(d)} ({'alle OK' if s.get('alle_ok') else 'NICHT ALLE'})")
-    # RAM
-    ram = s.get("ram_frei_mb")
-    if ram:
-        zeilen.append(f"RAM frei: {ram}MB von {s.get('ram_total_mb', '?')}MB")
-    # Temp
-    temp = s.get("temp_cpu")
-    if temp:
-        zeilen.append(f"CPU Temperatur: {temp}C {'(warm)' if temp > 50 else '(normal)'}")
-    # Fehler
-    n_err = s.get("open_errors", 0)
-    zeilen.append(f"Offene Fehler: {n_err}")
-    # Muster aus Intent-Historie
+        avail = int([l for l in open("/proc/meminfo") if "MemAvailable" in l][0].split()[1])//1024
+        total = int([l for l in open("/proc/meminfo") if "MemTotal" in l][0].split()[1])//1024
+        zeilen.append(f"RAM: {avail}MB frei von {total}MB ({100-int(avail/total*100)}% belegt)")
+    except Exception: pass
+    try:
+        mx=0; mname=""
+        for z in os.listdir("/sys/class/thermal"):
+            try:
+                tp=open(f"/sys/class/thermal/{z}/type").read().strip()
+                if any(x in tp for x in ("trip","lvl","vbat")): continue
+                rv=int(open(f"/sys/class/thermal/{z}/temp").read())
+                if rv<0: continue
+                g=rv/1000 if rv>1000 else float(rv)
+                if g>mx: mx=g; mname=tp
+            except Exception: pass
+        zeilen.append(f"CPU Temp: {mx:.1f}C an {mname} {'- WARM' if mx>50 else '- normal'}")
+    except Exception: pass
+
+    # Akku
+    try:
+        import json as _j2
+        bat = _j2.loads(_sp2.run(["termux-battery-status"],capture_output=True,text=True,timeout=8).stdout)
+        zeilen.append(f"Akku: {bat.get('percentage')}% | {bat.get('status')} | {bat.get('temperature')}C")
+    except Exception: pass
+
+    # Dienste mit Laufzeit
+    try:
+        P = os.environ.get("PREFIX","/data/data/com.termux/files/usr")
+        dienst_info = []
+        for s in ["jack_cortex","jack_telegram","jack_waechter","ollama"]:
+            r2 = _sp2.run(["sv","status",f"{P}/var/service/{s}"],capture_output=True,text=True,timeout=3)
+            out = r2.stdout.strip()
+            if "run:" in out:
+                import re as _re2
+                m = _re2.search(r'\(pid \d+\) (\d+)s', out)
+                sek = int(m.group(1)) if m else 0
+                std = sek//3600; min_ = (sek%3600)//60
+                laufzeit = f"{std}h {min_}m" if std > 0 else f"{min_}m"
+                dienst_info.append(f"{s} seit {laufzeit}")
+            else:
+                dienst_info.append(f"{s} GESTOPPT")
+        zeilen.append("Dienste: " + " | ".join(dienst_info))
+    except Exception: pass
+
+    # Fehler-Historie
+    try:
+        con = _sq2.connect(os.path.expanduser("~/jack/jack_errors.db"))
+        offen = con.execute("SELECT COUNT(*) FROM errors WHERE resolved=0").fetchone()[0]
+        gefixt = con.execute("SELECT COUNT(*) FROM errors WHERE resolved=1").fetchone()[0]
+        letzte = con.execute("SELECT error_type, error_msg, timestamp FROM errors ORDER BY id DESC LIMIT 3").fetchall()
+        con.close()
+        zeilen.append(f"Fehler: {offen} offen, {gefixt} insgesamt gefixt")
+        if letzte:
+            zeilen.append("Letzte Ereignisse:")
+            for e in letzte:
+                zeilen.append(f"  {e[2][:16]} | {e[0]}: {e[1][:60]}")
+    except Exception: pass
+
+    # Letzte 5 Entscheidungen
+    try:
+        log_lines = open(os.path.expanduser("~/jack/jack_decisions.log")).readlines()
+        if log_lines:
+            zeilen.append("Letzte Aktionen:")
+            for l in log_lines[-5:]:
+                zeilen.append(f"  {l.strip()[:90]}")
+    except Exception: pass
+
+    # Wochenmuster aus Intent-DB
     try:
         import jack_intent as _ji
         muster = _ji.muster_analyse()
         if muster:
-            zeilen.append("Erkannte Muster (was du oft tust):")
-            for m in muster[:3]:
-                zeilen.append(f"  - {m['intent']} meist um {m['stunde']} Uhr ({m['anzahl']}x)")
+            zeilen.append("Deine Gewohnheiten (aus Intent-Verlauf):")
+            for m in muster[:4]:
+                zeilen.append(f"  - {m['intent']} meist um {m['stunde']} Uhr ({m['anzahl']}x beobachtet)")
     except Exception: pass
-    # Letzte Aktion
+
+    # Memory-Statistik
     try:
-        lines = open(os.path.expanduser("~/jack/jack_decisions.log")).readlines()
-        if lines:
-            zeilen.append(f"Letzte Aktion: {lines[-1].strip()[:100]}")
+        con2 = _sq2.connect(os.path.expanduser("~/jack/jack_memory.db"))
+        n_mem = con2.execute("SELECT COUNT(*) FROM memory").fetchone()[0]
+        n_vec = con2.execute("SELECT COUNT(*) FROM memory_vec").fetchone()[0]
+        con2.close()
+        zeilen.append(f"Gedaechtnis: {n_mem} Erinnerungen, {n_vec} Vektoren indexiert")
     except Exception: pass
-    zeilen.append("=== ENDE LIVE STATUS ===")
-    zeilen.append("Nutze diese Daten aktiv in deiner Antwort. Erwaehne konkrete Werte wenn relevant.")
+
+    zeilen.append("=== ENDE SITUATIONSBEWUSSTSEIN ===")
+    zeilen.append("WICHTIG: Wenn der Nutzer 'was noch' fragt - nenne ANDERE Aspekte die noch nicht erwaehnt wurden.")
+    zeilen.append("Keine Standardfloskeln. Konkrete Zahlen und Beobachtungen. Sei ehrlich wenn du nichts Neues weisst.")
     return chr(10).join(zeilen)
 
 def talk_to_gemini(prompt):
