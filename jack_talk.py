@@ -181,16 +181,7 @@ def talk_to_gemini(prompt):
     except Exception:
         hits = []
     mem_ctx = "\n".join([f"- [{h[4]}] {h[1]} -> {h[2][:150]}" for h in hits]) if hits else "(keine)"
-    _live = ""
-    _sys_words = ["status", "systemcheck", "system check", "fehler", "dienste", "laeuft", "läuft",
-                  "commit", "erinnerungen", "xiaomi", "cortex", "wie geht es dir", "zustand", "check"]
-    if any(w in prompt.lower() for w in _sys_words):
-        try:
-            _st = jack_gemini_bridge.collect_status()
-            _live = ("\n\nECHTE LIVE-SYSTEMDATEN (JETZT gemessen, das ist die WAHRHEIT):\n"
-                     + _json_dumps_safe(_st) + "\n")
-        except Exception:
-            _live = ""
+    _live = _status_als_text()
     try:
         import json as _json
         _id = _json.load(open(os.path.expanduser("~/jack/jack_identity.json")))
