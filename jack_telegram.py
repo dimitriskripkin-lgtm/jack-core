@@ -189,7 +189,25 @@ def answer_callback(callback_id, text="OK"):
 
 def handle_callback(callback_data, callback_id):
     """Verarbeitet Inline-Button-Klicks."""
-    answer_callback(callback_id)
+    # Kategorie-Menu - sofort pruefen
+    if callback_data.startswith("menu:"):
+        key = callback_data[5:]
+        antwort = menu_kategorie(key)
+        answer_callback(callback_id, "Oeffne " + key + "...")
+        return antwort
+    # Zurueck zum Hauptmenu
+    if callback_data == "menu:hauptmenu":
+        answer_callback(callback_id, "Hauptmenu")
+        send_keyboard("JACK Befehlszentrale:", menu_hauptseite())
+        return None
+    # Gedanken-Popup: was macht JACK gerade
+    try:
+        import datetime as _dt
+        _lines = open(os.path.expanduser("~/jack/jack_decisions.log")).readlines()
+        _last = _lines[-1].split("|")[-1].strip()[:30] if _lines else "..."
+        answer_callback(callback_id, _last)
+    except Exception:
+        answer_callback(callback_id)
     import jack_log
 
     if callback_data.startswith("approve:"):
