@@ -114,6 +114,8 @@ def _keyword_detect(text):
     t = text.lower()
     frust = any(s in t for s in FRUST)
     frage = any(s in t for s in FRAGE)
+    # Direkte Bestaetigungsfragen: "ist es verbunden", "laeuft es", "wie ist der status"
+    bestaetigung = any(s in t for s in ['ist es', 'ist er', 'laeuft es', 'laeuft er', 'wie ist', 'status', 'verbunden'])
     treffer = []
     for aktion, keys in KEYWORDS.items():
         for k in keys:
@@ -181,8 +183,8 @@ def detect(text, gemini_fallback=True):
         auto = conf >= 0.6 and level >= min_level
         fragen = False
     elif level >= min_level:
-        auto = conf >= 0.85
-        fragen = 0.5 <= conf < 0.85
+        auto = conf >= 0.80
+        fragen = 0.75 <= conf < 0.80
     else:
         auto = False
         fragen = False
