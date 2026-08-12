@@ -712,6 +712,24 @@ def handle(text):
         threading.Thread(target=_bugfix_run, daemon=True).start()
         return None
 
+    if raw.strip().lower().startswith('/warum'):
+        import jack_gedanken as _gd3
+        rest = raw.strip()[6:].strip()
+        if rest == 'stat':
+            return _gd3.statistik()
+        return _gd3.als_text(3)
+
+    if raw.strip().lower().startswith('/episoden'):
+        import jack_episoden as _ep3
+        rest = raw.strip()[9:].strip()
+        if rest == 'bilde':
+            return 'Neue Episoden gebildet: ' + str(_ep3.bilde(3))
+        if rest == 'offen':
+            o = _ep3.offene(0)
+            if not o: return 'Keine offenen Themen.'
+            return chr(10).join('- ' + x['titel'] + ' (' + x['end_ts'][:10] + ')' for x in o)
+        return _ep3.als_text(6) or 'Noch keine Episoden.'
+
     if raw.strip().lower().startswith('/level'):
         raw_level = raw.strip().lower().replace('/level','').strip()
         parts = ['/level', raw_level] if raw_level else ['/level']

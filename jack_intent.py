@@ -211,6 +211,18 @@ def _ssh(cmd, timeout=10):
         capture_output=True, text=True, timeout=timeout)
 
 def execute(d):
+    _gid = None
+    try:
+        import jack_gedanken as _gd
+        if isinstance(d, dict):
+            _gid = _gd.denke(
+                ausloeser=d.get('_text','?'),
+                hypothese='Erkannt via ' + d.get('methode','?') + ' (Match: ' + str(d.get('match','')) + ')',
+                entscheidung=d.get('intent','?'),
+                konfidenz=d.get('confidence',0.5),
+                alternativen='nachfragen statt handeln' if d.get('nachfragen') else '',
+                quelle='intent')
+    except Exception: pass
     """Fuehrt Aktion aus, loggt Ergebnis."""
     aktion = d['intent'] if isinstance(d, dict) else d
     erg = ''
@@ -276,6 +288,10 @@ def execute(d):
     except Exception as e:
         erg = f'Fehler bei {aktion}: {str(e)[:150]}'
 
+    try:
+        import jack_gedanken as _gd2
+        _gd2.ergebnis(_gid, erg, 'fehler' not in str(erg).lower())
+    except Exception: pass
     if isinstance(d, dict):
         _log_intent(d.get('_text',''), aktion, d.get('methode','?'),
                     d.get('confidence',0), True, erg)

@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-12T12:31:31.091688
+Stand: 2026-08-13T01:14:37.886686
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -29,7 +29,7 @@ Stand: 2026-08-12T12:31:31.091688
 - JACK verfügt über Fähigkeiten wie Speichermanagement, Sicherheit und Automatisierung.
 - Dima hat Dima als Nutzer und JACK als KI-OS identifiziert.
 
-## Aktive Module (82)
+## Aktive Module (84)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -49,6 +49,8 @@ Stand: 2026-08-12T12:31:31.091688
 - jack_consolidate.py
 - jack_cortex.py
 - jack_db_queue.py
+- jack_episoden.py
+- jack_gedanken.py
 - jack_gemini_bridge.py
 - jack_haliza.py
 - jack_handshake_gen.py
@@ -114,30 +116,30 @@ Stand: 2026-08-12T12:31:31.091688
 - test_jack_approval.py
 
 ## System-Status
-- Offene Fehler: 0
-- Erinnerungen: 211
+- Offene Fehler: 1
+- Erinnerungen: 226
 - Dienste:
-run: jack_cortex: (pid 24878) 4183s
-run: jack_telegram: (pid 5675) 777s
+run: jack_cortex: (pid 24878) 49969s
+run: jack_telegram: (pid 3549) 0s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 24888) 4183s
+run: ollama: (pid 24888) 49969s
 
 ## Letzte Aenderungen
+654712b gemini: varianz-zwang und anti-report-stil im system-prompt
+6cf5abf gemini: varianz-zwang, anti-wiederholung, report-stil verboten
+80d15ea adb: aktive app und cpu-last im live-context, apps in identity gespeichert
+d0c1deb talk: syntaxwarning fix, antwort-laenge praeferenz in identity
+a1ddac0 talk: situationsbewusstsein - akku, laufzeiten, fehler-historie, muster, memory-stats, anti-wiederholung
+3bfc28c talk: _live immer via _status_als_text(), keine keyword-bedingung
+8670f03 talk: live-status als natuerliche sprache fuer gemini, muster aus intent-db
+b90d0a9 gemini: collect_status schnell ohne xiaomi-ssh, ram+temp+dienste lokal
+cd3c71e gemini: collect_status ohne xiaomi-ssh fuer schnellen kontext, live-daten klar im prompt
+7510d02 logging: alle restlichen blinden excepts geloggt
 fc6e8ef logging: blinde excepts in autonomous/publish/handshake/selftest geloggt
 acc2585 menue: /bugfix eingetragen | logging: 5 weitere module geloggt
 bef1a9d meilenstein: erster autonomer bugfix deployed - bug 2934 jack_cortex
 6c758d4 bugfix-loop: autonomer bug-fix mit freigabe-button, /bugfix befehl
 03ab41d intent: confidence-schwellen angepasst, bestaetigungsfragen erhoehen confidence
-0513e89 sync: context und identity aktualisiert
-04ea02f telegram: lokalen threading import in main() entfernt - UnboundLocalError fix
-ac156a9 logging: blinde excepts in telegram/oracle/publish/intent/config geloggt
-a7c5d3c sensors: xiaomi-ip aus config statt hardcoded
-9bd701d telegram: menu-callback ganz oben, OK-popup zeigt letzten jack-gedanken
-f8647f6 telegram: /menu ganz oben in handle() vor allem anderen
-019dcf8 telegram: alter menu-handler entfernt, neues kategorie-menue aktiv
-243dd6c telegram: komplettes menue-system mit kategorien, beschreibungen und beispielen
-be27b3c traceback-parser: fehleranalyse mit loesungshinweisen, /tb befehl in telegram
-2688e1d jack_calltest: prueft alle modulaebergreifenden Aufrufe + tote Waechter-Threads
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

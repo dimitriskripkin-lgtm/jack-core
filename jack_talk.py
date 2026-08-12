@@ -251,6 +251,12 @@ def _status_als_text():
                 zeilen.append("  " + cl[:80])
     except Exception: pass
 
+    try:
+        import jack_episoden as _ep
+        _et = _ep.als_text(4)
+        if _et: zeilen.append(_et)
+    except Exception: pass
+
     zeilen.append("=== ENDE SITUATIONSBEWUSSTSEIN ===")
     # Letzte JACK-Antworten - Anti-Wiederholung
     try:
