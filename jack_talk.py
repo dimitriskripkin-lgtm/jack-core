@@ -225,6 +225,32 @@ def _status_als_text():
         zeilen.append(f"Gedaechtnis: {n_mem} Erinnerungen, {n_vec} Vektoren indexiert")
     except Exception: pass
 
+    # ADB: aktive App + CPU
+    try:
+        import subprocess as _adb, re as _re3
+        _port = open(os.path.expanduser("~/jack/.adb_port")).read().strip()
+        # Aktive App
+        r = _adb.run(["adb","shell","dumpsys","window"],
+            capture_output=True,text=True,timeout=5)
+        for line in r.stdout.split(chr(10)):
+            if "mCurrentFocus" in line and "null" not in line:
+                m = _re3.search(r'u\d+ ([\w.]+)/([\w.]+)', line)
+                if m:
+                    pkg = m.group(1)
+                    app_kurz = pkg.split(".")[-1]
+                    zeilen.append(f"Aktive App: {app_kurz} ({pkg})")
+                break
+        # CPU Top 3
+        r2 = _adb.run(["adb","shell","dumpsys","cpuinfo"],
+            capture_output=True,text=True,timeout=5)
+        cpu_lines = [l.strip() for l in r2.stdout.split(chr(10))
+                     if "%" in l and "/" in l and "kernel" in l][:3]
+        if cpu_lines:
+            zeilen.append("CPU Top 3:")
+            for cl in cpu_lines:
+                zeilen.append("  " + cl[:80])
+    except Exception: pass
+
     zeilen.append("=== ENDE SITUATIONSBEWUSSTSEIN ===")
     zeilen.append("WICHTIG: Wenn der Nutzer 'was noch' fragt - nenne ANDERE Aspekte die noch nicht erwaehnt wurden.")
     zeilen.append("Keine Standardfloskeln. Konkrete Zahlen und Beobachtungen. Sei ehrlich wenn du nichts Neues weisst.")

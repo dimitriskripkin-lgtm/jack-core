@@ -27,3 +27,6 @@ else
     echo "$(date): Cortex tot (Versuch $FAILS/3), starte neu" >> ~/jack/startup.log
     nohup python3 jack_cortex.py >> ~/jack/cortex_stdout.log 2>&1 &
 fi
+# ADB Wireless Debug Verbindung
+PORT=$(cat ~/jack/.adb_port 2>/dev/null || echo "36205")
+adb connect 127.0.0.1:$PORT >/dev/null 2>&1
