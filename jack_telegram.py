@@ -893,7 +893,6 @@ def main():
                             except Exception as _le: _jlog and _jlog.fehler("telegram","unbenannt",_le)
                     except Exception as _fe:
                         send("Foto-Fehler: " + str(_fe)[:200])
-                import threading
                 threading.Thread(target=_foto, daemon=True).start()
                 continue
 
