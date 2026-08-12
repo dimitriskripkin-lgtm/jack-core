@@ -1,4 +1,8 @@
 import os, configparser
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 DEFAULT = {
     'NETWORK': {'ssh_port': '8022', 'rescue_port': '8023', 'keepalive_interval': '20', 'xiaomi_ip': '10.244.147.131', 'xiaomi_port': '43199'},

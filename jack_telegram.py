@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import os, sys, json, time, urllib.request, urllib.parse, subprocess
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 from datetime import datetime
 import threading
 
@@ -184,8 +188,8 @@ def answer_callback(callback_id, text="OK"):
         req = urllib.request.Request(API + "/answerCallbackQuery", data=data,
             headers={"Content-Type": "application/json"})
         urllib.request.urlopen(req, timeout=5)
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("telegram","unbenannt",_le)
 
 def handle_callback(callback_data, callback_id):
     """Verarbeitet Inline-Button-Klicks."""
@@ -821,8 +825,8 @@ def _absturz_log(fehler, kontext=""):
         os.makedirs(os.path.dirname(pfad), exist_ok=True)
         with open(pfad, "a") as f:
             f.write(_d.now().isoformat() + " | " + kontext + " | " + str(fehler)[:300] + chr(10))
-    except Exception:
-        pass
+    except Exception as _le:
+        _jlog and _jlog.fehler("telegram","unbenannt",_le)
 
 def main():
     send("JACK Telegram-Bridge online.")
@@ -886,7 +890,7 @@ def main():
                         send(ans[:3000] + chr(10) + f"({kb}KB)")
                         for f in [raw, small]:
                             try: _o2.remove(f)
-                            except: pass
+                            except Exception as _le: _jlog and _jlog.fehler("telegram","unbenannt",_le)
                     except Exception as _fe:
                         send("Foto-Fehler: " + str(_fe)[:200])
                 import threading
@@ -907,7 +911,7 @@ def main():
                         send_voice(rw)
                         for _f in (op, rw):
                             try: os.remove(_f)
-                            except: pass
+                            except Exception as _le: _jlog and _jlog.fehler("telegram","unbenannt",_le)
                     except Exception as e:
                         send("Fehler bei Sprachverarbeitung: " + str(e)[:100])
                 threading.Thread(target=_vrun, daemon=True).start()

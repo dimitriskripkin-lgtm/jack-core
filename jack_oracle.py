@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """JACK Oracle - bidirektionaler Kanal zwischen Claude und JACK via GitHub."""
 import os, json, subprocess, time, urllib.request, hmac, hashlib, datetime
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 
 REPO = "https://raw.githubusercontent.com/dimitriskripkin-lgtm/jack-commands/master/jack_cmd.json"
 LOCAL = os.path.expanduser("~/jack-commands")
@@ -14,7 +18,7 @@ def get_oracle_secret():
         for l in s.split(chr(10)):
             if "ORACLE_SECRET=" in l:
                 return l.split("=",1)[1].strip().strip('"')
-    except: pass
+    except Exception as _le: _jlog and _jlog.fehler("oracle","unbenannt",_le)
     return None
 
 def verify_sig(cmd, uuid, ts, sig):
@@ -141,7 +145,7 @@ def cycle():
     save_uuid(uuid)
     try:
         import jack_log; jack_log.log_decision("ORACLE-EINGANG",f"{uuid[:8]}: {cmd[:80]}")
-    except: pass
+    except Exception as _le: _jlog and _jlog.fehler("oracle","unbenannt",_le)
     safe,reason=is_safe(cmd)
     if not safe:
         push_result(uuid,cmd,"BLOCKIERT: "+reason,"blocked"); return
@@ -156,5 +160,5 @@ if __name__=="__main__":
         except Exception as e:
             try:
                 import jack_log; jack_log.log_decision("ORACLE-FEHLER",str(e)[:100])
-            except: pass
+            except Exception as _le: _jlog and _jlog.fehler("oracle","unbenannt",_le)
         time.sleep(60)

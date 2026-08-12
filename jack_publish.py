@@ -2,6 +2,10 @@
 """Veroeffentlicht SANITIERTEN JACK-Kontext oeffentlich fuer Claude/andere KIs.
 NIEMALS Secrets/Keys/Tokens - nur Struktur, Status, Logbuch-Zusammenfassung."""
 import os, subprocess, datetime, re
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
 H=os.path.expanduser("~/jack")
 OUT=os.path.expanduser("~/jack-context")
 BAD=re.compile(r'(AQ\.[A-Za-z0-9_-]{10}|sk_[a-zA-Z0-9]{10}|AIza[A-Za-z0-9_-]{10}|gh[ps]_[A-Za-z0-9]{10}|[0-9]{9,10}:AA[A-Za-z0-9_-]{10})')
