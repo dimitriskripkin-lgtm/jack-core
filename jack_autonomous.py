@@ -213,7 +213,7 @@ def _reflexion_loop():
                         str(ergebnis["ins_gedaechtnis"]) + " ins Gedaechtnis")
         except Exception as _e:
             try: import jack_log; jack_log.log_decision("REFLEXION-ERR", str(_e)[:80])
-            except: pass
+            except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _tm.sleep(3600)
 
 def _sanity_loop():
