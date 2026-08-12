@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-07T12:30:46.798755
+Stand: 2026-08-12T12:13:20.418398
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -27,8 +27,9 @@ Stand: 2026-08-07T12:30:46.798755
 - Das Xiaomi ist oft nicht erreichbar.
 - Die SSH-Verbindung zum Xiaomi ist häufig instabil.
 - JACK verfügt über Fähigkeiten wie Speichermanagement, Sicherheit und Automatisierung.
+- Dima hat Dima als Nutzer und JACK als KI-OS identifiziert.
 
-## Aktive Module (78)
+## Aktive Module (81)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -38,6 +39,7 @@ Stand: 2026-08-07T12:30:46.798755
 - jack_briefing.py
 - jack_budget.py
 - jack_bug_fixer.py
+- jack_calltest.py
 - jack_chains.py
 - jack_claude.py
 - jack_code_writer.py
@@ -70,6 +72,7 @@ Stand: 2026-08-07T12:30:46.798755
 - jack_personality.py
 - jack_publish.py
 - jack_radar.py
+- jack_reflexion.py
 - jack_sanity.py
 - jack_scout.py
 - jack_screen_tracker.py
@@ -83,6 +86,7 @@ Stand: 2026-08-07T12:30:46.798755
 - jack_talk.py
 - jack_telegram.py
 - jack_thermal.py
+- jack_traceback.py
 - jack_ui.py
 - jack_v2.py
 - jack_vecdb.py
@@ -110,29 +114,29 @@ Stand: 2026-08-07T12:30:46.798755
 
 ## System-Status
 - Offene Fehler: 1
-- Erinnerungen: 197
+- Erinnerungen: 209
 - Dienste:
-run: jack_cortex: (pid 31748) 18559s
-run: jack_telegram: (pid 957) 18393s
+run: jack_cortex: (pid 24878) 3092s
+run: jack_telegram: (pid 29141) 331s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 11415) 20343s
+run: ollama: (pid 24888) 3092s
 
 ## Letzte Aenderungen
-f827ff1 selftest: cpu-die 91C, akku 50C - zwei separate sensoren
-cca6d62 tests: 5 kern-tests fuer memory, intent, selftest, chains
-8dbcf19 memory: fts duplikate-fix, rebuild fts index
-e2be96d memory: schema fix 5->7 spalten, monkey-patch weg, schreibt via db_queue
-c51e96d memory_tree: schreibt via db_queue (thread-safe) | offene aenderungen synchronisiert
-9457fb2 db_queue: thread-safe write-queue | gemini: bare except geloggt | logging in kernmodulen
-bae4bcf db_queue: thread-safe sqlite write-queue, ein writer pro db
-5409af4 memory-tree: baumstruktur mit parent_id, auto-chaining in sessions, /baum befehl
-9397b65 logging: blinde excepts in 5 kernmodulen geloggt | memory: parent_id baumstruktur
-8a090d0 logging: jack_logging.py gebaut, blinde excepts in cortex/autonomous/intent geloggt, budget fname-fix, code_writer sys_prompt
-44f1655 ruff: 48 autofixes, fname-nameerror in jack_budget gefixt, sys_prompt in code_writer verdrahtet, jack_node_alpha archiviert
-477c233 vulkan: nach fairem benchmark deaktiviert - 66 prozent langsamer als CPU
-7f9ecbf chains: multi-step aktionsketten mit bedingungen, /kette befehl, morgen-briefing als kette
-dc40620 cortex: xiaomi-statuswechsel entprellt, erst nach 3 stabilen zyklen melden
-6d6439d talk: intent vor gemini, ergebnis fliesst in antwort statt raten
+04ea02f telegram: lokalen threading import in main() entfernt - UnboundLocalError fix
+ac156a9 logging: blinde excepts in telegram/oracle/publish/intent/config geloggt
+a7c5d3c sensors: xiaomi-ip aus config statt hardcoded
+9bd701d telegram: menu-callback ganz oben, OK-popup zeigt letzten jack-gedanken
+f8647f6 telegram: /menu ganz oben in handle() vor allem anderen
+019dcf8 telegram: alter menu-handler entfernt, neues kategorie-menue aktiv
+243dd6c telegram: komplettes menue-system mit kategorien, beschreibungen und beispielen
+be27b3c traceback-parser: fehleranalyse mit loesungshinweisen, /tb befehl in telegram
+2688e1d jack_calltest: prueft alle modulaebergreifenden Aufrufe + tote Waechter-Threads
+01c4105 Telegram: Offset persistent + sofortige Bestaetigung + Absturz-Log (behebt Replay-Loop)
+ebb1b09 Telegram: Timestamp am Ende jeder Nachricht
+c766375 jack_reflexion: Aktions-IDs + Nacht-Reflexions-Loop -> Langzeitgedaechtnis
+8fab8e0 jack_sanity: check()-Alias fuer Waechter-Thread (behebt SANITY-ERR)
+030eb0e db_queue: import als fallback in cortex/missions/memory_engine
+c65b048 telegram: foto-analyse immer auf deutsch
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
