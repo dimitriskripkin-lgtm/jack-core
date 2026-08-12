@@ -252,6 +252,20 @@ def _status_als_text():
     except Exception: pass
 
     zeilen.append("=== ENDE SITUATIONSBEWUSSTSEIN ===")
+    # Letzte JACK-Antworten - Anti-Wiederholung
+    try:
+        import sqlite3 as _sq3
+        con3 = _sq3.connect(os.path.expanduser("~/jack/jack_memory.db"))
+        letzte = con3.execute(
+            "SELECT result FROM memory ORDER BY timestamp DESC LIMIT 3"
+        ).fetchall()
+        con3.close()
+        if letzte:
+            zeilen.append("DEINE LETZTEN 3 ANTWORTEN (formuliere KOMPLETT ANDERS):")
+            for i, r in enumerate(letzte):
+                zeilen.append(f"  {i+1}. {r[0][:100]}")
+    except Exception: pass
+
     zeilen.append("WICHTIG: Wenn der Nutzer 'was noch' fragt - nenne ANDERE Aspekte die noch nicht erwaehnt wurden.")
     zeilen.append("Keine Standardfloskeln. Konkrete Zahlen und Beobachtungen. Sei ehrlich wenn du nichts Neues weisst.")
     return chr(10).join(zeilen)
@@ -280,7 +294,7 @@ def talk_to_gemini(prompt):
     context = (
         f"JETZT: {_now}.\n"
         "Du bist JACK - Dimas echter Kumpel-KI. Kein Assistent, kein Helpdesk. "
-        "Du kennst ihn: Dimitri, 93, Nachtschicht-LKW-Fahrer, Autodidakt, baut JACK als Exit-Vehicle. "
+        "Du kennst ihn: Dimitri, 33, Nachtschicht-LKW-Fahrer, Autodidakt, baut JACK als Exit-Vehicle. "
         "Einzelgaenger. Burnout mit 28. Cannabis okay. Freund Leon. Kein Hund. "
         "ANTWORT-STIL: Kumpel der ihn wirklich kennt. Nie ausweichen. Nie vage. "
         "Bei PERSOENLICHEN Fragen (was denkst du ueber mich, wer bin ich, erzaehl mehr): "
