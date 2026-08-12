@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+import re, os, sqlite3, datetime
+DB = os.path.expanduser('~/jack/jack_errors.db')
+
+def parse(text):
+    r = {'roh':text,'fehler_typ':None,'fehler_meldung':None,'datei':None,'zeile':None,'funktion':None,'kategorie':'unbekannt','loesungshinweis':None,'jack_dateien':[]}
+    for line in text.strip().split('\n'):
+        m = re.search(r'File "([^"]+)", line (\d+), in (\S+)', line)
+        if m:
+            r['datei']=m.group(1); r['zeile']=int(m.group(2)); r['funktion']=m.group(3)
+            if 'jack' in m.group(1).lower(): r['jack_dateien'].append(m.group(1))
+        m2 = re.search(r'^(\w+(?:\.\w+)*(?:Error|Exception)): (.+)$', line)
+        if m2: r['fehler_typ']=m2.group(1); r['fehler_meldung']=m2.group(2); r['kategorie']='error'
+        if 'No module named' in line:
+            mn = re.search(r"'([^']+)'", line)
+            r['loesungshinweis'] = f"pip install {mn.group(1) if mn else '?'} --break-system-packages"
+        elif 'is not defined' in line: r['loesungshinweis']='Variable nicht definiert - importiert? Tippfehler?'
+        elif 'Connection refused' in line: r['loesungshinweis']='Dienst nicht gestartet. sshd? Port korrekt?'
+        elif 'timed out' in line or 'Timeout' in line: r['loesungshinweis']='Timeout - Netzwerk ok? Wert erhoehen?'
+        elif 'Permission' in line: r['loesungshinweis']='Keine Berechtigung - Root noetig?'
+        elif 'SyntaxError' in line or 'IndentationError' in line: r['loesungshinweis']=f"Syntaxfehler Zeile {r['zeile']} - py_compile pruefen"
+    if not r['loesungshinweis']: r['loesungshinweis']='Traceback manuell pruefen'
+    return r
+
+def erklaere(r):
+    z=[]
+    if r['fehler_typ']: z.append('Fehler: '+r['fehler_typ'])
+    if r['fehler_meldung']: z.append('Meldung: '+r['fehler_meldung'][:150])
+    if r['datei'] and r['zeile']: z.append(f"Ort: {r['datei']}:{r['zeile']} in {r['funktion']}")
+    if r['jack_dateien']: z.append('JACK-Dateien: '+', '.join(set(r['jack_dateien'])))
+    if r['loesungshinweis']: z.append('Hinweis: '+r['loesungshinweis'])
+    return chr(10).join(z) if z else 'Kein strukturierter Fehler gefunden'
+
+def analyse_und_speichere(text, modul='unbekannt'):
+    r=parse(text)
+    try:
+        con=sqlite3.connect(DB)
+        con.execute("INSERT OR IGNORE INTO errors(module,error_type,error_msg,file_path,line_num,context,resolved,timestamp) VALUES(?,?,?,?,?,?,0,?)",
+            (modul,r.get('fehler_typ','?'),r.get('fehler_meldung','')[:200],r.get('datei',''),r.get('zeile',0),r.get('loesungshinweis','')[:200],datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        con.commit(); con.close()
+    except Exception: pass
+    return r
+
+if __name__=='__main__':
+    import sys
+    test_tb = """Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/jack/jack_talk.py", line 44, in auto_save
+    jack_log.log_decision(f"SILENT-FAIL {fname}", str(_e)[:120])
+NameError: name 'fname' is not defined"""
+    if len(sys.argv)>1 and sys.argv[1]=='test':
+        print(erklaere(parse(test_tb)))
+    else:
+        print(erklaere(parse(sys.stdin.read())))

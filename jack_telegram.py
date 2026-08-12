@@ -555,6 +555,15 @@ def handle(text):
             return 'Session-Kette zurueckgesetzt. Naechste Erinnerung startet neue Kette.'
         return _mt.baum_text(rest)
 
+    if raw.strip().lower().startswith('/analyse') or raw.strip().lower().startswith('/tb '):
+        tb_text = raw.strip().split(' ',1)[1].strip() if ' ' in raw.strip() else ''
+        if not tb_text:
+            return 'Nutzung: /tb <traceback-text> oder einfach Fehlertext nach /analyse'
+        import jack_traceback as _jt
+        r = _jt.parse(tb_text)
+        _jt.analyse_und_speichere(tb_text, 'telegram_analyse')
+        return _jt.erklaere(r)
+
     if raw.strip().lower().startswith('/level'):
         raw_level = raw.strip().lower().replace('/level','').strip()
         parts = ['/level', raw_level] if raw_level else ['/level']
