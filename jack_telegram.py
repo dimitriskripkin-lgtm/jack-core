@@ -736,6 +736,10 @@ def handle(text):
             return chr(10).join('- ' + x['titel'] + ' (' + x['end_ts'][:10] + ')' for x in o)
         return _ep3.als_text(6) or 'Noch keine Episoden.'
 
+    if raw.strip().lower() in ('/check','/bereit'):
+        import jack_voraussetzung as _vz
+        return 'Was gerade moeglich ist:' + chr(10) + _vz.alles()
+
     if raw.strip().lower().startswith('/level'):
         raw_level = raw.strip().lower().replace('/level','').strip()
         parts = ['/level', raw_level] if raw_level else ['/level']
@@ -962,8 +966,11 @@ def main():
                     try:
                         get_voice(fid, op)
                         rw, heard, ans = process_voice_message(op)
-                        send("Verstanden: " + heard + chr(10) + chr(10) + "JACK: " + ans)
-                        send_voice(rw)
+                        send("Du: " + str(heard) + chr(10) + chr(10) + "JACK: " + str(ans))
+                        try:
+                            send_voice(rw)
+                        except Exception as _ve:
+                            send("(Sprachausgabe fehlgeschlagen: " + str(_ve)[:60] + ")")
                         for _f in (op, rw):
                             try: os.remove(_f)
                             except Exception as _le: _jlog and _jlog.fehler("telegram","unbenannt",_le)

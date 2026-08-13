@@ -77,33 +77,42 @@ XIAOMI_LAST_STATE = None
 XIAOMI_PENDING = None
 XIAOMI_PENDING_COUNT = 0
 
+XIAOMI_SEIT = [0.0, None]
+XIAOMI_MELDUNGEN = [0, '']
+
 def notify_xiaomi_state(connected):
-    global XIAOMI_LAST_STATE, XIAOMI_PENDING, XIAOMI_PENDING_COUNT
+    global XIAOMI_LAST_STATE
+    import time as _t, datetime as _d, os as _o, json as _j
     if XIAOMI_LAST_STATE == connected:
-        XIAOMI_PENDING = None
-        XIAOMI_PENDING_COUNT = 0
+        XIAOMI_SEIT[0] = 0.0; XIAOMI_SEIT[1] = None
         return
-    # Zustandswechsel muss 3 Zyklen stabil sein bevor gemeldet wird
-    if XIAOMI_PENDING == connected:
-        XIAOMI_PENDING_COUNT += 1
-    else:
-        XIAOMI_PENDING = connected
-        XIAOMI_PENDING_COUNT = 1
-    if XIAOMI_PENDING_COUNT < 3:
+    if XIAOMI_SEIT[1] != connected:
+        XIAOMI_SEIT[1] = connected; XIAOMI_SEIT[0] = _t.time()
         return
+    if _t.time() - XIAOMI_SEIT[0] < 900:
+        return
+    heute = _d.date.today().isoformat()
+    if XIAOMI_MELDUNGEN[1] != heute:
+        XIAOMI_MELDUNGEN[0] = 0; XIAOMI_MELDUNGEN[1] = heute
+    if XIAOMI_MELDUNGEN[0] >= 2:
+        XIAOMI_LAST_STATE = connected
+        return
+    XIAOMI_MELDUNGEN[0] += 1
     XIAOMI_LAST_STATE = connected
-    XIAOMI_PENDING = None
-    XIAOMI_PENDING_COUNT = 0
+    XIAOMI_SEIT[0] = 0.0; XIAOMI_SEIT[1] = None
     try:
-        msg = "Xiaomi verbunden" if connected else "Xiaomi getrennt"
-        import urllib.request, json, os
-        secrets = open(os.path.expanduser("~/.jack_secrets")).read()
-        t = [l.split("=",1)[1].strip().strip("\"") for l in secrets.split(chr(10)) if "TELEGRAM_BOT_TOKEN" in l][0]
-        c = [l.split("=",1)[1].strip().strip("\"") for l in secrets.split(chr(10)) if "TELEGRAM_CHAT_ID" in l][0]
-        d = json.dumps({"chat_id": c, "text": msg}).encode()
-        urllib.request.urlopen(urllib.request.Request(f"https://api.telegram.org/bot{t}/sendMessage", data=d, headers={"Content-Type":"application/json"}), timeout=5)
+        msg = 'Xiaomi ist seit 15 Minuten wieder erreichbar.' if connected else 'Xiaomi ist seit 15 Minuten weg.'
+        import urllib.request
+        sec = open(_o.path.expanduser('~/.jack_secrets')).read()
+        tok = [l.split('=',1)[1].strip().strip('"') for l in sec.split(chr(10)) if 'TELEGRAM_BOT_TOKEN' in l][0]
+        cid = [l.split('=',1)[1].strip().strip('"') for l in sec.split(chr(10)) if 'TELEGRAM_CHAT_ID' in l][0]
+        data = _j.dumps({'chat_id':cid,'text':msg}).encode()
+        urllib.request.urlopen(urllib.request.Request(
+            'https://api.telegram.org/bot'+tok+'/sendMessage', data=data,
+            headers={'Content-Type':'application/json'}), timeout=5)
     except Exception as e:
-        log_status(f"[Cortex] Notify-Fehler: {e}")
+        log_status('[Cortex] Notify-Fehler: ' + str(e)[:80])
+
 
 def check_and_heal():
     global SSH_FAIL_COUNT, SSH_ERR_COUNT, XIAOMI_IP

@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-13T01:14:37.886686
+Stand: 2026-08-13T08:01:07.730277
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -29,7 +29,7 @@ Stand: 2026-08-13T01:14:37.886686
 - JACK verfügt über Fähigkeiten wie Speichermanagement, Sicherheit und Automatisierung.
 - Dima hat Dima als Nutzer und JACK als KI-OS identifiziert.
 
-## Aktive Module (84)
+## Aktive Module (85)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -103,6 +103,7 @@ Stand: 2026-08-13T01:14:37.886686
 - jack_voice_processor.py
 - jack_voice_router.py
 - jack_voice_stability.py
+- jack_voraussetzung.py
 - jack_write.py
 - jack_xiaomi.py
 - jack_xiaomi_cmd.py
@@ -117,14 +118,16 @@ Stand: 2026-08-13T01:14:37.886686
 
 ## System-Status
 - Offene Fehler: 1
-- Erinnerungen: 226
+- Erinnerungen: 228
 - Dienste:
-run: jack_cortex: (pid 24878) 49969s
-run: jack_telegram: (pid 3549) 0s
+run: jack_cortex: (pid 24878) 74359s
+run: jack_telegram: (pid 10235) 23936s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 24888) 49969s
+run: ollama: (pid 24888) 74359s
 
 ## Letzte Aenderungen
+65ae2f5 telegram: lange nachrichten aufteilen, episoden nicht abgehackt
+f21b5a3 episoden + gedanken + reflexion: momente statt datenpunkte, echte proaktivitaet, sichtbare gedankenkette
 654712b gemini: varianz-zwang und anti-report-stil im system-prompt
 6cf5abf gemini: varianz-zwang, anti-wiederholung, report-stil verboten
 80d15ea adb: aktive app und cpu-last im live-context, apps in identity gespeichert
@@ -138,8 +141,6 @@ cd3c71e gemini: collect_status ohne xiaomi-ssh fuer schnellen kontext, live-date
 fc6e8ef logging: blinde excepts in autonomous/publish/handshake/selftest geloggt
 acc2585 menue: /bugfix eingetragen | logging: 5 weitere module geloggt
 bef1a9d meilenstein: erster autonomer bugfix deployed - bug 2934 jack_cortex
-6c758d4 bugfix-loop: autonomer bug-fix mit freigabe-button, /bugfix befehl
-03ab41d intent: confidence-schwellen angepasst, bestaetigungsfragen erhoehen confidence
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

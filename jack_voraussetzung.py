@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+"""Prueft ob eine Aktion ueberhaupt moeglich ist - bevor sie fehlschlaegt."""
+import os, subprocess, json
+
+def _run(cmd, timeout=6):
+    try:
+        return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+    except Exception:
+        return None
+
+def gps_an():
+    r = _run(['settings','get','secure','location_mode'])
+    if r and r.stdout.strip().isdigit():
+        return int(r.stdout.strip()) > 0, 'location_mode=' + r.stdout.strip()
+    r2 = _run(['adb','shell','settings','get','secure','location_mode'])
+    if r2 and r2.stdout.strip().isdigit():
+        return int(r2.stdout.strip()) > 0, 'via adb'
+    r3 = _run(['termux-location','-p','network'], timeout=12)
+    if r3 and r3.returncode == 0 and 'latitude' in (r3.stdout or ''):
+        return True, 'location liefert daten'
+    return False, 'keine positionsdaten'
+
+def wlan_an():
+    r = _run(['termux-wifi-connectioninfo'], timeout=6)
+    if not r or not r.stdout.strip():
+        return False, 'keine wifi-info'
+    try:
+        d = json.loads(r.stdout)
+        ip = d.get('ip','')
+        if ip and ip != '0.0.0.0' and ip != '<unknown ip>':
+            return True, 'ip ' + str(ip)
+        return False, 'verbunden aber keine gueltige ip'
+    except Exception:
+        return False, 'wifi-info unlesbar'
+
+def xiaomi_ssh():
+    try:
+        import jack_config as jc
+        ip = jc.get_param('NETWORK','xiaomi_ip')
+    except Exception:
+        return False, 'config nicht lesbar'
+    r = _run(['ssh','-i',os.path.expanduser('~/.ssh/id_jack'),'-o','BatchMode=yes',
+              '-o','StrictHostKeyChecking=no','-o','ConnectTimeout=4','-p','8022',
+              'root@'+str(ip),'true'], timeout=8)
+    if r is None:
+        return False, 'ssh timeout'
+    if r.returncode == 0:
+        return True, 'erreichbar'
+    err = (r.stderr or '').lower()
+    if 'refused' in err:
+        return False, 'port offen aber sshd gestoppt - am Xiaomi "sshd" eingeben'
+    if 'timed out' in err or 'unreachable' in err:
+        return False, 'nicht im selben Netz oder aus'
+    return False, (r.stderr or 'unbekannt')[:80]
+
+def ollama_an():
+    try:
+        import urllib.request
+        urllib.request.urlopen('http://localhost:11434/api/tags', timeout=4)
+        return True, 'laeuft'
+    except Exception as e:
+        return False, str(e)[:60]
+
+def adb_verbunden():
+    r = _run(['adb','devices'])
+    if r and 'device' in r.stdout.replace('List of devices attached',''):
+        return True, 'verbunden'
+    return False, 'nicht verbunden - Port aus Wireless Debugging pruefen'
+
+def kamera_frei():
+    r = _run(['termux-camera-info'], timeout=8)
+    if r and r.returncode == 0 and 'id' in (r.stdout or ''):
+        return True, 'verfuegbar'
+    return False, 'Kamera nicht ansprechbar - andere App aktiv?'
+
+BEDARF = {
+    'standort_check':   ['gps'],
+    'ssh_check':        ['xiaomi'],
+    'xiaomi_status':    ['xiaomi'],
+    'xiaomi_wake':      ['xiaomi'],
+    'ollama_check':     ['ollama'],
+    'sensor_check':     [],
+    'akku_check':       [],
+    'ram_check':        [],
+    'temp_check':       [],
+    'dienste_check':    [],
+    'fehler_check':     [],
+    'dienst_neustart':  [],
+    'werkstatt_leeren': [],
+}
+
+PRUEFER = {
+    'gps':     (gps_an,       'GPS ist aus. Schalt es in den Schnelleinstellungen an, dann nochmal.'),
+    'wlan':    (wlan_an,      'Kein WLAN. Ohne Netz geht das nicht.'),
+    'xiaomi':  (xiaomi_ssh,   'Xiaomi nicht erreichbar.'),
+    'ollama':  (ollama_an,    'Ollama laeuft nicht. sv up ollama.'),
+    'adb':     (adb_verbunden,'ADB nicht verbunden. adb connect 127.0.0.1:PORT.'),
+    'kamera':  (kamera_frei,  'Kamera belegt oder nicht verfuegbar.'),
+}
+
+def pruefe(aktion):
+    """(ok, klartext). Klartext ist leer wenn alles passt."""
+    for key in BEDARF.get(aktion, []):
+        fn, hinweis = PRUEFER.get(key, (None, ''))
+        if not fn:
+            continue
+        try:
+            ok, detail = fn()
+        except Exception as e:
+            return False, 'Konnte ' + key + ' nicht pruefen: ' + str(e)[:60]
+        if not ok:
+            return False, hinweis + ' (' + str(detail) + ')'
+    return True, ''
+
+def alles():
+    z = []
+    for key, (fn, _) in PRUEFER.items():
+        try:
+            ok, d = fn()
+            z.append(('OK ' if ok else 'AUS') + ' ' + key + ': ' + str(d)[:60])
+        except Exception as e:
+            z.append('ERR ' + key + ': ' + str(e)[:50])
+    return chr(10).join(z)
+
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) > 1:
+        ok, txt = pruefe(sys.argv[1])
+        print(('MOEGLICH' if ok else 'BLOCKIERT') + ': ' + (txt or 'alles da'))
+    else:
+        print(alles())
