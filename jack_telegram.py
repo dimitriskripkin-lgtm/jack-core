@@ -25,7 +25,7 @@ BESTAETIGUNG = 'bestaetige schreiben'
 PENDING_IMPROVE = {}
 BESTAETIGUNG_PATCH = 'bestaetige patch'
 
-FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/scan','/menu','/m','/trace','/level','/kette','/baum'}
+FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/menu','/m','/trace','/level','/kette','/baum'}
 
 def load_secrets():
     token, chat_id = None, None
@@ -130,11 +130,13 @@ TOKEN, CHAT_ID = load_secrets()
 API = f"https://api.telegram.org/bot{TOKEN}"
 
 def send(text):
-    if len(str(text)) > 3800:
-        teile = [text[i:i+3800] for i in range(0, len(text), 3800)]
-        for teil in teile:
-            _send_raw(teil)
+    text = str(text)
+    if len(text) <= 3800:
+        _send_raw(text)
         return
+    teile = [text[i:i+3800] for i in range(0, len(text), 3800)]
+    for teil in teile:
+        _send_raw(teil)
 def _send_raw(text):
     url = f"{API}/sendMessage"
     data = json.dumps({"chat_id": CHAT_ID, "text": text}).encode()
@@ -142,7 +144,13 @@ def _send_raw(text):
     try:
         urllib.request.urlopen(req, timeout=10)
     except Exception as e:
-        print(f"Send-Fehler: {e}")
+        body = ""
+        try: body = e.read().decode()[:200]
+        except Exception: pass
+        try:
+            import jack_log; jack_log.log_decision("TG-SEND-FEHLER", f"{e} | {body} | text={str(text)[:60]}")
+        except Exception: pass
+        print(f"Send-Fehler: {e} | {body}")
 
 def get_voice(file_id, out_path):
     url = f"{API}/getFile?file_id={file_id}"
@@ -230,7 +238,7 @@ def handle_callback(callback_data, callback_id):
                 return f"Fix nicht gefunden: {fix_id}"
             import subprocess
             r = subprocess.run(["python3", fix["pfad"]],
-                capture_output=True, text=True, timeout=30)
+                capture_output=True, text=True, timeout=0)
             output = (r.stdout + r.stderr).strip()[:400]
             jack_log.log_decision("APPROVE-FIX-BUTTON", f"{fix_id}: {output[:80]}")
             return f"Fix ausgefuehrt:\n{output}"
@@ -280,7 +288,7 @@ def handle_callback(callback_data, callback_id):
         import glob as _gl
         for bak in _gl.glob(os.path.expanduser("~/jack/*.bugfix_bak")):
             try: os.remove(bak)
-            except: pass
+            except Exception: pass
         import jack_log; jack_log.log_decision("BUGFIX-DEPLOYED", f"Bug #{bug_id} gefixt und freigegeben")
         return f"Bug #{bug_id} als geloest markiert. Backup entfernt."
 
@@ -351,9 +359,9 @@ def handle_callback(callback_data, callback_id):
         return f"Unbekannter Button: {callback_data}"
 
 def get_updates(offset=0):
-    url = f"{API}/getUpdates?timeout=30&offset={offset}"
+    url = f"{API}/getUpdates?timeout=0&offset={offset}"
     try:
-        with urllib.request.urlopen(url, timeout=35) as res:
+        with urllib.request.urlopen(url, timeout=5) as res:
             return json.loads(res.read())['result']
     except: return []
 
@@ -390,7 +398,7 @@ def handle(text):
         data = {"cmd": cmd, "uuid": uid, "ts": ts, "sig": sig}
         repo = _o.path.expanduser("~/jack-commands")
         open(_o.path.join(repo,"jack_cmd.json"),"w").write(_j.dumps(data))
-        _sp.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=30)
+        _sp.run("cd ~/jack-commands && git add jack_cmd.json && git commit -m oracle && git push origin master", shell=True, capture_output=True, timeout=0)
         return "Oracle abgeschickt (" + uid + "). In ~60s: /oracle_result"
     if raw.strip().lower() == "/missionen":
         import jack_missions as _jm
@@ -784,7 +792,7 @@ def handle(text):
             if not os.path.exists(pfad):
                 return f"Fix-Datei fehlt: {pfad}"
             r = subprocess.run(["python3", pfad],
-                capture_output=True, text=True, timeout=30)
+                capture_output=True, text=True, timeout=0)
             output = (r.stdout + r.stderr).strip()[:500]
             import jack_log
             jack_log.log_decision("APPROVE-FIX", f"{fix_id}: {output[:80]}")
@@ -945,7 +953,7 @@ def main():
                         req = _ur.Request(
                             f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}",
                             data=payload, headers={"Content-Type":"application/json"})
-                        with _ur.urlopen(req, timeout=30) as r:
+                        with _ur.urlopen(req, timeout=0) as r:
                             ans = _j.loads(r.read())['candidates'][0]['content']['parts'][0]['text']
                         send(ans[:3000] + chr(10) + f"({kb}KB)")
                         for f in [raw, small]:
