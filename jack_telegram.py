@@ -748,6 +748,22 @@ def handle(text):
         import jack_voraussetzung as _vz
         return 'Was gerade moeglich ist:' + chr(10) + _vz.alles()
 
+    if raw.strip().lower().startswith('/lokal'):
+        import jack_lokal as _jl
+        rest = raw.strip()[6:].strip()
+        if not rest:
+            return _jl.status()
+        if rest.startswith('setze '):
+            return 'Modell gesetzt: ' + rest[6:] if _jl.setze(rest[6:].strip()) else 'Fehlgeschlagen'
+        a, e = _jl.frage(rest)
+        return a if a else 'Lokal nicht moeglich: ' + str(e)
+
+    if raw.strip().lower().startswith('/route'):
+        import jack_router as _jr
+        rest = raw.strip()[6:].strip() or 'test'
+        z, g = _jr.route(rest)
+        return 'Ziel: ' + z + chr(10) + 'Grund: ' + g + chr(10) + 'Netz: ' + ('ja' if _jr.netz_da() else 'nein')
+
     if raw.strip().lower().startswith('/level'):
         raw_level = raw.strip().lower().replace('/level','').strip()
         parts = ['/level', raw_level] if raw_level else ['/level']

@@ -224,6 +224,13 @@ def talk_to_gemini(prompt):
     except Exception as _le:
         _jlog and _jlog.fehler("talk","unbenannt",_le)
     try:
+        try:
+            import jack_router as _jro
+            if not _jro.netz_da():
+                _lok, _err = __import__('jack_lokal').frage(prompt, timeout=60)
+                if _lok:
+                    return _lok + chr(10) + chr(10) + '(offline beantwortet - lokales Modell)'
+        except Exception: pass
         result = jack_gemini_bridge.ask_gemini(context)
         if _intent_res:
             result = result + chr(10) + chr(10) + "[geprueft] " + str(_intent_res)
