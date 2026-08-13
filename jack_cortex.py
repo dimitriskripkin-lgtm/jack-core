@@ -148,7 +148,7 @@ def check_and_heal():
     # Ping OK, reset counter
     notify_xiaomi_state(True)
     if SSH_FAIL_COUNT > 0:
-        log_error(f"[Cortex] Xiaomi erreichbar wieder (nach {SSH_FAIL_COUNT} Fails)") # CORTEX_ERR: Xiaomi erreichbar wieder (nach 2 Fails)
+        log_status(f"[Cortex] Xiaomi erreichbar wieder (nach {SSH_FAIL_COUNT} Fails)") # CORTEX_ERR: Xiaomi erreichbar wieder (nach 2 Fails)
         SSH_FAIL_COUNT = 0
         notify_xiaomi_state(True)
     
