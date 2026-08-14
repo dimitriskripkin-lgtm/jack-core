@@ -120,7 +120,7 @@ def explore_next():
     results={}
 
     # CPU-Last
-    r=run_shell('cat /proc/loadavg', as_root=False, timeout=10)
+    r=run_shell('cat /proc/loadavg', as_root=True, timeout=10)
     try: results['cpu_user']='Load: '+r['stdout'].split()[0]
     except Exception: results['cpu_user']='unbekannt'
 
