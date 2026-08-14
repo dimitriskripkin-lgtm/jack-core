@@ -77,6 +77,24 @@ def cycle(dry=False):
         json.dump({"dienste":dienste,"xiaomi":xi,"errors":err},open(STATE,"w"))
     return {"erster_lauf":first,"dienste":dienste,"xiaomi":xi,"errors":err,"wuerde_tun":akt}
 
+def _maybe_self_audit():
+    try:
+        import jack_scheduler as _js, jack_self_audit as _jsa
+        ok,_=_js.can_run_heavy()
+        if ok:
+            _jsa.run()
+    except Exception as e:
+        try: import jack_log; jack_log.log_decision("SELF-AUDIT-FEHLER",str(e)[:80])
+        except Exception: pass
+
+def _maybe_ingest_schedule():
+    """Placeholder: schwere Ingest-Jobs nur in Power-Time."""
+    try:
+        import jack_scheduler as _js
+        if not _js.is_power_time(): return
+        import jack_log; jack_log.log_decision("SCHEDULER","Power-Time aktiv - schwere Jobs erlaubt")
+    except Exception: pass
+
 def _maybe_audit():
     try:
         import jack_audit, time as _t
@@ -125,6 +143,8 @@ def main():
             except Exception: pass
         _maybe_audit()
         _maybe_self_improve()
+        _maybe_self_audit()
+        _maybe_ingest_schedule()
         try:
             import jack_xiaomi as _jx
             _xr=_jx.explore_next()

@@ -176,6 +176,10 @@ def talk_to_gemini(prompt):
     except Exception:
         hits = []
     mem_ctx = "\n".join([f"- [{h[4]}] {h[1]} -> {h[2][:150]}" for h in hits]) if hits else "(keine)"
+    try:
+        import jack_context_compress as _jcc
+        mem_ctx = _jcc.compress(prompt, mem_ctx)
+    except Exception: pass
     _live = _status_als_text()
     try:
         import json as _json
