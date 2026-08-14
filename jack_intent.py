@@ -101,7 +101,7 @@ KEYWORDS = {
     'standort_check': ['standort', 'wo bin ich', 'position', 'gps'],
     'dienst_neustart':['neustart', 'restart', 'starte neu', 'reboot dienst'],
     'xiaomi_wake':    ['xiaomi wecken', 'wifi neustart', 'xiaomi neustarten'],
-    'proaktiv_check': ['sei proaktiv','proaktiv','optimier','was kannst du','leg los','mach was','schau mal','check alles','guck ob','first mission','erste mission','was willst du','was wuerdest du'],
+    'proaktiv_check': ['sei proaktiv','proaktiv','optimier','was kannst du','leg los','mach was','schau mal','check alles','guck ob','first mission','erste mission','was willst du','was wuerdest du','mach einfach','fang an','jetzt los','tu was'],
 }
 
 FRUST = ['nervt', 'wahnsinnig', 'klappt nicht', 'geht nicht', 'funktioniert nicht',
@@ -185,8 +185,8 @@ def detect(text, gemini_fallback=True):
         auto = conf >= 0.6 and level >= min_level
         fragen = False
     elif level >= min_level:
-        auto = conf >= 0.80
-        fragen = 0.75 <= conf < 0.80
+        auto = conf >= 0.60
+        fragen = 0.50 <= conf < 0.60
     else:
         auto = False
         fragen = False
