@@ -428,30 +428,33 @@ def oracle_sign(cmd, uuid, ts):
     except: return ""
 
 def handle(text):
-    if text:
-        # 1. Autonomer Xiaomi Inspector Trigger
-        if any(k in text.lower() for k in ['xiaomi', 'slave']) and any(k in text.lower() for k in ['check', 'prüf', 'umgebung', 'status', 'inspekt', 'prozess']):
-            try:
-                import jack_xiaomi_inspector
-                send('📱 *Verbinde mit Xiaomi Slave via SSH...*')
-                ok, sys_data = jack_xiaomi_inspector.inspect_xiaomi_system()
-                if ok:
-                    text = f"[ECHTER XIAOMI SYSTEM-INSPECT OUTPUT]:\n" + sys_data + f"\n\n[ANWEISUNG]:\nAnalysiere diese echten Systemdaten präzise und technisch. Nenne konkrete Zahlen (RAM, Load, Prozesse, Speicher)."
-                else:
-                    send(f'⚠️ *Xiaomi SSH Fehler:* {sys_data}\nVerarbeite Anfrage ohne Live-Daten.')
-            except Exception as e:
-                send(f'⚠️ *Inspector Fehler:* {e}')
+    if not text:
+        return None
 
-        # 2. Smart Web-Ingest Trigger
-        import re
-        url_match = re.search(r'https?://[^\s]+', text)
-        if url_match:
-            url = url_match.group(0)
+    # 1. Autonomer Xiaomi Inspector Trigger
+    if any(k in text.lower() for k in ['xiaomi', 'slave']) and any(k in text.lower() for k in ['check', 'prüf', 'umgebung', 'status', 'inspekt', 'prozess']):
+        try:
+            import jack_xiaomi_inspector
+            send('📱 *Verbinde mit Xiaomi Slave via SSH...*')
+            ok, sys_data = jack_xiaomi_inspector.inspect_xiaomi_system()
+            if ok:
+                return f"[ECHTER XIAOMI SYSTEM-INSPECT OUTPUT]:\n" + sys_data + f"\n\n[ANWEISUNG]:\nAnalysiere diese echten Systemdaten präzise und technisch. Nenne konkrete Zahlen (RAM, Load, Prozesse, Speicher)."
+            else:
+                send(f'⚠️ *Xiaomi SSH Fehler:* {sys_data}\nVerarbeite Anfrage ohne Live-Daten.')
+        except Exception as e:
+            send(f'⚠️ *Inspector Fehler:* {e}')
+
+    # 2. Smart Web-Ingest Trigger (ignoriert localhost / internal URLs)
+    import re
+    url_match = re.search(r'https?://[^\s]+', text)
+    if url_match:
+        url = url_match.group(0)
+        if 'localhost' not in url and '127.0.0.1' not in url:
             user_prompt = text.replace(url, '').strip()
             try:
                 import jack_web_ingest
                 send(f'🌐 *Lade Web-Inhalt...*\n`{url}`')
-                success, clean_text, added, skipped, err = jack_web_ingest.fetch_and_ingest_url(url)
+                success, clean_text, added, skipped, err = jack_web_ingest.fetch_and_process_url(url)
                 if success:
                     if not user_prompt:
                         return f'✅ *Web-Ingest erfolgreich!*\n📊 {added} Chunks gelernt, {skipped} Duplikate verworfen.'
@@ -461,6 +464,8 @@ def handle(text):
                     send(f'⚠️ *Web-Fetch Warnung:* {err}\nVerarbeite Frage ohne Seiteninhalt.')
             except Exception as e:
                 send(f'⚠️ *Web-Fehler:* {e}')
+
+    return text
 
 def _offset_lesen():
     try:
