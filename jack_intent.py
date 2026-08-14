@@ -119,10 +119,11 @@ def _keyword_detect(text):
     # Direkte Bestaetigungsfragen: "ist es verbunden", "laeuft es", "wie ist der status"
     bestaetigung = any(s in t for s in ['ist es', 'ist er', 'laeuft es', 'laeuft er', 'wie ist', 'status', 'verbunden'])
     treffer = []
+    HIGH_CONF=['proaktiv_check','dienst_neustart','xiaomi_wake']
     for aktion, keys in KEYWORDS.items():
         for k in keys:
             if k in t:
-                conf = 0.5
+                conf = 0.75 if aktion in HIGH_CONF else 0.5
                 if frust: conf += 0.35
                 if frage: conf += 0.25
                 treffer.append((aktion, min(conf, 0.95), k))
