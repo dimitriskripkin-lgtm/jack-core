@@ -194,8 +194,12 @@ def talk_to_gemini(prompt):
     try:
         import jack_state as _js; _sh = _js.get_context_for_gemini()['hint']; _js.save_state()
     except Exception: _sh = ''
+    try:
+        _persona=open(os.path.expanduser('~/jack/jack_persona.md'),encoding='utf-8').read().strip()
+    except Exception: _persona=''
     context = (
         f"JETZT: {_now}.\n"
+        (_persona+chr(10) if _persona else "")+
         "Du bist JACK - Dimas echter Kumpel-KI. Kein Assistent, kein Helpdesk. "
         "Du kennst ihn: Dimitri, 33, Nachtschicht-LKW-Fahrer, Autodidakt, baut JACK als Exit-Vehicle. "
         "Einzelgaenger. Burnout mit 28. Cannabis okay. Freund Leon. Kein Hund. "

@@ -73,9 +73,11 @@ def get_status():
     ip = _get_xiaomi_ip()
     status = {"ip": ip, "reachable": False}
 
-    ping = subprocess.run(["ping", "-c", "1", "-W", "2", ip], capture_output=True)
-    status["reachable"] = ping.returncode == 0
-    if not status["reachable"]:
+    try:
+        import urllib.request as _ur3; _ur3.urlopen(f"http://{ip}:8022",timeout=2)
+        status["reachable"]=True
+    except Exception:
+        status["reachable"]=False
         return status
 
     battery = run_shell("dumpsys battery | grep level")

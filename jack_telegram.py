@@ -218,7 +218,7 @@ def _check_memory_trigger(text, chat_id):
             {"text":"Ja, speichern","callback_data":"mem_save:"+text[:200]},
             {"text":"Nein","callback_data":"mem_skip"}
         ]]}
-        send_keyboard("Soll ich das speichern? "+text[:150], kb)
+        send_keyboard("Soll ich das speichern? "+text[:150], kb["inline_keyboard"])
         return True
     return False
 
