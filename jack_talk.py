@@ -176,7 +176,22 @@ def talk_to_gemini(prompt):
         try:
             import jack_groq_bridge as _gq
             _persona=open(os.path.expanduser('~/jack/jack_persona.md'),encoding='utf-8').read()
-            return _gq.ask_groq(_persona, prompt)
+            _mem=""
+            try:
+                import jack_vecdb as _jv; import jack_memory as _jm
+                mv=get_embedding(prompt)
+                hits=_jv.search_mem(mv,limit=3) if mv else []
+                _mem=chr(10).join([f"- [{h[4]}] {h[1]}: {h[2][:150]}" for h in hits]) if hits else ""
+            except Exception: pass
+            _id=""
+            try:
+                import json as _j
+                _id=_j.dumps(_j.load(open(os.path.expanduser('~/jack/jack_identity.json'))),ensure_ascii=False)[:500]
+            except Exception: pass
+            system=_persona+chr(10)+chr(10)
+            if _id: system+="DIMA-PROFIL:"+chr(10)+_id+chr(10)+chr(10)
+            if _mem: system+="ERINNERUNGEN:"+chr(10)+_mem+chr(10)
+            return _gq.ask_groq(system, prompt)
         except Exception: pass
     import jack_gemini_bridge
     try:
