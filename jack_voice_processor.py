@@ -4,8 +4,7 @@ try:
 except Exception:
     _jlog = None
 import subprocess
-from elevenlabs.client import ElevenLabs
-
+import jack_guard
 WHISPER_PATH = os.path.expanduser("~/whisper.cpp/build/bin/whisper-cli")
 MODEL_PATH = os.path.expanduser("~/whisper.cpp/models/ggml-small.bin")
 SECRETS = os.path.expanduser("~/.jack_secrets")
@@ -25,7 +24,8 @@ def process_voice_message(ogg_path):
     except Exception as e:
         return None, "", f"ffmpeg-Fehler: {e}"
     try:
-        result = subprocess.run([WHISPER_PATH,"-m",MODEL_PATH,"-f",wav_path,"-l","de","-nt","-t","6"], capture_output=True, text=True)
+        with jack_guard.Guard("whisper"):
+            result = subprocess.run([WHISPER_PATH,"-m",MODEL_PATH,"-f",wav_path,"-l","de","-nt","-t","6"], capture_output=True, text=True)
         text = " ".join(result.stdout.split()).strip()
     except Exception as e:
         return None, "", f"Whisper-Fehler: {e}"
@@ -41,12 +41,18 @@ def process_voice_message(ogg_path):
     except Exception as e:
         return None, text, f"Denk-Fehler: {e}"
     try:
+        from elevenlabs.client import ElevenLabs
         client = ElevenLabs(api_key=get_secret("ELEVENLABS_API_KEY"))
         audio = client.text_to_speech.convert(text=response_text, voice_id=get_secret("ELEVENLABS_VOICE_ID"), model_id="eleven_flash_v2_5")
         with open(resp_wav,"wb") as f:
             for chunk in audio: f.write(chunk)
     except Exception as e:
-        return None, text, f"TTS-Fehler: {e}"
+        import subprocess as _sp, jack_log
+        jack_log.log_decision("TTS-FALLBACK","ElevenLabs fehlgeschlagen, nutze espeak: "+str(e)[:80])
+        try:
+            _sp.run(["espeak-ng","-v","de","-s","140","-w",resp_wav,response_text[:500]],timeout=15,capture_output=True,check=True)
+        except Exception as e2:
+            return None, text, f"TTS-Fehler (EL+espeak): {e2}"
     try:
         os.remove(wav_path)
     except Exception as _le:
@@ -59,7 +65,8 @@ def _DEAD_ORIGINAL_process_voice_message(ogg_path):
     subprocess.run(["ffmpeg", "-y", "-i", ogg_path, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav_path], check=True, capture_output=True)
     
     # Audio transkribieren mit 6 CPU-Threads für maximale Geschwindigkeit
-    result = subprocess.run([WHISPER_PATH, "-m", MODEL_PATH, "-f", wav_path, "-l", "de", "-nt", "-t", "6"], capture_output=True, text=True)
+    with jack_guard.Guard("whisper"):
+        result = subprocess.run([WHISPER_PATH, "-m", MODEL_PATH, "-f", wav_path, "-l", "de", "-nt", "-t", "6"], capture_output=True, text=True)
     text = " ".join(result.stdout.split()).strip()
     
     # Intent-Routing: direkte Befehle ohne Gemini-Umweg
@@ -93,6 +100,7 @@ def _DEAD_ORIGINAL_process_voice_message(ogg_path):
         response_text = talk_to_gemini(text)
     
     # Antwort als Sprache generieren (Modern SDK Syntax)
+    from elevenlabs.client import ElevenLabs
     client = ElevenLabs(api_key=get_secret("ELEVENLABS_API_KEY"))
     audio = client.text_to_speech.convert(
         text=response_text,

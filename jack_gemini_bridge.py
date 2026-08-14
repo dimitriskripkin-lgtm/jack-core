@@ -75,6 +75,32 @@ def collect_status(mit_xiaomi=False):
     return status
 
 
+_CB_FAILS = 0
+_CB_OPEN = False
+_CB_THRESHOLD = 3
+
+def _cb_fail():
+    global _CB_FAILS, _CB_OPEN
+    _CB_FAILS += 1
+    if _CB_FAILS >= _CB_THRESHOLD:
+        _CB_OPEN = True
+        try: import jack_log; jack_log.log_decision('CIRCUIT-BREAKER', 'Gemini nach ' + str(_CB_FAILS) + 'x Fehler abgeschaltet, Fallback Ollama')
+        except Exception: pass
+
+def _cb_success():
+    global _CB_FAILS, _CB_OPEN
+    _CB_FAILS = 0; _CB_OPEN = False
+
+def _ollama_fallback(question):
+    try:
+        import urllib.request, json
+        data = json.dumps({'model':'llama3.2:3b','prompt':question,'stream':False}).encode()
+        req = urllib.request.Request('http://localhost:11434/api/generate', data=data, headers={'Content-Type':'application/json'})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            return '[Ollama] ' + json.loads(r.read()).get('response','(leer)')
+    except Exception as e:
+        return '[Fallback fehlgeschlagen] ' + str(e)
+
 def ask_gemini(question, status=None):
     import jack_budget
     _ok,_m=jack_budget.check_and_count('text')
@@ -110,15 +136,20 @@ def ask_gemini(question, status=None):
     }
     data = json.dumps(payload).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+    if _CB_OPEN:
+        try: import jack_log; jack_log.log_decision("CIRCUIT-BREAKER", "Breaker offen, direkt Ollama")
+        except Exception: pass
+        return _ollama_fallback(question)
     import time as _t
     for _a in range(3):
         try:
-            with urllib.request.urlopen(req, timeout=30) as res:
+            with urllib.request.urlopen(req, timeout=15) as res:
                 result = json.loads(res.read())
+                _cb_success()
                 try:
                     import jack_budget; jack_budget.add_tokens(result.get("usageMetadata",{}).get("totalTokenCount",0))
                 except Exception as _e:
-                    import jack_log; jack_log.log_decision('SILENT-FAIL jack_gemini', str(_e)[:120])
+                    import jack_log; jack_log.log_decision("SILENT-FAIL jack_gemini", str(_e)[:120])
                 return result["candidates"][0]["content"]["parts"][0]["text"]
         except Exception as _e:
             _code = getattr(_e, "code", None)
@@ -126,9 +157,10 @@ def ask_gemini(question, status=None):
                 _t.sleep(4 * (_a + 1)); continue
             if _code == 429:
                 return "Gemini ist gerade ueberlastet (Rate-Limit). Gleich nochmal probieren."
+            _cb_fail()
             if _a < 2:
-                _t.sleep(2); continue
-            return f"Gemini-Verbindungsfehler: {_e}"
+                _t.sleep(2 ** _a); continue
+            return _ollama_fallback(question)
 
 def update_identity(new_facts):
     path = "/data/data/com.termux/files/home/jack/jack_identity.json"

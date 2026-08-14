@@ -90,6 +90,25 @@ def get_status():
     return status
 
 
+def push_file_delta(local_path, remote_path):
+    """Uebertraegt nur wenn lokale Datei neuer als remote (Delta Transfer)."""
+    try:
+        local_mtime = int(os.path.getmtime(local_path))
+        r = run_shell(f"stat -c %Y {remote_path} 2>/dev/null || echo 0")
+        remote_mtime = int(r['stdout'].strip() or 0)
+        if local_mtime <= remote_mtime:
+            return {'skipped': True, 'reason': 'remote aktuell'}
+        with open(local_path,'r') as f: content = f.read()
+        ok = write_file(remote_path, content)
+        if ok:
+            try:
+                import jack_log
+                jack_log.log_decision('DELTA-PUSH', local_path + ' -> ' + remote_path)
+            except Exception: pass
+        return {'skipped': False, 'success': ok}
+    except Exception as e:
+        return {'skipped': False, 'success': False, 'error': str(e)}
+
 if __name__ == "__main__":
     print("[XIAOMI] Status-Check...")
     s = get_status()

@@ -179,7 +179,9 @@ def talk_to_gemini(prompt):
     _live = _status_als_text()
     try:
         import json as _json
-        _id = _json.load(open(os.path.expanduser("~/jack/jack_identity.json")))
+        if not getattr(talk_to_gemini, '_id_cache', None):
+            talk_to_gemini._id_cache = _json.load(open(os.path.expanduser('~/jack/jack_identity.json')))
+        _id = talk_to_gemini._id_cache
         id_ctx = _json.dumps(_id, ensure_ascii=False)
     except Exception:
         id_ctx = "(keine)"
@@ -189,6 +191,9 @@ def talk_to_gemini(prompt):
     _wochentage = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"]
     _monate = ["","Januar","Februar","Maerz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"]
     _now = f"{_wochentage[_dt.weekday()]}, {_dt.day}. {_monate[_dt.month]} {_dt.year}, {_dt.strftime('%H Uhr %M')}"
+    try:
+        import jack_state as _js; _sh = _js.get_context_for_gemini()['hint']; _js.save_state()
+    except Exception: _sh = ''
     context = (
         f"JETZT: {_now}.\n"
         "Du bist JACK - Dimas echter Kumpel-KI. Kein Assistent, kein Helpdesk. "

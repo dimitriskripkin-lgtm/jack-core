@@ -998,6 +998,9 @@ def main():
                         for _f in (op, rw):
                             try: os.remove(_f)
                             except Exception as _le: _jlog and _jlog.fehler("telegram","unbenannt",_le)
+                        try:
+                            import jack_guard; jack_guard.saga_cleanup()
+                        except Exception: pass
                     except Exception as e:
                         send("Fehler bei Sprachverarbeitung: " + str(e)[:100])
                 threading.Thread(target=_vrun, daemon=True).start()

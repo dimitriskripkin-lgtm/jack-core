@@ -30,3 +30,10 @@ def get_val(section, key, fallback=None):
         return get_param(section, key)
     except Exception:
         return fallback
+
+def feature_enabled(name, default=True):
+    try:
+        val = config.get('FEATURES', name).strip().lower()
+        return val in ('true','1','yes','on')
+    except Exception:
+        return default
