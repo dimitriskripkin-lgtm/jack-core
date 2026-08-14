@@ -1,69 +1,7 @@
-# JACK (Just Another Cognitive Kernel)
-> **Autonomous Edge AI Operating System for Android/Termux Environment**
+# JACK â€” Just Autonomous Command Kit
+> Autonomes Edge-KI-Betriebssystem auf Android-Hardware. Offline-first. Keine Cloud. Volle Kontrolle.
 
----
-
-## ğŸ› System Architecture & Node Topology
-
-JACK operates as a distributed cluster over persistent SSH tunnels with automated service supervision via `runit`:
-
-```
-+-------------------------------------------------------------------+
-| Honor Magic8 Pro (Master Node / Termux / 11GB RAM)                 |
-| - Core Engine, Telegram Bridge, State Machine, Priority Queue     |
-| - 90+ Modular Python Services & Runit Supervision Daemon          |
-| - Storage: SQLite (WAL Mode, busy_timeout=5000) + sqlite-vec      |
-+-------------------------------------------------------------------+
-                                  |
-                      SSH ControlMaster (95ms)
-                                  v
-+-------------------------------------------------------------------+
-| Xiaomi 11T Pro (Slave Node / Termux / IP: 10.58.220.131)          |
-| - Execution Engine: Offline Local Ollama (Llama 3.2 3B)           |
-| - Background Jobs: Autonomous Exploration & Task Processing       |
-+-------------------------------------------------------------------+
-```
-
----
-
-## âš™ Core Engineering Highlights
-
-### 1. Offline Shadow-Execution AutoFixer (`jack_autofixer_shadow.py`)
-Autonomous bug correction without risking live production crashes:
-- **Sandbox Isolation**: Unresolved errors in `jack_errors.db` trigger local LLM patches generated in `$PREFIX/tmp`.
-- **Verification**: Syntax and integrity are verified via `py_compile` inside the shadow environment.
-- **Atomic Rollback**: Source files are replaced only after 100% successful compilation, backed by automatic pre-patch backups.
-
-### 2. RAM-Aware Priority Task Queue (`jack_queue.py`)
-To prevent Android LMK process termination, background tasks are dynamically managed based on live memory pressure (`MemAvailable >= 800MB` threshold).
-- **Prio 1 (Real-Time)**: Telegram messaging, critical system guards, voice loop.
-- **Prio 2 (State & Optimization)**: Sensor polling, WAL checkpoints, DB optimizations.
-- **Prio 3 (Background)**: Shadow fixes, autonomous exploration (`explore_next`). Prio 3 tasks are automatically suspended if RAM dips below limit.
-
-### 3. Verified RAG & Ingestion Pipeline (`jack_context_ingest.py`)
-- **Sanitizing & Deduplication**: Cleans HTML, normalizes spaces, and filters noise (<80 chars).
-- **MD5 Deduplication**: Prevents duplicate insertions into `jack_memory.db` via deterministic hashing.
-- **Dual-Stack Resilience**: Primary reasoning via Gemini 2.5 Flash API with local Ollama fallback on 3 consecutive network failures.
-
----
-
-## ğŸ“Š Live Metrics & System Profile
-
-| Metric / Component | Status / Value | Design Note |
-| :--- | :--- | :--- |
-| **System Codebase** | **90+ Specialized Python Modules** | Modular micro-architecture in `~/jack` |
-| **Master Node Memory** | ~3.4 GB Available | Monitored by `jack_guard.py` (0.033ms lookup) |
-| **Active Services** | `jack_cortex`, `jack_telegram`, `ollama` | Managed by `runit` supervision |
-| **Inter-Node SSH Latency**| **95 ms** | Optimized via SSH ControlMaster sockets |
-| **Vector Search & RAG** | Native `sqlite-vec` + FTS5 | Zero Heavy-Framework (No ChromaDB) |
-
----
-
-## ğŸ‘¨â€ğŸ’» Author & Philosophy
-
-Engineered by **Dimitri (Dima)** â€” Self-Taught Systems Developer & Professional Truck Driver.
-
-> *"JACK was engineered under real-world conditions during night shiftsâ€”built entirely on mobile devices without desktop reliance. It proves that resilience, performance, and distributed AI architecture can be achieved on edge hardware with strict engineering constraints."*
-
----
-*Branch: `master` | Repository: [dimitriskripkin-lgtm/jack-core](https://github.com/dimitriskripkin-lgtm/jack-core)*
+## Warum JACK?
+Nach dem Crash eines Cloud-VPS am 06.06.2026 ein klares Dogma: **Nie wieder externe AbhÃ¤ngigkeit.**  
+JACK lÃ¤uft vollstÃ¥¹‘¥œ…Õ˜•¥•¹•È!…É‘İ…É”ƒŠLéİ•¤•­½ÁÁ•±Ñ”Mµ…ÉÑÁ¡½¹•Ì…±ÌÙ•ÉÑ•¥±Ñ•Ì‘”µ-$µ=L¸((´´´((ŒŒ!…É‘İ…É”µÉ¡¥Ñ•­ÑÕÈ()ğ9½‘”ğ•ËĞğI½±±”ğMÁ•Ìğ)ğ´´´´´µğ´´´´´´´´´´´´´´µğ´´´´´´´µğ´´´´´´µğ)ğ€¨©5…ÍÑ•È¨¨ğ!½¹½È5…¥ŒàAÉ¼ğ•¡¥É¸€¼!½ÍĞğM¹…Á‘É…½¸€à±¥Ñ”°€ÄÅI4°Q•ÉµÕà¹…Ñ¥Øğ)ğ€¨©M±…Ù”¨¨ğa¥…½µ¤€ÄÅPAÉ¼ğá•ÕÑ½È€¼M•¹Í½ÉÌğI½½Ñ•°MM A½ÉĞ€àÀÈÈ°½¹ÑÉ½±5…ÍÑ•È€ äÕµÌ¤ğ((´´´((ŒŒQ• µMÑ…¬€˜5Õ±Ñ¤µ114I½ÕÑ¥¹œ((´€¨©A•ÉÍ½¹…°½¹Ù•ÉÍ…Ñ¥½¹Ìè¨¨É½Ä±±…µ„´Ì¸Ì´ÜÁˆµÙ•ÉÍ…Ñ¥±•€€¡øÔÀÁµÌ1…Ñ•¹è¤(´€¨©MåÍÑ•´…±±Ì€¼I•…Í½¹¥¹œ€¼Y¥Í¥½¸è¨¨•µ¥¹¤€È¸Ô±…Í (´€¨©=™™±¥¹”…±±‰…¬è¨¨=±±…µ„±±…µ„Ì¸ÈèÍ‰€€¡±½­…°¤(´€¨©5•µ½Éä€˜Iè¨¨ME1¥Ñ”]0€¬ÍÅ±¥Ñ”µÙ•€¡Í½ÕÉ”è¹½µ¥Œµ•µ‰•µÑ•áĞ¤€¬QLÔAÉ”µ¥±Ñ•È(´€¨©Y½¥”MÑ…¬è¨¨±•Ù•¹1…‰ÌQQL€¼•ÍÁ•…¬µ¹€…±±‰…¬€¬İ¡¥ÍÁ•Èµ±¥€MQP(´€¨©%¹Ñ•É™…”è¨¨Q•±•É…´	½Ğ€¡)…­¥µ…¡…Ñ}‰½Ğ¤µ¥Ğ%¹±¥¹”µ-•å‰½…É‘Ì(´€¨©M•ÉÙ¥”5…¹…•µ•¹Ğè¨¨ÉÕ¹¥Ñ€€¼Ñ•ÉµÕàµÍ•ÉÙ¥•Í€€¬Q•ÉµÕàé	½½Ñ€ÕÑ½ÍÑ…ÉĞ((´´´((ŒŒI•Í¥±¥•¹”€˜ÕÑ½¹½µ¥”()ğ•…ÑÕÉ”ğ•Ñ…¥±Ìğ)ğ´´´´´´´´µğ´´´´´´´´µğ)ñ€¨©I4µÕ…É¨¨ğ1½­™¥±”µ5ÕÑ•àÙ½È]¡¥ÍÁ•È½Y¥Í¥½¸°M¡İ•±±”€àÀÁ5ğ)ğ€¨©¥ÉÕ¥Ğ	É•…­•È¨¨ğ9… €Íà±½Õµ•¡±•ÈƒŠ8Í½™½ÉÑ¥•È…±±‰…¬…Õ˜=±±…µ„ğ)ñ€¨©É…•™Õ°•É…‘…Ñ¥½¸¨¨ğI4€ğ€ÄÈÀÁ5°­­Ô€ğ€ÄÔ”½‘•ÈQ•µÀ€ø€Ôã
+ÁƒŠxÕÑ¼µ½İ¹É…‘”ğ)ğ€¨©M¡…‘½Üµá•ÕÑ¥½¸¨¨ğA…Ñ¡•Ì•ÉÍĞ¥¸M¡…ÑÑ•¸µ-½Á¥”Ñ•ÍÑ•¸€¡Áå}½µÁ¥±•€¤Ù½ÈÁÁ±äğ)ğ€¨©•…5…¸ÌMİ¥Ñ ¨¨ğ©…­}İ…Ñ¡‘½œ¹Í¡€ÁËÕ™ĞÕ¹¡•¥±Ğ…‰•ÍÓ
