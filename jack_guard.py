@@ -115,6 +115,17 @@ def get_model(default="gemini-2.5-flash", light="llama3.2:3b"):
             return light
     except Exception:
         pass
+    try:
+        import os as _os
+        for zone in range(10):
+            tf="/sys/class/thermal/thermal_zone"+str(zone)+"/temp"
+            if _os.path.exists(tf):
+                t=int(open(tf).read().strip())
+                if 1000<t<200000 and t/1000>58:
+                    _log("GRACEFUL-DEGRADE","Temperatur "+str(round(t/1000,1))+"C, schalte auf "+light)
+                    return light
+    except Exception:
+        pass
     return default
 
 def saga_cleanup(base_path=None):
