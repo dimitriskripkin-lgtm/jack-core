@@ -451,7 +451,7 @@ def handle(text):
             try:
                 import jack_web_ingest
                 send(f'🌐 *Lade Web-Inhalt...*\n`{url}`')
-                success, clean_text, added, skipped, err = jack_web_ingest.fetch_and_process_url(url)
+                success, clean_text, added, skipped, err = jack_web_ingest.fetch_and_ingest_url(url)
                 if success:
                     if not user_prompt:
                         return f'✅ *Web-Ingest erfolgreich!*\n📊 {added} Chunks gelernt, {skipped} Duplikate verworfen.'
