@@ -121,15 +121,17 @@ def explore_next():
 
     # CPU-Last
     r=run_shell('cat /proc/loadavg', as_root=False, timeout=10)
-    results['cpu_user']=r['stdout'] if r['success'] else 'unbekannt'
+    try: results['cpu_user']='Load: '+r['stdout'].split()[0]
+    except Exception: results['cpu_user']='unbekannt'
 
     # RAM
-    r=run_shell('cat /proc/meminfo | grep MemAvailable | awk "{print $2}"', as_root=False, timeout=10)
-    results['ram']=r['stdout'] if r['success'] else 'unbekannt'
+    r=run_shell('cat /proc/meminfo | grep MemAvailable', as_root=False, timeout=10)
+    try: results['ram']=str(round(int(r['stdout'].split()[1])/1024))+'MB frei'
+    except Exception: results['ram']='unbekannt'
 
     # Akku
-    r=run_shell('cat /sys/class/power_supply/battery/capacity 2>/dev/null || dumpsys battery | grep level', as_root=False, timeout=10)
-    results['battery']=r['stdout'].strip() if r['success'] else 'unbekannt'
+    r=run_shell('cat /sys/class/power_supply/battery/capacity', as_root=True, timeout=10)
+    results['battery']=r['stdout'].strip()+'%' if r['success'] and r['stdout'].strip().isdigit() else 'unbekannt'
 
     # Aktive App
     r=run_shell('dumpsys activity top 2>/dev/null | grep ACTIVITY | head -1', as_root=False, timeout=10)
@@ -142,7 +144,9 @@ def explore_next():
 
     # Disk
     r=run_shell('df /data | tail -1', as_root=False, timeout=10)
-    results['disk_used']=r['stdout'] if r['success'] else 'unbekannt'
+    try:
+        parts=r['stdout'].split(); results['disk_used']=parts[2]+'KB used, '+parts[4]+' full'
+    except Exception: results['disk_used']='unbekannt'
 
     results['timestamp']=datetime.datetime.now().isoformat()
     results['source']='explore_next'
