@@ -227,6 +227,25 @@ def _check_memory_trigger(text, chat_id):
 
 def handle_callback(callback_data, callback_id):
     """Verarbeitet Inline-Button-Klicks."""
+    if callback_data.startswith("confirm_write:"):
+        fn=callback_data[14:]
+        if PENDING_WRITE and PENDING_WRITE.get("filename")==fn:
+            try:
+                ok,msg=jack_write.commit_write(PENDING_WRITE["filename"],PENDING_WRITE["content"])
+                PENDING_WRITE.clear()
+                answer_callback(callback_id,"Gespeichert" if ok else "Fehler")
+                send("✅ "+msg if ok else "❌ "+msg)
+            except Exception as e:
+                answer_callback(callback_id,"Fehler")
+                send("Fehler beim Schreiben: "+str(e)[:100])
+        else:
+            answer_callback(callback_id,"Kein Vorschlag offen")
+        return
+    if callback_data.startswith("cancel_write:"):
+        PENDING_WRITE.clear()
+        answer_callback(callback_id,"Abgebrochen")
+        send("❌ Abgebrochen.")
+        return
     if callback_data.startswith("mem_save:"):
         fact=callback_data[9:]
         try:
