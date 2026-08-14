@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 import os, sys, json, time, urllib.request, urllib.parse, subprocess
+_PERSONA_PATH=os.path.expanduser("~/jack/jack_persona.md")
+try:
+    _PERSONA=open(_PERSONA_PATH,encoding="utf-8").read().strip()
+except Exception:
+    _PERSONA="Du bist JACK, Dimas KI-System. Kumpel-Ton, Deutsch, direkt."
 try:
     import jack_logging as _jlog
 except Exception:
@@ -206,8 +211,30 @@ def answer_callback(callback_id, text="OK"):
     except Exception as _le:
         _jlog and _jlog.fehler("telegram","unbenannt",_le)
 
+def _check_memory_trigger(text, chat_id):
+    triggers=["merk dir","vergiss nicht","ich hab jetzt","ich bin jetzt","ab sofort","wichtig:","ich wohne","ich arbeite"]
+    if any(t in text.lower() for t in triggers):
+        kb={"inline_keyboard":[[
+            {"text":"Ja, speichern","callback_data":"mem_save:"+text[:200]},
+            {"text":"Nein","callback_data":"mem_skip"}
+        ]]}
+        send_keyboard("Soll ich das speichern? "+text[:150], kb)
+        return True
+    return False
+
 def handle_callback(callback_data, callback_id):
     """Verarbeitet Inline-Button-Klicks."""
+    if callback_data.startswith("mem_save:"):
+        fact=callback_data[9:]
+        try:
+            import jack_memory as _jm; _jm.save(fact,"Dima erwaehnte",intent="dima_fact")
+            answer_callback(callback_id,"Gespeichert")
+        except Exception as e:
+            answer_callback(callback_id,"Fehler: "+str(e)[:50])
+        return
+    if callback_data=="mem_skip":
+        answer_callback(callback_id,"Ok")
+        return
     # Kategorie-Menu - sofort pruefen
     if callback_data.startswith("menu:"):
         key = callback_data[5:]
@@ -961,7 +988,7 @@ def main():
                         import jack_config as _jc
                         model = _jc.get_param('gemini','model')
                         payload = _j.dumps({
-                            "system_instruction":{"parts":[{"text":"Du bist JACK, Dimas KI-Assistent. Antworte IMMER auf Deutsch. Kurz und direkt. Bei Fehlermeldungen: Ursache nennen, Loesung vorschlagen."}]},
+                            "system_instruction":{"parts":[{"text":_PERSONA}]},
                             "contents":[{"parts":[
                                 {"text": cap},
                                 {"inline_data":{"mime_type":"image/jpeg","data":b64}}
@@ -969,7 +996,7 @@ def main():
                         req = _ur.Request(
                             f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}",
                             data=payload, headers={"Content-Type":"application/json"})
-                        with _ur.urlopen(req, timeout=0) as r:
+                        with _ur.urlopen(req, timeout=45) as r:
                             ans = _j.loads(r.read())['candidates'][0]['content']['parts'][0]['text']
                         send(ans[:3000] + chr(10) + f"({kb}KB)")
                         for f in [raw, small]:
