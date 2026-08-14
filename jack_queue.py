@@ -1,22 +1,40 @@
 #!/usr/bin/env python3
-"""JACK Queue: Thread-safe Write-Queue fuer DB-Operationen."""
-import queue,threading,sqlite3,os
+"""JACK Queue: Priority Task Queue fuer autonome Aktionen."""
+import queue,threading,os
 
-_q=queue.Queue()
 _lock=threading.Lock()
 
-def enqueue(fn,*args,**kwargs):
-    _q.put((fn,args,kwargs))
-
-def _worker():
-    while True:
-        fn,args,kwargs=_q.get()
+class TaskQueue:
+    def __init__(self,min_ram_mb=800):
+        self.min_ram_mb=min_ram_mb
+        self._tasks=[]
+        self._counter=0
+    def _check_ram(self):
         try:
-            with _lock: fn(*args,**kwargs)
-        except Exception as e:
-            try: import jack_log; jack_log.log_decision('QUEUE-ERR',str(e)[:100])
-            except Exception: pass
-        finally: _q.task_done()
+            for l in open("/proc/meminfo"):
+                if "MemAvailable" in l:
+                    return int(l.split()[1])//1024 >= self.min_ram_mb
+        except Exception: pass
+        return True
+    def add_task(self,priority,name,fn):
+        self._counter+=1
+        self._tasks.append((priority,self._counter,name,fn))
+    def execute(self):
+        results={}
+        self._tasks.sort(key=lambda x:(x[0],x[1]))
+        for prio,_,name,fn in self._tasks:
+            if not self._check_ram():
+                results[name]={"status":"skipped","reason":"RAM zu niedrig"}
+                continue
+            try:
+                with _lock: fn()
+                results[name]={"status":"ok"}
+            except Exception as e:
+                results[name]={"status":"error","reason":str(e)[:100]}
+                try: import jack_log; jack_log.log_decision("QUEUE-ERR",name+": "+str(e)[:100])
+                except Exception: pass
+        self._tasks=[]
+        return results
+    def join(self): pass
 
-_t=threading.Thread(target=_worker,daemon=True)
-_t.start()
+def enqueue(fn,*args,**kwargs): pass
