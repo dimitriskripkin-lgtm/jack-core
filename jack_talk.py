@@ -276,3 +276,38 @@ if __name__ == '__main__':
         r = talk_to_gemini(u)
         print(r)
         auto_save_to_memory(u, r)
+
+
+def build_final_prompt(user_query, persona_text, id_ctx, mem_ctx, hist_ctx, live_ctx, timestamp_str):
+    prompt_parts = []
+    
+    # 1. KONTEXT & GEDÄCHTNIS (Oben, damit es die Regeln nicht überschreibt)
+    prompt_parts.append(f"<context>\n[ZEIT]: {timestamp_str}\n[LIVE_SYSTEMSTATUS]: {live_ctx}\n</context>")
+    
+    if id_ctx:
+        prompt_parts.append(f"<user_profile>\n{id_ctx}\n</user_profile>")
+    if mem_ctx:
+        prompt_parts.append(f"<memories>\n{mem_ctx}\n</memories>")
+    if hist_ctx:
+        prompt_parts.append(f"<chat_history>\n{hist_ctx}\n</chat_history>")
+
+    # 2. HARTE REGELLOGIK & PERSONA (Ganz unten, direkt vor dem User-Input)
+    prompt_parts.append(f"""<system_constraints>
+{persona_text}
+
+<forbidden_rules>
+- WIEDERHOLE NIEMALS ungefragt biografische Details (Nachtschicht, Sprinter, Dahlhoff, Burnout, Kiyosaki, Hamsterrad, Exit-Vehicle).
+- VERWENDE KEIN Schleim- oder Floskel-Gelaber ("Als dein KI-Assistent", "Gute Frage", "Kumpel auf Augenhöhe").
+- SAGE NIEMALS "Das kann ich aus dem Chat heraus nicht".
+</forbidden_rules>
+
+<output_format>
+- TTS-PFLEGE: Fließtext zuerst, Code/Befehle IMMER ganz am Ende.
+- KURZ & DIREKT: Passe die Länge an die User-Anfrage an. Kein unnötiger Ballast.
+</output_format>
+</system_constraints>""")
+
+    # 3. DIE EIGENTLICHE USER-ANFRAGE
+    prompt_parts.append(f"<user_query>\n{user_query}\n</user_query>")
+
+    return "\n\n".join(prompt_parts)
