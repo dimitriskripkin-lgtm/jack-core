@@ -87,6 +87,7 @@ AKTIONEN = {
     'dienst_neustart':  {'level': 3, 'text': 'Toten Dienst neustarten'},
     'xiaomi_wake':      {'level': 3, 'text': 'Xiaomi WiFi neustarten'},
     'werkstatt_leeren': {'level': 3, 'text': 'Werkstatt aufraeumen'},
+    'proaktiv_check':  {'level': 3, 'text': 'Proaktiver System + Xiaomi Check'},
 }
 
 KEYWORDS = {
