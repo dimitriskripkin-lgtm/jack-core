@@ -18,6 +18,9 @@ SSH_OPTS = [
     "-o", "StrictHostKeyChecking=no",
     "-o", "UserKnownHostsFile=/dev/null",
     "-o", "ConnectTimeout=5",
+    "-o", "ControlMaster=auto",
+    "-o", "ControlPath="+os.path.expanduser("~/.ssh/sockets/%r@%h:%p"),
+    "-o", "ControlPersist=120",
 ]
 
 
@@ -110,6 +113,50 @@ def push_file_delta(local_path, remote_path):
         return {'skipped': False, 'success': ok}
     except Exception as e:
         return {'skipped': False, 'success': False, 'error': str(e)}
+
+def explore_next():
+    """Autonome Idle-Exploration: JACK schaut selbst was auf dem Xiaomi los ist."""
+    import json, datetime
+    results={}
+
+    # CPU-Last
+    r=run_shell("top -bn1 | grep 'Cpu' | awk '{print $2}'", as_root=False, timeout=10)
+    results['cpu_user']=r['stdout'] if r['success'] else 'unbekannt'
+
+    # RAM
+    r=run_shell('free -m | grep Mem | awk "{print $3\"/\"$2}"', as_root=False, timeout=10)
+    results['ram']=r['stdout'] if r['success'] else 'unbekannt'
+
+    # Akku
+    r=run_shell("dumpsys battery | grep level", as_root=False, timeout=10)
+    results['battery']=r['stdout'].strip() if r['success'] else 'unbekannt'
+
+    # Aktive App
+    r=run_shell("dumpsys window | grep mCurrentFocus | head -1", as_root=False, timeout=10)
+    results['active_app']=r['stdout'].strip() if r['success'] else 'unbekannt'
+
+    # Temperatur
+    r=run_shell("cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null || echo 0", as_root=False, timeout=10)
+    try: results['temp_c']=round(int(r['stdout'].strip())/1000,1)
+    except Exception: results['temp_c']='unbekannt'
+
+    # Disk
+    r=run_shell('df /data | tail -1 | awk "{print $3\"/\"$2}"', as_root=False, timeout=10)
+    results['disk_used']=r['stdout'] if r['success'] else 'unbekannt'
+
+    results['timestamp']=datetime.datetime.now().isoformat()
+    results['source']='explore_next'
+
+    # In RAG speichern
+    try:
+        import jack_memory as _jm
+        summary=json.dumps(results, ensure_ascii=False)
+        _jm.save('xiaomi_explore', summary, intent='explore')
+    except Exception as e:
+        try: import jack_log; jack_log.log_decision('EXPLORE-FEHLER', str(e)[:100])
+        except Exception: pass
+
+    return results
 
 if __name__ == "__main__":
     print("[XIAOMI] Status-Check...")
