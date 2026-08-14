@@ -910,7 +910,9 @@ def handle(text):
             PENDING_WRITE.clear()
             PENDING_WRITE.update(req)
             pv = jack_write.propose(req["filename"], req["content"])
-            send_keyboard("📝 "+pv["filename"]+"\n"+pv["preview"][:200], build_write_keyboard(pv["filename"])["inline_keyboard"])
+            _kb=build_write_keyboard(pv["filename"])["inline_keyboard"]
+            _kb_tuples=[[(b["text"],b["callback_data"]) for b in row] for row in _kb]
+            send_keyboard("📝 "+pv["filename"]+"\n"+pv["preview"][:200], _kb_tuples)
             return None
         _r = jack_talk.talk_to_gemini(text)
         jack_talk.auto_save_to_memory(text, _r)
