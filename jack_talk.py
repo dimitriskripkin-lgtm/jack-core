@@ -169,6 +169,15 @@ def _status_als_text():
 
 
 def talk_to_gemini(prompt):
+    # Persoenliche Gespraeche -> Groq (besser Persona-Treue)
+    # System-Calls, Vision, Reasoning -> Gemini
+    _personal = ["wer bin ich","wer bist du","was denkst du","erzaehl","erklaer mir","wie geht","was magst","was haeltst","kumpel","zusammen","gefuehl","meinung","freund"]
+    if any(w in prompt.lower() for w in _personal):
+        try:
+            import jack_groq_bridge as _gq
+            _persona=open(os.path.expanduser('~/jack/jack_persona.md'),encoding='utf-8').read()
+            return _gq.ask_groq(_persona, prompt)
+        except Exception: pass
     import jack_gemini_bridge
     try:
         mv = get_embedding(prompt)
