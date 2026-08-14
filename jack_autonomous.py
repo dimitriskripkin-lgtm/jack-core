@@ -125,6 +125,14 @@ def main():
             except Exception: pass
         _maybe_audit()
         _maybe_self_improve()
+        try:
+            import jack_xiaomi as _jx
+            _xr=_jx.explore_next()
+            import jack_log; jack_log.log_decision('EXPLORE',
+                f"Xiaomi: CPU={_xr.get('cpu_user','?')} RAM={_xr.get('ram','?')} Akku={_xr.get('battery','?')} Temp={_xr.get('temp_c','?')}C")
+        except Exception as _xe:
+            try: import jack_log; jack_log.log_decision('EXPLORE-FEHLER',str(_xe)[:80])
+            except Exception: pass
         time.sleep(HEARTBEAT)
 
 
