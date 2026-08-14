@@ -946,6 +946,20 @@ def main():
     offset = _offset_lesen()
     print("[TG] Starte mit Offset " + str(offset))
     while True:
+        # Proaktivitaets-Pulse alle 30 Minuten
+        _now_ts = __import__('time').time()
+        if not hasattr(get_updates, '_last_pulse') or _now_ts - get_updates._last_pulse > 1800:
+            get_updates._last_pulse = _now_ts
+            try:
+                import jack_log as _jlp
+                recent = _jlp.recent(3)
+                import jack_guard as _jg
+                ram = _jg.mem_available_mb()
+                model = _jg.get_model()
+                if ram < 1200:
+                    send(f"Yo Dima - RAM wird knapp ({ram}MB). Ich schalte auf {model}.")
+                _jg.saga_cleanup()
+            except Exception: pass
         updates = get_updates(offset)
         for u in updates:
             offset = u['update_id'] + 1
@@ -1037,6 +1051,7 @@ def main():
 
             text = msg.get('text', '')
             if not text: continue
+            if len(text)>10: _check_memory_trigger(text, None)
             print(f"[TG] {text}")
             cmd = text.strip().split()[0] if text.strip() else ''
             if cmd in FAST_CMDS:
