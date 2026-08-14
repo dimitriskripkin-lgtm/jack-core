@@ -40,27 +40,26 @@ def clean_html(raw_html):
     clean_text = re.sub(r'\n{3,}', '\n\n', raw_text).strip()
     return clean_text
 
-def fetch_and_ingest_url(url, source_label="web_ingest"):
-    print(f"[FETCH] Lade Inhalt von: {url}...")
-    req = urllib.request.Request(
-        url, 
-        headers={'User-Agent': 'Mozilla/5.0 (Android; Mobile; rv:120.0) Gecko/120.0 Firefox/120.0'}
-    )
+def fetch_and_process_url(url, source_label="web_ingest"):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7'
+    }
+    req = urllib.request.Request(url, headers=headers)
     try:
-        with urllib.request.urlopen(req, timeout=10) as response:
+        with urllib.request.urlopen(req, timeout=12) as response:
             html = response.read().decode('utf-8', errors='ignore')
             clean_text = clean_html(html)
             
-            if len(clean_text) < 100:
-                print("[WARN] Inhalt zu kurz oder geblockt.")
-                return False
+            if len(clean_text) < 50:
+                return False, "", 0, 0, "Inhalt zu kurz oder geblockt."
                 
-            print(f"[CLEAN] {len(clean_text)} Zeichen bereinigt. Starte Ingest...")
-            
             extracted = ingest.process_plain_text(clean_text, source_name=f"{source_label}:{url}")
-            if not extracted:
-                print("[WARN] Keine Chunks >= 80 Zeichen extrahiert.")
-                return False
+            
+            # Fallback: Falls Chunking fehlschlägt, speichere Rohtext als einen Chunk
+            if not extracted and len(clean_text) >= 50:
+                extracted = [(f"{source_label}:{url}", clean_text[:2000])]
 
             conn = sqlite3.connect(ingest.DB_PATH)
             ingest.init_db(conn)
@@ -82,16 +81,23 @@ def fetch_and_ingest_url(url, source_label="web_ingest"):
 
             conn.commit()
             conn.close()
-            print(f"[OK] Ingestion complete: {added_count} added, {skip_count} deduplicated.")
-            return True
+            return True, clean_text, added_count, skip_count, ""
 
     except Exception as e:
-        print(f"[ERR] Fehler beim Web-Ingest: {e}")
+        return False, "", 0, 0, str(e)
+
+def fetch_and_ingest_url(url, source_label="web_ingest"):
+    print(f"[FETCH] Lade Inhalt von: {url}...")
+    success, clean_text, added, skipped, err = fetch_and_process_url(url, source_label)
+    if success:
+        print(f"[OK] Ingestion erfolgreich: {added} Chunks hinzugefügt, {skipped} Duplikate.")
+        return True
+    else:
+        print(f"[ERR] Web-Ingest Fehlgeschlagen: {err}")
         return False
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        target_url = sys.argv[1]
-        fetch_and_ingest_url(target_url)
+        fetch_and_ingest_url(sys.argv[1])
     else:
         print("Usage: python3 jack_web_ingest.py <URL>")
