@@ -120,19 +120,19 @@ def explore_next():
     results={}
 
     # CPU-Last
-    r=run_shell("top -bn1 | grep 'Cpu' | awk '{print $2}'", as_root=False, timeout=10)
+    r=run_shell('cat /proc/loadavg', as_root=False, timeout=10)
     results['cpu_user']=r['stdout'] if r['success'] else 'unbekannt'
 
     # RAM
-    r=run_shell('free -m | grep Mem | awk "{print $3\"/\"$2}"', as_root=False, timeout=10)
+    r=run_shell('cat /proc/meminfo | grep MemAvailable | awk "{print $2}"', as_root=False, timeout=10)
     results['ram']=r['stdout'] if r['success'] else 'unbekannt'
 
     # Akku
-    r=run_shell("dumpsys battery | grep level", as_root=False, timeout=10)
+    r=run_shell('cat /sys/class/power_supply/battery/capacity 2>/dev/null || dumpsys battery | grep level', as_root=False, timeout=10)
     results['battery']=r['stdout'].strip() if r['success'] else 'unbekannt'
 
     # Aktive App
-    r=run_shell("dumpsys window | grep mCurrentFocus | head -1", as_root=False, timeout=10)
+    r=run_shell('dumpsys activity top 2>/dev/null | grep ACTIVITY | head -1', as_root=False, timeout=10)
     results['active_app']=r['stdout'].strip() if r['success'] else 'unbekannt'
 
     # Temperatur
@@ -141,7 +141,7 @@ def explore_next():
     except Exception: results['temp_c']='unbekannt'
 
     # Disk
-    r=run_shell('df /data | tail -1 | awk "{print $3\"/\"$2}"', as_root=False, timeout=10)
+    r=run_shell('df /data | tail -1', as_root=False, timeout=10)
     results['disk_used']=r['stdout'] if r['success'] else 'unbekannt'
 
     results['timestamp']=datetime.datetime.now().isoformat()
