@@ -243,6 +243,8 @@ def talk_to_gemini(prompt):
         if _pre and _pre['ausfuehren']:
             _pre['_text'] = prompt
             _r = _ji.execute(_pre)
+            if _r and len(str(_r)) > 10:
+                return str(_r)
             _intent_res = _r
             context += (chr(10) + chr(10) + "JACK HAT GERADE GEPRUEFT (" +
                         _pre['beschreibung'] + "): " + str(_r) +
