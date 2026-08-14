@@ -100,6 +100,7 @@ KEYWORDS = {
     'standort_check': ['standort', 'wo bin ich', 'position', 'gps'],
     'dienst_neustart':['neustart', 'restart', 'starte neu', 'reboot dienst'],
     'xiaomi_wake':    ['xiaomi wecken', 'wifi neustart', 'xiaomi neustarten'],
+    'proaktiv_check': ['sei proaktiv','proaktiv','optimier','was kannst du','leg los','mach was','schau mal','check alles','guck ob','first mission','erste mission','was willst du','was wuerdest du'],
 }
 
 FRUST = ['nervt', 'wahnsinnig', 'klappt nicht', 'geht nicht', 'funktioniert nicht',
