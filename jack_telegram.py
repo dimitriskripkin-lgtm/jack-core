@@ -1,11 +1,3 @@
-
-# LIVE VOICE BRIDGE FAST-LANE
-try:
-    from jack_live_bridge import JACKLiveVoiceBridge
-    live_bridge = JACKLiveVoiceBridge()
-except ImportError:
-    live_bridge = None
-
 #!/usr/bin/env python3
 import os, sys, json, time, urllib.request, urllib.parse, subprocess
 _PERSONA_PATH=os.path.expanduser("~/jack/jack_persona.md")
@@ -19,6 +11,10 @@ except Exception:
     _jlog = None
 from datetime import datetime
 import threading
+try:
+    from jack_live_bridge import JACKLiveVoiceBridge as _JLVB; live_bridge=_JLVB()
+except ImportError:
+    live_bridge=None
 
 def build_write_keyboard(filename):
     return {"inline_keyboard":[[{"text":"🟢 Bestätigen","callback_data":f"confirm_write:{filename}"},{"text":"🔴 Abbrechen","callback_data":f"cancel_write:{filename}"}]]}
