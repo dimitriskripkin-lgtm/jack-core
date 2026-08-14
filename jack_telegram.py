@@ -1,3 +1,11 @@
+
+# LIVE VOICE BRIDGE FAST-LANE
+try:
+    from jack_live_bridge import JACKLiveVoiceBridge
+    live_bridge = JACKLiveVoiceBridge()
+except ImportError:
+    live_bridge = None
+
 #!/usr/bin/env python3
 import os, sys, json, time, urllib.request, urllib.parse, subprocess
 _PERSONA_PATH=os.path.expanduser("~/jack/jack_persona.md")
