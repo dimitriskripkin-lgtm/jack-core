@@ -280,6 +280,18 @@ def execute(d):
         elif aktion == 'xiaomi_wake':
             r = _ssh("su -c 'svc wifi disable; sleep 3; svc wifi enable'", 30)
             erg = 'Xiaomi WiFi neugestartet' if r.returncode == 0 else 'Xiaomi nicht erreichbar'
+        elif aktion == 'proaktiv_check':
+            import jack_gemini_bridge as _jgb
+            s=_jgb.collect_status()
+            lines=[f"System: {'OK' if s.get('alle_ok') else 'PROBLEM'} | RAM: {s.get('ram_frei_mb','?')}MB | Temp: {s.get('temp_cpu','?')}C"]
+            try:
+                import jack_xiaomi as _jx; xr=_jx.explore_next()
+                lines.append(f"Xiaomi: RAM {xr.get('ram','?')} | Akku {xr.get('battery','?')} | Load {xr.get('cpu_user','?')} | Temp {xr.get('temp_c','?')}C")
+            except Exception as xe: lines.append(f"Xiaomi: {xe}")
+            try:
+                import jack_log; lines.append("Log: "+jack_log.recent(2))
+            except Exception: pass
+            erg=chr(10).join(lines)
         elif aktion == 'werkstatt_leeren':
             w = os.path.expanduser('~/jack_werkstatt')
             n = len([f for f in os.listdir(w)]) if os.path.isdir(w) else 0
