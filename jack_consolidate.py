@@ -1,67 +1,50 @@
 #!/usr/bin/env python3
-"""
-JACK Session-Konsolidierung
-Liest die letzten Logs und Gedaechtnis-Zugriffe,
-schreibt eine Zusammenfassung als neuen Memory-Eintrag.
-Laeuft automatisch nach jeder Session (Trigger: Waechter oder manuell).
-"""
-import sqlite3, os, sys
-try:
-    import jack_logging as _jlog
-except Exception:
-    _jlog = None
-from datetime import datetime, timedelta
+import os
+import sqlite3
+import json
+import time
 
-sys.path.insert(0, os.path.expanduser("~/jack"))
-DB = os.path.expanduser("~/jack/kortex_memory.db")
-LOG = os.path.expanduser("~/jack/jack_decisions.log")
+DB_PATH = os.path.expanduser("~/jack/jack_memory.db")
 
-def run():
-    conn = sqlite3.connect(DB)
+def run_consolidation():
+    if not os.path.exists(DB_PATH):
+        print("[WARN] DB path not found for consolidation.")
+        return
+
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
-    # Was wurde in den letzten 12h abgerufen?
-    seit = (datetime.now() - timedelta(hours=12)).isoformat()
-    zugegriffen = c.execute(
-        "SELECT category, content FROM memories WHERE last_accessed > ? ORDER BY access_count DESC LIMIT 5",
-        (seit,)
-    ).fetchall()
-
-    # Was wurde in den letzten 12h gemacht? (Logs)
-    try:
-        lines = open(LOG).readlines()
-        letzte_logs = [l.strip() for l in lines[-10:] if l.strip()]
-    except Exception:
-        letzte_logs = []
-
-    if not zugegriffen and not letzte_logs:
-        return "Nichts zu konsolidieren."
-
-    ts = datetime.now().strftime("%Y-%m-%d %H:%M")
-    teile = [f"Session-Zusammenfassung {ts}:"]
-
-    if letzte_logs:
-        teile.append("Aktionen: " + " | ".join([l.split("] ")[1] if "] " in l else l for l in letzte_logs[-5:]]))
-
-    if zugegriffen:
-        teile.append("Genutzte Eintraege: " + ", ".join([f"{r[1][:40]}" for r in zugegriffen]))
-
-    inhalt = "\n".join(teile)
-
-    # Nur speichern wenn Session substanziell war (min 3 Log-Eintraege)
-    if len(letzte_logs) >= 3:
-        c.execute(
-            "INSERT INTO memories (timestamp, category, content, source, tags, importance) VALUES (?,?,?,?,?,?)",
-            (datetime.now().isoformat(), "session", inhalt, "consolidate", "auto session", 6)
+    # Tabelle für synthetisiertes Langzeitwissen anlegen
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS consolidated_knowledge (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            topic TEXT,
+            summary TEXT,
+            source_count INTEGER,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-        conn.commit()
-        import jack_log
-        jack_log.log_decision("CONSOLIDATE", f"Session gespeichert: {len(letzte_logs)} Logs, {len(zugegriffen)} Zugriffe")
-        conn.close()
-        return f"Konsolidiert: {len(letzte_logs)} Logs + {len(zugegriffen)} Gedaechtnis-Zugriffe"
+    ''')
 
+    # Un-synthetisierte Ingest-Einträge holen
+    c.execute("SELECT id, source, content FROM ingested_context WHERE is_stale = 0 ORDER BY id DESC LIMIT 50")
+    rows = c.fetchall()
+
+    if len(rows) < 5:
+        print("[INFO] Zu wenige neue Memories für Konsolidierung (< 5).")
+        conn.close()
+        return
+
+    sources = set(r[1] for r in rows)
+    total_len = sum(len(r[2]) for r in rows)
+
+    summary_text = f"Synthetisiert aus {len(rows)} Memory-Blöcken. Quellen: {', '.join(list(sources)[:3])}. Gesamtzeichen: {total_len}."
+
+    c.execute("INSERT INTO consolidated_knowledge (topic, summary, source_count) VALUES (?, ?, ?)",
+              ("Auto-Synthesis", summary_text, len(rows)))
+
+    conn.commit()
     conn.close()
-    return "Session zu kurz fuer Konsolidierung."
+    print(f"[OK] Memory Consolidation abgeschlossen: {len(rows)} Items verarbeitet.")
 
 if __name__ == "__main__":
-    print(run())
+    run_consolidation()
