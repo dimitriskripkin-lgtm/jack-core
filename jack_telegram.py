@@ -12,6 +12,9 @@ except Exception:
 from datetime import datetime
 import threading
 
+def build_write_keyboard(filename):
+    return {"inline_keyboard":[[{"text":"🟢 Bestätigen","callback_data":f"confirm_write:{filename}"},{"text":"🔴 Abbrechen","callback_data":f"cancel_write:{filename}"}]]}
+
 sys.path.append(os.path.expanduser('~/jack'))
 import jack_claude
 import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors, jack_improve, jack_log, jack_budget, jack_skills, jack_agent
@@ -907,9 +910,8 @@ def handle(text):
             PENDING_WRITE.clear()
             PENDING_WRITE.update(req)
             pv = jack_write.propose(req["filename"], req["content"])
-            return ("Schreibvorschlag:\nDatei: " + pv["filename"] +
-                    "\nOrdner: ~/jack_werkstatt\nInhalt:\n" + pv["preview"] +
-                    "\n\nZum Ausfuehren antworte exakt: " + BESTAETIGUNG + "\nOder: abbrechen")
+            send_keyboard("📝 "+pv["filename"]+"\n"+pv["preview"][:200], build_write_keyboard(pv["filename"])["inline_keyboard"])
+            return None
         _r = jack_talk.talk_to_gemini(text)
         jack_talk.auto_save_to_memory(text, _r)
         return _r[:3000]
