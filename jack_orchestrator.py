@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+import os
+import sys
+import time
+import sqlite3
+import datetime
+
+JACK_DIR = os.path.expanduser("~/jack")
+sys.path.insert(0, JACK_DIR)
+
+import jack_xiaomi_inspector
+
+LOG_FILE = os.path.expanduser("~/jack/orchestrator.log")
+DB_PATH = os.path.expanduser("~/jack/jack_memory.db")
+
+def log(msg):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    entry = f"[{timestamp}] [ORCHESTRATOR] {msg}"
+    print(entry)
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(entry + "\n")
+
+def notify_telegram(msg):
+    try:
+        import jack_telegram
+        jack_telegram.send(msg)
+    except Exception as e:
+        log(f"Fehler beim Telegram-Pushen: {e}")
+
+def check_and_heal_xiaomi():
+    log("🔍 Starte autonomen Xiaomi Health-Check...")
+    ok, output = jack_xiaomi_inspector.inspect_xiaomi_system()
+    
+    if not ok:
+        log(f"⚠️ Xiaomi SSH nicht erreichbar: {output}")
+        return
+
+    # Parse RAM aus free -m / meminfo Output
+    free_ram = None
+    for line in output.splitlines():
+        if "Mem:" in line or "MemAvailable:" in line:
+            parts = line.split()
+            if len(parts) >= 7 and parts[0] == "Mem:":
+                try:
+                    free_ram = int(parts[6]) # available MB
+                except: pass
+
+    log(f"📊 Xiaomi Verfügbarer RAM: {free_ram} MB")
+
+    # Auto-Healing Schwellenwert: Unter 600 MB freiem RAM wird aufgeräumt
+    if free_ram is not None and free_ram < 600:
+        log(f"🚨 RAM kritisch ({free_ram} MB < 600 MB). Starte autonomen Clean-Up...")
+        cleanup_cmd = "sync && echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true"
+        success, res = jack_xiaomi_inspector.run_remote_cmd(cleanup_cmd)
+        
+        notify_msg = (
+            f"🛠️ *Autonomer Xiaomi-Emergency-Fix*\\n"
+            f"RAM war auf {free_ram} MB gesunken.\\n"
+            f"Cache geleert: {'Erfolgreich' if success else 'Fehlgeschlagen'}"
+        )
+        notify_telegram(notify_msg)
+    else:
+        log("✅ Xiaomi Systemzustand im grünen Bereich.")
+
+def generate_morning_briefing():
+    log("🌅 Generiere Morgen-Briefing...")
+    ok, xiaomi_data = jack_xiaomi_inspector.inspect_xiaomi_system()
+    
+    # Kuriertes Wissen der letzten 24h abfragen
+    curated_info = "Keine neuen Einträge."
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT topic, summary FROM curated_knowledge ORDER BY id DESC LIMIT 2")
+        rows = cursor.fetchall()
+        if rows:
+            curated_info = "\n".join([f"• *{r[0]}*: {r[1][:120]}..." for r in rows])
+        conn.close()
+    except Exception as e:
+        curated_info = f"Fehler bei DB-Abfrage: {e}"
+
+    briefing = (
+        f"☕ *Guten Morgen Dima! Hier ist dein JACK-Briefing*\\n\\n"
+        f"📱 *Xiaomi Slave Status:* {'Online' if ok else 'Offline/SSH-Fehler'}\\n"
+        f"🧠 *Kürzlich gelerntes Wissen:*\\n{curated_info}\\n\\n"
+        f"Ready für die nächste Schicht!"
+    )
+    return briefing
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "--briefing":
+        briefing_text = generate_morning_briefing()
+        print(briefing_text)
+        notify_telegram(briefing_text)
+    else:
+        check_and_heal_xiaomi()
