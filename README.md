@@ -2,6 +2,64 @@
 > Autonomes Edge-KI-Betriebssystem auf Android-Hardware. Offline-first. Keine Cloud. Volle Kontrolle.
 
 ## Warum JACK?
-Nach dem Crash eines Cloud-VPS am 06.06.2026 ein klares Dogma: **Nie wieder externe Abh√§ngigkeit.**  
-JACK l√§uft vollst√•πë•úÅÖ’òÅï•ùïπï»Å!Ö…ë›Ö…îÉäLÅÈ›ï§Åùï≠Ω¡¡ï±—îÅMµÖ…—¡°ΩπïÃÅÖ±ÃÅŸï…—ï•±—ïÃÅëùîµ-$µ=L∏((¥¥¥((ååÅ!Ö…ë›Ö…îµ…ç°•—ï≠—’»()Å9ΩëîÅÅïÀù–ÅÅIΩ±±îÅÅM¡ïçÃÅ)¥¥¥¥¥µ¥¥¥¥¥¥¥¥¥¥¥¥¥¥µ¥¥¥¥¥¥¥µ¥¥¥¥¥¥µ)Ä®©5ÖÕ—ï»®®ÅÅ!ΩπΩ»Å5Öù•å‡ÅA…ºÅÅï°•…∏ÄºÅ!ΩÕ–ÅÅMπÖ¡ë…ÖùΩ∏Ä‡Å±•—î∞Äƒ≈ÅI4∞ÅQï…µ’‡ÅπÖ—•ÿÅ)Ä®©M±ÖŸî®®ÅÅa•ÖΩµ§Äƒ≈PÅA…ºÅÅ·ïç’—Ω»ÄºÅMïπÕΩ…ÃÅÅIΩΩ—ïê∞ÅMM ÅAΩ…–Ä‡¿»»∞ÅΩπ—…Ω±5ÖÕ—ï»Ä†‰’µÃ§Å((¥¥¥((ååÅQïç†µM—Öç¨ÄòÅ5’±—§µ114ÅIΩ’—•πú((¥Ä®©Aï…ÕΩπÖ∞ÅΩπŸï…ÕÖ—•ΩπÃË®®Å…ΩƒÅÅ±±ÖµÑ¥Ã∏Ã¥‹¡àµŸï…ÕÖ—•±ïÄÄ°¯‘¿¡µÃÅ1Ö—ïπË§(¥Ä®©MÂÕ—ï¥ÅÖ±±ÃÄºÅIïÖÕΩπ•πúÄºÅY•Õ•Ω∏Ë®®Åïµ•π§Ä»∏‘Å±ÖÕ†(¥Ä®©=ôô±•πîÅÖ±±âÖç¨Ë®®Å=±±ÖµÑÅÅ±±ÖµÑÃ∏»ËÕâÄÄ°±Ω≠Ö∞§(¥Ä®©5ïµΩ…‰ÄòÅIË®®ÅME1•—îÅ]0Ä¨ÅÅÕ≈±•—îµŸïçÄ°ÕΩ’…çîËÅπΩµ•åµïµâïêµ—ï·–§Ä¨ÅQL‘ÅA…îµ•±—ï»(¥Ä®©YΩ•çîÅM—Öç¨Ë®®Å±ïŸïπ1ÖâÃÅQQLÄºÅÅïÕ¡ïÖ¨µπùÄÅÖ±±âÖç¨Ä¨ÅÅ›°•Õ¡ï»µç±•ÄÅMQP(¥Ä®©%π—ï…ôÖçîË®®ÅQï±ïù…Ö¥Å	Ω–Ä°)Öç≠•µÖ°Ö—}âΩ–§Åµ•–Å%π±•πîµ-ïÂâΩÖ…ëÃ(¥Ä®©Mï…Ÿ•çîÅ5ÖπÖùïµïπ–Ë®®ÅÅ…’π•—ÄÄºÅÅ—ï…µ’‡µÕï…Ÿ•çïÕÄÄ¨ÅÅQï…µ’‡È	ΩΩ—ÄÅ’—ΩÕ—Ö…–((¥¥¥((ååÅIïÕ•±•ïπçîÄòÅ’—ΩπΩµ•î()ÅïÖ—’…îÅÅï—Ö•±ÃÅ)¥¥¥¥¥¥¥¥µ¥¥¥¥¥¥¥¥µ)ÒÄ®©I4µ’Ö…ê®®ÅÅ1Ωç≠ô•±îµ5’—ï‡ÅŸΩ»Å]°•Õ¡ï»ΩY•Õ•Ω∏∞ÅMç°›ï±±îÄ‡¿¡5Å)Ä®©•…ç’•–Å	…ïÖ≠ï»®®ÅÅ9Öç†ÄÕ‡Å±Ω’êµï°±ï»Éä8ÅÕΩôΩ…—•ùï»ÅÖ±±âÖç¨ÅÖ’òÅ=±±ÖµÑÅ)ÒÄ®©…Öçïô’∞Åïù…ÖëÖ—•Ω∏®®ÅÅI4ÄÄƒ»¿¡5∞Å≠≠‘ÄÄƒ‘îÅΩëï»ÅQïµ¿Ä¯Ä‘„
-¡ÉäxÅ’—ºµΩ›πù…ÖëîÅ)Ä®©M°ÖëΩ‹µ·ïç’—•Ω∏®®ÅÅAÖ—ç°ïÃÅï…Õ–Å•∏ÅMç°Ö——ï∏µ-Ω¡•îÅ—ïÕ—ï∏Ä°Å¡Â}çΩµ¡•±ïÄ§ÅŸΩ»Å¡¡±‰Å)Ä®©ïÖêÅ5Ö∏ùÃÅM›•—ç†®®ÅÅ©Öç≠}›Ö—ç°ëΩúπÕ°ÄÅ¡À’ô–Å’πêÅ°ï•±–ÅÖâùïÕ”
+Nach dem Crash eines Cloud-VPS am 06.06.2026 ein klares Dogma: **Nie wieder externe Abh√§ngigkeit.**
+JACK l√§uft vollst√§ndig auf eigener Hardware ‚Äî zwei gekoppelte Smartphones als verteiltes Edge-KI-OS.
+
+---
+
+## Hardware-Architektur
+
+| Node | Ger√§t | Rolle | Specs |
+|------|-------|-------|-------|
+| **Master** | Honor Magic8 Pro | Gehirn / Host | Snapdragon 8 Elite, 11GB RAM, Termux nativ |
+| **Slave** | Xiaomi 11T Pro | Executor / Sensors | Rooted, SSH Port 8022, ControlMaster (95ms) |
+
+---
+
+## Tech-Stack & Multi-LLM Routing
+
+- **Personal Conversations:** Groq llama-3.3-70b-versatile (~500ms Latenz)
+- **System Calls / Reasoning / Vision:** Gemini 2.5 Flash
+- **Offline Fallback:** Ollama llama3.2:3b (lokal)
+- **Memory & RAG:** SQLite WAL + sqlite-vec (nomic-embed-text) + FTS5 Pre-Filter
+- **Voice Stack:** ElevenLabs TTS / espeak-ng Fallback + whisper-cli STT
+- **Interface:** Telegram Bot (@JackDimaChat_bot) mit Inline-Keyboards
+- **Service Management:** runit / termux-services + Termux:Boot Autostart
+
+---
+
+## Resilience & Autonomie
+
+| Feature | Details |
+|---------|---------|
+| **RAM-Guard** | Lockfile-Mutex vor Whisper/Vision, Schwelle 800MB |
+| **Circuit Breaker** | Nach 3x Cloud-Fehler -> sofortiger Fallback auf Ollama |
+| **Graceful Degradation** | RAM < 1200MB, Akku < 15% oder Temp > 58¬∞C -> Auto-Downgrade |
+| **Shadow-Execution** | Patches erst in Schatten-Kopie testen (py_compile) vor Apply |
+| **Dead Mans Switch** | jack_watchdog.sh pr√ºft und heilt abgest√ºrzte Dienste |
+| **SSH ControlMaster** | Tunnelswitch von 281ms auf 95ms Latenz gedr√ºckt |
+
+---
+
+## Autonomie-Levelsystem
+
+Level 1: Nur fragen - keine Aktion ohne Best√§tigung
+Level 2: Lesen erlaubt - Status, Sensoren, Xiaomi lesen
+Level 3: Schreiben erlaubt - Dienste neustarten, Xiaomi steuern, Dateien schreiben
+Level 4: Vollautonom - handelt selbst im Schatten-Workspace, meldet danach
+
+---
+
+## Live Performance Benchmarks
+
+SSH Latenz (ControlMaster): 95 ms
+Groq API Response Time: ~500 ms
+State Detection Overhead: 0.0004 ms / Call
+RAM Guard Check: 0.033 ms / Call
+Feature Flag Evaluation: 0.0016 ms / Call
+Memory Vector RAG: Sub-5 ms
+
+---
+
+*GitHub: https://github.com/dimitriskripkin-lgtm/jack-core*
+*Owner: Dimitri (Dima) | Built on Termux / Android Edge Devices*
