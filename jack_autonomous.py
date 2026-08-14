@@ -133,6 +133,12 @@ def main():
         except Exception as _xe:
             try: import jack_log; jack_log.log_decision('EXPLORE-FEHLER',str(_xe)[:80])
             except Exception: pass
+        try:
+            import jack_autofixer_shadow as _afs
+            _afs.run(limit=3)
+        except Exception as _afe:
+            try: import jack_log; jack_log.log_decision('AUTOFIXER-FEHLER',str(_afe)[:80])
+            except Exception: pass
         time.sleep(HEARTBEAT)
 
 
