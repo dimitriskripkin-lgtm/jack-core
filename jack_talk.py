@@ -171,7 +171,7 @@ def _status_als_text():
 def talk_to_gemini(prompt):
     # Persoenliche Gespraeche -> Groq (besser Persona-Treue)
     # System-Calls, Vision, Reasoning -> Gemini
-    _personal = ["wer bin ich","wer bist du","was denkst du","erzaehl","erklaer mir","wie geht","was magst","was haeltst","kumpel","zusammen","gefuehl","meinung","freund"]
+    _personal = ["wer bin ich","wer bist du","was denkst","erzaehl","erklaer mir","wie geht","was magst","was haeltst","kumpel","zusammen","gefuehl","meinung","freund","ueber mich","über mich","ueber dich","über dich","ueber uns","wer bist","ich bin","selbst","charakter","person"]
     if any(w in prompt.lower() for w in _personal):
         try:
             import jack_groq_bridge as _gq
