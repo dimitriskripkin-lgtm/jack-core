@@ -465,7 +465,12 @@ def handle(text):
             except Exception as e:
                 send(f'⚠️ *Web-Fehler:* {e}')
 
-    return text
+    # Weiter zu jack_talk wenn kein fruehzeitiger Return
+    try:
+        import jack_talk as _jt
+        return _jt.talk_to_gemini(text)
+    except Exception as _te:
+        return f"Fehler: {_te}"
 
 def _offset_lesen():
     try:
