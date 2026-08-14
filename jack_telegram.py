@@ -899,7 +899,9 @@ def handle(text):
         return "JACK online. Befehle: /status /errors /code <aufgabe> /run <datei> oder einfach fragen (Text+Sprache)."
     elif text == '/status':
         s = jack_gemini_bridge.collect_status()
-        return f"Cortex: {s['cortex']}\nXiaomi: {'✓' if s['xiaomi_reachable'] else '✗'}\nOffene Fehler: {s['open_errors']}"
+        ok='✓' if s.get('alle_ok') else '✗'
+        xok='✓' if s.get('xiaomi_reachable') and s['xiaomi_reachable']!='nicht geprueft' else '?'
+        return f"System: {ok} | RAM: {s.get('ram_frei_mb','?')}MB | Temp: {s.get('temp_cpu','?')}C | Xiaomi: {xok} | Fehler: {s.get('open_errors',0)}"
     elif text == '/errors':
         import sqlite3
         con = sqlite3.connect(ERRORS_DB)
