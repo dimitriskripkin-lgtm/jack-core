@@ -458,7 +458,8 @@ def handle(text):
     if text.strip() == '/befehle':
         send_keyboard("JACK Befehle:", [
             [("Status","intent:dienste_check"),("RAM","intent:ram_check")],
-            [("Temperatur","intent:temp_check"),("Akku","intent:akku_check")],
+            [("Temperatur","intent:temp_check"),("Honor Akku","intent:akku_check")],
+            [("Xiaomi Akku","intent:xiaomi_akku"),("Xiaomi SSH","intent:ssh_check")],
             [("Fehler","intent:fehler_check"),("Ollama","intent:ollama_check")],
             [("Proaktiv","intent:proaktiv_check"),("SSH Xiaomi","intent:ssh_check")],
             [("Xiaomi Wecken","intent:xiaomi_wake"),("Selftest","oracle:dienste")]
