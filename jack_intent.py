@@ -102,7 +102,7 @@ KEYWORDS = {
     'standort_check': ['standort', 'wo bin ich', 'position', 'gps'],
     'dienst_neustart':['neustart', 'restart', 'starte neu', 'reboot dienst'],
     'xiaomi_wake':    ['xiaomi wecken', 'wifi neustart', 'xiaomi neustarten'],
-    'xiaomi_akku':    ['xiaomi akku', 'akku xiaomi', 'wie viel akku xiaomi', 'xiaomi batterie'],
+    'xiaomi_akku':    ['xiaomi akku', 'akku xiaomi', 'wie viel akku xiaomi', 'xiaomi batterie', 'akku vom xiaomi', 'akku xiaomi', 'wie viel akku hat xiaomi', 'xiaomi wie viel akku'],
     'proaktiv_check': ['sei proaktiv','proaktiv','optimier','was kannst du','leg los','mach was','schau mal','check alles','guck ob','first mission','erste mission','was willst du','was wuerdest du','mach einfach','fang an','jetzt los','tu was'],
 }
 
@@ -121,7 +121,7 @@ def _keyword_detect(text):
     # Direkte Bestaetigungsfragen: "ist es verbunden", "laeuft es", "wie ist der status"
     bestaetigung = any(s in t for s in ['ist es', 'ist er', 'laeuft es', 'laeuft er', 'wie ist', 'status', 'verbunden'])
     treffer = []
-    HIGH_CONF=['proaktiv_check','dienst_neustart','xiaomi_wake']
+    HIGH_CONF=['proaktiv_check','dienst_neustart','xiaomi_wake','xiaomi_akku']
     for aktion, keys in KEYWORDS.items():
         for k in keys:
             if k in t:
