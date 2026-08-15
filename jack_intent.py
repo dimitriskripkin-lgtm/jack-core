@@ -189,7 +189,7 @@ def detect(text, gemini_fallback=True):
         fragen = False
     elif level >= min_level:
         auto = conf >= 0.60
-        fragen = 0.50 <= conf < 0.60
+        fragen = False
     else:
         auto = False
         fragen = False
