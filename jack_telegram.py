@@ -613,6 +613,10 @@ def main():
                     reply = handle(text)
                     if reply:
                         send(reply)
+                        try:
+                            import jack_talk as _jt
+                            _jt.add_to_window(text, reply)
+                        except Exception: pass
         except Exception as e:
             time.sleep(2)
         time.sleep(1)

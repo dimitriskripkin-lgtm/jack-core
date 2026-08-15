@@ -15,6 +15,19 @@ except Exception:
 MODEL_NAME = 'llama3.2:3b'
 DB_PATH = os.path.expanduser('~/jack/jack_memory.db')
 
+# Rolling Window - letzte 10 Telegram-Nachrichten im RAM
+_ROLLING_WINDOW = []
+def add_to_window(user_msg, jack_reply):
+    global _ROLLING_WINDOW
+    _ROLLING_WINDOW.append((str(user_msg), str(jack_reply)[:300]))
+    if len(_ROLLING_WINDOW) > 10:
+        _ROLLING_WINDOW = _ROLLING_WINDOW[-10:]
+
+def get_window_ctx():
+    if not _ROLLING_WINDOW:
+        return "(keiner)"
+    return chr(10).join([f"Dima: {c} | JACK: {r}" for c,r in _ROLLING_WINDOW])
+
 def get_embedding(text):
     url = 'http://localhost:11434/api/embeddings'
     data = json.dumps({'model': 'nomic-embed-text', 'prompt': text}).encode('utf-8')
@@ -213,8 +226,7 @@ def talk_to_gemini(prompt):
         id_ctx = _json.dumps(_id, ensure_ascii=False)
     except Exception:
         id_ctx = "(keine)"
-    hist = get_recent_history(6)
-    hist_ctx = "\n".join([f"Dima: {c} | JACK: {r[:150]}" for c, r in hist]) if hist else "(keiner)"
+    hist_ctx = get_window_ctx()
     _dt = datetime.datetime.now()
     _wochentage = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"]
     _monate = ["","Januar","Februar","Maerz","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"]
