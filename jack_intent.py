@@ -287,9 +287,9 @@ def execute(d):
             erg='Xiaomi WiFi neugestartet' if r.returncode==0 else 'Fehler: '+r.stderr[:100]
         elif aktion == 'xiaomi_akku':
             import subprocess as _ssp2
-            r=_ssp2.run(['ssh','xiaomi-jack','cat /sys/class/power_supply/battery/capacity 2>/dev/null || dumpsys battery | grep level'],capture_output=True,text=True,timeout=10)
+            r=_ssp2.run(['ssh','xiaomi-jack',"su -c 'cat /sys/class/power_supply/battery/capacity'"],capture_output=True,text=True,timeout=10)
             batt=r.stdout.strip()
-            erg=f'Xiaomi Akku: {batt}%' if batt else 'Akku nicht lesbar'
+            erg=f'Xiaomi Akku: {batt}%' if batt.isdigit() else 'Akku nicht lesbar'
         elif aktion == 'proaktiv_check':
             import jack_gemini_bridge as _jgb
             s=_jgb.collect_status()
