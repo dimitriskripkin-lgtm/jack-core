@@ -525,6 +525,16 @@ def main():
             for u in updates:
                 offset = u['update_id'] + 1
                 _offset_schreiben(offset)
+                cb = u.get('callback_query', {})
+                if cb:
+                    cb_data = cb.get('data', '')
+                    cb_id = cb.get('id', '')
+                    cb_chat = str(cb.get('message', {}).get('chat', {}).get('id', ''))
+                    if cb_chat == str(CHAT_ID):
+                        cb_reply = handle_callback(cb_data, cb_id)
+                        if cb_reply:
+                            send(cb_reply)
+                    continue
                 msg = u.get('message', {})
                 text = msg.get('text', '')
                 chat_id = msg.get('chat', {}).get('id')
