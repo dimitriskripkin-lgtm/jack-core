@@ -554,6 +554,39 @@ def main():
                 msg = u.get('message', {})
                 text = msg.get('text', '')
                 chat_id = msg.get('chat', {}).get('id')
+                if 'photo' in msg and chat_id:
+                    file_id = msg['photo'][-1]['file_id']
+                    caption = msg.get('caption','Was siehst du? Analysiere auf Deutsch.')
+                    send('📸 Analysiere...')
+                    vibrate(80)
+                    def _foto(fid=file_id, cap=caption):
+                        try:
+                            import urllib.request as _ur, json as _j, base64, subprocess as _sp2, os as _o2
+                            url = f"{API}/getFile?file_id={fid}"
+                            with _ur.urlopen(url) as res:
+                                path = _j.loads(res.read())['result']['file_path']
+                            dl = f"https://api.telegram.org/file/bot{TOKEN}/{path}"
+                            raw = _o2.path.expanduser(f"~/jack/foto_{fid}.jpg")
+                            _ur.urlretrieve(dl, raw)
+                            b64 = base64.b64encode(open(raw,'rb').read()).decode()
+                            import jack_gemini_bridge as _gb, jack_config as _jc
+                            key = _gb.load_api_key()
+                            model = _jc.get_param('gemini','model')
+                            payload = _j.dumps({
+                                "system_instruction":{"parts":[{"text":_PERSONA}]},
+                                "contents":[{"parts":[{"text":cap},{"inline_data":{"mime_type":"image/jpeg","data":b64}}]}]
+                            }).encode()
+                            req = _ur.Request(f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}",data=payload,headers={"Content-Type":"application/json"})
+                            with _ur.urlopen(req,timeout=45) as r:
+                                ans = _j.loads(r.read())['candidates'][0]['content']['parts'][0]['text']
+                            send(ans[:3000])
+                            try: _o2.remove(raw)
+                            except Exception: pass
+                        except Exception as e:
+                            send("Foto-Fehler: " + str(e)[:200])
+                    import threading
+                    threading.Thread(target=_foto, daemon=True).start()
+                    continue
                 if 'voice' in msg and chat_id:
                     file_id = msg['voice']['file_id']
                     ogg = os.path.expanduser(f'~/jack/voice_{file_id}.ogg')
