@@ -103,7 +103,7 @@ KEYWORDS = {
     'dienst_neustart':['neustart', 'restart', 'starte neu', 'reboot dienst'],
     'xiaomi_wake':    ['xiaomi wecken', 'wifi neustart', 'xiaomi neustarten'],
     'xiaomi_akku':    ['wie viel akku hat xiaomi', 'xiaomi wie viel akku', 'akku vom xiaomi', 'zeig xiaomi akku', 'xiaomi batterie stand'],
-    'proaktiv_check': ['sei proaktiv','proaktiv','optimier','was kannst du','leg los','mach was','schau mal','check alles','guck ob','first mission','erste mission','was willst du','was wuerdest du','mach einfach','fang an','jetzt los','tu was'],
+    'proaktiv_check': ['sei proaktiv','optimier alles','check alles','first mission','erste mission','was wuerdest du machen','mach einfach was','jetzt los legen'],
 }
 
 FRUST = ['nervt', 'wahnsinnig', 'klappt nicht', 'geht nicht', 'funktioniert nicht',
