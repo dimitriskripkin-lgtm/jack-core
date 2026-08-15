@@ -409,7 +409,25 @@ def handle_callback(callback_data, callback_id):
                 return "Unbekannter Oracle-Befehl: " + cmd
         except Exception as _e:
             return "Oracle [" + cmd + "] Fehler: " + str(_e)[:200]
-        return f"Unbekannter Button: {callback_data}"
+    if callback_data.startswith("intent:"):
+        akt=callback_data[7:]
+        if akt=="abbruch": return "Abgebrochen."
+        try:
+            import jack_intent as _ji
+            res=_ji.execute({'intent':akt,'methode':'button','confidence':1.0,'_text':'Button'})
+            return str(res) if res else "Erledigt."
+        except Exception as e: return "Fehler: "+str(e)[:100]
+    if callback_data.startswith("oracle:"):
+        cmd=callback_data[7:]
+        import subprocess as _sp, sqlite3 as _sq, os as _o2
+        if cmd=="dienste":
+            svcs=["jack_cortex","jack_telegram","jack_waechter","ollama"]
+            r=_sp.run(["sv","status"]+["/data/data/com.termux/files/usr/var/service/"+s for s in svcs],capture_output=True,text=True,timeout=10)
+            return "Dienste:"+chr(10)+r.stdout.strip()
+        if cmd=="ram":
+            lines=[l.strip() for l in open("/proc/meminfo") if "MemAvailable" in l or "MemTotal" in l]
+            return "RAM:"+chr(10)+chr(10).join(lines)
+    return f"Unbekannter Button: {callback_data}"
 
 def get_updates(offset=0):
     url = f"{API}/getUpdates?timeout=0&offset={offset}"
@@ -497,6 +515,8 @@ def _offset_schreiben(wert):
         pass
 
 def main():
+    try: send("JACK online. Alle Dienste gestartet.")
+    except Exception: pass
     offset = _offset_lesen()
     print('[INFO] Telegram Bot Schleife gestartet, warte auf Nachrichten...')
     while True:
