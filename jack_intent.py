@@ -102,7 +102,7 @@ KEYWORDS = {
     'standort_check': ['standort', 'wo bin ich', 'position', 'gps'],
     'dienst_neustart':['neustart', 'restart', 'starte neu', 'reboot dienst'],
     'xiaomi_wake':    ['xiaomi wecken', 'wifi neustart', 'xiaomi neustarten'],
-    'xiaomi_akku':    ['xiaomi akku', 'akku xiaomi', 'wie viel akku xiaomi', 'xiaomi batterie', 'akku vom xiaomi', 'akku xiaomi', 'wie viel akku hat xiaomi', 'xiaomi wie viel akku'],
+    'xiaomi_akku':    ['wie viel akku hat xiaomi', 'xiaomi wie viel akku', 'akku vom xiaomi', 'zeig xiaomi akku', 'xiaomi batterie stand'],
     'proaktiv_check': ['sei proaktiv','proaktiv','optimier','was kannst du','leg los','mach was','schau mal','check alles','guck ob','first mission','erste mission','was willst du','was wuerdest du','mach einfach','fang an','jetzt los','tu was'],
 }
 
