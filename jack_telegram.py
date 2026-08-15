@@ -554,6 +554,27 @@ def main():
                 msg = u.get('message', {})
                 text = msg.get('text', '')
                 chat_id = msg.get('chat', {}).get('id')
+                if 'voice' in msg and chat_id:
+                    file_id = msg['voice']['file_id']
+                    ogg = os.path.expanduser(f'~/jack/voice_{file_id}.ogg')
+                    rw = ogg.replace('.ogg','_resp.wav')
+                    send('🎤')
+                    vibrate(60)
+                    def _vrun(fid=file_id, op=ogg):
+                        try:
+                            get_voice(fid, op)
+                            rw2, heard, ans = process_voice_message(op)
+                            send("Du: " + str(heard) + chr(10) + chr(10) + "JACK: " + str(ans))
+                            try: send_voice(rw2)
+                            except Exception: pass
+                            for f in (op, rw2):
+                                try: os.remove(f)
+                                except Exception: pass
+                        except Exception as e:
+                            send("Sprachfehler: " + str(e)[:100])
+                    import threading
+                    threading.Thread(target=_vrun, daemon=True).start()
+                    continue
                 if text and chat_id:
                     vibrate(40)
                     reply = handle(text)
