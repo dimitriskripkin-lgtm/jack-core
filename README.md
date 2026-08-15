@@ -1,65 +1,125 @@
 # JACK — Just Autonomous Command Kit
-> Autonomes Edge-KI-Betriebssystem auf Android-Hardware. Offline-first. Keine Cloud. Volle Kontrolle.
+
+> Autonomes Edge-KI-Betriebssystem auf Android. Offline-first. Keine Cloud. Volle Kontrolle.
+
+Branch: master | Python + Android + Termux | Groq + Gemini + Ollama
+
+---
 
 ## Warum JACK?
-Nach dem Crash eines Cloud-VPS am 06.06.2026 ein klares Dogma: **Nie wieder externe Abhängigkeit.**
-JACK läuft vollständig auf eigener Hardware — zwei gekoppelte Smartphones als verteiltes Edge-KI-OS.
+
+Nach dem Crash eines Cloud-VPS am 06.06.2026: Nie wieder externe Abhaengigkeit.
+JACK laeuft auf zwei gekoppelten Smartphones - kein Server, keine Cloud, keine monatliche Rechnung.
+Wenn das Internet ausfaellt, laeuft JACK weiter.
 
 ---
 
 ## Hardware-Architektur
 
-| Node | Gerät | Rolle | Specs |
-|------|-------|-------|-------|
-| **Master** | Honor Magic8 Pro | Gehirn / Host | Snapdragon 8 Elite, 11GB RAM, Termux nativ |
-| **Slave** | Xiaomi 11T Pro | Executor / Sensors | Rooted, SSH Port 8022, ControlMaster (95ms) |
+    Honor Magic8 Pro (Master)    SSH ControlMaster 95ms    Xiaomi 11T Pro (Slave)
+    Snapdragon 8 Elite, 11GB    <--------------------->   Root + Magisk, SSH 8022
+    Termux nativ, JACK Gehirn                              Executor + Audio + Root
 
 ---
 
-## Tech-Stack & Multi-LLM Routing
+## LLM-Routing
 
-- **Personal Conversations:** Groq llama-3.3-70b-versatile (~500ms Latenz)
-- **System Calls / Reasoning / Vision:** Gemini 2.5 Flash
-- **Offline Fallback:** Ollama llama3.2:3b (lokal)
-- **Memory & RAG:** SQLite WAL + sqlite-vec (nomic-embed-text) + FTS5 Pre-Filter
-- **Voice Stack:** ElevenLabs TTS / espeak-ng Fallback + whisper-cli STT
-- **Interface:** Telegram Bot (@JackDimaChat_bot) mit Inline-Keyboards
-- **Service Management:** runit / termux-services + Termux:Boot Autostart
+| Trigger | Modell | Latenz |
+|---------|--------|--------|
+| Persoenliche Gespraeche | Groq llama-3.3-70b | ~500ms |
+| System, Vision, Reasoning | Gemini 2.5 Flash | ~1.5s |
+| Offline / RAM-kritisch | Ollama llama3.2:3b | ~8s |
 
----
-
-## Resilience & Autonomie
-
-| Feature | Details |
-|---------|---------|
-| **RAM-Guard** | Lockfile-Mutex vor Whisper/Vision, Schwelle 800MB |
-| **Circuit Breaker** | Nach 3x Cloud-Fehler -> sofortiger Fallback auf Ollama |
-| **Graceful Degradation** | RAM < 1200MB, Akku < 15% oder Temp > 58°C -> Auto-Downgrade |
-| **Shadow-Execution** | Patches erst in Schatten-Kopie testen (py_compile) vor Apply |
-| **Dead Mans Switch** | jack_watchdog.sh prüft und heilt abgestürzte Dienste |
-| **SSH ControlMaster** | Tunnelswitch von 281ms auf 95ms Latenz gedrückt |
+Circuit Breaker: Nach 3x Gemini-Fehler sofort Ollama.
+Graceful Degradation: Bei RAM<1200MB, Akku<15% oder Temp>58C automatisch Ollama.
 
 ---
 
-## Autonomie-Levelsystem
+## Autonomie-Level-System
 
-Level 1: Nur fragen - keine Aktion ohne Bestätigung
-Level 2: Lesen erlaubt - Status, Sensoren, Xiaomi lesen
-Level 3: Schreiben erlaubt - Dienste neustarten, Xiaomi steuern, Dateien schreiben
-Level 4: Vollautonom - handelt selbst im Schatten-Workspace, meldet danach
-
----
-
-## Live Performance Benchmarks
-
-SSH Latenz (ControlMaster): 95 ms
-Groq API Response Time: ~500 ms
-State Detection Overhead: 0.0004 ms / Call
-RAM Guard Check: 0.033 ms / Call
-Feature Flag Evaluation: 0.0016 ms / Call
-Memory Vector RAG: Sub-5 ms
+    Level 1  Nur fragen      Keine Aktion ohne Bestaetigung
+    Level 2  Lesen           Status, Sensoren, Xiaomi lesen
+    Level 3  Schreiben       Dienste, Xiaomi, Dateien
+    Level 4  Vollautonome    Handelt selbst, meldet danach
 
 ---
 
-*GitHub: https://github.com/dimitriskripkin-lgtm/jack-core*
-*Owner: Dimitri (Dima) | Built on Termux / Android Edge Devices*
+## Resilience-Features
+
+| Feature | Detail |
+|---------|--------|
+| RAM-Guard | Lockfile-Mutex, Schwelle 800MB MemAvailable |
+| Circuit Breaker | Gemini nach 3x Fehler sofort Ollama |
+| Graceful Degradation | RAM/Akku/Temp-basiertes Modell-Downgrade |
+| Shadow-Execution | Patch auf Kopie testen bevor Original ersetzt |
+| Dead Man Switch | Autostart via ~/.termux/boot |
+| Exponential Backoff | 1s/2s/4s Retry bei Netzfehlern |
+| Saga Cleanup | Temp-Dateien nach Pipeline-Abbruch loeschen |
+| Delta Transfer | Nur Aenderungen zwischen Honor und Xiaomi |
+| Selbst-Reparatur | Ollama Bug-Fixer mit Shadow-Execution |
+
+---
+
+## Performance (live gemessen 2026-08-15)
+
+    SSH ohne ControlMaster:    281ms
+    SSH mit ControlMaster:      95ms  (3x schneller)
+    RAM-Guard Check:          0.033ms pro Call
+    Feature-Flag:            0.0016ms pro Call
+    State-Detection:         0.0004ms pro Call
+    Groq Latenz:              ~500ms
+    System-Rating:             9.4/10
+
+---
+
+## Waechter-Loop (alle 300s, vollautomatisch)
+
+    1. Dienste pruefen und heilen
+    2. explore_next() - Xiaomi CPU/RAM/Akku/Temp live abfragen
+    3. jack_autofixer_shadow - Bug-Fixer mit Shadow-Execution
+    4. jack_self_audit - SYSTEM_STATE.md generieren
+    5. Scheduler - Heavy Jobs nur Power-Time 08-15h
+
+---
+
+## Memory (4 Schichten)
+
+    Core      jack_identity.json   Wer JACK ist
+    Recall    SQLite FTS5          Gespraechsverlauf
+    Archival  sqlite-vec RAG       250+ Embeddings
+    Context   jack_context_ingest  Multi-LLM Exports
+
+---
+
+## Tech-Stack
+
+    Python 3 / Termux nativ
+    SQLite WAL + sqlite-vec + FTS5
+    Groq / Gemini 2.5 Flash / Ollama llama3.2:3b
+    nomic-embed-text (Embeddings)
+    whisper-cli (STT offline) + ElevenLabs / espeak-ng (TTS)
+    Telegram Bot + Inline-Keyboards
+    runit/termux-services
+
+---
+
+## Projektgeschichte
+
+    April 2026     Quest 3 VR Overlay - Meta OS zu restriktiv
+    April 2026     Titan auf Netcup VPS
+    06.06.2026     VPS-Crash - Eisernes Dogma: NIE WIEDER CLOUD
+    Juni 2026      JACK auf Android geboren
+    August 2026    Multi-LLM, Groq, Autonomie-Level, Shadow-Execution
+
+---
+
+## Ueber den Entwickler
+
+Autodidaktischer Python-Entwickler. Spezialisierung: Android-Internals, Termux, ADB, Shizuku, Mobile Edge Computing.
+Entwickelt ausschliesslich auf dem Smartphone - kein PC.
+Ziel: KI-Spezialist fuer direkten Einstieg in KI-Unternehmen oder als Technical Founder.
+
+---
+
+Kein simulated environment. Echter Snapdragon, echtes Android, echte Grenzen.
+https://github.com/dimitriskripkin-lgtm/jack-core
