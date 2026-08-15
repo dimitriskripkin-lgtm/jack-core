@@ -240,7 +240,9 @@ def talk_to_gemini(prompt):
     try:
         import jack_intent as _ji
         _pre = _ji.detect(prompt)
-        if _pre and _pre['ausfuehren'] and len(prompt) < 60:
+        _fw=['sei proaktiv','was kannst du','proaktiv','optimier','check alles','mach was','schreib','erstell eine','mach eine datei','neue datei','sei selbst']
+        _fi=any(w in prompt.lower() for w in _fw)
+        if _pre and _pre['ausfuehren'] and (len(prompt) < 60 or _fi):
             _pre['_text'] = prompt
             _r = _ji.execute(_pre)
             if _r and len(str(_r)) > 10:
