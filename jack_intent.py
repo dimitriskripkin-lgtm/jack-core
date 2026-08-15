@@ -92,7 +92,7 @@ AKTIONEN = {
 }
 
 KEYWORDS = {
-    'ssh_check':      ['ssh', 'xiaomi', 'slave', 'zweites handy'],
+    'ssh_check':      ['ssh pruefen', 'ssh check', 'xiaomi verbindung', 'slave erreichbar', 'zweites handy verbunden'],
     'akku_check':     ['akku', 'batterie', 'ladung', 'prozent'],
     'ram_check':      ['ram', 'speicher', 'arbeitsspeicher', 'memory'],
     'temp_check':     ['temperatur', 'heiss', 'heiß', 'warm', 'grad', 'thermal'],
