@@ -470,7 +470,7 @@ def handle(text):
         return None
 
     # 1. Autonomer Xiaomi Inspector Trigger
-    if any(k in text.lower() for k in ['xiaomi', 'slave']) and any(k in text.lower() for k in ['check', 'prüf', 'umgebung', 'status', 'inspekt', 'prozess']):
+    if any(k in text.lower() for k in ['xiaomi inspizieren', 'xiaomi prozesse', 'xiaomi umgebung', 'xiaomi system inspect']) and len(text) < 50:
         try:
             import jack_xiaomi_inspector
             send('📱 *Verbinde mit Xiaomi Slave via SSH...*')
