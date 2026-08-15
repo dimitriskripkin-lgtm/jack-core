@@ -86,6 +86,7 @@ AKTIONEN = {
     'standort_check':   {'level': 2, 'text': 'Standort abrufen'},
     'dienst_neustart':  {'level': 3, 'text': 'Toten Dienst neustarten'},
     'xiaomi_wake':      {'level': 3, 'text': 'Xiaomi WiFi neustarten'},
+    'xiaomi_akku':      {'level': 2, 'text': 'Xiaomi Akku pruefen'},
     'werkstatt_leeren': {'level': 3, 'text': 'Werkstatt aufraeumen'},
     'proaktiv_check':  {'level': 3, 'text': 'Proaktiver System + Xiaomi Check'},
 }
@@ -101,6 +102,7 @@ KEYWORDS = {
     'standort_check': ['standort', 'wo bin ich', 'position', 'gps'],
     'dienst_neustart':['neustart', 'restart', 'starte neu', 'reboot dienst'],
     'xiaomi_wake':    ['xiaomi wecken', 'wifi neustart', 'xiaomi neustarten'],
+    'xiaomi_akku':    ['xiaomi akku', 'akku xiaomi', 'wie viel akku xiaomi', 'xiaomi batterie'],
     'proaktiv_check': ['sei proaktiv','proaktiv','optimier','was kannst du','leg los','mach was','schau mal','check alles','guck ob','first mission','erste mission','was willst du','was wuerdest du','mach einfach','fang an','jetzt los','tu was'],
 }
 
@@ -280,8 +282,14 @@ def execute(d):
                     tot.append(s)
             erg = ('Neugestartet: ' + ', '.join(tot)) if tot else 'Alle Dienste laufen bereits'
         elif aktion == 'xiaomi_wake':
-            r = _ssh("su -c 'svc wifi disable; sleep 3; svc wifi enable'", 30)
-            erg = 'Xiaomi WiFi neugestartet' if r.returncode == 0 else 'Xiaomi nicht erreichbar'
+            import subprocess as _ssp
+            r=_ssp.run(['ssh','xiaomi-jack','su -c "svc wifi disable; sleep 3; svc wifi enable"'],capture_output=True,text=True,timeout=35)
+            erg='Xiaomi WiFi neugestartet' if r.returncode==0 else 'Fehler: '+r.stderr[:100]
+        elif aktion == 'xiaomi_akku':
+            import subprocess as _ssp2
+            r=_ssp2.run(['ssh','xiaomi-jack','cat /sys/class/power_supply/battery/capacity 2>/dev/null || dumpsys battery | grep level'],capture_output=True,text=True,timeout=10)
+            batt=r.stdout.strip()
+            erg=f'Xiaomi Akku: {batt}%' if batt else 'Akku nicht lesbar'
         elif aktion == 'proaktiv_check':
             import jack_gemini_bridge as _jgb
             s=_jgb.collect_status()
