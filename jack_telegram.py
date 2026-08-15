@@ -455,6 +455,12 @@ def oracle_sign(cmd, uuid, ts):
 def handle(text):
     if not text:
         return None
+    if text.strip() in ['/selftest','/test']:
+        try:
+            import jack_cortex as _jc
+            return _jc.selftest()
+        except Exception as e:
+            return f"Selftest Fehler: {e}"
     if text.strip() == '/befehle':
         send_keyboard("JACK Befehle:", [
             [("Status","intent:dienste_check"),("RAM","intent:ram_check")],
