@@ -197,6 +197,13 @@ def send_keyboard(text, buttons):
     except Exception as _e:
         import jack_log; jack_log.log_decision("KEYBOARD-FEHLER", str(_e)[:100])
 
+def vibrate(ms=80):
+    """Kurze Haptik-Rueckmeldung."""
+    try:
+        import subprocess as _vs
+        _vs.run(['termux-vibrate','-d',str(ms)],capture_output=True,timeout=2)
+    except Exception: pass
+
 def send_webapp(text, url, button_text="Ergebnisse anzeigen"):
     import json as _j
     keyboard = {"inline_keyboard": [[{"text": button_text, "url": url}]]}
@@ -517,6 +524,7 @@ def _offset_schreiben(wert):
 def main():
     try: send("JACK online. Alle Dienste gestartet.")
     except Exception: pass
+    vibrate(200)
     offset = _offset_lesen()
     print('[INFO] Telegram Bot Schleife gestartet, warte auf Nachrichten...')
     while True:
@@ -531,6 +539,7 @@ def main():
                     cb_id = cb.get('id', '')
                     cb_chat = str(cb.get('message', {}).get('chat', {}).get('id', ''))
                     if cb_chat == str(CHAT_ID):
+                        vibrate(60)
                         cb_reply = handle_callback(cb_data, cb_id)
                         if cb_reply:
                             send(cb_reply)
@@ -539,6 +548,7 @@ def main():
                 text = msg.get('text', '')
                 chat_id = msg.get('chat', {}).get('id')
                 if text and chat_id:
+                    vibrate(40)
                     reply = handle(text)
                     if reply:
                         send(reply)
