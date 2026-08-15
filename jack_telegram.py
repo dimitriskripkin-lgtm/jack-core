@@ -430,6 +430,18 @@ def oracle_sign(cmd, uuid, ts):
 def handle(text):
     if not text:
         return None
+    if text.strip() == '/befehle':
+        send_keyboard("JACK Befehle:", [
+            [("Status","intent:dienste_check"),("RAM","intent:ram_check")],
+            [("Temperatur","intent:temp_check"),("Akku","intent:akku_check")],
+            [("Fehler","intent:fehler_check"),("Ollama","intent:ollama_check")],
+            [("Proaktiv","intent:proaktiv_check"),("SSH Xiaomi","intent:ssh_check")],
+            [("Xiaomi Wecken","intent:xiaomi_wake"),("Selftest","oracle:dienste")]
+        ])
+        return None
+    if text.strip() in ['/menu', '/m']:
+        send_keyboard("JACK Befehlszentrale:", menu_hauptseite())
+        return None
 
     # 1. Autonomer Xiaomi Inspector Trigger
     if any(k in text.lower() for k in ['xiaomi', 'slave']) and any(k in text.lower() for k in ['check', 'prüf', 'umgebung', 'status', 'inspekt', 'prozess']):
