@@ -83,7 +83,7 @@ def step_chrome_search(p):
 STEPS={'exec':step_exec,'tap':step_tap,'find_and_tap':step_find_and_tap,
     'open_app':step_open_app,'keyevent':step_keyevent,'wait':step_wait,
     'ui_check':step_ui_check,'home':step_home,
-    'input_text':step_input_text,'ui_text':step_ui_text}
+    'input_text':step_input_text,'ui_text':step_ui_text,'chrome_search':step_chrome_search}
 
 def run_plan(plan,send_fn=None):
     name=plan.get('name','Plan')
