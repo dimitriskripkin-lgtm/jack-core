@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T13:18:25.433637
+Stand: 2026-08-16T13:30:31.981708
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -146,15 +146,17 @@ Stand: 2026-08-16T13:18:25.433637
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 733
+- Erinnerungen: 736
 - Dienste:
-run: jack_cortex: (pid 7269) 182296s
-run: jack_telegram: (pid 30594) 389s
+run: jack_cortex: (pid 7269) 183022s
+run: jack_telegram: (pid 30594) 1115s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7266) 182296s
+run: ollama: (pid 7266) 183022s
 
 ## Letzte Aenderungen
-965afa4 feat: step_chrome_search - direkt Google via am start
+15e0710 feat: chrome_search in STEPS-Dict registriert
+64b89b1 feat: step_chrome_search - direkt Google via am start
+808f3e8 inbox: Claude Inbox Test
 d0bd542 fix: input_text+ui_text in STEPS-Dict
 e542540 fix: importlib.reload jack_planner bei jedem Plan-Run
 d47eba4 feat: jack_planner.py + PLAN-Marker - Level 4 autonome Plaene live
@@ -167,8 +169,6 @@ e498cd2 feat: jack_critic - Schadcode-Pruefung vor jedem Datei-Write
 5cf5569 fix: Persona LLM-Architektur, Datei-Fallback entfernt, EXEC-Kanal live
 d82ce76 feat: EXEC-Marker mit Bestaetigungs-Button - Befehle direkt aus Telegram
 02e464c feat: WRITE-Marker - Gemini kann Dateien direkt vorschlagen mit Auto-Button
-536d602 fix: Persona - nie behaupten etwas getan zu haben ohne Ausfuehrung
-ae6d02c fix: Persona klargestellt - JACK kann Dateien schreiben
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

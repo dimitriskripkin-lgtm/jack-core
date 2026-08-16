@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-16 13:20
+# JACK SYSTEM STATE — 2026-08-16 13:30
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: UP
 
 ## Resources
-- RAM verfuegbar: 3114MB
+- RAM verfuegbar: 2824MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 733
+- Memory-Eintraege: 735
 - Offene Fehler: 0
 
 ## Config
@@ -24,10 +24,10 @@
 - autolearn: AN
 
 ## Letzte Log-Eintraege
-s=o | rc=0
-[2026-08-16 13:19:18] EXEC | python3 - << 'PEOF'
-import os
-p=os.path.expanduser('~/jack/jack_planner.py')
-s=o | rc=0
+[2026-08-16 13:29:05] EXEC | cat /sys/class/thermal/thermal_zone0/temp | rc=0
+[2026-08-16 13:29:16] EXEC | echo "$(date): Mission 7 - JACK vergleicht LLMs: Groq llama-3.3-70b vs Gemini 2. | rc=0
+[2026-08-16 13:30:02] EXEC | python3 - << 'PEOF'
+import sys
+sys.path.insert(0,'/data/data/com.termux/files/ho | rc=0
 
-*Generiert: 2026-08-16 13:20*
+*Generiert: 2026-08-16 13:30*
