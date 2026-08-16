@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T13:51:44.946334
+Stand: 2026-08-16T15:37:35.077650
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -146,14 +146,15 @@ Stand: 2026-08-16T13:51:44.946334
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 740
+- Erinnerungen: 761
 - Dienste:
-run: jack_cortex: (pid 7269) 184295s
-run: jack_telegram: (pid 30594) 2388s
+run: jack_cortex: (pid 18564) 5276s
+run: jack_telegram: (pid 18562) 5276s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7266) 184295s
+run: ollama: (pid 18563) 5276s
 
 ## Letzte Aenderungen
+a99b932 chore: README.md aktualisiert und Portfolio-Polish
 cbaf12c feat: Mission 1-8 abgeschlossen, Zero-Touch live, jack_lernlog persistiert
 fc527e9 inbox: Mission 8 - Zero Touch von Claude
 15e0710 feat: chrome_search in STEPS-Dict registriert
@@ -168,7 +169,6 @@ c019895 fix: Subagent Akku-Format, Log-Zeile gefiltert
 e498cd2 feat: jack_critic - Schadcode-Pruefung vor jedem Datei-Write
 4c4c50d auto-backup vor write
 7055c53 feat: ReAct-Loop bei EXEC-Fehler, EXEC-Parser gehaertet
-5cf5569 fix: Persona LLM-Architektur, Datei-Fallback entfernt, EXEC-Kanal live
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
