@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T12:02:39.245163
+Stand: 2026-08-16T12:14:46.023353
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -9,7 +9,7 @@ Stand: 2026-08-16T12:02:39.245163
 
 ## Was JACK ueber Dima gelernt hat
 - Dima ist Dimitri.
-- Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht).
+- Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht), KEIN Fernfahrer.
 - Dima ist Hobby-Programmierer und Autodidakt, entwickelt hauptsächlich auf dem Smartphone.
 - Dima hat mit 28 einen Burnout gehabt und sich selbst daraus gezogen (Stoizismus, Jung, Kiyosaki).
 - Dima hat eine Investmentwohnung in Essen.
@@ -25,7 +25,6 @@ Stand: 2026-08-16T12:02:39.245163
 - JACK ist "Just Autonomous Command Kit" und soll offline-first agieren.
 - Dima hat einen Telegram Bot @jackdimachat_bot als Interface.
 - Dima hat KEINEN Hund.
-- Dima ist LKW-Fahrer mit Sprinter Kühlkoffer, KEIN Fernfahrer.
 
 ## Aktive Module (114)
 - install_litert.py
@@ -145,14 +144,15 @@ Stand: 2026-08-16T12:02:39.245163
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 718
+- Erinnerungen: 721
 - Dienste:
-run: jack_cortex: (pid 7269) 177750s
-run: jack_telegram: (pid 17685) 1530s
+run: jack_cortex: (pid 7269) 178477s
+run: jack_telegram: (pid 17685) 2257s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7266) 177750s
+run: ollama: (pid 7266) 178477s
 
 ## Letzte Aenderungen
+9ca00e9 feat: jack_ghost.py - Ghost Touch live, erster Tap verifiziert (4P.de)
 c019895 fix: Subagent Akku-Format, Log-Zeile gefiltert
 9860142 feat: Subagent in proaktiv_check - 4 Agenten parallel
 e498cd2 feat: jack_critic - Schadcode-Pruefung vor jedem Datei-Write
@@ -167,7 +167,6 @@ af70869 fix: datei_schreiben mit Inline-Button in handle() verdrahtet
 b700c5e fix: datei_schreiben korrekt in elif-Kette - kein unbekannt mehr
 7580954 fix: propose_write -> propose in datei_schreiben
 cd293bb fix: _pre -> d in datei_schreiben handler
-4bb67cd feat: datei_schreiben Intent eingebaut
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-16 12:04
+# JACK SYSTEM STATE — 2026-08-16 12:14
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: UP
 
 ## Resources
-- RAM verfuegbar: 3197MB
+- RAM verfuegbar: 3657MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 718
+- Memory-Eintraege: 720
 - Offene Fehler: 0
 
 ## Config
@@ -24,10 +24,10 @@
 - autolearn: AN
 
 ## Letzte Log-Eintraege
-import sys
-sys.path.insert(0,'/data/data/com.termux/files/ho | rc=0
-[2026-08-16 12:02:19] EXEC | python3 - << 'PEOF'
-import sys
-sys.path.insert(0,'/data/data/com.termux/files/ho | rc=0
+import sys, time, subprocess
+sys.path.insert(0,'/data/data/c | rc=0
+[2026-08-16 12:11:53] EXEC | python3 - << 'PEOF'
+import sys, time, subprocess
+sys.path.insert(0,'/data/data/c | rc=0
 
-*Generiert: 2026-08-16 12:04*
+*Generiert: 2026-08-16 12:14*

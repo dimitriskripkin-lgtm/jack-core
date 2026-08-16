@@ -482,6 +482,22 @@ def oracle_sign(cmd, uuid, ts):
 def handle(text):
     if not text:
         return None
+    _pi=text.find('[[PLAN:')
+    _pj=text.rfind('[[/PLAN]]')
+    if _pi>=0 and _pj>_pi:
+        _pname=text[_pi+7:text.find(']]',_pi)]
+        _pjson=text[text.find(']]',_pi)+2:_pj].strip()
+        def _runplan(pn=_pname,pj=_pjson):
+            try:
+                import json,jack_planner
+                plan=json.loads(pj)
+                plan['name']=pn
+                jack_planner.run_plan(plan,send)
+            except Exception as e:
+                send('Plan-Fehler: '+str(e)[:200])
+        import threading as _th
+        _th.Thread(target=_runplan,daemon=True).start()
+        return None
     _cmd=jack_exec.extrahiere(text)
     if _cmd:
         PENDING_EXEC.clear(); PENDING_EXEC['cmd']=_cmd
