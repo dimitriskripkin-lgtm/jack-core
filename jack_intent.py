@@ -303,6 +303,15 @@ def execute(d):
             batt=r.stdout.strip()
             erg=f'Xiaomi Akku: {batt}%' if batt.isdigit() else 'Akku nicht lesbar'
         elif aktion == 'proaktiv_check':
+            try:
+                import jack_subagent as _jsa
+                erg=_jsa.run_all()
+                try:
+                    import jack_log as _jl2
+                    erg=erg+chr(10)+'LOG: '+_jl2.recent(2)
+                except Exception: pass
+                return erg
+            except Exception: pass
             import jack_gemini_bridge as _jgb
             s=_jgb.collect_status()
             lines=[f"System: {'OK' if s.get('alle_ok') else 'PROBLEM'} | RAM: {s.get('ram_frei_mb','?')}MB | Temp: {s.get('temp_cpu','?')}C"]

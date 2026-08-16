@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-16 11:29
+# JACK SYSTEM STATE — 2026-08-16 11:34
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: UP
 
 ## Resources
-- RAM verfuegbar: 3597MB
+- RAM verfuegbar: 3384MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 711
+- Memory-Eintraege: 712
 - Offene Fehler: 0
 
 ## Config
@@ -24,10 +24,10 @@
 - autolearn: AN
 
 ## Letzte Log-Eintraege
-[2026-08-16 11:28:08] EXEC | ls /tmp/jackdaten | rc=2
-[2026-08-16 11:28:23] EXEC | python3 -c "import jack_exec; print(jack_exec.extrahiere('test'))" | rc=0
-[2026-08-16 11:29:07] EXEC | cd ~/jack && git add -A && git commit -m "feat: ReAct-Loop bei EXEC-Fehler, EXEC | rc=0
-[2026-08-16 11:29:10] SELF-IMPROVE | Analyse abgeschlossen, keine Muster gefunden.
-[2026-08-16 11:29:10] SELF-IMPROVE | Tagescheck abgeschlossen
+s=ope | rc=0
+[2026-08-16 11:33:18] EXEC | cd ~/jack && python3 -c "
+import jack_critic as c
+p = chr(47)+'tmp'+chr(47)+'boe | rc=0
+[2026-08-16 11:33:39] EXEC | cd ~/jack && git add -A && git commit -m "feat: jack_critic - Schadcode-Pruefung | rc=0
 
-*Generiert: 2026-08-16 11:29*
+*Generiert: 2026-08-16 11:34*
