@@ -26,7 +26,16 @@ def propose(filename, content):
         "preview": preview
     }
 
+def _backup():
+    import subprocess, os as _o
+    h=_o.path.expanduser('~/jack')
+    try:
+        subprocess.run(['git','add','-A'],cwd=h,capture_output=True,timeout=20)
+        subprocess.run(['git','commit','-m','auto-backup vor write'],cwd=h,capture_output=True,timeout=20)
+    except Exception: pass
+
 def commit_write(filename, content):
+    _backup()
     import jack_log; jack_log.log_decision('DATEI-SCHREIBEN', filename, str(len(content))+' Zeichen')
     # roher Pfad OHNE Saeuberung zur echten Grenzkontrolle
     raw = os.path.realpath(os.path.join(WERKSTATT, filename))

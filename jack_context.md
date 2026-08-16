@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T11:26:14.557910
+Stand: 2026-08-16T11:29:18.534971
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -143,14 +143,15 @@ Stand: 2026-08-16T11:26:14.557910
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 711
+- Erinnerungen: 712
 - Dienste:
-run: jack_cortex: (pid 7269) 175565s
-run: jack_telegram: (pid 6272) 4s
+run: jack_cortex: (pid 7269) 175749s
+run: jack_telegram: (pid 8023) 80s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7266) 175565s
+run: ollama: (pid 7266) 175749s
 
 ## Letzte Aenderungen
+7055c53 feat: ReAct-Loop bei EXEC-Fehler, EXEC-Parser gehaertet
 5cf5569 fix: Persona LLM-Architektur, Datei-Fallback entfernt, EXEC-Kanal live
 d82ce76 feat: EXEC-Marker mit Bestaetigungs-Button - Befehle direkt aus Telegram
 02e464c feat: WRITE-Marker - Gemini kann Dateien direkt vorschlagen mit Auto-Button
@@ -165,7 +166,6 @@ d8a9411 fix: Live-Fakten als unveraenderliche Zone - kein Halluzinieren mehr
 5586887 fix: ssh_check Keywords fuer Erreichbarkeit erweitert
 0191092 fix: Intent nur bei echten Befehlen - Start-Wort oder kurze Nachricht
 d18fc63 feat: Rolling Window - letzte 10 Nachrichten im RAM fuer Gemini-Kontext
-2d0afbd fix: schreib und proaktiv Intent auch bei langen Saetzen
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
