@@ -16,6 +16,11 @@ def _home():
     _ssh("su -c 'input keyevent 3'",5)
     time.sleep(1)
 
+def _termux_cmd(cmd,t=15):
+    import subprocess
+    r=subprocess.run(['ssh','xiaomi-jack',cmd],capture_output=True,text=True,timeout=t)
+    return ((r.stdout or '')+(r.stderr or '')).strip()[:400]
+
 def _type(text):
     safe=text.replace(' ','%s')
     _ssh("su -c 'input text "+safe+"'",5)
