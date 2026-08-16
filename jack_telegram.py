@@ -623,7 +623,17 @@ def main():
                     vibrate(40)
                     reply = handle(text)
                     if reply:
-                        send(reply)
+                        import re as _rw
+                        _m=_rw.search(r'\[\[WRITE:(.+?)\]\](.*?)\[\[/WRITE\]\]', reply, _rw.S)
+                        if _m:
+                            _fn=_m.group(1).strip(); _ct=_m.group(2).strip()
+                            _p=jack_write.propose(_fn,_ct)
+                            PENDING_WRITE.clear(); PENDING_WRITE.update(_p)
+                            _clean=_rw.sub(r'\[\[WRITE:.+?\]\].*?\[\[/WRITE\]\]','',reply,flags=_rw.S).strip()
+                            if _clean: send(_clean)
+                            send_keyboard("Datei: "+_p['filename']+chr(10)+chr(10)+_p['preview'],[[('🟢 Bestätigen','confirm_write:'+_p['filename']),('🔴 Abbrechen','cancel_write:'+_p['filename'])]])
+                        else:
+                            send(reply)
                         try:
                             import jack_talk as _jt
                             _jt.add_to_window(text, reply)
