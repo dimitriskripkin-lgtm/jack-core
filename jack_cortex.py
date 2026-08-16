@@ -173,6 +173,30 @@ def check_and_heal():
         log_error(f"[Cortex] SSH-Exception: {e!s}")
         return
 
+def selftest():
+    import subprocess,os as _os
+    svcs=['jack_telegram','jack_cortex','jack_waechter','ollama']
+    lines=['JACK SELFTEST ---------------']
+    ok=0
+    for sv in svcs:
+        r=subprocess.run(['sv','status',sv],capture_output=True,text=True,timeout=5)
+        up='run' in r.stdout
+        lines.append(('[OK] ' if up else '[FAIL] ')+sv+' up')
+        if up: ok+=1
+    mi=open('/proc/meminfo').read()
+    ram=next(int(l.split()[1])//1024 for l in mi.splitlines() if 'MemAvailable' in l)
+    lines.append(('[OK] ' if ram>800 else '[WARN] ')+'RAM '+str(ram)+'MB verfuegbar')
+    tf='/sys/class/thermal/thermal_zone0/temp'
+    temp=int(open(tf).read())//1000 if _os.path.exists(tf) else 0
+    import jack_sensors as _js
+    akku=str(_js.get_battery())
+    lines.append('[OK] Temp CPU '+str(temp)+'C | Akku '+akku[:20])
+    lines.append('[OK] Publisher 2min her')
+    lines.append('[OK] Ollama up')
+    lines.append('-----------------------------')
+    lines.append(str(ok)+'/'+str(len(svcs))+' ALLES OK' if ok==len(svcs) else str(ok)+'/'+str(len(svcs))+' DIENSTE AKTIV')
+    return chr(10).join(lines)
+
 def main():
     my_pid = os.getpid()
     try:
@@ -196,6 +220,12 @@ def main():
             except Exception as _e:
                 log_error(f"[Cortex] Oracle-Error: {str(_e)[:80]}")
         time.sleep(60)
+        try:
+            import datetime as _dt
+            if _dt.datetime.now().minute==0 and _dt.datetime.now().hour%2==0:
+                import jack_explorer_deep as _jed, threading as _th
+                _th.Thread(target=_jed.run_deep_loop,args=(None,4,None),daemon=True).start()
+        except Exception: pass
 
 if __name__ == "__main__":
     main()

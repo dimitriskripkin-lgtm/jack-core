@@ -1,0 +1,506 @@
+{
+  "com.termux": {
+    "paket": "com.termux",
+    "ebene1": {
+      "ESC": {
+        "buttons": 5,
+        "texte": [
+          "ESC",
+          "/",
+          "―",
+          "HOME",
+          "↑"
+        ]
+      },
+      "/": {
+        "buttons": 5,
+        "texte": [
+          "ESC",
+          "/",
+          "―",
+          "HOME",
+          "↑"
+        ]
+      },
+      "―": {
+        "buttons": 5,
+        "texte": [
+          "ESC",
+          "/",
+          "―",
+          "HOME",
+          "↑"
+        ]
+      },
+      "HOME": {
+        "buttons": 5,
+        "texte": [
+          "ESC",
+          "/",
+          "―",
+          "HOME",
+          "↑"
+        ]
+      },
+      "↑": {
+        "buttons": 5,
+        "texte": [
+          "ESC",
+          "/",
+          "―",
+          "HOME",
+          "↑"
+        ]
+      },
+      "END": {
+        "buttons": 5,
+        "texte": [
+          "ESC",
+          "/",
+          "―",
+          "HOME",
+          "↑"
+        ]
+      },
+      "PGUP": {
+        "buttons": 5,
+        "texte": [
+          "ESC",
+          "/",
+          "―",
+          "HOME",
+          "↑"
+        ]
+      },
+      "↹": {
+        "buttons": 5,
+        "texte": [
+          "ESC",
+          "/",
+          "―",
+          "HOME",
+          "↑"
+        ]
+      }
+    }
+  },
+  "org.chromium.webapk.a149e610f14e78439_v2": {
+    "paket": "org.chromium.webapk.a149e610f14e78439_v2",
+    "ebene1": {
+      "TikTok Anleitung VideoKurs": {
+        "buttons": 5,
+        "texte": [
+          "Direkt zum Inhalt",
+          "Warenkorb",
+          "Zu Produktinformationen springen",
+          "Medien 1 in Modal öffnen",
+          "Medien 2 in Modal öffnen"
+        ]
+      },
+      "Deevid.ai Videos erstellen *Anzeige": {
+        "buttons": 5,
+        "texte": [
+          "404",
+          "Page not found",
+          "The page you're looking for may have been removed or the URL is incorrect.",
+          "Back to home",
+          "DeeVid AI Agent: All-in-One AI Director for Video, Image, Voice & Music"
+        ]
+      },
+      "YouTube Anleitung VideoKurs": {
+        "buttons": 5,
+        "texte": [
+          "Direkt zum Inhalt",
+          "Warenkorb",
+          "Hochwertige Stuttgart Bekleidung. Stuttgart T-Shirts, Stuttgart Hoodie, Stuttgart Socken",
+          "Vorgestellte Kollektion",
+          "Anleitung 2026"
+        ]
+      },
+      "Impressum": {
+        "buttons": 5,
+        "texte": [
+          "Direkt zum Inhalt",
+          "Enricha",
+          "Warenkorb",
+          "Beginne mit unseren Starter Kursen",
+          "TikTok"
+        ]
+      },
+      "DATENSCHUTZ": {
+        "buttons": 0,
+        "texte": []
+      },
+      "wonderlink logo": {
+        "buttons": 5,
+        "texte": [
+          "Mods/Hacks/Apk",
+          "Player/IPTV",
+          "Musik & Video",
+          "Google",
+          "Shopping/eBay usw."
+        ]
+      }
+    }
+  },
+  "com.ubercab.eats": {
+    "paket": "com.ubercab.eats",
+    "ebene1": {
+      "btn_540_298": {
+        "buttons": 5,
+        "texte": [
+          "Zuhause",
+          "Alle",
+          "Fahrten",
+          "Gourmet",
+          "Courier"
+        ]
+      },
+      "Zuhause": {
+        "buttons": 5,
+        "texte": [
+          "Mods/Hacks/Apk",
+          "Player/IPTV",
+          "Musik & Video",
+          "Google",
+          "Shopping/eBay usw."
+        ]
+      },
+      "btn_975_177": {
+        "buttons": 5,
+        "texte": [
+          "Mods/Hacks/Apk",
+          "Player/IPTV",
+          "Musik & Video",
+          "Google",
+          "Shopping/eBay usw."
+        ]
+      },
+      "btn_540_1212": {
+        "buttons": 5,
+        "texte": [
+          "Kamera",
+          "3.101",
+          "WhatsApp Images",
+          "1.863",
+          "Telegram"
+        ]
+      },
+      "btn_463_1982": {
+        "buttons": 5,
+        "texte": [
+          "Mods/Hacks/Apk",
+          "Player/IPTV",
+          "Musik & Video",
+          "Google",
+          "Shopping/eBay usw."
+        ]
+      }
+    }
+  },
+  "com.facemoji.lite.xiaomi": {
+    "paket": "com.facemoji.lite.xiaomi",
+    "ebene1": {
+      "btn_540_314": {
+        "buttons": 5,
+        "texte": [
+          "Sonnig  25°/13°",
+          "AQI 26",
+          "Ottersberg",
+          "5-Tage-Vorhersage",
+          "Weitere Details"
+        ]
+      },
+      "Mods/Hacks/Apk": {
+        "buttons": 3,
+        "texte": [
+          "Mods/Hacks/Apk",
+          "Downloader",
+          "OBDeleven",
+          "ModCombo",
+          "Скачать игры на андроид. Русский плей маркет - androeed.ru"
+        ]
+      },
+      "Player/IPTV": {
+        "buttons": 3,
+        "texte": [
+          "Player/IPTV",
+          "XP Player",
+          "IPTV",
+          "Musikplayer",
+          "IPTV Pro"
+        ]
+      },
+      "Musik & Video": {
+        "buttons": 3,
+        "texte": [
+          "Musik & Video",
+          "Musikplayer - DDMusic",
+          "YouTube",
+          "Soundiiz",
+          "SmartTube"
+        ]
+      },
+      "Google": {
+        "buttons": 3,
+        "texte": [
+          "Google",
+          "Maps",
+          "Google",
+          "Play Store",
+          "Drive"
+        ]
+      },
+      "Shopping/eBay usw.": {
+        "buttons": 3,
+        "texte": [
+          "Shopping/eBay usw.",
+          "Kleinanzeigen",
+          "eBay",
+          "mobile.de",
+          "mydealz"
+        ]
+      }
+    }
+  },
+  "com.termux.widget": {
+    "paket": "com.termux.widget",
+    "ebene1": {}
+  },
+  "com.subway.mobile.emea.germany": {
+    "paket": "com.subway.mobile.emea.germany",
+    "ebene1": {
+      "SUBWAY REWARDS® BEITRETEN": {
+        "buttons": 0,
+        "texte": []
+      },
+      "ANMELDEN": {
+        "buttons": 5,
+        "texte": [
+          "Subway Rewards® Beitreten",
+          "Angaben zu Ihrer Person",
+          "*Pflichtfeld. Wir brauchen deine E-Mail-Adresse, um dein Konto einzurichten.",
+          "Vorname*",
+          "Nachname*"
+        ]
+      },
+      "btn_540_1895": {
+        "buttons": 3,
+        "texte": [
+          "BESTELLUNG BEGINNEN",
+          "Subway Rewards",
+          "Melde dich bei Subway Rewards® an und sammle Punkte bei jeder Bestellung, die du in Subway® umwandeln kannst!",
+          "Startseite",
+          "Speisekarte"
+        ]
+      }
+    }
+  },
+  "com.shazam.android": {
+    "paket": "com.shazam.android",
+    "ebene1": {
+      "btn_61_161": {
+        "buttons": 3,
+        "texte": [
+          "BESTELLUNG BEGINNEN",
+          "Subway Rewards",
+          "Melde dich bei Subway Rewards® an und sammle Punkte bei jeder Bestellung, die du in Subway® umwandeln kannst!",
+          "Startseite",
+          "Speisekarte"
+        ]
+      },
+      "Tüte/Einkaufswagen0Artikel": {
+        "buttons": 5,
+        "texte": [
+          "Mods/Hacks/Apk",
+          "Player/IPTV",
+          "Musik & Video",
+          "Google",
+          "Shopping/eBay usw."
+        ]
+      },
+      "BESTELLUNG BEGINNEN": {
+        "buttons": 5,
+        "texte": [
+          "Mods/Hacks/Apk",
+          "Player/IPTV",
+          "Musik & Video",
+          "Google",
+          "Shopping/eBay usw."
+        ]
+      }
+    }
+  },
+  "com.winlator": {
+    "paket": "com.winlator",
+    "ebene1": {
+      "Nach oben": {
+        "buttons": 4,
+        "texte": [
+          "Containers",
+          "Container-1"
+        ]
+      },
+      "Add": {
+        "buttons": 5,
+        "texte": [
+          "Mods/Hacks/Apk",
+          "Player/IPTV",
+          "Musik & Video",
+          "Google",
+          "Shopping/eBay usw."
+        ]
+      },
+      "btn_859_309": {
+        "buttons": 5,
+        "texte": [
+          "Sonnig  25°/13°",
+          "AQI 26",
+          "Ottersberg",
+          "5-Tage-Vorhersage",
+          "Weitere Details"
+        ]
+      },
+      "btn_981_309": {
+        "buttons": 5,
+        "texte": [
+          "Sonnig  25°/13°",
+          "AQI 26",
+          "Ottersberg",
+          "5-Tage-Vorhersage",
+          "Weitere Details"
+        ]
+      }
+    }
+  },
+  "fr.brickoft.soundiiz": {
+    "paket": "fr.brickoft.soundiiz",
+    "ebene1": {
+      "Soundiiz": {
+        "buttons": 5,
+        "texte": [
+          "Sign in",
+          "Sign in with Google",
+          "Sign in with Facebook",
+          "Sign in with Apple",
+          "Sign in with Spotify"
+        ]
+      },
+      "Sign in with Google": {
+        "buttons": 5,
+        "texte": [
+          "Über Google anmelden",
+          "Konto auswählen",
+          "Weiter zu ",
+          "Soundiiz",
+          "[1] Dimitri Skripkin"
+        ]
+      },
+      "Sign in with Facebook": {
+        "buttons": 5,
+        "texte": [
+          "Sign in",
+          "Sign in with Google",
+          "Sign in with Facebook",
+          "Sign in with Apple",
+          "Sign in with Spotify"
+        ]
+      },
+      "Sign in with Apple": {
+        "buttons": 5,
+        "texte": [
+          "Apple",
+          "Apple Account",
+          "Apple Account",
+          "Open Menu",
+          "Verwende deinen Apple Account, um dich bei „Soundiiz“ anzumelden."
+        ]
+      },
+      "Sign in with Spotify": {
+        "buttons": 5,
+        "texte": [
+          "Skip to content",
+          "Erlaube Spotify die Verknüpfung mit:",
+          "Soundiiz",
+          "DimaSkripa",
+          "Nicht du?"
+        ]
+      },
+      "Sign in with a music service": {
+        "buttons": 5,
+        "texte": [
+          "Sign in",
+          "Sign in with Google",
+          "Sign in with Facebook",
+          "Sign in with Apple",
+          "Sign in with Spotify"
+        ]
+      }
+    }
+  },
+  "de.wirlebenapp": {
+    "paket": "de.wirlebenapp",
+    "ebene1": {
+      "Zum Hauptinhalt springen": {
+        "buttons": 5,
+        "texte": [
+          "Zum Hauptinhalt springen",
+          "",
+          "",
+          "",
+          "Unsere Angebote"
+        ]
+      },
+      "Apothekenauswahl": {
+        "buttons": 5,
+        "texte": [
+          "Zum Hauptinhalt springen",
+          "",
+          "",
+          "",
+          "Unsere Angebote"
+        ]
+      },
+      "Startseite": {
+        "buttons": 2,
+        "texte": [
+          "Achtung!",
+          "Möchtest Du die App wirklich beenden?",
+          "ABBRECHEN",
+          "JA"
+        ]
+      },
+      "Logo": {
+        "buttons": 2,
+        "texte": [
+          "Achtung!",
+          "Möchtest Du die App wirklich beenden?",
+          "ABBRECHEN",
+          "JA"
+        ]
+      },
+      "": {
+        "buttons": 2,
+        "texte": [
+          "Achtung!",
+          "Möchtest Du die App wirklich beenden?",
+          "ABBRECHEN",
+          "JA"
+        ]
+      },
+      "": {
+        "buttons": 2,
+        "texte": [
+          "Achtung!",
+          "Möchtest Du die App wirklich beenden?",
+          "ABBRECHEN",
+          "JA"
+        ]
+      }
+    }
+  },
+  "de.hafas.android.db": {
+    "paket": "de.hafas.android.db",
+    "ebene1": {}
+  }
+}

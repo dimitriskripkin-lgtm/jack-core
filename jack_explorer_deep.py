@@ -1,3 +1,32 @@
+DIALOG_KEYWORDS=[
+    'akzeptieren','ablehnen','zustimmen','verstanden','ok','weiter',
+    'accept','decline','agree','continue','allow','permit',
+    'anmelden','einloggen','login','sign in','registrieren',
+    'bestaetigen','confirm','cookie','datenschutz','privacy',
+    'jetzt nicht','spaeter','skip','ueberspringen',
+    'alle akzeptieren','alle ablehnen','notwendige',
+    'schliessen','close','fertig','done'
+]
+
+SKIP_KEYWORDS=[
+    'kaufen','bezahlen','buy','purchase','checkout','bestellen',
+    'kreditkarte','paypal','zahlung','payment',
+    'passwort eingeben','password','pin eingeben'
+]
+
+def finde_dialog_button(xml):
+    import xml.etree.ElementTree as ET, jack_ghost as jg
+    try:
+        root=ET.fromstring(xml)
+        for n in root.iter('node'):
+            if n.get('clickable')!='true': continue
+            t=(n.get('text','').strip()+' '+n.get('content-desc','').strip()).lower()
+            if any(k in t for k in SKIP_KEYWORDS): continue
+            if any(k in t for k in DIALOG_KEYWORDS):
+                pos=jg._mitte(n.get('bounds',''))
+                if pos: return {'text':t[:40],'x':pos[0],'y':pos[1]}
+    except: pass
+    return None
 import subprocess,os,time,json,sys
 sys.path.insert(0,os.path.expanduser('~/jack'))
 
@@ -27,6 +56,17 @@ def _get_clickable(xml):
 def _kill(paket):
     _ssh('am force-stop '+paket,5)
 
+def handle_dialogs(send_fn=None, max_rounds=10):
+    import jack_ghost as jg, time
+    for _ in range(max_rounds):
+        xml=jg.hol_xiaomi_ui()
+        if not xml.startswith('<'): break
+        btn=finde_dialog_button(xml)
+        if not btn: break
+        if send_fn: send_fn('  Dialog: '+btn['text'][:30])
+        _ssh("su -c 'input tap "+str(btn['x'])+" "+str(btn['y'])+"'",5)
+        time.sleep(1.5)
+
 def explore_deep(paket,max_els=8,depth=2,send_fn=None):
     if send_fn: send_fn('Deep-Explore: '+paket)
     try:
@@ -39,8 +79,12 @@ def explore_deep(paket,max_els=8,depth=2,send_fn=None):
     xml1=_dump_ui()
     if not xml1.startswith('<'):
         _kill(paket); return None
+    handle_dialogs(send_fn)
+    xml1=_dump_ui()
+    if not xml1.startswith('<'):
+        _kill(paket); return None
     els1=_get_clickable(xml1)[:max_els]
-    if send_fn: send_fn('Ebene 1: '+str(len(els1))+' Buttons')
+    if send_fn: send_fn('Ebene 1: '+str(len(els1))+' Buttons nach Dialog-Handling')
     for el in els1:
         txt=el['text'] or 'btn_'+str(el['x'])+'_'+str(el['y'])
         _ssh("su -c 'input tap "+str(el['x'])+" "+str(el['y'])+"'",5)
@@ -66,6 +110,7 @@ def explore_deep(paket,max_els=8,depth=2,send_fn=None):
                 {'type':'home','desc':'Home'}
             ]},'Deep-Explore: '+paket+' -> '+txt[:20])
         except: pass
+        handle_dialogs(send_fn)
         _ssh("su -c 'input keyevent 4'",5)
         time.sleep(0.8)
     _kill(paket)

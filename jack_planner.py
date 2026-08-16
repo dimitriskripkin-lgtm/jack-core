@@ -108,7 +108,8 @@ def run_plan(plan,send_fn=None):
             return results
         time.sleep(step.get('delay',0.8))
     try:
-        import jack_outcome
+        import jack_outcome,importlib
+        importlib.reload(jack_outcome)
         rec=jack_outcome.evaluate(plan,results)
         if send_fn: send_fn(jack_outcome.fmt(rec))
         if rec.get('outcome')=='SUCCESS':

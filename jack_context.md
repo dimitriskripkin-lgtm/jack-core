@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T16:10:54.426039
+Stand: 2026-08-16T17:26:37.629293
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -26,7 +26,7 @@ Stand: 2026-08-16T16:10:54.426039
 - Dima hat einen Telegram Bot @jackdimachat_bot als Interface.
 - Dima hat KEINEN Hund.
 
-## Aktive Module (120)
+## Aktive Module (122)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -57,6 +57,7 @@ Stand: 2026-08-16T16:10:54.426039
 - jack_episoden.py
 - jack_exec.py
 - jack_explorer.py
+- jack_explorer_deep.py
 - jack_gedanken.py
 - jack_gemini_bridge.py
 - jack_ghost.py
@@ -119,6 +120,7 @@ Stand: 2026-08-16T16:10:54.426039
 - jack_thermal.py
 - jack_traceback.py
 - jack_ui.py
+- jack_ui_agent.py
 - jack_v2.py
 - jack_vecdb.py
 - jack_vinted_radar.py
@@ -150,14 +152,16 @@ Stand: 2026-08-16T16:10:54.426039
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 766
+- Erinnerungen: 780
 - Dienste:
-run: jack_cortex: (pid 18564) 7275s
-run: jack_telegram: (pid 11709) 224s
+run: jack_cortex: (pid 22069) 1856s
+run: jack_telegram: (pid 11183) 444s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 18563) 7275s
+run: ollama: (pid 18563) 11818s
 
 ## Letzte Aenderungen
+4a83395 feat: jack_explorer_deep
+59dceef fix: explore pm list mit su -c, max_apps auf 50 erhoeht
 c46791f feat: Skill-Lifecycle verifiziert - CANDIDATE/TESTING/VERIFIED live
 65d6c40 feat: Schema-Validator aktiv - unbekannte Step-Typen blockiert
 e151f34 inbox: RESET
@@ -171,8 +175,6 @@ fc527e9 inbox: Mission 8 - Zero Touch von Claude
 808f3e8 inbox: Claude Inbox Test
 d0bd542 fix: input_text+ui_text in STEPS-Dict
 e542540 fix: importlib.reload jack_planner bei jedem Plan-Run
-d47eba4 feat: jack_planner.py + PLAN-Marker - Level 4 autonome Plaene live
-9ca00e9 feat: jack_ghost.py - Ghost Touch live, erster Tap verifiziert (4P.de)
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

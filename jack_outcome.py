@@ -4,6 +4,7 @@ sys.path.insert(0, os.path.expanduser('~/jack'))
 OUTCOMES = ['SUCCESS','PARTIAL','FAILED','ABORTED','UNKNOWN']
 
 def evaluate(plan, results):
+    import re
     criteria = plan.get('success_criteria', [])
     name = plan.get('name','?')
     total = len(results)
@@ -25,7 +26,24 @@ def evaluate(plan, results):
             evidence=str(r.get('r','')) if r else ''
         else:
             evidence=' '.join(str(r.get('r','')) for r in results)
-        ok=value.lower() in evidence.lower() if typ=='contains' else evidence.strip()==value.strip()
+        if typ=='contains':
+            ok=value.lower() in evidence.lower()
+        elif typ=='equals':
+            # Extrahiere Output nach rc=0\n
+            output = re.sub(r'^rc=\d+\n?', '', str(evidence).strip())
+            ok = output == value
+        elif typ=='gt':
+            # Extrahiere Zahlen aus evidence (z.B. "rc=0\n4" -> 4)
+            nums = re.findall(r'\d+', str(evidence))
+            if nums:
+                try: ok = int(nums[-1]) > int(value)
+                except: ok = False
+            else: ok = False
+        elif typ=='not_empty':
+            # Prüfe ob nach rc=0\n noch Inhalt kommt
+            output = re.sub(r'^rc=\d+\n?', '', str(evidence).strip())
+            ok = len(output) > 0
+        else: ok=False
         passed.append({'criterion':c,'ok':ok,'evidence':evidence[:200]})
     all_ok=all(p['ok'] for p in passed)
     any_ok=any(p['ok'] for p in passed)

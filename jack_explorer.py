@@ -26,6 +26,7 @@ def explore_app(paket, timeout=12):
         texts=[n.get('text','') for n in root.iter('node') if n.get('text','').strip()]
         clickable=len([n for n in root.iter('node') if n.get('clickable')=='true'])
         subprocess.run(['ssh','xiaomi-jack',"su -c 'input keyevent 3'"],capture_output=True,timeout=5)
+        subprocess.run(['ssh','xiaomi-jack',"am force-stop "+paket],capture_output=True,timeout=5)
         return {'paket':paket,'texts':texts[:20],'clickable':clickable,'ts':int(time.time())}
     except Exception as e:
         return {'paket':paket,'error':str(e)[:100],'ts':int(time.time())}

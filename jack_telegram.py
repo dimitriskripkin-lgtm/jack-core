@@ -518,6 +518,21 @@ def handle(text):
             send_keyboard("Datei: "+p['filename']+chr(10)+"Pfad: ~/jack_werkstatt/"+p['filename']+chr(10)+chr(10)+"Inhalt:"+chr(10)+p['preview'], [[('🟢 Bestätigen','confirm_write:'+p['filename']),('🔴 Abbrechen','cancel_write:'+p['filename'])]])
             return None
         pass
+    if text.strip().startswith('/agent '):
+        ziel=text.strip()[7:].strip()
+        import jack_ui_agent,threading
+        threading.Thread(target=jack_ui_agent.run_agent,args=(ziel,None,20,send),daemon=True).start()
+        return 'Agent gestartet: '+ziel
+    if text.strip()=='/explore_deep' or text.strip().startswith('/explore_deep '):
+        parts=text.strip().split()
+        paket=parts[1] if len(parts)>1 else None
+        import jack_explorer_deep as _jed, threading
+        if paket:
+            threading.Thread(target=_jed.explore_deep,args=(paket,8,2,send),daemon=True).start()
+            return 'Deep-Explore gestartet: '+paket
+        else:
+            threading.Thread(target=_jed.run_deep_loop,args=(None,6,send),daemon=True).start()
+            return 'Deep-Loop gestartet - erkunde naechste 3 unbekannte Apps...'
     if text.strip()=='/explore' or text.strip().startswith('/explore '):
         n=int(text.strip().split()[-1]) if text.strip()!=('/explore') else 3
         n=min(n,50)

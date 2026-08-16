@@ -226,5 +226,365 @@
     ],
     "clickable": 6,
     "ts": 1786889086
+  },
+  "com.contextlogic.wish": {
+    "paket": "com.contextlogic.wish",
+    "texts": [
+      "Über Google anmelden",
+      "In Wish | Shop and Save anmelden",
+      "dimitriskripkin@googlemail.com",
+      "Google erlaubt Wish | Shop and Save den Zugriff auf diese Informationen über Sie",
+      "[1] Dimitri Skripkin",
+      "Name und Profilbild",
+      "dimitriskripkin@googlemail.com",
+      "E-Mail-Adresse",
+      "Weitere Informationen finden Sie in der ",
+      "Datenschutzerklärung",
+      " und den ",
+      "Nutzungsbedingungen",
+      " von Wish | Shop and Save wie Wish | Shop and Save Ihre Daten verarbeitet und schützt.",
+      "Sie können in Ihrem ",
+      "Google-Konto",
+      " jederzeit Änderungen an Ihren Angaben vornehmen.",
+      "Weitere Informationen zu „Über Google anmelden“",
+      "Abbrechen",
+      "Weiter"
+    ],
+    "clickable": 6,
+    "ts": 1786889560
+  },
+  "com.mi.android.globalminusscreen": {
+    "paket": "com.mi.android.globalminusscreen",
+    "texts": [
+      "Mods/Hacks/Apk",
+      "Player/IPTV",
+      "Musik & Video",
+      "Google",
+      "Shopping/eBay usw.",
+      "Kalender",
+      "Gmail",
+      "HP",
+      "Notizen",
+      "KI",
+      "Sicherheit/Finanzen/Banking",
+      "Dateimanager +",
+      "Fotos",
+      "System/Tools/Design",
+      "SOUNDBOKS",
+      "Mit Google suchen",
+      "CamSam PLUS",
+      "Sozial Media",
+      "Galerie",
+      "1"
+    ],
+    "clickable": 32,
+    "ts": 1786889568
+  },
+  "de.urlaubstracker.app": {
+    "paket": "de.urlaubstracker.app",
+    "texts": [],
+    "clickable": 17,
+    "ts": 1786889575
+  },
+  "io.trezor.suite": {
+    "paket": "io.trezor.suite",
+    "texts": [
+      "",
+      "Portfolio Tracker",
+      "",
+      "$",
+      "32",
+      ",33",
+      "16.08.2026",
+      "",
+      "3.21%",
+      "33,28 $",
+      "31,31 $",
+      "1T",
+      "1W",
+      "1M",
+      "6M",
+      "1J",
+      "ALLE",
+      "",
+      "Empfangen",
+      "Ethereum"
+    ],
+    "clickable": 16,
+    "ts": 1786889585
+  },
+  "com.xiaoji.egggame": {
+    "paket": "com.xiaoji.egggame",
+    "texts": [
+      "To ensure your GameSir game controller works properly, you need to enable the following features",
+      "Launch Game",
+      "Enable Audio",
+      "Allow game audio to be enabled while using the app",
+      "Allow"
+    ],
+    "clickable": 1,
+    "ts": 1786889592
+  },
+  "com.google.android.apps.nbu.files": {
+    "paket": "com.google.android.apps.nbu.files",
+    "texts": [
+      "Nach „Aufgabe“ suchen",
+      "Nach „Aufgabe“ suchen",
+      "Zuletzt verwendet",
+      "Alle anzeigen",
+      "Screenshot_2026-08-16-14-37-26-545_com.android.chrome.jpg",
+      "Screenshots",
+      "Kategorien",
+      "Downloads",
+      "891 MB",
+      "Bilder",
+      "12 GB",
+      "Videos",
+      "62 GB",
+      "Audio",
+      "751 KB",
+      "Dokumente",
+      "22 MB",
+      "Apps",
+      "Sammlungen",
+      "Markiert"
+    ],
+    "clickable": 22,
+    "ts": 1786889600
+  },
+  "fr.vinted": {
+    "paket": "fr.vinted",
+    "texts": [
+      "Nachrichten",
+      "Vinted  ",
+      "vor 4 Stunden",
+      "Account dauerhaft gesperrt: Anzeichen für betrügerische Aktivitäten"
+    ],
+    "clickable": 2,
+    "ts": 1786889608
+  },
+  "com.miui.fm": {
+    "paket": "com.miui.fm",
+    "texts": [
+      "Suchen",
+      "Empfohlen",
+      "MANGORADIO",
+      "music,variety",
+      "Deutschlandfunk | DLF | MP3 128k",
+      "culture,news,public service,information",
+      "Deutschlandfunk | DLF | OPUS 24k",
+      "culture,news,public service,information",
+      "Bayern 3",
+      "pop",
+      "Deutschlandfunk | DLF | AAC 96k",
+      "culture,information,news,public service",
+      "Deutschlandfunk | DLF | AAC 192k",
+      "culture,information,news,public service",
+      "Deutschlandfunk Kultur | DLF | MP3 128k",
+      "culture,news,public service,information",
+      "Bayern 2",
+      "information",
+      "Bayern 1 Oberbayern",
+      "oldies"
+    ],
+    "clickable": 33,
+    "ts": 1786889616
+  },
+  "com.termux": {
+    "paket": "com.termux",
+    "texts": [
+      "ESC",
+      "/",
+      "―",
+      "HOME",
+      "↑",
+      "END",
+      "PGUP",
+      "↹",
+      "CTRL",
+      "ALT",
+      "←",
+      "↓",
+      "→",
+      "PGDN"
+    ],
+    "clickable": 14,
+    "ts": 1786889624
+  },
+  "com.whatnot_mobile": {
+    "paket": "com.whatnot_mobile",
+    "texts": [
+      "Für dich",
+      "Trading Card Games",
+      "Pokémon-Karten",
+      "Alle Kategorien ansehen",
+      "pokemonmeistertobi",
+      "Live • 66",
+      "🔥Booster Auktionen ab 1€🔥",
+      "Pokémon-Karten",
+      "•",
+      "Pokémon Karten, Pokemon 151, Startet bei 1 €",
+      "glowingchiara",
+      "Live • 232",
+      "POKÉMON SINGLES AB 2€!✨",
+      "Pokémon-Karten",
+      "pokedenzy",
+      "Live • 140",
+      "e",
+      "emd_livedeals",
+      "Live • 217",
+      "Whatnot durchsuchen"
+    ],
+    "clickable": 23,
+    "ts": 1786889632
+  },
+  "de.avm.android.myfritz2": {
+    "paket": "de.avm.android.myfritz2",
+    "texts": [
+      "Internet verbunden",
+      "WLAN teilen",
+      "Heimnetz und Mesh",
+      "Alle 10 Geräte",
+      "FireTV Wohnzimmer ",
+      "Echtzeitpriorisiert",
+      "A13-von-Dimitri",
+      "Drucker",
+      "Natascha Firmen IPhone ",
+      "PC-48-31-77-0F-87-DE",
+      "FRITZ!Box 7590",
+      "Start",
+      "FRITZ!⁠NAS",
+      "Komfort",
+      "Service",
+      "Shop"
+    ],
+    "clickable": 13,
+    "ts": 1786889640
+  },
+  "com.google.android.play.games": {
+    "paket": "com.google.android.play.games",
+    "texts": [
+      "Dimka ja",
+      "dimitriistcool@googlemail.com",
+      "Weiter als Dimka"
+    ],
+    "clickable": 2,
+    "ts": 1786889648
+  },
+  "com.xing.android": {
+    "paket": "com.xing.android",
+    "texts": [
+      "Klingt spannend?",
+      "Diesen Job für später merken."
+    ],
+    "clickable": 1,
+    "ts": 1786889656
+  },
+  "com.alphainventor.filemanager": {
+    "paket": "com.alphainventor.filemanager",
+    "texts": [
+      "Dateimanager +",
+      "Hauptspeicher",
+      "183 GB / 256 GB",
+      "System",
+      "Downloads",
+      "891 MB (39)",
+      "Bilder",
+      "12,3 GB (5628)",
+      "Audio",
+      "134 MB (260)",
+      "Videos",
+      "62,6 GB (951)",
+      "Dokumente",
+      "22,7 MB (42)",
+      "Apps",
+      "22 GB (239)",
+      "Neue Dateien",
+      "1,7 MB (3)",
+      "Cloud",
+      "Remote"
+    ],
+    "clickable": 18,
+    "ts": 1786889669
+  },
+  "myfiles.filemanager.fileexplorer.cleaner": {
+    "paket": "myfiles.filemanager.fileexplorer.cleaner",
+    "texts": [
+      "Telefonreiniger",
+      "Junk-Dateien",
+      "Sauber",
+      "Prozessmanager",
+      "Duplikate löschen",
+      "KI -Aufräumarbeiten",
+      "WhatsApp-Reiniger",
+      "Apps-Manager",
+      "Fotokompressor",
+      "Batteriemanager",
+      "Reiniger",
+      "Dateien"
+    ],
+    "clickable": 11,
+    "ts": 1786889677
+  },
+  "com.subway.subway": {
+    "paket": "com.subway.subway",
+    "texts": [
+      "Error",
+      "YES"
+    ],
+    "clickable": 3,
+    "ts": 1786889685
+  },
+  "com.yablio.sendfilestotv": {
+    "paket": "com.yablio.sendfilestotv",
+    "texts": [
+      "Send Files To TV erlauben, auf Musik- und Audiodateien auf diesem Gerät zuzugreifen?",
+      "ERLAUBEN",
+      "NICHT ERLAUBEN"
+    ],
+    "clickable": 4,
+    "ts": 1786889694
+  },
+  "org.chromium.webapk.aed735ce287c2540c_v2": {
+    "paket": "org.chromium.webapk.aed735ce287c2540c_v2",
+    "texts": [
+      "ModsBeforeFriday! william gay",
+      "Source Code",
+      "The easiest way to install custom songs for Beat Saber on Quest!",
+      "To get started, plug your Quest in with a USB-C cable and click the button below.",
+      "Want see what mods are available? You can find a full list ",
+      "here!",
+      "No compatible devices?",
+      "To use MBF, you must enable developer mode so that your Quest is accessible via USB.",
+      "Follow the ",
+      "official guide",
+      " - you'll need to create a new organisation and enable USB debugging.",
+      "Using Android?",
+      "It's possible that the connection between your device and the Quest has been set up the wrong way around. To fix this:",
+      "• ",
+      "Swipe down from the top of the screen.",
+      "• ",
+      "Click the dialog relating to the USB connection. This might be called \"charging via USB\".",
+      "• ",
+      "Change \"USB controlled by\" to \"Connected device\". If \"Connected device\" is already selected, change it to \"This device\" and change it back.",
+      "Still not working?"
+    ],
+    "clickable": 5,
+    "ts": 1786889705
+  },
+  "com.camsam.plus": {
+    "paket": "com.camsam.plus",
+    "texts": [
+      "Positionssuche",
+      "374106"
+    ],
+    "clickable": 7,
+    "ts": 1786889712
+  },
+  "com.mojang.minecraftpe": {
+    "paket": "com.mojang.minecraftpe",
+    "texts": [],
+    "clickable": 0,
+    "ts": 1786889725
   }
 }
