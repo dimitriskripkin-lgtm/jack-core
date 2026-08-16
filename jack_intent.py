@@ -236,7 +236,7 @@ def execute(d):
     try:
         if aktion == 'datei_schreiben':
             import re as _re
-            t=(_pre.get('_text','') or '')
+            t=(d.get('_text','') or '')
             m=_re.search(r'datei\s+(\S+\.\w+)\s+(?:mit\s+inhalt\s+|inhalt\s+)(.*)',t,_re.I)
             if m:
                 fname=m.group(1); content=m.group(2)
