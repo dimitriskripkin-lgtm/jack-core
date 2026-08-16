@@ -1,38 +1,13 @@
 {
-  "ts": 1786879801,
+  "ts": 1786887670,
   "plan": {
     "steps": [
       {
-        "type": "exec",
-        "cmd": "ssh xiaomi-jack \"su -c 'ps -A | grep -E \\\"jack|python\\\"| head -5'\"",
-        "desc": "Prozesse Fix"
-      },
-      {
-        "type": "exec",
-        "cmd": "python3 -c \"print(43800//1000,'Grad')\"",
-        "desc": "Temp umrechnen"
-      },
-      {
-        "type": "exec",
-        "cmd": "cat ~/jack/jack_lernlog.txt",
-        "desc": "Lernlog Stand"
-      },
-      {
-        "type": "chrome_search",
-        "query": "termux android edge AI autonomous system 2026",
-        "desc": "JACK in der Welt",
-        "wait": 5
-      },
-      {
-        "type": "exec",
-        "cmd": "echo \"$(date): Mission 8 - Zero-Touch via Claude push_plan bestaetigt\" >> ~/jack/jack_lernlog.txt",
-        "desc": "Log"
-      },
-      {
-        "type": "home",
-        "desc": "Home"
+        "type": "wait",
+        "seconds": 1,
+        "desc": "Null-Plan"
       }
     ],
-    "name": "Mission 8 - Zero Touch von Claude"
+    "name": "RESET"
   }
 }
