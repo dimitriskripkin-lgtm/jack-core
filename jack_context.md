@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T13:30:31.981708
+Stand: 2026-08-16T13:51:44.946334
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -146,14 +146,16 @@ Stand: 2026-08-16T13:30:31.981708
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 736
+- Erinnerungen: 740
 - Dienste:
-run: jack_cortex: (pid 7269) 183022s
-run: jack_telegram: (pid 30594) 1115s
+run: jack_cortex: (pid 7269) 184295s
+run: jack_telegram: (pid 30594) 2388s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7266) 183022s
+run: ollama: (pid 7266) 184295s
 
 ## Letzte Aenderungen
+cbaf12c feat: Mission 1-8 abgeschlossen, Zero-Touch live, jack_lernlog persistiert
+fc527e9 inbox: Mission 8 - Zero Touch von Claude
 15e0710 feat: chrome_search in STEPS-Dict registriert
 64b89b1 feat: step_chrome_search - direkt Google via am start
 808f3e8 inbox: Claude Inbox Test
@@ -167,8 +169,6 @@ e498cd2 feat: jack_critic - Schadcode-Pruefung vor jedem Datei-Write
 4c4c50d auto-backup vor write
 7055c53 feat: ReAct-Loop bei EXEC-Fehler, EXEC-Parser gehaertet
 5cf5569 fix: Persona LLM-Architektur, Datei-Fallback entfernt, EXEC-Kanal live
-d82ce76 feat: EXEC-Marker mit Bestaetigungs-Button - Befehle direkt aus Telegram
-02e464c feat: WRITE-Marker - Gemini kann Dateien direkt vorschlagen mit Auto-Button
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
