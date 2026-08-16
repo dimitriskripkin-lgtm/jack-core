@@ -1,36 +1,40 @@
 {
-  "ts": 1786891126,
+  "ts": 1786891214,
   "plan": {
-    "name": "Level4 Mission 1 - Systemstatus",
+    "name": "Level4 Mission 2 - Xiaomi Kontrolle",
     "success_criteria": [
       {
         "type": "contains",
-        "value": "MB",
+        "value": "100",
         "step": 1,
-        "desc": "RAM Wert vorhanden"
+        "desc": "Xiaomi Akku voll"
       },
       {
         "type": "contains",
-        "value": "OK",
-        "step": 2,
-        "desc": "Dienste laufen"
+        "value": "Homescreen",
+        "step": 3,
+        "desc": "Zurueck auf Homescreen"
       }
     ],
     "steps": [
       {
         "type": "exec",
-        "cmd": "free -m | awk 'NR==2{print \"RAM:\", $7\"MB frei\"}'",
-        "desc": "RAM pruefen"
+        "cmd": "ssh xiaomi-jack \"su -c 'cat /sys/class/power_supply/battery/capacity'\"",
+        "desc": "Xiaomi Akku"
       },
       {
-        "type": "exec",
-        "cmd": "sv status jack_telegram jack_cortex jack_waechter ollama | grep -c run",
-        "desc": "Dienste zaehlen"
+        "type": "open_app",
+        "paket": "com.android.settings",
+        "desc": "Einstellungen oeffnen"
       },
       {
-        "type": "exec",
-        "cmd": "echo $(date): Level4 Mission 1 OK >> ~/jack/jack_lernlog.txt",
-        "desc": "Log schreiben"
+        "type": "wait",
+        "seconds": 2,
+        "desc": "Laden"
+      },
+      {
+        "type": "home",
+        "desc": "Homescreen"
       }
     ]
   }
