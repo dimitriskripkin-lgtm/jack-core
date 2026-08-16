@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T11:23:12.948650
+Stand: 2026-08-16T11:26:14.557910
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -27,7 +27,7 @@ Stand: 2026-08-16T11:23:12.948650
 - Dima hat KEINEN Hund.
 - Dima ist LKW-Fahrer mit Sprinter Kühlkoffer, KEIN Fernfahrer.
 
-## Aktive Module (111)
+## Aktive Module (112)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -88,6 +88,7 @@ Stand: 2026-08-16T11:23:12.948650
 - jack_publish.py
 - jack_queue.py
 - jack_radar.py
+- jack_react.py
 - jack_reflexion.py
 - jack_research_curator.py
 - jack_rhythm.py
@@ -142,14 +143,15 @@ Stand: 2026-08-16T11:23:12.948650
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 710
+- Erinnerungen: 711
 - Dienste:
-run: jack_cortex: (pid 7269) 175383s
-run: jack_telegram: (pid 13757) 1995s
+run: jack_cortex: (pid 7269) 175565s
+run: jack_telegram: (pid 6272) 4s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7266) 175383s
+run: ollama: (pid 7266) 175565s
 
 ## Letzte Aenderungen
+5cf5569 fix: Persona LLM-Architektur, Datei-Fallback entfernt, EXEC-Kanal live
 d82ce76 feat: EXEC-Marker mit Bestaetigungs-Button - Befehle direkt aus Telegram
 02e464c feat: WRITE-Marker - Gemini kann Dateien direkt vorschlagen mit Auto-Button
 536d602 fix: Persona - nie behaupten etwas getan zu haben ohne Ausfuehrung
@@ -164,7 +166,6 @@ d8a9411 fix: Live-Fakten als unveraenderliche Zone - kein Halluzinieren mehr
 0191092 fix: Intent nur bei echten Befehlen - Start-Wort oder kurze Nachricht
 d18fc63 feat: Rolling Window - letzte 10 Nachrichten im RAM fuer Gemini-Kontext
 2d0afbd fix: schreib und proaktiv Intent auch bei langen Saetzen
-960515b fix: Foto-Handler im Poll-Loop wiederhergestellt
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

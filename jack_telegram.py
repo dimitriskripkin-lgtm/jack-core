@@ -250,6 +250,13 @@ def handle_callback(callback_data, callback_id):
             out=jack_exec.run(cmd)
             PENDING_EXEC.clear()
             send(out)
+            if not out.startswith('rc=0') and not out.startswith('BLOCKIERT'):
+                try:
+                    import jack_react
+                    send('Analysiere Fehler...')
+                    send('VORSCHLAG:' + chr(10) + str(jack_react.analysiere(cmd, out))[:1500])
+                except Exception as _e:
+                    send('Analyse-Fehler: ' + str(_e)[:120])
         import threading as _th
         _th.Thread(target=_r, daemon=True).start()
         return

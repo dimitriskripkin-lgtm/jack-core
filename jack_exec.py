@@ -35,5 +35,9 @@ def run(cmd, timeout=120):
         return 'Fehler: ' + str(e)[:200]
 
 def extrahiere(text):
-    m = re.search(r'\[\[EXEC\]\](.*?)\[\[/EXEC\]\]', text, re.S)
-    return m.group(1).strip() if m else None
+    O='[[EXEC]]'
+    C='[[/EXEC]]'
+    i=text.find(O)
+    j=text.rfind(C)
+    if i<0 or j<0 or j<=i: return None
+    return text[i+len(O):j].strip()
