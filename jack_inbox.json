@@ -1,7 +1,7 @@
 {
-  "ts": 1786892159,
+  "ts": 1786892990,
   "plan": {
-    "name": "Outcome Types Test",
+    "name": "System Health Check v2",
     "success_criteria": [
       {
         "type": "gt",
@@ -10,21 +10,32 @@
         "desc": "Mehr als 3 Dienste laufen"
       },
       {
-        "type": "not_empty",
+        "type": "gt",
+        "value": "800",
         "step": 2,
-        "desc": "Skills vorhanden"
+        "desc": "RAM ueber 800MB"
+      },
+      {
+        "type": "not_empty",
+        "step": 3,
+        "desc": "Xiaomi erreichbar"
       }
     ],
     "steps": [
       {
         "type": "exec",
         "cmd": "sv status jack_telegram jack_cortex jack_waechter ollama | grep -c run",
-        "desc": "Dienste"
+        "desc": "Dienste zaehlen"
       },
       {
         "type": "exec",
-        "cmd": "python3 -c \"import sys;sys.path.insert(0,'/data/data/com.termux/files/home/jack');import jack_skill_lib as sk;print(len(sk.list_all()))\"",
-        "desc": "Skills"
+        "cmd": "free -m | awk 'NR==2{print $7}'",
+        "desc": "RAM pruefen"
+      },
+      {
+        "type": "exec",
+        "cmd": "ssh xiaomi-jack 'echo OK'",
+        "desc": "Xiaomi Ping"
       }
     ]
   }
