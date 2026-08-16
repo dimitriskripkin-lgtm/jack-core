@@ -1,13 +1,37 @@
 {
-  "ts": 1786887670,
+  "ts": 1786891126,
   "plan": {
-    "steps": [
+    "name": "Level4 Mission 1 - Systemstatus",
+    "success_criteria": [
       {
-        "type": "wait",
-        "seconds": 1,
-        "desc": "Null-Plan"
+        "type": "contains",
+        "value": "MB",
+        "step": 1,
+        "desc": "RAM Wert vorhanden"
+      },
+      {
+        "type": "contains",
+        "value": "OK",
+        "step": 2,
+        "desc": "Dienste laufen"
       }
     ],
-    "name": "RESET"
+    "steps": [
+      {
+        "type": "exec",
+        "cmd": "free -m | awk 'NR==2{print \"RAM:\", $7\"MB frei\"}'",
+        "desc": "RAM pruefen"
+      },
+      {
+        "type": "exec",
+        "cmd": "sv status jack_telegram jack_cortex jack_waechter ollama | grep -c run",
+        "desc": "Dienste zaehlen"
+      },
+      {
+        "type": "exec",
+        "cmd": "echo $(date): Level4 Mission 1 OK >> ~/jack/jack_lernlog.txt",
+        "desc": "Log schreiben"
+      }
+    ]
   }
 }
