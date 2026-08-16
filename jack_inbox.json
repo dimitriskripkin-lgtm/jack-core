@@ -1,40 +1,36 @@
 {
-  "ts": 1786891214,
+  "ts": 1786891217,
   "plan": {
-    "name": "Level4 Mission 2 - Xiaomi Kontrolle",
+    "name": "Level4 Mission 3 - Lernlog",
     "success_criteria": [
       {
         "type": "contains",
-        "value": "100",
+        "value": "Level4",
         "step": 1,
-        "desc": "Xiaomi Akku voll"
+        "desc": "Lernlog enthaelt Level4 Eintraege"
       },
       {
         "type": "contains",
-        "value": "Homescreen",
-        "step": 3,
-        "desc": "Zurueck auf Homescreen"
+        "value": "JACK",
+        "step": 2,
+        "desc": "Skills vorhanden"
       }
     ],
     "steps": [
       {
         "type": "exec",
-        "cmd": "ssh xiaomi-jack \"su -c 'cat /sys/class/power_supply/battery/capacity'\"",
-        "desc": "Xiaomi Akku"
+        "cmd": "grep Level4 ~/jack/jack_lernlog.txt | wc -l",
+        "desc": "Level4 Eintraege zaehlen"
       },
       {
-        "type": "open_app",
-        "paket": "com.android.settings",
-        "desc": "Einstellungen oeffnen"
+        "type": "exec",
+        "cmd": "python3 -c \"import sys;sys.path.insert(0,'/data/data/com.termux/files/home/jack');import jack_skill_lib as sk;print('JACK Skills:',len(sk.list_all()))\"",
+        "desc": "Skills zaehlen"
       },
       {
-        "type": "wait",
-        "seconds": 2,
-        "desc": "Laden"
-      },
-      {
-        "type": "home",
-        "desc": "Homescreen"
+        "type": "exec",
+        "cmd": "echo $(date): Level4 Mission 3 abgeschlossen >> ~/jack/jack_lernlog.txt",
+        "desc": "Log"
       }
     ]
   }
