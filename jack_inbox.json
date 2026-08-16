@@ -1,35 +1,35 @@
 {
-  "ts": 1786891217,
+  "ts": 1786891950,
   "plan": {
-    "name": "Level4 Mission 3 - Lernlog",
+    "name": "Retest",
     "success_criteria": [
       {
         "type": "contains",
-        "value": "Level4",
-        "step": 1,
-        "desc": "Lernlog enthaelt Level4 Eintraege"
+        "value": "2",
+        "desc": "Mindestens 2 Dienste laufen",
+        "step": 1
       },
       {
         "type": "contains",
-        "value": "JACK",
+        "value": "Skills:",
         "step": 2,
-        "desc": "Skills vorhanden"
+        "desc": "Skills-Ausgabe vorhanden"
       }
     ],
     "steps": [
       {
         "type": "exec",
-        "cmd": "grep Level4 ~/jack/jack_lernlog.txt | wc -l",
-        "desc": "Level4 Eintraege zaehlen"
+        "cmd": "sv status jack_telegram jack_cortex jack_waechter ollama | grep -c run",
+        "desc": "Dienste zaehlen"
       },
       {
         "type": "exec",
-        "cmd": "python3 -c \"import sys;sys.path.insert(0,'/data/data/com.termux/files/home/jack');import jack_skill_lib as sk;print('JACK Skills:',len(sk.list_all()))\"",
+        "cmd": "python3 -c \"import sys;sys.path.insert(0,'/data/data/com.termux/files/home/jack');import jack_skill_lib as sk;print('Skills:',len(sk.list_all()))\"",
         "desc": "Skills zaehlen"
       },
       {
         "type": "exec",
-        "cmd": "echo $(date): Level4 Mission 3 abgeschlossen >> ~/jack/jack_lernlog.txt",
+        "cmd": "echo $(date): Retest OK >> ~/jack/jack_lernlog.txt",
         "desc": "Log"
       }
     ]
