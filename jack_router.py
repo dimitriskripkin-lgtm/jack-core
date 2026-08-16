@@ -10,15 +10,13 @@ LOKAL_GEEIGNET = ('klassifizier','ist das','ja oder nein','fass zusammen',
                   'wieviel','wie viele','zaehl','extrahier','uebersetze kurz')
 
 def netz_da():
-    try:
-        urllib.request.urlopen('https://generativelanguage.googleapis.com', timeout=4)
-        return True
-    except Exception:
+    for url in ['https://8.8.8.8','https://www.google.com','https://generativelanguage.googleapis.com']:
         try:
-            urllib.request.urlopen('https://1.1.1.1', timeout=3)
+            urllib.request.urlopen(url, timeout=5)
             return True
         except Exception:
-            return False
+            pass
+    return False
 
 def route(prompt, aufgabe='allgemein'):
     """('lokal'|'cloud', begruendung)"""

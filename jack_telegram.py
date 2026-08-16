@@ -521,7 +521,11 @@ def handle(text):
     if text.strip().startswith('/agent '):
         ziel=text.strip()[7:].strip()
         import jack_ui_agent,threading
-        threading.Thread(target=jack_ui_agent.run_agent,args=(ziel,None,20,send),daemon=True).start()
+        app=None
+        if 'termux' in ziel.lower(): app='com.termux'
+        elif 'einstellungen' in ziel.lower() or 'settings' in ziel.lower(): app='com.android.settings'
+        elif 'chrome' in ziel.lower(): app='com.android.chrome'
+        threading.Thread(target=jack_ui_agent.run_agent,args=(ziel,app,20,send),daemon=True).start()
         return 'Agent gestartet: '+ziel
     if text.strip()=='/explore_deep' or text.strip().startswith('/explore_deep '):
         parts=text.strip().split()
