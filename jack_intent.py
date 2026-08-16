@@ -77,6 +77,7 @@ def muster_analyse():
 # ---------- Aktions-Katalog ----------
 AKTIONEN = {
     'ssh_check':        {'level': 2, 'text': 'Xiaomi SSH pruefen'},
+    'datei_schreiben':  {'level': 3, 'text': 'Datei schreiben'},
     'akku_check':       {'level': 2, 'text': 'Akkustand pruefen'},
     'ram_check':        {'level': 2, 'text': 'RAM pruefen'},
     'temp_check':       {'level': 2, 'text': 'Temperatur pruefen'},
@@ -93,6 +94,7 @@ AKTIONEN = {
 
 KEYWORDS = {
     'ssh_check':      ['ssh pruefen', 'ssh check', 'xiaomi verbindung', 'slave erreichbar', 'zweites handy verbunden', 'ist der xiaomi reichbar', 'ist xiaomi reichbar', 'xiaomi reichbar', 'kannst du xiaomi erreichen'],
+    'datei_schreiben':  ['schreib eine datei', 'erstell eine datei', 'mach eine datei', 'neue datei erstellen', 'datei erstellen', 'schreib datei', 'create file'],
     'akku_check':     ['akku', 'batterie', 'ladung', 'prozent'],
     'ram_check':      ['ram', 'speicher', 'arbeitsspeicher', 'memory'],
     'temp_check':     ['temperatur', 'heiss', 'heiß', 'warm', 'grad', 'thermal'],
@@ -232,6 +234,16 @@ def execute(d):
     aktion = d['intent'] if isinstance(d, dict) else d
     erg = ''
     try:
+        if aktion == 'datei_schreiben':
+            import re as _re
+            t=(_pre.get('_text','') or '')
+            m=_re.search(r'datei\s+(\S+\.\w+)\s+(?:mit\s+inhalt\s+|inhalt\s+)(.*)',t,_re.I)
+            if m:
+                fname=m.group(1); content=m.group(2)
+                import jack_write as _jw
+                erg=_jw.propose_write(fname,content)
+            else:
+                erg='Bitte so: schreib eine datei NAME.txt mit inhalt TEXT'
         if aktion == 'ssh_check':
             r = _ssh('true', 8)
             erg = 'Xiaomi SSH: ' + ('erreichbar' if r.returncode == 0 else 'nicht erreichbar')
