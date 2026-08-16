@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T17:50:50.880490
+Stand: 2026-08-16T18:02:57.574335
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -152,29 +152,29 @@ Stand: 2026-08-16T17:50:50.880490
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 785
+- Erinnerungen: 786
 - Dienste:
-run: jack_cortex: (pid 22069) 3309s
-run: jack_telegram: (pid 8176) 130s
+run: jack_cortex: (pid 22069) 4036s
+run: jack_telegram: (pid 11952) 553s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 18563) 13271s
+run: ollama: (pid 18563) 13998s
 
 ## Letzte Aenderungen
-5c44716 feat: /ssh Befehl - direkter SSH-Output ohne Gemini-Umweg
-0c37194 fix: netz_da multi-URL, agent immer Dollar-Prefix fuer SSH
-e72bbc4 feat: /agent - ReAct UI-Agent mit Gemini live auf Xiaomi
+647cbd8 fix: _termux_cmd definiert, /ssh funktioniert mit echtem Output
+fc25048 feat: /ssh Befehl - direkter SSH-Output ohne Gemini-Umweg
+c551a46 fix: netz_da multi-URL, agent immer Dollar-Prefix fuer SSH
+569eb34 feat: /agent - ReAct UI-Agent mit Gemini live auf Xiaomi
+33fd615 inbox: System Health Check v3
+ce68d65 inbox: System Health Check v2
+79401fc inbox: Outcome Types Test
+d412483 inbox: Retest
+7a4c36c inbox: Level4 Mission 3 - Lernlog
+bc1e4bb inbox: Level4 Mission 2 - Xiaomi Kontrolle
+f9d8024 inbox: Level4 Mission 1 - Systemstatus
 4a83395 feat: jack_explorer_deep
 59dceef fix: explore pm list mit su -c, max_apps auf 50 erhoeht
 c46791f feat: Skill-Lifecycle verifiziert - CANDIDATE/TESTING/VERIFIED live
 65d6c40 feat: Schema-Validator aktiv - unbekannte Step-Typen blockiert
-e151f34 inbox: RESET
-f03c40d feat: Evidence Records - jeder Step mit Timestamp
-71051ae chore: sync + unstaged changes
-a99b932 chore: README.md aktualisiert und Portfolio-Polish
-cbaf12c feat: Mission 1-8 abgeschlossen, Zero-Touch live, jack_lernlog persistiert
-fc527e9 inbox: Mission 8 - Zero Touch von Claude
-15e0710 feat: chrome_search in STEPS-Dict registriert
-64b89b1 feat: step_chrome_search - direkt Google via am start
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

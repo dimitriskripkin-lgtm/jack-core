@@ -502,5 +502,99 @@
   "de.hafas.android.db": {
     "paket": "de.hafas.android.db",
     "ebene1": {}
+  },
+  "de.sldo.kundenportal.tecis": {
+    "paket": "de.sldo.kundenportal.tecis",
+    "ebene1": {
+      "Support": {
+        "buttons": 5,
+        "texte": [
+          "Neuen Kontakt erstellen",
+          "Zu Kontakt hinzufügen",
+          "SMS senden",
+          "040-69696969",
+          "1"
+        ]
+      },
+      "btn_127_1142": {
+        "buttons": 5,
+        "texte": [
+          "Schatz",
+          "Anruferansicht ausprobieren",
+          "Anpassen, wie Schatz während eines Anrufs angezeigt wird",
+          "Notfallkontakt",
+          "+49 174 9012771 �"
+        ]
+      },
+      "btn_292_1142": {
+        "buttons": 5,
+        "texte": [
+          "Alle",
+          "Verpasst",
+          "Kontakte",
+          "Kein Spam",
+          "Spam"
+        ]
+      },
+      "btn_457_1142": {
+        "buttons": 5,
+        "texte": [
+          "Support",
+          "Willkommen zurück!",
+          "Mit der PIN zum Kundenportal anmelden.",
+          "PIN anzeigen",
+          "PIN vergessen?"
+        ]
+      }
+    }
+  },
+  "de.toggo": {
+    "paket": "de.toggo",
+    "ebene1": {}
+  },
+  "jbl.stc.com": {
+    "paket": "jbl.stc.com",
+    "ebene1": {
+      "Bottom sheet backdrop": {
+        "buttons": 4,
+        "texte": [
+          "Geräte",
+          "Soundboks 4",
+          "#297004",
+          "Geräte",
+          "Profil"
+        ]
+      },
+      "btn_1000_180": {
+        "buttons": 5,
+        "texte": [
+          "Bewölkt  24°/13°",
+          "AQI 28",
+          "Ottersberg",
+          "5-Tage-Vorhersage",
+          "Weitere Details"
+        ]
+      },
+      "btn_540_469": {
+        "buttons": 5,
+        "texte": [
+          "Bewölkt  24°/13°",
+          "AQI 28",
+          "Ottersberg",
+          "5-Tage-Vorhersage",
+          "Weitere Details"
+        ]
+      },
+      "btn_915_469": {
+        "buttons": 5,
+        "texte": [
+          "Bewölkt  24°/13°",
+          "AQI 28",
+          "Ottersberg",
+          "5-Tage-Vorhersage",
+          "Weitere Details"
+        ]
+      }
+    }
   }
 }

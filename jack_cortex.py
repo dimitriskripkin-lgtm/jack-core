@@ -220,12 +220,7 @@ def main():
             except Exception as _e:
                 log_error(f"[Cortex] Oracle-Error: {str(_e)[:80]}")
         time.sleep(60)
-        try:
-            import datetime as _dt
-            if _dt.datetime.now().minute==0 and _dt.datetime.now().hour%2==0:
-                import jack_explorer_deep as _jed, threading as _th
-                _th.Thread(target=_jed.run_deep_loop,args=(None,4,None),daemon=True).start()
-        except Exception: pass
+        pass  # Auto-Explore deaktiviert
 
 if __name__ == "__main__":
     main()
