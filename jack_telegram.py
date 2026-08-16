@@ -455,6 +455,17 @@ def oracle_sign(cmd, uuid, ts):
 def handle(text):
     if not text:
         return None
+    _t=text.lower()
+    if any(w in _t for w in ['schreib eine datei','erstell eine datei','mach eine datei','schreib datei']):
+        import re as _re
+        m=_re.search(r'datei\s+(\S+\.\w+)\s+(?:mit\s+inhalt\s+|inhalt\s+)(.*)',text,_re.I)
+        if m:
+            fn=m.group(1).strip(); ct=m.group(2).strip()
+            p=jack_write.propose(fn,ct)
+            PENDING_WRITE.clear(); PENDING_WRITE.update(p)
+            send_keyboard("Datei: "+p['filename']+chr(10)+"Pfad: ~/jack_werkstatt/"+p['filename']+chr(10)+chr(10)+"Inhalt:"+chr(10)+p['preview'], [[('🟢 Bestätigen','confirm_write:'+p['filename']),('🔴 Abbrechen','cancel_write:'+p['filename'])]])
+            return None
+        return "So bitte: schreib eine datei NAME.txt mit inhalt TEXT"
     if text.strip() in ['/selftest','/test']:
         try:
             import jack_cortex as _jc
