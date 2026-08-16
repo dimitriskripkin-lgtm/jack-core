@@ -518,6 +518,23 @@ def handle(text):
             send_keyboard("Datei: "+p['filename']+chr(10)+"Pfad: ~/jack_werkstatt/"+p['filename']+chr(10)+chr(10)+"Inhalt:"+chr(10)+p['preview'], [[('🟢 Bestätigen','confirm_write:'+p['filename']),('🔴 Abbrechen','cancel_write:'+p['filename'])]])
             return None
         pass
+    if text.strip()=='/skills':
+        import jack_skill_lib as _sk
+        skills=_sk.list_all()
+        if not skills: return 'Keine Skills gespeichert.'
+        lines=['SKILLS ('+str(len(skills))+'):']
+        for s2 in skills:
+            lines.append('['+s2['state']+'] '+s2['name']+' - '+str(s2['successes'])+'/'+str(s2['executions'])+' Erfolge')
+        return chr(10).join(lines)
+    if text.strip().startswith('skill:'):
+        import jack_skill_lib as _sk, jack_planner, importlib
+        importlib.reload(jack_planner)
+        sname=text.strip()[6:].strip()
+        skill=_sk.get(sname)
+        if not skill: return 'Skill nicht gefunden: '+sname
+        import threading as _th2
+        _th2.Thread(target=jack_planner.run_plan,args=(skill['plan'],send),daemon=True).start()
+        return 'Starte Skill: '+sname+' ['+skill['state']+']'
     if text.strip() in ['/selftest','/test']:
         try:
             import jack_cortex as _jc

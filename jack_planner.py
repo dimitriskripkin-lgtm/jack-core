@@ -111,6 +111,17 @@ def run_plan(plan,send_fn=None):
         import jack_outcome
         rec=jack_outcome.evaluate(plan,results)
         if send_fn: send_fn(jack_outcome.fmt(rec))
+        if rec.get('outcome')=='SUCCESS':
+            try:
+                import jack_skill_lib as _sk
+                _sk.record_run(name, True)
+                skill=_sk.get(name)
+                if not skill:
+                    _sk.save(name, plan, 'Auto-gespeichert nach erstem Erfolg')
+                    if send_fn: send_fn('Skill gespeichert: '+name+' [CANDIDATE]')
+                else:
+                    if send_fn: send_fn('Skill: '+name+' ['+skill['state']+'] '+str(skill['successes'])+'/'+str(skill['executions'])+' Erfolge')
+            except Exception: pass
     except Exception as _oe:
         if send_fn: send_fn('Fertig: '+name)
     return results
