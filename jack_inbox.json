@@ -1,36 +1,30 @@
 {
-  "ts": 1786891950,
+  "ts": 1786892159,
   "plan": {
-    "name": "Retest",
+    "name": "Outcome Types Test",
     "success_criteria": [
       {
-        "type": "contains",
-        "value": "2",
-        "desc": "Mindestens 2 Dienste laufen",
-        "step": 1
+        "type": "gt",
+        "value": "3",
+        "step": 1,
+        "desc": "Mehr als 3 Dienste laufen"
       },
       {
-        "type": "contains",
-        "value": "Skills:",
+        "type": "not_empty",
         "step": 2,
-        "desc": "Skills-Ausgabe vorhanden"
+        "desc": "Skills vorhanden"
       }
     ],
     "steps": [
       {
         "type": "exec",
         "cmd": "sv status jack_telegram jack_cortex jack_waechter ollama | grep -c run",
-        "desc": "Dienste zaehlen"
+        "desc": "Dienste"
       },
       {
         "type": "exec",
-        "cmd": "python3 -c \"import sys;sys.path.insert(0,'/data/data/com.termux/files/home/jack');import jack_skill_lib as sk;print('Skills:',len(sk.list_all()))\"",
-        "desc": "Skills zaehlen"
-      },
-      {
-        "type": "exec",
-        "cmd": "echo $(date): Retest OK >> ~/jack/jack_lernlog.txt",
-        "desc": "Log"
+        "cmd": "python3 -c \"import sys;sys.path.insert(0,'/data/data/com.termux/files/home/jack');import jack_skill_lib as sk;print(len(sk.list_all()))\"",
+        "desc": "Skills"
       }
     ]
   }
