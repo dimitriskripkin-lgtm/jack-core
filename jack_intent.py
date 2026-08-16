@@ -241,7 +241,7 @@ def execute(d):
             if m:
                 fname=m.group(1); content=m.group(2)
                 import jack_write as _jw
-                erg=_jw.propose_write(fname,content)
+                erg=_jw.propose(fname,content)
             else:
                 erg='Bitte so: schreib eine datei NAME.txt mit inhalt TEXT'
         if aktion == 'ssh_check':
