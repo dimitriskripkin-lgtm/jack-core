@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T12:14:46.023353
+Stand: 2026-08-16T12:20:49.671161
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -26,7 +26,7 @@ Stand: 2026-08-16T12:14:46.023353
 - Dima hat einen Telegram Bot @jackdimachat_bot als Interface.
 - Dima hat KEINEN Hund.
 
-## Aktive Module (114)
+## Aktive Module (115)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -86,6 +86,7 @@ Stand: 2026-08-16T12:14:46.023353
 - jack_patch.py
 - jack_patch_memory.py
 - jack_personality.py
+- jack_planner.py
 - jack_publish.py
 - jack_queue.py
 - jack_radar.py
@@ -144,14 +145,15 @@ Stand: 2026-08-16T12:14:46.023353
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 721
+- Erinnerungen: 722
 - Dienste:
-run: jack_cortex: (pid 7269) 178477s
-run: jack_telegram: (pid 17685) 2257s
+run: jack_cortex: (pid 7269) 178840s
+run: jack_telegram: (pid 15550) 332s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7266) 178477s
+run: ollama: (pid 7266) 178840s
 
 ## Letzte Aenderungen
+d47eba4 feat: jack_planner.py + PLAN-Marker - Level 4 autonome Plaene live
 9ca00e9 feat: jack_ghost.py - Ghost Touch live, erster Tap verifiziert (4P.de)
 c019895 fix: Subagent Akku-Format, Log-Zeile gefiltert
 9860142 feat: Subagent in proaktiv_check - 4 Agenten parallel
@@ -166,7 +168,6 @@ ae6d02c fix: Persona klargestellt - JACK kann Dateien schreiben
 af70869 fix: datei_schreiben mit Inline-Button in handle() verdrahtet
 b700c5e fix: datei_schreiben korrekt in elif-Kette - kein unbekannt mehr
 7580954 fix: propose_write -> propose in datei_schreiben
-cd293bb fix: _pre -> d in datei_schreiben handler
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

@@ -26,7 +26,7 @@ def step_open_app(p):
     return 'App '+p['paket']+' geoeffnet'
 
 def step_keyevent(p):
-    _ssh('su -c '+D+'input keyevent '+str(p['keycode'])+D)
+    _ssh("su -c 'input keyevent "+str(p['keycode'])+"'")
     return 'keyevent '+str(p['keycode'])
 
 def step_wait(p):
