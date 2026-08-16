@@ -244,7 +244,7 @@ def execute(d):
                 erg=_jw.propose(fname,content)
             else:
                 erg='Bitte so: schreib eine datei NAME.txt mit inhalt TEXT'
-        if aktion == 'ssh_check':
+        elif aktion == 'ssh_check':
             r = _ssh('true', 8)
             erg = 'Xiaomi SSH: ' + ('erreichbar' if r.returncode == 0 else 'nicht erreichbar')
         elif aktion == 'akku_check':
