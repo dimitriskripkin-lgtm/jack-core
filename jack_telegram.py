@@ -489,9 +489,11 @@ def handle(text):
         _pjson=text[text.find(']]',_pi)+2:_pj].strip()
         def _runplan(pn=_pname,pj=_pjson):
             try:
-                import json,importlib,jack_planner
+                import json,importlib,jack_planner,jack_schema
+                plan,err=jack_schema.validate(pj)
+                if not plan:
+                    send('PLAN UNGUELTIG: '+err); return
                 importlib.reload(jack_planner)
-                plan=json.loads(pj)
                 plan['name']=pn
                 jack_planner.run_plan(plan,send)
             except Exception as e:
