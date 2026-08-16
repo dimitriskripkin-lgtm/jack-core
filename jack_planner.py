@@ -98,7 +98,8 @@ def run_plan(plan,send_fn=None):
             r=str(fn(step)) if fn else 'UNBEKANNT: '+typ
         except Exception as e:
             r='FEHLER: '+str(e)[:120]
-        results.append({'n':i+1,'typ':typ,'r':r})
+        import time as _t
+        results.append({'n':i+1,'typ':typ,'desc':desc,'r':r,'ts':int(_t.time())})
         abort=step.get('abort_on_fail') and ('FEHLER' in r or 'NICHT_GEFUNDEN' in r)
         msg='['+str(i+1)+'/'+str(len(steps))+'] '+desc+': '+r[:150]
         if send_fn: send_fn(msg)
@@ -106,5 +107,10 @@ def run_plan(plan,send_fn=None):
             if send_fn: send_fn('Abgebrochen nach Schritt '+str(i+1))
             return results
         time.sleep(step.get('delay',0.8))
-    if send_fn: send_fn('Fertig: '+name)
+    try:
+        import jack_outcome
+        rec=jack_outcome.evaluate(plan,results)
+        if send_fn: send_fn(jack_outcome.fmt(rec))
+    except Exception as _oe:
+        if send_fn: send_fn('Fertig: '+name)
     return results

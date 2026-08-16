@@ -14,7 +14,9 @@ def _repo():
 
 INBOX_FILE='jack_inbox.json'
 RAW='https://raw.githubusercontent.com/'+_repo()+'/master/'+INBOX_FILE
-_last_ts=None
+_last_ts=0
+try: _last_ts=int(open(os.path.expanduser('~/.jack_inbox_ts')).read().strip())
+except: pass
 
 def push_plan(plan,name='Claude-Plan'):
     import base64
@@ -49,8 +51,10 @@ def poll_inbox(send_fn=None):
             raw=json.loads(r.read())
             d=json.loads(base64.b64decode(raw['content']).decode())
         ts=d.get('ts',0)
-        if ts and ts!=_last_ts:
+        if ts and ts>0 and ts!=_last_ts:
             _last_ts=ts
+            try: open(os.path.expanduser('~/.jack_inbox_ts'),'w').write(str(ts))
+            except: pass
             plan=d.get('plan')
             if plan and send_fn:
                 import jack_planner,importlib
