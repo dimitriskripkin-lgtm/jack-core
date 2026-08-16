@@ -594,6 +594,7 @@ def main():
     except Exception: pass
     vibrate(200)
     offset = _offset_lesen()
+    import jack_inbox; jack_inbox.start_inbox_poller(send)
     print('[INFO] Telegram Bot Schleife gestartet, warte auf Nachrichten...')
     while True:
         try:

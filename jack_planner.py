@@ -45,9 +45,31 @@ def step_home(p):
     jg.tap_xiaomi(540,2310)
     return 'Home'
 
+def step_input_text(p):
+    import time
+    txt=str(p.get('text',''))
+    _ssh('su -c "input keyevent 123"')
+    time.sleep(0.3)
+    _ssh('su -c "input keyevent 28 28"')
+    time.sleep(0.3)
+    safe=txt.replace(' ','%s').replace('&','and').replace('?','')
+    _ssh('su -c "input text '+safe+'"')
+    time.sleep(0.3)
+    return 'Eingabe: '+txt[:40]
+
+def step_ui_text(p):
+    import jack_ghost as jg
+    xml=jg.hol_xiaomi_ui()
+    import xml.etree.ElementTree as ET
+    try: root=ET.fromstring(xml)
+    except: return 'XML-Fehler'
+    words=[n.get('text','') for n in root.iter('node') if n.get('text','').strip()]
+    return ' | '.join(words[:20])[:500]
+
 STEPS={'exec':step_exec,'tap':step_tap,'find_and_tap':step_find_and_tap,
     'open_app':step_open_app,'keyevent':step_keyevent,'wait':step_wait,
-    'ui_check':step_ui_check,'home':step_home}
+    'ui_check':step_ui_check,'home':step_home,
+    'input_text':step_input_text,'ui_text':step_ui_text}
 
 def run_plan(plan,send_fn=None):
     name=plan.get('name','Plan')
