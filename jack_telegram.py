@@ -32,6 +32,8 @@ except Exception as _ke:
 
 ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
 PENDING_WRITE = {}
+import jack_exec
+PENDING_EXEC = {}
 LAST_CODE = {'file': None}
 BESTAETIGUNG = 'bestaetige schreiben'
 PENDING_IMPROVE = {}
@@ -238,6 +240,24 @@ def _check_memory_trigger(text, chat_id):
 
 def handle_callback(callback_data, callback_id):
     """Verarbeitet Inline-Button-Klicks."""
+    if callback_data == 'run_exec':
+        c=PENDING_EXEC.get('cmd')
+        if not c:
+            answer_callback(callback_id,'Nichts offen'); return
+        answer_callback(callback_id,'Laeuft...')
+        send('Fuehre aus...')
+        def _r(cmd=c):
+            out=jack_exec.run(cmd)
+            PENDING_EXEC.clear()
+            send(out)
+        import threading as _th
+        _th.Thread(target=_r, daemon=True).start()
+        return
+    if callback_data == 'cancel_exec':
+        PENDING_EXEC.clear()
+        answer_callback(callback_id,'Abgebrochen')
+        send('Befehl verworfen.')
+        return
     if callback_data.startswith("confirm_write:"):
         fn=callback_data[14:]
         if PENDING_WRITE and PENDING_WRITE.get("filename")==fn:
@@ -454,6 +474,12 @@ def oracle_sign(cmd, uuid, ts):
 
 def handle(text):
     if not text:
+        return None
+    _cmd=jack_exec.extrahiere(text)
+    if _cmd:
+        PENDING_EXEC.clear(); PENDING_EXEC['cmd']=_cmd
+        _prev=_cmd if len(_cmd)<800 else _cmd[:800]+' ...'
+        send_keyboard('BEFEHL:'+chr(10)+_prev, [[('🟢 Ausführen','run_exec'),('🔴 Abbrechen','cancel_exec')]])
         return None
     _t=text.lower()
     if any(w in _t for w in ['schreib eine datei','erstell eine datei','mach eine datei','schreib datei']):
