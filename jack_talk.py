@@ -322,7 +322,7 @@ def build_final_prompt(user_query, persona_text, id_ctx, mem_ctx, hist_ctx, live
     prompt_parts = []
     
     # 1. KONTEXT & GEDÄCHTNIS (Oben, damit es die Regeln nicht überschreibt)
-    prompt_parts.append(f"<context>\n[ZEIT]: {timestamp_str}\n[LIVE_SYSTEMSTATUS]: {live_ctx}\n</context>")
+    prompt_parts.append(f"<LIVE_FAKTEN_UNVERAENDERLICH>\nZEIT: {timestamp_str}\nDIESE ZAHLEN SIND ECHTE MESSWERTE - NIEMALS ANDERE ZAHLEN ERFINDEN ODER SCHAETZEN:\n{live_ctx}\nREGEL: Wenn du RAM, Temp, Akku oder Load nennst, NUR diese Zahlen verwenden. Nie erfinden.\n</LIVE_FAKTEN_UNVERAENDERLICH>")
     
     if id_ctx:
         prompt_parts.append(f"<user_profile>\n{id_ctx}\n</user_profile>")
