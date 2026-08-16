@@ -1,1 +1,51 @@
-{"ts":0,"plan":null}
+{
+  "ts": 1786878397,
+  "plan": {
+    "steps": [
+      {
+        "type": "open_app",
+        "paket": "com.android.chrome",
+        "desc": "Chrome"
+      },
+      {
+        "type": "wait",
+        "seconds": 3,
+        "desc": "Warten"
+      },
+      {
+        "type": "find_and_tap",
+        "text": "In Google suchen oder URL eingeben",
+        "desc": "Adressleiste"
+      },
+      {
+        "type": "wait",
+        "seconds": 1,
+        "desc": "Warten"
+      },
+      {
+        "type": "input_text",
+        "text": "JACK autonomous android",
+        "desc": "Suche"
+      },
+      {
+        "type": "keyevent",
+        "keycode": 66,
+        "desc": "Enter"
+      },
+      {
+        "type": "wait",
+        "seconds": 5,
+        "desc": "Laden"
+      },
+      {
+        "type": "ui_text",
+        "desc": "Lesen"
+      },
+      {
+        "type": "home",
+        "desc": "Home"
+      }
+    ],
+    "name": "Claude Inbox Test"
+  }
+}
