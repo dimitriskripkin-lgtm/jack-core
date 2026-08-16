@@ -1,51 +1,38 @@
 {
-  "ts": 1786878397,
+  "ts": 1786879801,
   "plan": {
     "steps": [
       {
-        "type": "open_app",
-        "paket": "com.android.chrome",
-        "desc": "Chrome"
+        "type": "exec",
+        "cmd": "ssh xiaomi-jack \"su -c 'ps -A | grep -E \\\"jack|python\\\"| head -5'\"",
+        "desc": "Prozesse Fix"
       },
       {
-        "type": "wait",
-        "seconds": 3,
-        "desc": "Warten"
+        "type": "exec",
+        "cmd": "python3 -c \"print(43800//1000,'Grad')\"",
+        "desc": "Temp umrechnen"
       },
       {
-        "type": "find_and_tap",
-        "text": "In Google suchen oder URL eingeben",
-        "desc": "Adressleiste"
+        "type": "exec",
+        "cmd": "cat ~/jack/jack_lernlog.txt",
+        "desc": "Lernlog Stand"
       },
       {
-        "type": "wait",
-        "seconds": 1,
-        "desc": "Warten"
+        "type": "chrome_search",
+        "query": "termux android edge AI autonomous system 2026",
+        "desc": "JACK in der Welt",
+        "wait": 5
       },
       {
-        "type": "input_text",
-        "text": "JACK autonomous android",
-        "desc": "Suche"
-      },
-      {
-        "type": "keyevent",
-        "keycode": 66,
-        "desc": "Enter"
-      },
-      {
-        "type": "wait",
-        "seconds": 5,
-        "desc": "Laden"
-      },
-      {
-        "type": "ui_text",
-        "desc": "Lesen"
+        "type": "exec",
+        "cmd": "echo \"$(date): Mission 8 - Zero-Touch via Claude push_plan bestaetigt\" >> ~/jack/jack_lernlog.txt",
+        "desc": "Log"
       },
       {
         "type": "home",
         "desc": "Home"
       }
     ],
-    "name": "Claude Inbox Test"
+    "name": "Mission 8 - Zero Touch von Claude"
   }
 }
