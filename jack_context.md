@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T11:29:18.534971
+Stand: 2026-08-16T11:32:20.248163
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -27,7 +27,7 @@ Stand: 2026-08-16T11:29:18.534971
 - Dima hat KEINEN Hund.
 - Dima ist LKW-Fahrer mit Sprinter Kühlkoffer, KEIN Fernfahrer.
 
-## Aktive Module (112)
+## Aktive Module (113)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -51,6 +51,7 @@ Stand: 2026-08-16T11:29:18.534971
 - jack_context_compress.py
 - jack_context_ingest.py
 - jack_cortex.py
+- jack_critic.py
 - jack_db_optimizer.py
 - jack_db_queue.py
 - jack_delta.py
@@ -145,12 +146,13 @@ Stand: 2026-08-16T11:29:18.534971
 - Offene Fehler: 0
 - Erinnerungen: 712
 - Dienste:
-run: jack_cortex: (pid 7269) 175749s
-run: jack_telegram: (pid 8023) 80s
+run: jack_cortex: (pid 7269) 175931s
+run: jack_telegram: (pid 10419) 166s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7266) 175749s
+run: ollama: (pid 7266) 175931s
 
 ## Letzte Aenderungen
+4c4c50d auto-backup vor write
 7055c53 feat: ReAct-Loop bei EXEC-Fehler, EXEC-Parser gehaertet
 5cf5569 fix: Persona LLM-Architektur, Datei-Fallback entfernt, EXEC-Kanal live
 d82ce76 feat: EXEC-Marker mit Bestaetigungs-Button - Befehle direkt aus Telegram
@@ -165,7 +167,6 @@ cd293bb fix: _pre -> d in datei_schreiben handler
 d8a9411 fix: Live-Fakten als unveraenderliche Zone - kein Halluzinieren mehr
 5586887 fix: ssh_check Keywords fuer Erreichbarkeit erweitert
 0191092 fix: Intent nur bei echten Befehlen - Start-Wort oder kurze Nachricht
-d18fc63 feat: Rolling Window - letzte 10 Nachrichten im RAM fuer Gemini-Kontext
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

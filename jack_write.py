@@ -35,6 +35,12 @@ def _backup():
     except Exception: pass
 
 def commit_write(filename, content):
+    try:
+        import jack_critic
+        ok, grund = jack_critic.pruefe(content)
+        if not ok:
+            return False, 'CRITIC BLOCKIERT: ' + grund
+    except Exception: pass
     _backup()
     import jack_log; jack_log.log_decision('DATEI-SCHREIBEN', filename, str(len(content))+' Zeichen')
     # roher Pfad OHNE Saeuberung zur echten Grenzkontrolle
