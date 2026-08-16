@@ -77,6 +77,22 @@ def _parse(antwort):
         elif line.startswith('ZIEL_ERREICHT:') and 'ja' in line.lower(): r['fertig']=True
     return r
 
+def run_ssh_agent(befehle,send_fn=None):
+    import jack_gemini_bridge as gb
+    ergebnisse=[]
+    for cmd in befehle:
+        out=_termux_cmd(cmd)
+        if send_fn: send_fn('$ '+cmd+chr(10)+out)
+        ergebnisse.append({'cmd':cmd,'out':out})
+    zusammenfassung='\n'.join(['$ '+e['cmd']+chr(10)+e['out'][:200] for e in ergebnisse])
+    prompt='Hier sind die Ergebnisse der SSH-Befehle auf dem Xiaomi Android Geraet:'+chr(10)+zusammenfassung+chr(10)+chr(10)+'Fasse zusammen was du gelernt hast. Antworte auf Deutsch.'
+    try:
+        fazit=gb.ask_gemini(prompt,{})
+        if send_fn: send_fn(chr(10)+'FAZIT: '+fazit[:500])
+    except Exception as e:
+        if send_fn: send_fn('Fazit-Fehler: '+str(e)[:100])
+    return ergebnisse
+
 def run_agent(ziel,start_app=None,max_schritte=20,send_fn=None):
     if send_fn: send_fn('Agent gestartet: '+ziel)
     verlauf=[]

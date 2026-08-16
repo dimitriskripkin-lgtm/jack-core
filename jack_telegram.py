@@ -518,6 +518,12 @@ def handle(text):
             send_keyboard("Datei: "+p['filename']+chr(10)+"Pfad: ~/jack_werkstatt/"+p['filename']+chr(10)+chr(10)+"Inhalt:"+chr(10)+p['preview'], [[('🟢 Bestätigen','confirm_write:'+p['filename']),('🔴 Abbrechen','cancel_write:'+p['filename'])]])
             return None
         pass
+    if text.strip().startswith('/ssh '):
+        cmds=[c.strip() for c in text.strip()[5:].split(',') if c.strip()]
+        if not cmds: return 'Bitte Befehle angeben: /ssh ls, python3 --version, free -m'
+        import jack_ui_agent,threading
+        threading.Thread(target=jack_ui_agent.run_ssh_agent,args=(cmds,send),daemon=True).start()
+        return 'SSH-Agent gestartet: '+', '.join(cmds)
     if text.strip().startswith('/agent '):
         ziel=text.strip()[7:].strip()
         import jack_ui_agent,threading

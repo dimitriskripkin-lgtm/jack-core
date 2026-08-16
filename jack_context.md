@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T17:44:47.409120
+Stand: 2026-08-16T17:47:49.207442
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -154,12 +154,13 @@ Stand: 2026-08-16T17:44:47.409120
 - Offene Fehler: 0
 - Erinnerungen: 784
 - Dienste:
-run: jack_cortex: (pid 22069) 2946s
-run: jack_telegram: (pid 28956) 491s
+run: jack_cortex: (pid 22069) 3128s
+run: jack_telegram: (pid 6565) 64s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 18563) 12908s
+run: ollama: (pid 18563) 13090s
 
 ## Letzte Aenderungen
+0c37194 fix: netz_da multi-URL, agent immer Dollar-Prefix fuer SSH
 e72bbc4 feat: /agent - ReAct UI-Agent mit Gemini live auf Xiaomi
 4a83395 feat: jack_explorer_deep
 59dceef fix: explore pm list mit su -c, max_apps auf 50 erhoeht
@@ -174,7 +175,6 @@ fc527e9 inbox: Mission 8 - Zero Touch von Claude
 15e0710 feat: chrome_search in STEPS-Dict registriert
 64b89b1 feat: step_chrome_search - direkt Google via am start
 808f3e8 inbox: Claude Inbox Test
-d0bd542 fix: input_text+ui_text in STEPS-Dict
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
