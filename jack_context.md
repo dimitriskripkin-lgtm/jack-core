@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T11:32:20.248163
+Stand: 2026-08-16T11:35:22.056262
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -144,14 +144,16 @@ Stand: 2026-08-16T11:32:20.248163
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 712
+- Erinnerungen: 713
 - Dienste:
-run: jack_cortex: (pid 7269) 175931s
-run: jack_telegram: (pid 10419) 166s
+run: jack_cortex: (pid 7269) 176113s
+run: jack_telegram: (pid 14902) 51s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7266) 175931s
+run: ollama: (pid 7266) 176113s
 
 ## Letzte Aenderungen
+9860142 feat: Subagent in proaktiv_check - 4 Agenten parallel
+e498cd2 feat: jack_critic - Schadcode-Pruefung vor jedem Datei-Write
 4c4c50d auto-backup vor write
 7055c53 feat: ReAct-Loop bei EXEC-Fehler, EXEC-Parser gehaertet
 5cf5569 fix: Persona LLM-Architektur, Datei-Fallback entfernt, EXEC-Kanal live
@@ -165,8 +167,6 @@ b700c5e fix: datei_schreiben korrekt in elif-Kette - kein unbekannt mehr
 cd293bb fix: _pre -> d in datei_schreiben handler
 4bb67cd feat: datei_schreiben Intent eingebaut
 d8a9411 fix: Live-Fakten als unveraenderliche Zone - kein Halluzinieren mehr
-5586887 fix: ssh_check Keywords fuer Erreichbarkeit erweitert
-0191092 fix: Intent nur bei echten Befehlen - Start-Wort oder kurze Nachricht
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

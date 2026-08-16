@@ -308,7 +308,8 @@ def execute(d):
                 erg=_jsa.run_all()
                 try:
                     import jack_log as _jl2
-                    erg=erg+chr(10)+'LOG: '+_jl2.recent(2)
+                    _lg=[l for l in _jl2.recent(8).splitlines() if l.strip().startswith(chr(91)) and 'EXEC' not in l]
+                    erg=erg+chr(10)+'LOG: '+(_lg[-1][:120] if _lg else 'keine Eintraege')
                 except Exception: pass
                 return erg
             except Exception: pass
