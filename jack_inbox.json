@@ -1,13 +1,13 @@
 {
-  "ts": 1786892990,
+  "ts": 1786893182,
   "plan": {
-    "name": "System Health Check v2",
+    "name": "System Health Check v3",
     "success_criteria": [
       {
         "type": "gt",
         "value": "3",
         "step": 1,
-        "desc": "Mehr als 3 Dienste laufen"
+        "desc": "Mehr als 3 Dienste"
       },
       {
         "type": "gt",
@@ -25,17 +25,17 @@
       {
         "type": "exec",
         "cmd": "sv status jack_telegram jack_cortex jack_waechter ollama | grep -c run",
-        "desc": "Dienste zaehlen"
+        "desc": "Dienste"
       },
       {
         "type": "exec",
         "cmd": "free -m | awk 'NR==2{print $7}'",
-        "desc": "RAM pruefen"
+        "desc": "RAM"
       },
       {
         "type": "exec",
         "cmd": "ssh xiaomi-jack 'echo OK'",
-        "desc": "Xiaomi Ping"
+        "desc": "Xiaomi"
       }
     ]
   }
