@@ -134,32 +134,44 @@ def _maybe_self_improve():
         except Exception: pass
 
 def main():
-    import jack_log; jack_log.log_decision("WAECHTER-START","Nacht-Ueberwachung laeuft")
+    import jack_log; jack_log.log_decision("WAECHTER-START", "Nacht-Ueberwachung mit Queue")
+    import jack_queue
+    q = jack_queue.TaskQueue(min_ram_mb=800)
     while True:
-        try: cycle()
-        except Exception as e:
-            try:
-                import jack_log; jack_log.log_decision("WAECHTER-FEHLER",str(e)[:100])
-            except Exception: pass
-        _maybe_audit()
-        _maybe_self_improve()
-        _maybe_self_audit()
-        _maybe_ingest_schedule()
-        try:
+        q.add_task(1, "cycle", cycle)
+        q.add_task(2, "audit", _maybe_audit)
+        q.add_task(2, "self_improve", _maybe_self_improve)
+        q.add_task(2, "self_audit", _maybe_self_audit)
+        q.add_task(2, "ingest_schedule", _maybe_ingest_schedule)
+
+        def _run_db_opt():
+            import jack_db_optimizer as _dbo
+            _dbo.enforce_pragmas()
+            _dbo.optimize_wal()
+
+        q.add_task(2, "db_optimizer", _run_db_opt)
+        
+        def _run_explore():
             import jack_xiaomi as _jx
-            _xr=_jx.explore_next()
-            import jack_log; jack_log.log_decision('EXPLORE',
-                f"Xiaomi: CPU={_xr.get('cpu_user','?')} RAM={_xr.get('ram','?')} Akku={_xr.get('battery','?')} Temp={_xr.get('temp_c','?')}C")
-        except Exception as _xe:
-            try: import jack_log; jack_log.log_decision('EXPLORE-FEHLER',str(_xe)[:80])
-            except Exception: pass
-        try:
+            _xr = _jx.explore_next()
+            import jack_log
+            jack_log.log_decision('EXPLORE', f"Xiaomi: CPU={_xr.get('cpu_user','?')} RAM={_xr.get('ram','?')} Akku={_xr.get('battery','?')} Temp={_xr.get('temp_c','?')}C")
+        
+        def _run_autofixer():
             import jack_autofixer_shadow as _afs
             _afs.run(limit=3)
-        except Exception as _afe:
-            try: import jack_log; jack_log.log_decision('AUTOFIXER-FEHLER',str(_afe)[:80])
-            except Exception: pass
+
+        q.add_task(3, "explore_next", _run_explore)
+        q.add_task(3, "autofixer_shadow", _run_autofixer)
+        
+        results = q.execute()
+        for name, res in results.items():
+            if res.get("status") == "skipped":
+                import jack_log
+                jack_log.log_decision("QUEUE-SKIPPED", res.get("reason", name))
+        
         time.sleep(HEARTBEAT)
+
 
 
 import threading as _th, time as _tm

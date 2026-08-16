@@ -243,7 +243,7 @@ def execute(d):
                 import jack_write as _jw
                 erg=_jw.propose(fname,content)
             else:
-                erg='Bitte so: schreib eine datei NAME.txt mit inhalt TEXT'
+                erg=''
         elif aktion == 'ssh_check':
             r = _ssh('true', 8)
             erg = 'Xiaomi SSH: ' + ('erreichbar' if r.returncode == 0 else 'nicht erreichbar')

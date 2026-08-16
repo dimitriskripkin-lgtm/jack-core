@@ -18,18 +18,17 @@ def record_async(sec=8):
   if os.path.exists(TMP_WAV): os.remove(TMP_WAV)
   import os as _os; _os.path.exists(done) and _os.remove(done)
   open(trigger, "w").write(str(sec))
-  import time as _t; waited = 0
-  while waited < sec + 12:
-   if os.path.exists(done):
-    import time as _t2
-    _t2.sleep(3)
-    prev=0
-    for _ in range(5):
-     cur=os.path.getsize(TMP_M4A) if os.path.exists(TMP_M4A) else 0
-     if cur==prev and cur>1000: break
-     prev=cur; _t2.sleep(1)
-    break
-   _t.sleep(1); waited += 1
+  try:
+   import subprocess as _sp
+   _sp.run(["inotifywait","-t",str(sec+12),"-e","create,close_write",os.path.dirname(done)],capture_output=True,timeout=sec+15)
+  except Exception:
+   import time as _t; _t.sleep(sec+2)
+  import time as _t2; _t2.sleep(3)
+  prev=0
+  for _ in range(5):
+   cur=os.path.getsize(TMP_M4A) if os.path.exists(TMP_M4A) else 0
+   if cur==prev and cur>1000: break
+   prev=cur; _t2.sleep(1)
  except Exception as e: state["last_error"]=str(e)
  finally:
   state["recording"]=False

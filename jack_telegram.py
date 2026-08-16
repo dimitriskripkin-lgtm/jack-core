@@ -491,7 +491,7 @@ def handle(text):
             PENDING_WRITE.clear(); PENDING_WRITE.update(p)
             send_keyboard("Datei: "+p['filename']+chr(10)+"Pfad: ~/jack_werkstatt/"+p['filename']+chr(10)+chr(10)+"Inhalt:"+chr(10)+p['preview'], [[('🟢 Bestätigen','confirm_write:'+p['filename']),('🔴 Abbrechen','cancel_write:'+p['filename'])]])
             return None
-        return "So bitte: schreib eine datei NAME.txt mit inhalt TEXT"
+        pass
     if text.strip() in ['/selftest','/test']:
         try:
             import jack_cortex as _jc
