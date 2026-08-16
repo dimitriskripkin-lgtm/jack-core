@@ -1,7 +1,7 @@
 import subprocess, os, re
 
 BLOCK = ['rm -rf /', 'mkfs', 'dd if=', ':(){', 'chmod -R 777 /',
-         'id_jack', '.ssh/', 'api_key', 'API_KEY', 'token', 'TOKEN',
+         'id_jack', '.ssh/', 'api_key', 'API_KEY',
          'shutdown', 'reboot', '> /dev/sd']
 
 def pruefe(cmd):

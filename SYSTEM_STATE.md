@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-16 12:29
+# JACK SYSTEM STATE — 2026-08-16 13:15
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: UP
 
 ## Resources
-- RAM verfuegbar: 3325MB
+- RAM verfuegbar: 2750MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 723
+- Memory-Eintraege: 732
 - Offene Fehler: 0
 
 ## Config
@@ -24,10 +24,10 @@
 - autolearn: AN
 
 ## Letzte Log-Eintraege
-s= | rc=0
-[2026-08-16 12:28:29] EXEC | python3 - << 'PEOF'
-import os
-p=os.path.expanduser('~/jack/jack_planner.py')
-s=o | rc=0
+import sys, subprocess, time
+sys.path.insert(0,'/data/data/c | rc=0
+[2026-08-16 13:15:05] EXEC | python3 - << 'PEOF'
+import sys, subprocess, time
+sys.path.insert(0,'/data/data/c | rc=0
 
-*Generiert: 2026-08-16 12:29*
+*Generiert: 2026-08-16 13:15*

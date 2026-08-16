@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T12:29:55.375257
+Stand: 2026-08-16T13:15:23.501327
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -146,14 +146,15 @@ Stand: 2026-08-16T12:29:55.375257
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 724
+- Erinnerungen: 733
 - Dienste:
-run: jack_cortex: (pid 7269) 179386s
-run: jack_telegram: (pid 24530) 199s
+run: jack_cortex: (pid 7269) 182114s
+run: jack_telegram: (pid 30594) 207s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 7266) 179386s
+run: ollama: (pid 7266) 182114s
 
 ## Letzte Aenderungen
+d0bd542 fix: input_text+ui_text in STEPS-Dict
 e542540 fix: importlib.reload jack_planner bei jedem Plan-Run
 d47eba4 feat: jack_planner.py + PLAN-Marker - Level 4 autonome Plaene live
 9ca00e9 feat: jack_ghost.py - Ghost Touch live, erster Tap verifiziert (4P.de)
@@ -168,7 +169,6 @@ d82ce76 feat: EXEC-Marker mit Bestaetigungs-Button - Befehle direkt aus Telegram
 536d602 fix: Persona - nie behaupten etwas getan zu haben ohne Ausfuehrung
 ae6d02c fix: Persona klargestellt - JACK kann Dateien schreiben
 af70869 fix: datei_schreiben mit Inline-Button in handle() verdrahtet
-b700c5e fix: datei_schreiben korrekt in elif-Kette - kein unbekannt mehr
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

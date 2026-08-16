@@ -66,6 +66,20 @@ def step_ui_text(p):
     words=[n.get('text','') for n in root.iter('node') if n.get('text','').strip()]
     return ' | '.join(words[:20])[:500]
 
+def step_chrome_search(p):
+    import subprocess as _sp, time, jack_ghost as jg, xml.etree.ElementTree as ET
+    q=p.get('query','').replace(' ','+')
+    url='https://www.google.com/search?q='+q if not p.get('url') else p.get('url')
+    cmd="su -c 'am start -n com.android.chrome/com.google.android.apps.chrome.Main -a android.intent.action.VIEW -d \"" +url+"\"'"
+    _sp.run(['ssh','xiaomi-jack',cmd],capture_output=True,timeout=12)
+    time.sleep(p.get('wait',5))
+    xml=jg.hol_xiaomi_ui()
+    try:
+        root=ET.fromstring(xml)
+        words=[n.get('text','') for n in root.iter('node') if n.get('text','').strip()]
+        return ' | '.join(words[:25])[:600]
+    except: return 'XML-Fehler'
+
 STEPS={'exec':step_exec,'tap':step_tap,'find_and_tap':step_find_and_tap,
     'open_app':step_open_app,'keyevent':step_keyevent,'wait':step_wait,
     'ui_check':step_ui_check,'home':step_home,
