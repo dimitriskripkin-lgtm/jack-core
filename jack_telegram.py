@@ -518,6 +518,22 @@ def handle(text):
             send_keyboard("Datei: "+p['filename']+chr(10)+"Pfad: ~/jack_werkstatt/"+p['filename']+chr(10)+chr(10)+"Inhalt:"+chr(10)+p['preview'], [[('🟢 Bestätigen','confirm_write:'+p['filename']),('🔴 Abbrechen','cancel_write:'+p['filename'])]])
             return None
         pass
+    if text.strip()=='/explore' or text.strip().startswith('/explore '):
+        n=int(text.strip().split()[-1]) if text.strip()!=('/explore') else 3
+        n=min(n,50)
+        import jack_explorer, threading
+        threading.Thread(target=jack_explorer.run_exploration,args=(n,send),daemon=True).start()
+        return 'Starte Xiaomi-Exploration ('+str(n)+' Apps)...'
+    if text.strip()=='/appmap':
+        import json,os as _os
+        f=_os.path.expanduser('~/jack/xiaomi_app_map.json')
+        try:
+            d=json.load(open(f))
+            lines=['APP-MAP ('+str(len(d))+' Apps):']
+            for k,v in list(d.items())[:15]:
+                lines.append(k.split('.')[-1]+': '+str(v.get('clickable',0))+' Buttons')
+            return chr(10).join(lines)
+        except: return 'Noch keine App-Map. /explore zuerst.'
     if text.strip()=='/skills':
         import jack_skill_lib as _sk
         skills=_sk.list_all()

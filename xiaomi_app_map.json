@@ -1,0 +1,230 @@
+{
+  "org.chromium.webapk.a149e610f14e78439_v2": {
+    "paket": "org.chromium.webapk.a149e610f14e78439_v2",
+    "texts": [
+      "yotimoo",
+      "TikTok Anleitung VideoKurs",
+      "Deevid.ai Videos erstellen *Anzeige",
+      "YouTube Anleitung VideoKurs",
+      "Impressum",
+      "DATENSCHUTZ"
+    ],
+    "clickable": 6,
+    "ts": 1786888890
+  },
+  "com.ubercab.eats": {
+    "paket": "com.ubercab.eats",
+    "texts": [
+      "Spare mit einer Uber One Mitgliedschaft\n4 Wochen kostenlos 4,99 €/Monat",
+      "Spare bei der Liefergebühr für Bestellungen, die über dem Mindestbestellwert liegen.",
+      "Zusätzliche Einsparungen",
+      "Erhalte 10 % Uber One Credits für zulässige Fahrten über Uber Comfort sowie für zulässige Premium-Fahrten und 5 % Uber One Credits für zulässige Economy-Fahrten.",
+      "Du kannst ohne Gebühren oder Nachteile stornieren.",
+      "Erhalte bis zu 10 % Uber One Credits nach Abschluss zulässiger Fahrten. Steuern (und ähnliche Gebühren) sowie Aktionen werden nicht auf Mindestbestellwerte oder Vorteile im Zusammenhang mit Uber One Credits angerechnet. Erhaltene Uber One Credits verfallen nach 36 Monaten.\n\nDer Preis für die Mitgliedschaft ist in den geschätzten Einsparungen nicht enthalten. Die tatsächlichen Einsparungen können variieren. Siehe AGB",
+      "Erfahre mehr"
+    ],
+    "clickable": 1,
+    "ts": 1786888898
+  },
+  "com.facemoji.lite.xiaomi": {
+    "paket": "com.facemoji.lite.xiaomi",
+    "texts": [
+      "Mods/Hacks/Apk",
+      "Player/IPTV",
+      "Musik & Video",
+      "1",
+      "Google",
+      "Shopping/eBay usw.",
+      "Kalender",
+      "Gmail",
+      "HP",
+      "Notizen",
+      "KI",
+      "Sicherheit/Finanzen/Banking",
+      "Dateimanager +",
+      "Fotos",
+      "System/Tools/Design",
+      "SOUNDBOKS",
+      "Mit Google suchen",
+      "CamSam PLUS",
+      "Sozial Media",
+      "Galerie"
+    ],
+    "clickable": 32,
+    "ts": 1786888906
+  },
+  "com.termux.widget": {
+    "paket": "com.termux.widget",
+    "texts": [
+      "Termux:Widget",
+      "Termux:Widget is a plugin app for the Termux app. \n\nCheck Termux app github https://github.com/termux/termux-app and Termux:Widget app github https://github.com/termux/termux-widget for more info.",
+      "The current max static and dynamic shortcuts limit for the Termux:Widget app is 15. \n\nCheck https://github.com/termux/termux-widget#max-shortcuts-limit-optional for info on how to change the limit.",
+      "The Termux:Widget app does not require a launcher activity/icon to function. You can optionally disable the launcher activity if you want and enable it again from the main activity if required.\n\nThe launcher activity is an alias for the current main activity of the app which can still be opened after disabling the launcher activity. The main activity can be opened from  Termux app settings  ->  Termux:Widget  ->  Open App  if the option has been implemented in your installed Termux app version. Otherwise, running the  am start com.termux.widget/com.termux.widget.activities.TermuxWidgetMainActivity  command in the Termux app should open it.\n\nNote that on some devices the widgets created on launcher home may not function properly if the launcher activity is disabled and if the widgets have reverted to their default view and show the Open Termux:Widget app to refresh widget message, then opening the launcher/main activity will be necessary to refresh the widgets. Additionally, if the launcher activity has been disabled and the widget is in the default view, then clicking the widget title may crash your launcher.",
+      "DISABLE LAUNCHER ICON",
+      "Dynamic shortcuts will normally show when long holding the Termux:Widget app launcher icon and in launcher searches results. To create dynamic shortcuts, put desired scripts/binaries in  ~/.termux/widget/dynamic_shortcuts  with the Termux app and then click the create shortcuts button."
+    ],
+    "clickable": 1,
+    "ts": 1786888914
+  },
+  "com.subway.mobile.emea.germany": {
+    "paket": "com.subway.mobile.emea.germany",
+    "texts": [
+      "Melde dich beim brandneuen Prämienprogramm Subway Rewards an! Du sammelst bei jeder Bestellung Punkte, die du dann gegen Subway Cash einlösen kannst.",
+      "SUBWAY REWARDS® BEITRETEN",
+      "ANMELDEN",
+      "Weiter als Gast"
+    ],
+    "clickable": 3,
+    "ts": 1786888922
+  },
+  "com.shazam.android": {
+    "paket": "com.shazam.android",
+    "texts": [
+      "Melde dich beim brandneuen Prämienprogramm Subway Rewards an! Du sammelst bei jeder Bestellung Punkte, die du dann gegen Subway Cash einlösen kannst.",
+      "SUBWAY REWARDS® BEITRETEN",
+      "ANMELDEN",
+      "Weiter als Gast"
+    ],
+    "clickable": 3,
+    "ts": 1786889010
+  },
+  "com.winlator": {
+    "paket": "com.winlator",
+    "texts": [
+      "Containers",
+      "Container-1"
+    ],
+    "clickable": 4,
+    "ts": 1786889019
+  },
+  "fr.brickoft.soundiiz": {
+    "paket": "fr.brickoft.soundiiz",
+    "texts": [
+      "Sign in",
+      "Sign in with Google",
+      "Sign in with Facebook",
+      "Sign in with Apple",
+      "Sign in with Spotify",
+      "Sign in with a music service",
+      "OR",
+      "Username OR Email",
+      "Password",
+      "Forgot password?",
+      "Log in",
+      "Don't have an account? ",
+      "Sign up",
+      "If you are signing in with an identity provider and are not a Soundiiz user, you will be registered and you will need to agree to Soundiiz's Terms & Conditions ",
+      "Terms & Conditions",
+      "."
+    ],
+    "clickable": 13,
+    "ts": 1786889026
+  },
+  "de.wirlebenapp": {
+    "paket": "de.wirlebenapp",
+    "texts": [
+      "Zum Hauptinhalt springen",
+      "",
+      "",
+      "",
+      "Unsere Angebote",
+      "im ",
+      "August",
+      "Alle Produkte im Angebot",
+      "-26%³",
+      "LADIVAL allergische Kinderhaut Gel LSF 50+",
+      "Ladival",
+      "® ",
+      "Allergische Kinderhaut Sonnenschutz-Gel LSF 50+ für Kinder- und Babyhaut ab 6 Monaten, pflegend, wasserfest.",
+      "•    Für allergische Kinder- und Babyhaut ab 6 Monaten",
+      "•    Wasserfest",
+      "•    Mit 4-fach Zellschutz",
+      "•    Korallenfreundlich",
+      "•    Brennt nicht in den Augen",
+      "PZN 19362728",
+      "97,45 € / 1 l"
+    ],
+    "clickable": 110,
+    "ts": 1786889034
+  },
+  "de.sldo.kundenportal.tecis": {
+    "paket": "de.sldo.kundenportal.tecis",
+    "texts": [
+      "Support",
+      "Willkommen zurück!",
+      "Mit der PIN zum Kundenportal anmelden.",
+      "PIN anzeigen",
+      "PIN vergessen?",
+      "Anmelden"
+    ],
+    "clickable": 10,
+    "ts": 1786889041
+  },
+  "de.hafas.android.db": {
+    "paket": "de.hafas.android.db",
+    "texts": [
+      "Neu im DB Navigator",
+      "Jetzt Neues entdecken und noch smarter reisen!"
+    ],
+    "clickable": 3,
+    "ts": 1786889050
+  },
+  "de.toggo": {
+    "paket": "de.toggo",
+    "texts": [
+      "Dein Besuch bei TOGGO",
+      "Bitte lasse Deine Eltern über Deine Daten entscheiden und zustimmen.﻿",
+      "Wenn Du oder Dein Kind die TOGGO App nutzen, speichern wir und unsere 27 Partner Cookies, mit deren Hilfe wir das verwendete Gerät wiedererkennen können. Wir verwenden diese Technologien, um Dir Komforteinstellungen in der TOGGO App zu ermöglichen, das Nutzerverhalten zu analysieren und den Erfolg von Werbung zu messen.",
+      "Mehr Informationen zu Partnern und Datenverarbeitungszwecken sowie die Möglichkeit des Ablehnens von Cookies findest du unter \"Einstellungen oder ablehnen\".",
+      "Detaillierte Informationen über Datenverarbeitungen in der TOGGO App und über deine Rechte findest du zudem unter „Datenschutzerklärung“. Eine Pflicht der Verarbeitung von Daten zuzustimmen, um unser Angebot zu nutzen, besteht nicht. Deine Auswahl kannst du jederzeit über die Datenschutzeinstellungen widerrufen.",
+      "Datenschutzerklärung",
+      " | ",
+      "Impressum"
+    ],
+    "clickable": 9,
+    "ts": 1786889057
+  },
+  "jbl.stc.com": {
+    "paket": "jbl.stc.com",
+    "texts": [
+      "Bluetooth aktivieren",
+      "Wechsle zum Kontrollzentrum und schalte Bluetooth ein.",
+      "Wechsle zu Bluetooth",
+      "Meine Geräte",
+      "JBL x TOMORROWLAND"
+    ],
+    "clickable": 8,
+    "ts": 1786889066
+  },
+  "ar.tvplayer.companion": {
+    "paket": "ar.tvplayer.companion",
+    "texts": [
+      "TiviMate Companion",
+      "Du hast Premium freigeschaltet. So aktivierst du Dein Gerät:\n\n\n1. Installiere TiviMate auf deinem Gerät (Fire TV oder Android-Box)\n\n2. Öffne TiviMate\n\n3. Gehe zum Bildschirm Entsperren\n\n4. Melde Dich mit Deinem TiviMate-Account an\n\n5. Aktiviere Dein Gerät",
+      "Aktivierte Geräte (2/5)",
+      "Amazon Fire TV Stick 4K Schlafzimmer",
+      "Handy Xiaomi Xiaomi 2107113SG",
+      "Aktualisieren",
+      "Wenn du ein Abonnement hast, kannst du es bei Google Play kündigen:",
+      "https://play.google.com/store/account/subscriptions",
+      "Die TiviMate Companion-App ist kein IPTV-Player und bietet keine Inhalte!",
+      "TiviMate Account: dimitriistcool@yahoo.com"
+    ],
+    "clickable": 7,
+    "ts": 1786889074
+  },
+  "com.soundboks.SOUNDBOKS": {
+    "paket": "com.soundboks.SOUNDBOKS",
+    "texts": [
+      "Geräte",
+      "Soundboks 4",
+      "#297004",
+      "Geräte",
+      "Profil",
+      "Schalte Bluetooth ein",
+      "Wenn es ausgeschaltet ist, kannst du dich nicht verbinden und Hits abspielen!"
+    ],
+    "clickable": 6,
+    "ts": 1786889086
+  }
+}

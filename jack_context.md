@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T15:55:45.529265
+Stand: 2026-08-16T16:10:54.426039
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -26,7 +26,7 @@ Stand: 2026-08-16T15:55:45.529265
 - Dima hat einen Telegram Bot @jackdimachat_bot als Interface.
 - Dima hat KEINEN Hund.
 
-## Aktive Module (119)
+## Aktive Module (120)
 - install_litert.py
 - jack_agent.py
 - jack_android.py
@@ -56,6 +56,7 @@ Stand: 2026-08-16T15:55:45.529265
 - jack_delta.py
 - jack_episoden.py
 - jack_exec.py
+- jack_explorer.py
 - jack_gedanken.py
 - jack_gemini_bridge.py
 - jack_ghost.py
@@ -149,14 +150,15 @@ Stand: 2026-08-16T15:55:45.529265
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 764
+- Erinnerungen: 766
 - Dienste:
-run: jack_cortex: (pid 18564) 6366s
-run: jack_telegram: (pid 30910) 44s
+run: jack_cortex: (pid 18564) 7275s
+run: jack_telegram: (pid 11709) 224s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 18563) 6366s
+run: ollama: (pid 18563) 7275s
 
 ## Letzte Aenderungen
+c46791f feat: Skill-Lifecycle verifiziert - CANDIDATE/TESTING/VERIFIED live
 65d6c40 feat: Schema-Validator aktiv - unbekannte Step-Typen blockiert
 e151f34 inbox: RESET
 f03c40d feat: Evidence Records - jeder Step mit Timestamp
@@ -171,7 +173,6 @@ d0bd542 fix: input_text+ui_text in STEPS-Dict
 e542540 fix: importlib.reload jack_planner bei jedem Plan-Run
 d47eba4 feat: jack_planner.py + PLAN-Marker - Level 4 autonome Plaene live
 9ca00e9 feat: jack_ghost.py - Ghost Touch live, erster Tap verifiziert (4P.de)
-c019895 fix: Subagent Akku-Format, Log-Zeile gefiltert
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).
