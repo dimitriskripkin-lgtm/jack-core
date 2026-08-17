@@ -55,3 +55,6 @@ repo_export*
 jack_persona.md
 jack_context.md
 jack_persona.json
+*.db
+*.db-wal
+*.db-shm

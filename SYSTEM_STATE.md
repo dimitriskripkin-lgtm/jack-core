@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-17 11:56
+# JACK SYSTEM STATE — 2026-08-17 12:01
 
 ## Services
 - jack_cortex: UP
@@ -7,10 +7,10 @@
 - ollama: UP
 
 ## Resources
-- RAM verfuegbar: 2630MB
+- RAM verfuegbar: 2420MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 1000
-- Offene Fehler: 1
+- Memory-Eintraege: 1001
+- Offene Fehler: 3
 
 ## Config
 - Xiaomi IP: 10.58.220.131
@@ -24,13 +24,15 @@
 - autolearn: AN
 
 ## Letzte Fehler
+- [MANTEL-TEST-ERR] Spiegel live
+- [SKILL-BUILDER-ERR] table skills has no column named zweck
 - [TEST-ERR] Spiegel-Funktionstest
 
 ## Letzte Log-Eintraege
-[2026-08-17 11:55:47] EXPLORE | Xiaomi: CPU=Load: 4.89 RAM=2081MB frei Akku=100% Temp=32.8C
-[2026-08-17 11:55:47] SHADOW-FIXER | 1 Fehler gefunden
-[2026-08-17 11:55:47] SHADOW-FIXER | #2936: Datei nicht gefunden
-[2026-08-17 11:55:47] SHADOW-FIXER | Fertig: 0 fixed, 1 skipped, 0 eskaliert
-[2026-08-17 11:56:15] WAECHTER-START | Nacht-Ueberwachung mit Queue
+[2026-08-17 11:56:17] EXPLORE | Xiaomi: CPU=Load: 4.79 RAM=2154MB frei Akku=100% Temp=33.0C
+[2026-08-17 11:56:17] SHADOW-FIXER | Keine offenen Fehler
+[2026-08-17 11:57:36] SCOUT-LAUF | 2f2a990ba20ab2a3
+[2026-08-17 11:57:36] SKILL-BUILDER-ERR | table skills has no column named zweck
+[2026-08-17 11:58:05] MANTEL-TEST-ERR | Spiegel live
 
-*Generiert: 2026-08-17 11:56*
+*Generiert: 2026-08-17 12:01*
