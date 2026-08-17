@@ -582,6 +582,37 @@ def handle(text):
             return _jc.selftest()
         except Exception as e:
             return f"Selftest Fehler: {e}"
+    if text.strip() == '/kette' or text.strip().startswith('/kette '):
+        try:
+            import jack_chains
+            _teile = text.strip().split(None, 1)
+            if len(_teile) == 1:
+                return jack_chains.liste()
+            _kn = _teile[1].strip()
+            send('Kette startet: ' + _kn)
+            import threading as _kth
+            def _krun():
+                try:
+                    _r = jack_chains.run(_kn)
+                    send(_r.get('text', 'Kette fertig, kein Text'))
+                except Exception as _ke:
+                    send('Ketten-Fehler: ' + str(_ke)[:150])
+            _kth.Thread(target=_krun, daemon=True).start()
+            return None
+        except Exception as _ke2:
+            return 'Ketten-Fehler: ' + str(_ke2)[:150]
+    if text.strip() == '/bugfix':
+        send('Bugfix-Loop startet: suche fixbare Bugs in errors.db...')
+        import threading as _bth
+        def _brun():
+            try:
+                import jack_bugfix_loop as _bl
+                _erg = _bl.run(max_bugs=1)
+                send(str(_erg)[:3500] if _erg else 'Bugfix-Loop ohne Ergebnis')
+            except Exception as _be:
+                send('Bugfix-Fehler: ' + str(_be)[:150])
+        _bth.Thread(target=_brun, daemon=True).start()
+        return None
     if text.strip() == '/befehle':
         send_keyboard("JACK Befehle:", [
             [("Status","intent:dienste_check"),("RAM","intent:ram_check")],
