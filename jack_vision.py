@@ -1,61 +1,62 @@
 #!/usr/bin/env python3
-import os
-import subprocess
-import base64
-from PIL import Image
-import google.generativeai as genai
-import jack_config
+"""JACK Vision: Xiaomi-Screen -> Gemini 2.5 Flash via REST (kein genai-Paket).
+get_screen_b64(max_px, quality): Screenshot via SSH, PIL-Kompression, Base64.
+vision_ask(prompt, ...): Budget-Check -> Vision-Call -> Text zurueck."""
+import os, subprocess, base64, json, urllib.request
 
-def get_screen_b64():
-    path_png = os.path.expanduser('~/jack/vision_tmp.png')
-    path_jpg = os.path.expanduser('~/jack/vision_tmp.jpg')
-    
-    cmd = "ssh -p 8022 xiaomi-jack 'su -c screencap -p' > " + path_png
-    subprocess.run(cmd, shell=True, check=True)
-    
-    img = Image.open(path_png).convert('RGB')
-    img.thumbnail((800, 800))
-    img.save(path_jpg, 'JPEG', quality=65)
-    
-    with open(path_jpg, "rb") as f:
-        b64_data = base64.b64encode(f.read()).decode('utf-8')
-        
-    os.remove(path_png)
-    os.remove(path_jpg)
-    
-    return b64_data
+def _gemini_key():
+    for l in open(os.path.expanduser('~/.jack_secrets')):
+        if 'GEMINI_API_KEY' in l:
+            return l.split('"')[1] if '"' in l else l.split('=',1)[1].strip()
+    return ''
 
-def analyze_screen(prompt="Beschreibe kurz und präzise, was du auf diesem Bildschirm siehst. Welche App ist offen und welche Buttons gibt es?"):
+def get_screen_b64(max_px=1080, quality=80):
+    from PIL import Image
+    png = os.path.expanduser('~/jack/vision_tmp.png')
+    jpg = os.path.expanduser('~/jack/vision_tmp.jpg')
+    subprocess.run("ssh -o ConnectTimeout=5 xiaomi-jack 'su -c screencap -p' > " + png,
+                   shell=True, check=True, timeout=20)
+    img = Image.open(png).convert('RGB')
+    img.thumbnail((max_px, max_px * 3))
+    img.save(jpg, 'JPEG', quality=quality)
+    b64 = base64.b64encode(open(jpg, 'rb').read()).decode()
+    for f in (png, jpg):
+        try: os.remove(f)
+        except OSError: pass
+    return b64
+
+def vision_ask(prompt, b64=None, max_px=1080, quality=80, timeout=45):
+    import jack_budget
+    ok, msg = jack_budget.check_and_count('vision')
+    if not ok: return '[BUDGET] ' + msg
+    key = _gemini_key()
+    if not key: return '[FEHLER] Kein GEMINI_API_KEY in ~/.jack_secrets'
+    if b64 is None:
+        try: b64 = get_screen_b64(max_px, quality)
+        except Exception as e: return '[FEHLER Screenshot] ' + str(e)[:120]
+    url = ('https://generativelanguage.googleapis.com/v1beta/models/'
+           'gemini-2.5-flash:generateContent?key=' + key)
+    payload = {"contents": [{"parts": [
+        {"text": prompt},
+        {"inline_data": {"mime_type": "image/jpeg", "data": b64}}]}],
+        "generationConfig": {"maxOutputTokens": 2048, "temperature": 0.2}}
+    req = urllib.request.Request(url, data=json.dumps(payload).encode(),
+        headers={"Content-Type": "application/json"})
     try:
-        api_key = jack_config.get_param('API', 'gemini_key')
-    except Exception:
-        api_key = ''
-        
-    if not api_key:
-        return "FEHLER: Kein Gemini API Key in der config.ini gefunden."
-    
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-2.5-flash')
-    
-    print("-> Ziehe Screenshot vom Xiaomi und komprimiere...")
-    try:
-        b64_data = get_screen_b64()
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            res = json.loads(r.read())
+        try:
+            import jack_budget as _b
+            _b.add_tokens(res.get('usageMetadata', {}).get('totalTokenCount', 0))
+        except Exception: pass
+        return res['candidates'][0]['content']['parts'][0]['text']
     except Exception as e:
-        return f"FEHLER beim Screenshot-Stream: {e}"
-    
-    image_part = {
-        'mime_type': 'image/jpeg',
-        'data': b64_data
-    }
-    
-    print("-> Sende Bild an Gemini Vision...")
-    try:
-        response = model.generate_content([prompt, image_part])
-        return response.text
-    except Exception as e:
-        return f"FEHLER bei der Gemini API: {e}"
+        return '[FEHLER Gemini] ' + str(e)[:150]
 
-if __name__ == "__main__":
-    result = analyze_screen()
-    print("\n=== GEMINI VISION OUTPUT ===")
-    print(result)
+def analyze_screen(prompt="Beschreibe kurz was auf dem Screen ist. Welche App, welche Buttons?"):
+    return vision_ask(prompt)
+
+if __name__ == '__main__':
+    import sys
+    p = ' '.join(sys.argv[1:]) or None
+    print(analyze_screen(p) if p else analyze_screen())

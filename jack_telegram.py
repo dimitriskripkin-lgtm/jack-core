@@ -703,6 +703,54 @@ def handle(text):
             import jack_intent as _ji; lvl=_ji.get_level()
             return f'Autonomie-Level: {lvl}/4'
         except Exception as _e: return 'Level-Fehler: '+str(_e)[:80]
+    if _rt == '/vision' or _rt.startswith('/vision '):
+        _frage = _rt[8:].strip() or None
+        send('Vision: Screenshot vom Xiaomi laeuft...')
+        import threading as _vth
+        def _vrun():
+            try:
+                import jack_vision as _jv
+                _r = _jv.analyze_screen(_frage) if _frage else _jv.analyze_screen()
+                send('VISION:' + chr(10) + str(_r))
+            except Exception as _e:
+                send('Vision-Fehler: ' + str(_e)[:150])
+        _vth.Thread(target=_vrun, daemon=True).start()
+        return None
+    if _rt.startswith('/harvest_stop'):
+        open(os.path.expanduser('~/jack/.harvest_stop'), 'w').write('stop')
+        return 'Harvest wird nach aktueller Runde gestoppt.'
+    if _rt == '/harvest_status':
+        import jack_harvest as _jh
+        return _jh.status()
+    if _rt == '/harvest_lernen':
+        send('Destilliere Fakten aus geernteten Chats...')
+        import threading as _lth
+        def _lrun():
+            try:
+                import jack_harvest_lernen as _jl
+                send(str(_jl.lernen()))
+            except Exception as _e:
+                send('Lern-Fehler: ' + str(_e)[:150])
+        _lth.Thread(target=_lrun, daemon=True).start()
+        return None
+    if _rt == '/fakten':
+        import jack_harvest_lernen as _jl
+        return _jl.zeige_fakten()
+    if _rt.startswith('/harvest'):
+        _teile = _rt.split()
+        _quelle = _teile[1] if len(_teile) > 1 else 'unbekannt'
+        _runden = int(_teile[2]) if len(_teile) > 2 and _teile[2].isdigit() else 20
+        send(f'Harvest startet: {_quelle}, max {_runden} Runden. Chrome mit offenem Chat muss im Vordergrund sein. Stop: /harvest_stop')
+        import threading as _hth
+        def _hrun():
+            try:
+                import jack_harvest as _jh
+                _r = _jh.harvest(_quelle, _runden, status_fn=send)
+                send(f'HARVEST FERTIG: {_r.get("neu",0)} neue Eintraege in {_r.get("runden",0)} Runden. {_r.get("grund","")}')
+            except Exception as _e:
+                send('Harvest-Fehler: ' + str(_e)[:150])
+        _hth.Thread(target=_hrun, daemon=True).start()
+        return None
     if _rt == '/budget':
         try:
             import jack_budget as _jb; return str(_jb.status())
