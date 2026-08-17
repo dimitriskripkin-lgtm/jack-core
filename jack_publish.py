@@ -19,7 +19,7 @@ def _filter_private(t):
     out=[]
     skip=False
     for l in t.split("\n"):
-        if any(x in l for x in ["dima_profil","Max-Planck","Tupperware","Dalhoff Feinkost","Heinrich Staas","Schaeferhund","heisst Rex","hat einen Hund"]):
+        if any(x in l for x in ["dima_profil","Max-Planck","Tupperware","Dalhoff Feinkost","Heinrich Staas","Schaeferhund","heisst Rex","hat einen Hund","Burnout","Michi mit 17","Cannabis","Kiyosaki","Hamsterrad","Nachtschicht-LKW","Sprinter Kuehlkoffer"]):
             skip=True; out.append("[PRIVAT GEFILTERT]"); continue
         if skip and l.startswith("- ") or (skip and l.strip()==""): continue
         skip=False; out.append(l)
