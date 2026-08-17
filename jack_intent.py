@@ -1,8 +1,8 @@
-import configparser
 #!/usr/bin/env python3
 """JACK Intent-Engine: erkennt Aktionswuensche in natuerlicher Sprache.
 Hybrid: Keywords zuerst (instant), Gemini-Semantik als Fallback (praezise).
 Lernt aus Historie welche Aktionen Dima wann will."""
+import configparser
 import os, json, subprocess, sys, sqlite3, datetime, re
 try:
     import jack_logging as _jlog
@@ -29,7 +29,10 @@ def get_level():
     except: return 1
 
 def set_level(n):
-    open(LEVEL_FILE, 'w').write(str(n))
+    cfg=configparser.ConfigParser(); cp=os.path.join(H,'config.ini'); cfg.read(cp)
+    if not cfg.has_section('AUTONOMIE'): cfg.add_section('AUTONOMIE')
+    cfg.set('AUTONOMIE','level',str(int(n)))
+    with open(cp,'w') as f: cfg.write(f)
 
 # ---------- DB fuer Intent-Historie ----------
 def _init_db():
@@ -197,7 +200,7 @@ def detect(text, gemini_fallback=True):
         fragen = False
     else:
         auto = False
-        fragen = False
+        fragen = conf >= 0.60
 
     return {
         'intent': aktion,

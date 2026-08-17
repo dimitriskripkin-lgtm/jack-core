@@ -8,7 +8,7 @@ try:
 except Exception:
     _jlog = None
 
-ERROR_DB = jack_config.get_param('STORAGE', 'db_path')
+ERROR_DB = os.path.expanduser('~/jack/jack_errors.db')  # errors-Tabelle lebt hier, nicht in db_path
 XIAOMI_IP = jack_config.get_param('NETWORK', 'xiaomi_ip')
 XIAOMI_SSH_PORT = 8022
 SSH_FAIL_COUNT = 0
@@ -148,7 +148,7 @@ def check_and_heal():
     # Ping OK, reset counter
     notify_xiaomi_state(True)
     if SSH_FAIL_COUNT > 0:
-        log_status(f"[Cortex] Xiaomi erreichbar wieder (nach {SSH_FAIL_COUNT} Fails)") # CORTEX_ERR: Xiaomi erreichbar wieder (nach 2 Fails)
+        log_status(f"[Cortex] Xiaomi erreichbar wieder (nach {SSH_FAIL_COUNT} Fails)")
         SSH_FAIL_COUNT = 0
         notify_xiaomi_state(True)
     

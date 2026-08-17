@@ -45,3 +45,6 @@ _kortex_daemon.pid
 .ssh/
 id_jack
 id_jack.pub
+jack_identity.json
+dima_profil.md
+kortex_profile.json

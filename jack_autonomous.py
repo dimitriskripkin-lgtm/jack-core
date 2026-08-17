@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""JACK Nacht-Waechter: regelbasierte Selbstueberwachung.
-NUR: Zustand lesen, tote JACK-Dienste neustarten, Dima per Telegram melden.
-NIE: LLM-Entscheidungen, loeschen, bauen. Erster Lauf = nur Baseline, keine Meldung."""
+"""JACK Waechter-Daemon: Dienste-Heilung + Hintergrund-Loops.
+Threads: Autolearn(2h), Publisher(3min), Missionen(5min), Scout(taeglich), Monitor(2min).
+Self-Improve 1x taeglich ausserhalb 16-22 Uhr. Erster Lauf = Baseline ohne Meldung."""
 import os, json, subprocess, time, urllib.request, sqlite3
 try:
     import jack_logging as _jlog
@@ -188,7 +188,7 @@ def _autolearn_loop():
 def _publisher_loop():
     while True:
         try:
-            import jack_publish; jack_publish.push()
+            import jack_publish; jack_publish.build()
         except Exception as e:
             try: import jack_log; jack_log.log_decision("PUBLISHER-ERR",str(e)[:80])
             except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)

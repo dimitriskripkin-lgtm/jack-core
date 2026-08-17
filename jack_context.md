@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-16T18:02:57.574335
+Stand: 2026-08-17T11:32:35.092630
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -9,22 +9,20 @@ Stand: 2026-08-16T18:02:57.574335
 
 ## Was JACK ueber Dima gelernt hat
 - Dima ist Dimitri.
-- Dima ist LKW-Fahrer mit Sprinter Kühlkoffer bei Dalhoff Feinkost in Achim (Nachtschicht), KEIN Fernfahrer.
+- Dima ist LKW-Fahrer bei Dalhoff Feinkost in Achim und fährt Sprinter Kühlkoffer im Nachtdienst.
+- Dima hat KEINEN Hund.
 - Dima ist Hobby-Programmierer und Autodidakt, entwickelt hauptsächlich auf dem Smartphone.
 - Dima hat mit 28 einen Burnout gehabt und sich selbst daraus gezogen (Stoizismus, Jung, Kiyosaki).
-- Dima hat eine Investmentwohnung in Essen.
-- Dima möchte mit JACK Unabhängigkeit und Freiheit aufbauen.
-- JACK ist das Exit-Vehicle für Dimas Freiheit und Unabhängigkeit.
-- JACK ist ein autonomes, lokales AI-OS auf Dimas Honor Magic8 Pro.
-- JACK nutzt Gemini als Denkwerkzeug über API-Calls.
-- JACK nutzt ollama llama3.2:3b als Offline-Fallback für Gemini.
+- Dima besitzt eine Investmentwohnung in Essen.
+- Mit JACK baut Dima an seiner Freiheit und Unabhängigkeit.
+- JACK ist ein autonomes, lokales AI-OS, das auf Dimas Honor Magic8 Pro läuft.
+- JACK nutzt Gemini per API-Calls als Haupt-Denkwerkzeug.
+- JACK hat ollama llama3.2:3b als Offline-Fallback.
 - JACK verwendet sqlite-vec als Vektordatenbank.
-- JACK steht unter Dimas voller Kontrolle.
-- JACK kann das Xiaomi 11T Pro per SSH ansprechen, die Verbindung ist aber häufig instabil.
-- JACK hat KEINEN direkten Shell- oder Dateizugriff über den Chat.
-- JACK ist "Just Autonomous Command Kit" und soll offline-first agieren.
-- Dima hat einen Telegram Bot @jackdimachat_bot als Interface.
-- Dima hat KEINEN Hund.
+- Dima behält die volle Kontrolle über JACK.
+- JACK kann das Xiaomi 11T Pro per SSH ansprechen, die Verbindung ist aber oft instabil.
+- JACK ist "Just Autonomous Command Kit" und legt Wert auf Offline-Fähigkeit.
+- Dimas Interface zu JACK ist ein Telegram Bot namens @jackdimachat_bot.
 
 ## Aktive Module (122)
 - install_litert.py
@@ -152,14 +150,18 @@ Stand: 2026-08-16T18:02:57.574335
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 786
+- Erinnerungen: 994
 - Dienste:
-run: jack_cortex: (pid 22069) 4036s
-run: jack_telegram: (pid 11952) 553s
+run: jack_cortex: (pid 18928) 62856s
+run: jack_telegram: (pid 25962) 1488s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 18563) 13998s
+run: ollama: (pid 18563) 76976s
 
 ## Letzte Aenderungen
+3a3a094 fix: intent liest config.ini statt .autonomie_level, Cortex IP-Find auf log_status
+1c2301e fix: Schema-Queries auf state/VERIFIED, Briefing-Fehler geloggt, Circuit-Breaker Cooldown+Reset
+eb59bdb Circuit Breaker gefixt: Reset nach 300s Cooldown, cb_fail nur bei finalem Fehlschlag, UnboundLocalError behoben
+e2d5ff4 fix: Auto-Explore deaktiviert - war zu aggressiv
 647cbd8 fix: _termux_cmd definiert, /ssh funktioniert mit echtem Output
 fc25048 feat: /ssh Befehl - direkter SSH-Output ohne Gemini-Umweg
 c551a46 fix: netz_da multi-URL, agent immer Dollar-Prefix fuer SSH
@@ -171,10 +173,6 @@ d412483 inbox: Retest
 7a4c36c inbox: Level4 Mission 3 - Lernlog
 bc1e4bb inbox: Level4 Mission 2 - Xiaomi Kontrolle
 f9d8024 inbox: Level4 Mission 1 - Systemstatus
-4a83395 feat: jack_explorer_deep
-59dceef fix: explore pm list mit su -c, max_apps auf 50 erhoeht
-c46791f feat: Skill-Lifecycle verifiziert - CANDIDATE/TESTING/VERIFIED live
-65d6c40 feat: Schema-Validator aktiv - unbekannte Step-Typen blockiert
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

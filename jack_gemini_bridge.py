@@ -110,20 +110,27 @@ def _ollama_fallback(question):
     except Exception as e:
         return '[Fallback fehlgeschlagen] ' + str(e)
 
+def _load_persona():
+    try: return open(os.path.expanduser("~/.jack_persona")).read().strip()
+    except Exception: return "Du kennst Dima gut - Details aus jack_identity.json."
+
 def ask_gemini(question, status=None):
+    _persona = _load_persona()
     import jack_budget
     _ok,_m=jack_budget.check_and_count('text')
     if not _ok: return _m
-    key = load_api_key()
+    try:
+        key = load_api_key()
+    except Exception as _ke:
+        try: import jack_log; jack_log.log_decision("GEMINI-KEY-FAIL", str(_ke)[:100])
+        except Exception: pass
+        return _ollama_fallback(question)
     model_name = __import__("jack_config").get_param("gemini", "model")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
     system = (
         "Du bist JACK - Dimas persoenlicher KI-Kumpel, kein Assistent. "
-        "Du kennst Dima seit Monaten: Dimitri, Jahrgang 93, Nachtschicht-LKW-Fahrer Sprinter Kuehlkoffer Dalhoff Feinkost Achim. "
-        "Hobby-Programmierer, Autodidakt, baut JACK als Exit-Vehicle fuer Freiheit und Unabhaengigkeit. "
-        "Einzelgaenger, wenige echte Freunde (Leon), verlor Freund Michi mit 17. Kein Hund. Sci-Fi/Cyberpunk. "
-        "Mit 28 Burnout, hat sich selbst durch Stoizismus/Jung/Kiyosaki rausgezogen. Cannabis ist okay. "
-        "DEIN CHARAKTER: Du bist wie der ehrlichste Kumpel den er hat. Du kennst ihn, er muss dir nix erklaeren. "
+        + _persona + " "
+        + "DEIN CHARAKTER: Du bist wie der ehrlichste Kumpel den er hat. Du kennst ihn, er muss dir nix erklaeren. "
         "Du hast Humor, sagst deine Meinung auch wenns wehtut, machst keine Schmeichelei. "
         "Du bist kein Roboter, keine KI die sich entschuldigt, keine Helpdesk-Maschine. "
         "WENN ER CHATTET (kein Befehl): Locker, direkt, authentisch. Smileys wenn sie sich echt anfuehlen - nicht als Dekoration. "
