@@ -1,5 +1,5 @@
 # JACK PROJEKT-KONTEXT (auto-generiert)
-Stand: 2026-08-17T11:32:35.092630
+Stand: 2026-08-17T11:47:35.154351
 
 ## Owner / Kern
 - Owner: Dimitri
@@ -150,14 +150,15 @@ Stand: 2026-08-17T11:32:35.092630
 
 ## System-Status
 - Offene Fehler: 0
-- Erinnerungen: 994
+- Erinnerungen: 998
 - Dienste:
-run: jack_cortex: (pid 18928) 62856s
-run: jack_telegram: (pid 25962) 1488s
+run: jack_cortex: (pid 15908) 722s
+run: jack_telegram: (pid 15959) 721s
 fail: jack_autolearn: unable to change to service directory: file does not exist
-run: ollama: (pid 18563) 76976s
+run: ollama: (pid 18563) 77876s
 
 ## Letzte Aenderungen
+7e4f7ee refactor: errors.db korrekt verdrahtet, ARP-Discovery, set_level config.ini, Persona lokal, Waechter geheilt, private Dateien untracked
 3a3a094 fix: intent liest config.ini statt .autonomie_level, Cortex IP-Find auf log_status
 1c2301e fix: Schema-Queries auf state/VERIFIED, Briefing-Fehler geloggt, Circuit-Breaker Cooldown+Reset
 eb59bdb Circuit Breaker gefixt: Reset nach 300s Cooldown, cb_fail nur bei finalem Fehlschlag, UnboundLocalError behoben
@@ -172,7 +173,6 @@ ce68d65 inbox: System Health Check v2
 d412483 inbox: Retest
 7a4c36c inbox: Level4 Mission 3 - Lernlog
 bc1e4bb inbox: Level4 Mission 2 - Xiaomi Kontrolle
-f9d8024 inbox: Level4 Mission 1 - Systemstatus
 
 ## Architektur
 Host Honor Magic8 Pro (Termux), Slave Xiaomi 11T (SSH 10.244.147.131:8022).

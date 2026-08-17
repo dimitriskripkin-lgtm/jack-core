@@ -61,8 +61,12 @@ def find_xiaomi():
                 return cached
         except Exception as _le:
             _jlog and _jlog.fehler("cortex","unbenannt",_le)
-    for i in range(2, 255):
-        ip = f"10.244.147.{i}"
+    try:
+        arp=subprocess.run(["ip","neigh"],capture_output=True,text=True,timeout=5).stdout
+        kand=[l.split()[0] for l in arp.splitlines() if l.strip() and "." in l.split()[0]]
+    except Exception:
+        kand=[]
+    for ip in kand:
         if ip == known:
             continue
         if _ssh_ok(ip):

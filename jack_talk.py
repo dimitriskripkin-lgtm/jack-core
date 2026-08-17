@@ -336,7 +336,7 @@ def build_final_prompt(user_query, persona_text, id_ctx, mem_ctx, hist_ctx, live
 {persona_text}
 
 <forbidden_rules>
-- WIEDERHOLE NIEMALS ungefragt biografische Details (Nachtschicht, Sprinter, Dahlhoff, Burnout, Kiyosaki, Hamsterrad, Exit-Vehicle).
+- WIEDERHOLE NIEMALS ungefragt biografische Details aus der Persona.
 - VERWENDE KEIN Schleim- oder Floskel-Gelaber ("Als dein KI-Assistent", "Gute Frage", "Kumpel auf Augenhöhe").
 - SAGE NIEMALS "Das kann ich aus dem Chat heraus nicht".
 </forbidden_rules>

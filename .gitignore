@@ -48,3 +48,9 @@ id_jack.pub
 jack_identity.json
 dima_profil.md
 kortex_profile.json
+*.bak*
+repo_export*
+*.wav
+.jack_persona
+jack_persona.md
+jack_context.md
