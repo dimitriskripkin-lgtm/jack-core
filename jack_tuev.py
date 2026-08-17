@@ -128,7 +128,7 @@ t0 = time.time(); sh('ssh -o ConnectTimeout=4 xiaomi-jack true', 12); ms = (time
 p('OK' if ms < 200 else 'WARN', 'SSH', f'Latenz {ms:.0f}ms (Multiplexing {"aktiv" if ms < 200 else "PRUEFEN"})')
 
 # 9 REPO-HYGIENE
-rc, out, _ = sh("git ls-files | grep -v jack_publish.py | grep -v jack_tuev.py | xargs grep -l 'Burnout\\|Michi\\|Kiyosaki\\|Dalhoff\\|ghp_[A-Za-z0-9]' 2>/dev/null", 20)
+rc, out, _ = sh("git ls-files | grep -v jack_publish.py | grep -v jack_tuev.py | grep -v jack_tuev2.py | xargs grep -l 'Burnout\\|Michi\\|Kiyosaki\\|Dalhoff\\|ghp_[A-Za-z0-9]' 2>/dev/null", 20)
 p('OK' if not out else 'FAIL', 'REPO', 'private Begriffe: ' + (out.replace(chr(10), ', ')[:80] if out else 'keine'))
 rc, out, _ = sh('git ls-files | grep -E "\\.db($|-)|jack_persona\\.|jack_identity|dima_profil|repo_export|personality\\.json|handshake_v[0-9]|^CLAUDE\\.md$"')
 p('OK' if not out else 'FAIL', 'REPO', 'sensible Dateien getrackt: ' + (out.replace(chr(10), ', ')[:80] if out else 'keine'))
