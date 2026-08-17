@@ -58,3 +58,6 @@ jack_persona.json
 *.db
 *.db-wal
 *.db-shm
+CLAUDE.md
+jack_handshake_v*.json
+jack_personality.json
