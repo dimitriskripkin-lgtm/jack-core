@@ -30,7 +30,7 @@ except Exception as _ke:
     def search_memory(*a,**k): return []
     def get_recent(*a,**k): return []
 
-ERRORS_DB = jack_config.get_param('STORAGE', 'db_path')
+ERRORS_DB = os.path.expanduser('~/jack/jack_errors.db')  # errors-Tabelle, nicht db_path
 PENDING_WRITE = {}
 import jack_exec
 PENDING_EXEC = {}
