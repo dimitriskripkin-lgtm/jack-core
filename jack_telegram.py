@@ -508,6 +508,22 @@ def oracle_sign(cmd, uuid, ts):
 def handle(text):
     if not text:
         return None
+    if text.startswith("/find "):
+        target = text[6:].strip()
+        send(f'🔍 Suche "{target}" auf dem Screen...')
+        def _do_find():
+            try:
+                import jack_vision, jack_grid_vision
+                coords, raw = jack_grid_vision.find_element(target, jack_vision.vision_ask, jack_vision.get_screen_b64)
+                if coords:
+                    send(f'🎯 {target} gefunden bei: x={coords[0]}, y={coords[1]}')
+                else:
+                    send(f'❌ {target} nicht gefunden.\nRoh-Antwort: {raw}')
+            except Exception as e:
+                send(f'Fehler bei /find: {e}')
+        import threading
+        threading.Thread(target=_do_find, daemon=True).start()
+        return None
     _pi=text.find('[[PLAN:')
     _pj=text.rfind('[[/PLAN]]')
     if _pi>=0 and _pj>_pi:

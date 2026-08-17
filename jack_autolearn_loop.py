@@ -64,26 +64,35 @@ def genesis_skills():
         except Exception:
             continue
         
+        in_tb = False
+        tb_lines = []
         for line in lines:
-            # Fehler-Muster erkennen
+            if "Traceback (most recent call" in line:
+                in_tb = True
+                tb_lines = []
+                continue
+            if in_tb:
+                if line.startswith(" ") or line.startswith("\t"):
+                    tb_lines.append(line.strip())
+                else:
+                    tb_lines.append(line.strip())
+                    msg = " | ".join(tb_lines[-2:]) if len(tb_lines) > 1 else line.strip()
+                    key = re.sub("[^a-zA-Z0-9_]", "_", msg)[:50]
+                    error_counts[key] = error_counts.get(key, 0) + 1
+                    error_types[key] = "traceback_deep"
+                    in_tb = False
+                continue
             is_error = False
             msg = ""
-            
-            # Standard FEHLER/WARN
             if "FEHLER:" in line or "WARN:" in line or "ERROR:" in line:
                 is_error = True
                 msg = line.split("]", 1)[-1].strip() if "]" in line else line.strip()
-            
-            # Python Traceback
-            elif "Traceback" in line or "Exception:" in line or "Error:" in line:
+            elif "Exception:" in line or "Error:" in line:
                 is_error = True
                 msg = line.strip()
-            
             if is_error and msg:
-                key = re.sub(r'\W+', '_', msg)[:40]
+                key = re.sub("[^a-zA-Z0-9_]", "_", msg)[:40]
                 error_counts[key] = error_counts.get(key, 0) + 1
-                
-                # Fehler-Typ klassifizieren
                 msg_lower = msg.lower()
                 if "not defined" in msg_lower or "importerror" in msg_lower:
                     error_types[key] = "missing_import"
@@ -163,14 +172,20 @@ def test_candidate_skills():
             cmd = steps[0].get('cmd', '')
             if cmd:
                 log(f"TESTE SKILL: {name} -> {cmd[:30]}...")
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
-                
-                c.execute("UPDATE skills SET executions=executions+1 WHERE name=?", (name,))
-                if result.returncode == 0:
-                    c.execute("UPDATE skills SET successes=successes+1, state='VERIFIED' WHERE name=?", (name,))
-                    log(f"SKILL VERIFIED: {name}")
-                else:
-                    log(f"SKILL FAILED: {name} (rc={result.returncode})")
+                try:
+                    result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
+                    out_text = (str(result.stdout) + str(result.stderr)).lower()
+                    bad = ["command not found", "permission denied", "syntax error", "traceback", "fatal"]
+                    has_err = any(b in out_text for b in bad)
+                    c.execute("UPDATE skills SET executions=executions+1 WHERE name=?", (name,))
+                    if result.returncode == 0 and not has_err:
+                        c.execute("UPDATE skills SET successes=successes+1, state=? WHERE name=?", ("VERIFIED", name,))
+                        log(f"SKILL VERIFIED: {name}")
+                    else:
+                        log(f"SKILL FAILED: {name} (rc={result.returncode}, err_text={has_err})")
+                except subprocess.TimeoutExpired:
+                    c.execute("UPDATE skills SET executions=executions+1 WHERE name=?", (name,))
+                    log(f"SKILL TIMEOUT: {name} (>10s)")
                 tested += 1
         except Exception as e:
             log(f"TEST FEHLER {name}: {e}")

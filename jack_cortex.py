@@ -141,7 +141,7 @@ def check_and_heal():
         notify_xiaomi_state(False)
         SSH_FAIL_COUNT += 1
         if SSH_FAIL_COUNT == 1 or SSH_FAIL_COUNT % 5 == 0:
-            log_status(f"[Cortex] Xiaomi nicht erreichbar (Ping {SSH_FAIL_COUNT}x fehlgeschlagen)")
+            log_status(f"[Cortex] Xiaomi nicht erreichbar (SSH {SSH_FAIL_COUNT}x fehlgeschlagen)")
         
         if SSH_FAIL_COUNT >= SSH_FAIL_THRESHOLD:
             log_status(f"[Cortex] Versuche WiFi-Recovery auf Xiaomi (Fail #{SSH_FAIL_COUNT})")
@@ -160,7 +160,7 @@ def check_and_heal():
                 log_status(f"[Cortex] WiFi-Recovery Exception: {e!s}")
         return
     
-    # Ping OK, reset counter
+    # SSH OK, reset counter
     notify_xiaomi_state(True)
     if SSH_FAIL_COUNT > 0:
         log_status(f"[Cortex] Xiaomi erreichbar wieder (nach {SSH_FAIL_COUNT} Fails)")
