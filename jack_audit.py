@@ -70,8 +70,8 @@ def _skills_status():
         import sqlite3, os
         c = sqlite3.connect(os.path.expanduser("~/jack/jack_skills.db"))
         total = c.execute("SELECT COUNT(*) FROM skills").fetchone()[0]
-        ok = c.execute("SELECT COUNT(*) FROM skills WHERE status=\"verifiziert\"").fetchone()[0]
-        defekt = c.execute("SELECT COUNT(*) FROM skills WHERE status=\"defekt\"").fetchone()[0]
+        ok = c.execute("SELECT COUNT(*) FROM skills WHERE state='VERIFIED'").fetchone()[0]
+        defekt = c.execute("SELECT COUNT(*) FROM skills WHERE state='DEFEKT'").fetchone()[0]
         c.close()
         return f"{ok}/{total} verifiziert, {defekt} defekt"
     except Exception as e:

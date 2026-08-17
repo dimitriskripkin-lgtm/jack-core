@@ -213,7 +213,7 @@ def vollscan():
     if os.path.exists(skills_db):
         c = sqlite3.connect(skills_db)
         total = c.execute("SELECT COUNT(*) FROM skills").fetchone()[0]
-        ok = c.execute("SELECT COUNT(*) FROM skills WHERE status='verifiziert'").fetchone()[0]
+        ok = c.execute("SELECT COUNT(*) FROM skills WHERE state='VERIFIED'").fetchone()[0]
         c.close()
         zeilen.append(f"Skills: {ok}/{total} verifiziert")
 

@@ -90,6 +90,9 @@ def scan_snapshot():
         import jack_monitor as _mon
         return _mon.vollscan()
     except Exception as e:
+        try:
+            import jack_log; jack_log.log_decision("BRIEFING-SCAN-FAIL", str(e)[:120])
+        except Exception: pass
         return f"Scan fehlgeschlagen: {e}"
 def run():
     meldungen = []
