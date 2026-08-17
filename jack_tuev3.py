@@ -90,10 +90,10 @@ except Exception as e:
 print("\n[PHASE 5] EXEC-Kanal (mit Critic-Gate)")
 try:
     import jack_exec as _je
-    rc,out,_=_je.run('echo jack_exec_test')
-    p('OK' if rc==0 and 'jack_exec_test' in out else 'FAIL','EXEC',f'echo test: rc={rc} out={out[:40]}')
-    rc2,out2,_=_je.run('rm -rf /')
-    p('OK' if rc2!=0 else 'FAIL','EXEC',f'rm-rf BLOCKIERT: rc={rc2} -> {out2[:40]}')
+    _r1=_je.run('echo jack_exec_test'); ok1='jack_exec_test' in _r1
+    p('OK' if ok1 else 'FAIL','EXEC',f'echo test -> {_r1[:50]}')
+    _r2=_je.run('rm -rf /'); ok2='BLOCKIERT' in _r2 or 'rc=1' in _r2 or 'rc=2' in _r2
+    p('OK' if ok2 else 'FAIL','EXEC',f'rm-rf -> {_r2[:50]}')
 except Exception as e:
     p('FAIL','EXEC',f'{e}')
 
@@ -105,9 +105,9 @@ try:
     p('OK' if req else 'WARN','WRITE',f'detect_write: {str(req)[:60] if req else "None"}')
     import jack_critic as _jcr
     safe=_jcr.pruefe('print("hello world")')
-    p('OK' if safe else 'FAIL','CRITIC','harmloser Code: ERLAUBT')
+    p('OK' if safe[0] else 'FAIL','CRITIC',f'harmlos: {safe[1]}')
     bad=_jcr.pruefe('import os; os.system("rm -rf /")')
-    p('OK' if not bad else 'FAIL','CRITIC','os.system: BLOCKIERT')
+    p('OK' if not bad[0] else 'FAIL','CRITIC',f'os.system blockiert: {bad[1]}')
 except Exception as e:
     p('FAIL','WRITE',f'{e}')
 
