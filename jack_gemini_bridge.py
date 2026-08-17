@@ -188,7 +188,9 @@ def update_identity(new_facts):
     except: identity = {}
     identity.update(new_facts)
     identity["last_updated"] = datetime.now().isoformat()
-    with open(path, "w") as f: json.dump(identity, f, indent=2)
+    _tmp=path+".tmp"
+    with open(_tmp,"w") as f: json.dump(identity,f,indent=2)
+    os.replace(_tmp,path)
 
 if __name__ == "__main__":
     import sys
