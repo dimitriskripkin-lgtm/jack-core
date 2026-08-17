@@ -304,6 +304,8 @@ def talk_to_gemini(prompt):
                     result += chr(10) + chr(10) + "(Level " + str(_det['min_level']) + " noetig fuer: " + _det['beschreibung'] + " - /level " + str(_det['min_level']) + ")"
         except Exception as _le:
             _jlog and _jlog.fehler("talk","unbenannt",_le)
+        if result and result.startswith('[Ollama]'):
+            return result + '\n\n💾 Lokal (llama3.2)'
         return result + "\n\n🌐 Gemini"
     except Exception:
         result = talk_to_ollama(prompt, [])

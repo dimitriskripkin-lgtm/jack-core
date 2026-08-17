@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-17 11:55
+# JACK SYSTEM STATE — 2026-08-17 11:56
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: UP
 
 ## Resources
-- RAM verfuegbar: 2716MB
+- RAM verfuegbar: 2630MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 999
+- Memory-Eintraege: 1000
 - Offene Fehler: 1
 
 ## Config
@@ -27,10 +27,10 @@
 - [TEST-ERR] Spiegel-Funktionstest
 
 ## Letzte Log-Eintraege
-[2026-08-17 11:50:42] SELF-AUDIT | SYSTEM_STATE.md generiert
-[2026-08-17 11:50:42] SCHEDULER | Power-Time aktiv - schwere Jobs erlaubt
-[2026-08-17 11:50:44] EXPLORE | Xiaomi: CPU=Load: 6.11 RAM=2118MB frei Akku=100% Temp=32.9C
-[2026-08-17 11:50:44] SHADOW-FIXER | Keine offenen Fehler
-[2026-08-17 11:55:12] TEST-ERR | Spiegel-Funktionstest
+[2026-08-17 11:55:47] EXPLORE | Xiaomi: CPU=Load: 4.89 RAM=2081MB frei Akku=100% Temp=32.8C
+[2026-08-17 11:55:47] SHADOW-FIXER | 1 Fehler gefunden
+[2026-08-17 11:55:47] SHADOW-FIXER | #2936: Datei nicht gefunden
+[2026-08-17 11:55:47] SHADOW-FIXER | Fertig: 0 fixed, 1 skipped, 0 eskaliert
+[2026-08-17 11:56:15] WAECHTER-START | Nacht-Ueberwachung mit Queue
 
-*Generiert: 2026-08-17 11:55*
+*Generiert: 2026-08-17 11:56*
