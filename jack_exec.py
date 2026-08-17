@@ -23,12 +23,21 @@ def run(cmd, timeout=120):
                            cwd=os.path.expanduser('~/jack'))
         out = (r.stdout or '') + (r.stderr or '')
         out = out.strip() or '(kein Output)'
+        rc = r.returncode
+        try:
+            import jack_observer
+            obs_ok, errs = jack_observer.check_output(r.stdout or '', r.stderr or '')
+            if not obs_ok and rc == 0:
+                rc = 99
+                out = '[OBSERVER BLOCK] OS luegt mit rc=0! Fehler: ' + str(errs) + '\n\n' + out
+        except Exception:
+            pass
         if len(out) > 3000:
             out = out[:1500] + chr(10) + '...' + chr(10) + out[-1200:]
         try:
-            import jack_log; jack_log.log_decision('EXEC', cmd[:80], 'rc=' + str(r.returncode))
+            import jack_log; jack_log.log_decision('EXEC', cmd[:80], 'rc=' + str(rc))
         except Exception: pass
-        return 'rc=' + str(r.returncode) + chr(10) + out
+        return 'rc=' + str(rc) + chr(10) + out
     except subprocess.TimeoutExpired:
         return 'TIMEOUT nach ' + str(timeout) + 's'
     except Exception as e:
