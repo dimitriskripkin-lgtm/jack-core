@@ -80,12 +80,17 @@ MENU = {
             ("/missionen", "Zeigt alle laufenden und abgeschlossenen Aufgaben", "/missionen"),
             ("/auto", "JACK arbeitet selbstaendig an einem Ziel (max 4 Runden)", "/auto optimiere jack_selftest.py"),
             ("/bugfix", "JACK sucht Bugs und repariert sie autonom mit Freigabe-Button", "/bugfix"),
+                ("/autolearn_status", "Zeigt Autolearn Loop Status", "/autolearn_status"),
+                ("/ingest_status", "Zeigt Auto-Ingest Status", "/ingest_status"),
         ]
     },
     "gedaechtnis": {
         "label": "🧠 Gedaechtnis & Lernen",
         "befehle": [
             ("/baum", "Zeigt die letzte Gespraeches-Kette (was fuehrte wozu)", "/baum"),
+                ("/rag Python", "Suche nach Python", "/rag Python"),
+                ("/rag Skill", "Suche nach Skills", "/rag Skill"),
+                ("/rag Fehler", "Suche nach Fehlern", "/rag Fehler"),
             ("/baum stat", "Statistik: wie viele Erinnerungen sind vernetzt", "/baum stat"),
             ("/baum reset", "Startet eine neue Gedaechtnis-Kette", "/baum reset"),
             ("merke dir", "JACK merkt sich eine wichtige Information dauerhaft", "merke dir ich mag keine langen Antworten"),
@@ -785,6 +790,47 @@ def handle(text):
             _w=_os.path.expanduser('~/jack_werkstatt'); _f=sorted(_os.listdir(_w)) if _os.path.isdir(_w) else []
             return 'Werkstatt: ' + str(len(_f)) + ' Dateien' + chr(10) + chr(10).join(_f[-5:])
         except Exception as _e: return 'Werkstatt-Fehler: ' + str(_e)[:120]
+    if text.startswith('/rag '):
+        q = text[5:].strip()
+        if not q: return 'Nutzung: /rag <suchbegriff>'
+        try:
+            import sqlite3 as _sq
+            con = _sq.connect(os.path.expanduser('~/jack/jack_memory.db'))
+            rows = con.execute(
+                'SELECT content FROM ingested_context WHERE content LIKE ? LIMIT 5',
+                ('%' + q + '%',)).fetchall()
+            con.close()
+            if not rows: return 'Keine RAG-Treffer fuer: ' + q
+            sep = chr(10) + '---' + chr(10)
+            return 'RAG [' + q + ']:' + chr(10)+chr(10) + sep.join(r[0][:200] for r in rows)
+        except Exception as e: return 'RAG-Fehler: ' + str(e)
+
+    if text.strip() == '/autolearn_status':
+        try:
+            import subprocess as _sp
+            r = _sp.run(['pgrep', '-f', 'jack_autolearn_loop.py'],
+                capture_output=True, text=True)
+            p = r.stdout.strip()
+            log = os.path.expanduser('~/jack/autolearn.log')
+            last = open(log).readlines()[-1].strip() if os.path.exists(log) else '(kein Log)'
+            st = 'PIDs: ' + p if p else 'NICHT LAUFEND'
+            return 'Autolearn: ' + st + chr(10) + 'Log: ' + last[:150]
+        except Exception as e: return 'Autolearn-Fehler: ' + str(e)
+
+    if text.strip() == '/ingest_status':
+        try:
+            import subprocess as _sp2
+            r = _sp2.run(['pgrep', '-f', 'jack_auto_ingest.py'],
+                capture_output=True, text=True)
+            p = r.stdout.strip()
+            import sqlite3 as _sq2
+            con = _sq2.connect(os.path.expanduser('~/jack/jack_memory.db'))
+            n = con.execute('SELECT COUNT(*) FROM ingested_context').fetchone()[0]
+            con.close()
+            st = 'PIDs: ' + p if p else 'NICHT LAUFEND'
+            return 'Ingest: ' + st + chr(10) + 'DB: ' + str(n) + ' Eintraege'
+        except Exception as e: return 'Ingest-Fehler: ' + str(e)
+
     if _rt.startswith('/'):
         return 'Unbekannter Befehl: ' + _rt.split()[0] + ' - /menu zeigt alle Befehle.'
     # Weiter zu jack_talk wenn kein fruehzeitiger Return
