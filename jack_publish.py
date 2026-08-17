@@ -14,6 +14,17 @@ def sh(c,cwd=None):
     try: return subprocess.run(c,shell=True,capture_output=True,text=True,timeout=25,cwd=cwd).stdout.strip()
     except Exception: return ""
 
+def _filter_private(t):
+    "Entfernt private Sektionen aus context.md bevor push."
+    out=[]
+    skip=False
+    for l in t.split("\n"):
+        if any(x in l for x in ["dima_profil","Max-Planck","Tupperware","Dalhoff Feinkost","Heinrich Staas","Schaeferhund","heisst Rex","hat einen Hund"]):
+            skip=True; out.append("[PRIVAT GEFILTERT]"); continue
+        if skip and l.startswith("- ") or (skip and l.strip()==""): continue
+        skip=False; out.append(l)
+    return "\n".join(out)
+
 def scrub(t):
     return "\n".join("[ZEILE ENTFERNT: Secret]" if BAD.search(l) else l for l in t.split("\n"))
 
@@ -37,7 +48,7 @@ def build():
     try:
         import jack_budget; p.append("\n## Budget heute\n"+jack_budget.status())
     except Exception: pass
-    text=scrub("\n".join(p))
+    text=_filter_private(scrub("\n".join(p)))
     os.makedirs(OUT,exist_ok=True)
     open(f"{OUT}/context.md","w").write(text)
     _copytree_scrub(os.path.expanduser("~/jack_werkstatt"), f"{OUT}/werkstatt")

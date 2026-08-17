@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-17 12:26
+# JACK SYSTEM STATE — 2026-08-17 14:55
 
 ## Services
 - jack_cortex: UP
@@ -7,10 +7,10 @@
 - ollama: UP
 
 ## Resources
-- RAM verfuegbar: 2990MB
+- RAM verfuegbar: 2870MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 1006
-- Offene Fehler: 0
+- Memory-Eintraege: 1035
+- Offene Fehler: 1
 
 ## Config
 - Xiaomi IP: 10.58.220.131
@@ -23,11 +23,14 @@
 - voice_pipeline: AN
 - autolearn: AN
 
-## Letzte Log-Eintraege
-[2026-08-17 12:21:25] SCHEDULER | Power-Time aktiv - schwere Jobs erlaubt
-[2026-08-17 12:21:27] EXPLORE | Xiaomi: CPU=Load: 4.35 RAM=2094MB frei Akku=100% Temp=32.6C
-[2026-08-17 12:21:27] SHADOW-FIXER | Keine offenen Fehler
-[2026-08-17 12:22:46] SCOUT-LAUF | d9a01ae57c72ce92
-[2026-08-17 12:23:46] TUEV-ERR | Kanaltest
+## Letzte Fehler
+- [NOTIFY-FEHLER] The read operation timed out
 
-*Generiert: 2026-08-17 12:26*
+## Letzte Log-Eintraege
+[2026-08-17 14:45:11] SHADOW-FIXER | Keine offenen Fehler
+[2026-08-17 14:50:11] SELF-AUDIT | SYSTEM_STATE.md generiert
+[2026-08-17 14:50:11] SCHEDULER | Power-Time aktiv - schwere Jobs erlaubt
+[2026-08-17 14:50:14] EXPLORE | Xiaomi: CPU=Load: 3.79 RAM=1911MB frei Akku=100% Temp=32.2C
+[2026-08-17 14:50:14] SHADOW-FIXER | Keine offenen Fehler
+
+*Generiert: 2026-08-17 14:55*

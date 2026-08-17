@@ -303,7 +303,7 @@ def handle_callback(callback_data, callback_id):
         def _crun():
             try:
                 _r = handle(_befehl)
-                if _r: send(str(_r)[:3800])
+                if _r: send(str(_r))
             except Exception as _ce:
                 send('Button-Fehler: ' + str(_ce)[:150])
         _cth.Thread(target=_crun, daemon=True).start()

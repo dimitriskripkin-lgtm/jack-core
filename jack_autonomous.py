@@ -188,7 +188,7 @@ def _autolearn_loop():
 def _publisher_loop():
     while True:
         try:
-            import jack_publish; jack_publish.build()
+            import jack_publish; jack_publish.push()
         except Exception as e:
             try: import jack_log; jack_log.log_decision("PUBLISHER-ERR",str(e)[:80])
             except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
