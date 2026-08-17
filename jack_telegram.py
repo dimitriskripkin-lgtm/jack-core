@@ -687,24 +687,24 @@ def handle(text):
     _rt = text.strip()
     if _rt == '/budget':
         try:
-            import jack_budget as _jb; return str(_jb.status())[:3800]
+            import jack_budget as _jb; return str(_jb.status())
         except Exception as _e: return 'Budget-Fehler: ' + str(_e)[:120]
     if _rt == '/missionen':
         try:
-            import jack_missions as _jm; return str(_jm.uebersicht())[:3800]
+            import jack_missions as _jm; return str(_jm.uebersicht())
         except Exception as _e: return 'Missionen-Fehler: ' + str(_e)[:120]
     if _rt == '/audit':
         try:
-            import jack_audit as _ja; return str(_ja.report())[:3800]
+            import jack_audit as _ja; return str(_ja.report())
         except Exception as _e: return 'Audit-Fehler: ' + str(_e)[:120]
     if _rt == '/scan':
         try:
-            import jack_monitor as _jmo; return str(_jmo.vollscan())[:3800]
+            import jack_monitor as _jmo; return str(_jmo.vollscan())
         except Exception as _e: return 'Scan-Fehler: ' + str(_e)[:120]
     if _rt == '/baum':
         try:
             import jack_memory_tree as _jmt
-            return (str(_jmt.statistik()) + chr(10) + str(_jmt.letzte_kette(5)))[:3800]
+            return (str(_jmt.statistik()) + chr(10) + str(_jmt.letzte_kette(5)))
         except Exception as _e: return 'Baum-Fehler: ' + str(_e)[:120]
     if _rt == '/trace':
         try:
