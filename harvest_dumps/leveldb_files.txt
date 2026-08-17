@@ -1,0 +1,10 @@
+/data/data/com.android.chrome/app_chrome/Default/WebStorage/1069/IndexedDB/indexeddb.leveldb/000003.log
+/data/data/com.android.chrome/app_chrome/Default/WebStorage/1472/IndexedDB/indexeddb.leveldb/000004.log
+/data/data/com.android.chrome/app_chrome/Default/WebStorage/1472/IndexedDB/indexeddb.leveldb/000005.ldb
+/data/data/com.android.chrome/app_chrome/Default/WebStorage/1516/IndexedDB/indexeddb.leveldb/000003.log
+/data/data/com.android.chrome/app_chrome/Default/WebStorage/1517/IndexedDB/indexeddb.leveldb/000004.log
+/data/data/com.android.chrome/app_chrome/Default/WebStorage/1517/IndexedDB/indexeddb.leveldb/000005.ldb
+/data/data/com.android.chrome/app_chrome/Default/WebStorage/1601/IndexedDB/indexeddb.leveldb/000004.log
+/data/data/com.android.chrome/app_chrome/Default/WebStorage/1601/IndexedDB/indexeddb.leveldb/000005.ldb
+/data/data/com.android.chrome/app_chrome/Default/WebStorage/1612/IndexedDB/indexeddb.leveldb/000003.log
+/data/data/com.android.chrome/app_chrome/Default/WebStorage/1622/IndexedDB/indexeddb.leveldb/000010.log

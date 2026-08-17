@@ -1,0 +1,8 @@
+{
+  "page_type": "email_input",
+  "title": "Die KI f\u00fcr Probleml\u00f6ser",
+  "next_action": "Anmelden oder registrieren mit Google oder E-Mail",
+  "input_fields": [
+    "email"
+  ]
+}

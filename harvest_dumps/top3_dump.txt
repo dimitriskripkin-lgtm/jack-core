@@ -1,0 +1,39 @@
+=== /data/data/com.android.chrome/app_chrome/Default/WebStorage/1780/IndexedDB/indexeddb.leveldb/000177.ldb ===
+c%*@a
+actualName"&LogsDatabaseV2:104259454657268290686||"
+public
+userIdentifier"
+ServiceWorker.
+o	((
+V	0<
+0w.'
+ ..'
+ #l5
+pN.F
+@La0
+pL.'
+0V.'
+UyXr
+ KN(
+e@v:~F
+filter.leveldb.BuiltinBloomFilter2
+=== /data/data/com.android.chrome/app_chrome/Default/WebStorage/1517/IndexedDB/indexeddb.leveldb/000005.ldb ===
+IR&$
+tmx-db
+sid1"	publicKey\K
+[0Y0
+ps@]
+private
+ E/w&j
+createTimeN
+type"	web:ecdsa{
++8/T 1
+ %PRL
+filter.leveldb.BuiltinBloomFilter2
+=== /data/data/com.android.chrome/app_chrome/Default/WebStorage/2239/IndexedDB/indexeddb.leveldb/000005.ldb ===
+	YtIdbMeta
+actualName"
+yt-idb-test-do-not-use"
+publicr$
+userIdentifier_{
+filter.leveldb.BuiltinBloomFilter2

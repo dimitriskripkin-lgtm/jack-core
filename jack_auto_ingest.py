@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""
+jack_auto_ingest.py - Überwacht exports/ Ordner und importiert neue Dateien automatisch.
+"""
+import os
+import time
+import hashlib
+from datetime import datetime
+
+EXPORTS_DIR = os.path.expanduser("~/jack/exports")
+LOG_FILE = os.path.expanduser("~/jack/auto_ingest.log")
+SEEN_FILE = os.path.expanduser("~/jack/ingested_hashes.txt")
+
+def log(msg):
+    with open(LOG_FILE, 'a') as f:
+        f.write(f"[{datetime.now()}] {msg}\n")
+
+def md5(path):
+    h = hashlib.md5()
+    with open(path, 'rb') as f:
+        for chunk in iter(lambda: f.read(8192), b''):
+            h.update(chunk)
+    return h.hexdigest()
+
+def load_seen():
+    if os.path.exists(SEEN_FILE):
+        with open(SEEN_FILE) as f:
+            return set(f.read().split())
+    return set()
+
+def save_seen(seen):
+    with open(SEEN_FILE, 'w') as f:
+        f.write('\n'.join(seen))
+
+def main():
+    log("Auto-Ingest gestartet")
+    seen = load_seen()
+    
+    while True:
+        if os.path.exists(EXPORTS_DIR):
+            for f in os.listdir(EXPORTS_DIR):
+                if f.endswith('.zip') or f.endswith('.json'):
+                    path = os.path.join(EXPORTS_DIR, f)
+                    h = md5(path)
+                    if h not in seen:
+                        log(f"Neue Datei: {f}")
+                        os.system(f"python3 ~/jack/jack_context_ingest.py {path}")
+                        seen.add(h)
+                        save_seen(seen)
+        time.sleep(60)
+
+if __name__ == "__main__":
+    main()

@@ -41,61 +41,94 @@ def promote_candidate_skills():
     return count
 
 def genesis_skills():
-    """Erstellt echte Fix-Skills basierend auf Fehler-Mustern."""
+    """Erstellt echte Fix-Skills aus mehreren Log-Quellen."""
     import re
-    if not os.path.exists(LOG_FILE): return 0
-    with open(LOG_FILE, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
+    import glob
+    
+    log_sources = [
+        LOG_FILE,
+        os.path.expanduser("~/jack/jack_telegram.log"),
+        os.path.expanduser("~/jack/autolearn_stdout.log"),
+        "/data/data/com.termux/files/home/.termux/boot/termux.log"
+    ]
     
     error_counts = {}
     error_types = {}
     
-    for line in lines:
-        if "FEHLER:" in line or "WARN:" in line:
-            msg = line.split("]", 1)[-1].strip() if "]" in line else line.strip()
-            key = re.sub(r'\W+', '_', msg)[:30]
-            error_counts[key] = error_counts.get(key, 0) + 1
+    for log_path in log_sources:
+        if not os.path.exists(log_path):
+            continue
+        try:
+            with open(log_path, 'r', encoding='utf-8', errors='ignore') as f:
+                lines = f.readlines()
+        except Exception:
+            continue
+        
+        for line in lines:
+            # Fehler-Muster erkennen
+            is_error = False
+            msg = ""
             
-            # Fehler-Typ erkennen für echte Fix-Logik
-            if "not defined" in msg.lower():
-                error_types[key] = "missing_import"
-            elif "no such file" in msg.lower() or "not found" in msg.lower():
-                error_types[key] = "missing_file"
-            elif "permission" in msg.lower():
-                error_types[key] = "permission"
-            elif "timeout" in msg.lower():
-                error_types[key] = "timeout"
-            else:
-                error_types[key] = "generic"
+            # Standard FEHLER/WARN
+            if "FEHLER:" in line or "WARN:" in line or "ERROR:" in line:
+                is_error = True
+                msg = line.split("]", 1)[-1].strip() if "]" in line else line.strip()
+            
+            # Python Traceback
+            elif "Traceback" in line or "Exception:" in line or "Error:" in line:
+                is_error = True
+                msg = line.strip()
+            
+            if is_error and msg:
+                key = re.sub(r'\W+', '_', msg)[:40]
+                error_counts[key] = error_counts.get(key, 0) + 1
+                
+                # Fehler-Typ klassifizieren
+                msg_lower = msg.lower()
+                if "not defined" in msg_lower or "importerror" in msg_lower:
+                    error_types[key] = "missing_import"
+                elif "no such file" in msg_lower or "not found" in msg_lower or "filenotfound" in msg_lower:
+                    error_types[key] = "missing_file"
+                elif "permission" in msg_lower:
+                    error_types[key] = "permission"
+                elif "timeout" in msg_lower or "timed out" in msg_lower:
+                    error_types[key] = "timeout"
+                elif "memory" in msg_lower or "oom" in msg_lower:
+                    error_types[key] = "memory"
+                else:
+                    error_types[key] = "generic"
     
     created = 0
     conn = sqlite3.connect(DB_SKILLS)
     cu = conn.cursor()
     
     for key, count in error_counts.items():
-        if count >= 2:
+        if count >= 2:  # Threshold bleibt 2
             skill_name = f"auto_fix_{key}"
             cu.execute("SELECT name FROM skills WHERE name=?", (skill_name,))
             if not cu.fetchone():
                 etype = error_types.get(key, "generic")
                 desc = f"Auto-Genesis: '{key}' trat {count} mal auf. Typ: {etype}"
                 
-                # Echte Fix-Logik basierend auf Fehler-Typ
+                # Echte Fix-Logik
                 if etype == "missing_import":
                     cmd = "python3 -c 'import sys; print(sys.path)'"
-                    desc += " -> Prüfe Python-Pfad und Importe"
+                    desc += " -> Prüfe Python-Pfad"
                 elif etype == "missing_file":
                     cmd = "ls -la ~/jack/*.py | head -5"
-                    desc += " -> Prüfe ob Dateien existieren"
+                    desc += " -> Prüfe Dateien"
                 elif etype == "permission":
                     cmd = "chmod +x ~/jack/*.py"
-                    desc += " -> Setze Ausführungsrechte"
+                    desc += " -> Setze Rechte"
                 elif etype == "timeout":
                     cmd = "ps aux | grep -v grep | grep jack | head -3"
-                    desc += " -> Prüfe laufende Prozesse"
+                    desc += " -> Prüfe Prozesse"
+                elif etype == "memory":
+                    cmd = "free -h && ps aux --sort=-%mem | head -5"
+                    desc += " -> Prüfe RAM-Nutzung"
                 else:
-                    cmd = "tail -5 ~/jack/autolearn.log"
-                    desc += " -> Prüfe Log für Details"
+                    cmd = "tail -10 ~/jack/autolearn.log"
+                    desc += " -> Prüfe Log"
                 
                 plan = json.dumps({
                     "steps": [{"type": "exec", "cmd": cmd, "timeout": 30}],

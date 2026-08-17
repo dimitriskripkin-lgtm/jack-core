@@ -1,0 +1,5 @@
+-rw------- 1 u0_a222 u0_a222 566915 2026-08-16 15:41 /data/data/com.android.chrome/app_chrome/Default/WebStorage/1780/IndexedDB/indexeddb.leveldb/000175.log
+-rw------- 1 u0_a222 u0_a222  25075 2026-08-04 13:39 /data/data/com.android.chrome/app_chrome/Default/WebStorage/2312/IndexedDB/indexeddb.leveldb/000003.log
+-rw------- 1 u0_a222 u0_a222     38 2026-05-14 11:35 /data/data/com.android.chrome/app_chrome/Default/WebStorage/1601/IndexedDB/indexeddb.leveldb/000004.log
+-rw------- 1 u0_a222 u0_a222   6812 2026-05-01 02:04 /data/data/com.android.chrome/app_chrome/Default/WebStorage/1780/IndexedDB/indexeddb.leveldb/000177.ldb
+-rw------- 1 u0_a222 u0_a222   1260 2026-04-13 16:16 /data/data/com.android.chrome/app_chrome/Default/WebStorage/1517/IndexedDB/indexeddb.leveldb/000005.ldb

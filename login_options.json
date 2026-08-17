@@ -1,0 +1,23 @@
+[
+  {
+    "option": "google",
+    "label": "Mit Google fortfahren",
+    "x": 540,
+    "y": 610,
+    "type": "button"
+  },
+  {
+    "option": "email",
+    "label": "Gib deine E-Mail ein",
+    "x": 540,
+    "y": 720,
+    "type": "input"
+  },
+  {
+    "option": "email",
+    "label": "Mit E-Mail fortfahren",
+    "x": 540,
+    "y": 830,
+    "type": "button"
+  }
+]

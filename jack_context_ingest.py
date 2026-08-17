@@ -9,15 +9,15 @@ import json
 import re
 import hashlib
 import sqlite3
+import zipfile
+import tempfile
 
 DB_PATH = os.path.expanduser("~/jack/jack_memory.db")
 
 def clean_text(raw_text):
     if not raw_text:
         return ""
-    # Remove HTML tags
     text = re.sub(r'<[^>]+>', ' ', raw_text)
-    # Normalize whitespace
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
@@ -39,19 +39,34 @@ def init_db(conn):
 
 def process_chatgpt(json_data):
     extracted = []
-    for conv in json_data:
-        title = conv.get('title', 'Untitled')
-        mapping = conv.get('mapping', {})
-        for node_id, node in mapping.items():
-            msg = node.get('message')
-            if msg and msg.get('content') and msg.get('content').get('parts'):
-                role = msg.get('author', {}).get('role', 'unknown')
-                parts = msg.get('content', {}).get('parts', [])
-                text_parts = [p for p in parts if isinstance(p, str)]
-                full_text = " ".join(text_parts)
-                cleaned = clean_text(full_text)
+    if isinstance(json_data, list):
+        for conv in json_data:
+            title = conv.get('title', 'Untitled')
+            mapping = conv.get('mapping', {})
+            for node_id, node in mapping.items():
+                msg = node.get('message')
+                if msg and msg.get('content') and msg.get('content').get('parts'):
+                    role = msg.get('author', {}).get('role', 'unknown')
+                    parts = msg.get('content', {}).get('parts', [])
+                    text_parts = [p for p in parts if isinstance(p, str)]
+                    full_text = " ".join(text_parts)
+                    cleaned = clean_text(full_text)
+                    if len(cleaned) >= 80:
+                        extracted.append((f"chatgpt:{title}:{role}", cleaned))
+    return extracted
+
+def process_claude(json_data):
+    extracted = []
+    if isinstance(json_data, list):
+        for conv in json_data:
+            title = conv.get('chat_name', 'Untitled_Claude')
+            messages = conv.get('chat_messages', [])
+            for msg in messages:
+                sender = msg.get('sender', 'unknown')
+                text = msg.get('text', '')
+                cleaned = clean_text(text)
                 if len(cleaned) >= 80:
-                    extracted.append((f"chatgpt:{title}:{role}", cleaned))
+                    extracted.append((f"claude:{title}:{sender}", cleaned))
     return extracted
 
 def process_plain_text(text_content, source_name="text"):
@@ -73,7 +88,26 @@ def ingest_file(file_path, file_type="auto"):
     init_db(conn)
 
     extracted = []
-    if file_type == "chatgpt" or file_path.endswith('.json'):
+    
+    if file_path.endswith('.zip'):
+        print("[*] Entpacke ZIP-Archiv...")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            try:
+                with zipfile.ZipFile(file_path, 'r') as zip_ref:
+                    zip_ref.extractall(tmpdir)
+                for root, _, files in os.walk(tmpdir):
+                    for file in files:
+                        if file.endswith('.json'):
+                            try:
+                                with open(os.path.join(root, file), 'r', encoding='utf-8') as f:
+                                    data = json.load(f)
+                                    extracted.extend(process_claude(data))
+                            except Exception as e:
+                                print(f"[WARN] Failed to parse {file}: {e}")
+            except Exception as e:
+                print(f"[ERR] Failed to extract zip: {e}")
+                
+    elif file_type == "chatgpt" or file_path.endswith('.json'):
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -89,8 +123,8 @@ def ingest_file(file_path, file_type="auto"):
 
     added_count = 0
     skip_count = 0
-
     cursor = conn.cursor()
+    
     for source, text in extracted:
         h = md5_hash(text)
         try:
@@ -110,7 +144,6 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python3 jack_context_ingest.py <path_to_file> [type]")
         sys.exit(1)
-
     f_path = sys.argv[1]
     f_type = sys.argv[2] if len(sys.argv) > 2 else "auto"
     ingest_file(f_path, f_type)

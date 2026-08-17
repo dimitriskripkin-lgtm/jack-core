@@ -86,3 +86,157 @@ def historie(limit=5):
 if __name__ == '__main__':
     n = sys.argv[1] if len(sys.argv) > 1 else None
     print(liste() if not n else run(n)['text'])
+
+def chain_oauth_final():
+    """Vollständiger OAuth-Login: Erkenne aktuelle Seite, führe nächsten Schritt aus, wiederhole bis eingeloggt."""
+    import jack_vision, jack_ghost, xml.etree.ElementTree as ET, time, re
+    
+    for _ in range(5):  # Max 5 Schritte
+        b64 = jack_vision.get_screen_b64()
+        
+        # Seite analysieren
+        prompt = "Was zeigt dieser Screenshot? Antwort nur JSON: {\"page\": \"login|account_chooser|confirm|logged_in|other\", \"email\": \"sichtbare email oder null\"}"
+        resp = jack_vision.vision_ask(prompt, b64=b64, max_px=1024, quality=85)
+        try:
+            data = eval(resp)  # Sicher, weil von Vision
+            page = data.get("page", "other")
+        except:
+            page = "other"
+        
+        print(f"Erkannte Seite: {page}")
+        
+        if page == "login":
+            # Finde "Mit Google fortfahren" via XML
+            xml = jack_ghost.hol_xiaomi_ui()
+            root = ET.fromstring(xml)
+            for node in root.iter("node"):
+                txt = node.get("text", "")
+                if "Google" in txt and "fortfahren" in txt.lower():
+                    bounds = node.get("bounds", "")
+                    match = re.search(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]', bounds)
+                    if match:
+                        x1, y1, x2, y2 = map(int, match.groups())
+                        jack_ghost.tap_xiaomi((x1+x2)//2, (y1+y2)//2)
+                        print("Getappt: Mit Google fortfahren")
+                        time.sleep(3)
+                        break
+        
+        elif page == "account_chooser":
+            # Finde "Dimitri Skripkin" via XML
+            xml = jack_ghost.hol_xiaomi_ui()
+            root = ET.fromstring(xml)
+            for node in root.iter("node"):
+                txt = node.get("text", "")
+                if "Dimitri" in txt and "googlemail" in txt:
+                    bounds = node.get("bounds", "")
+                    match = re.search(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]', bounds)
+                    if match:
+                        x1, y1, x2, y2 = map(int, match.groups())
+                        jack_ghost.tap_xiaomi((x1+x2)//2, (y1+y2)//2)
+                        print("Getappt: Dimitri Skripkin")
+                        time.sleep(3)
+                        break
+        
+        elif page == "confirm":
+            # Finde "Weiter" via XML
+            xml = jack_ghost.hol_xiaomi_ui()
+            root = ET.fromstring(xml)
+            for node in root.iter("node"):
+                txt = node.get("text", "")
+                if txt.strip() in ["Weiter", "Fortfahren", "Continue"]:
+                    bounds = node.get("bounds", "")
+                    match = re.search(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]', bounds)
+                    if match:
+                        x1, y1, x2, y2 = map(int, match.groups())
+                        jack_ghost.tap_xiaomi((x1+x2)//2, (y1+y2)//2)
+                        print("Getappt: Weiter")
+                        time.sleep(4)
+                        break
+        
+        elif page == "logged_in":
+            print("ERFOLG: Erfolgreich eingeloggt")
+            return {"ok": True, "text": "Eingeloggt bei Claude"}
+        
+        else:
+            print("UNBEKANNT: Seite nicht erkannt")
+            time.sleep(2)
+    
+    return {"ok": False, "text": "Nicht geschafft, zu viele Schritte"}
+
+
+def chain_oauth_final():
+    """Vollständiger OAuth-Login: Erkenne aktuelle Seite, führe nächsten Schritt aus, wiederhole bis eingeloggt."""
+    import jack_vision, jack_ghost, xml.etree.ElementTree as ET, time, re
+    
+    for _ in range(5):  # Max 5 Schritte
+        b64 = jack_vision.get_screen_b64()
+        
+        # Seite analysieren
+        prompt = "Was zeigt dieser Screenshot? Antwort nur JSON: {\"page\": \"login|account_chooser|confirm|logged_in|other\", \"email\": \"sichtbare email oder null\"}"
+        resp = jack_vision.vision_ask(prompt, b64=b64, max_px=1024, quality=85)
+        try:
+            data = eval(resp)  # Sicher, weil von Vision
+            page = data.get("page", "other")
+        except:
+            page = "other"
+        
+        print(f"Erkannte Seite: {page}")
+        
+        if page == "login":
+            # Finde "Mit Google fortfahren" via XML
+            xml = jack_ghost.hol_xiaomi_ui()
+            root = ET.fromstring(xml)
+            for node in root.iter("node"):
+                txt = node.get("text", "")
+                if "Google" in txt and "fortfahren" in txt.lower():
+                    bounds = node.get("bounds", "")
+                    match = re.search(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]', bounds)
+                    if match and int(match.group(3)) > 0:  # Nur wenn x2 > 0
+                        x1, y1, x2, y2 = map(int, match.groups())
+                        jack_ghost.tap_xiaomi((x1+x2)//2, (y1+y2)//2)
+                        print("Getappt: Mit Google fortfahren")
+                        time.sleep(3)
+                        break
+        
+        elif page == "account_chooser":
+            # Finde "Dimitri Skripkin" via XML
+            xml = jack_ghost.hol_xiaomi_ui()
+            root = ET.fromstring(xml)
+            for node in root.iter("node"):
+                txt = node.get("text", "")
+                if "Dimitri" in txt and "googlemail" in txt:
+                    bounds = node.get("bounds", "")
+                    match = re.search(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]', bounds)
+                    if match and int(match.group(3)) > 0:  # Nur wenn x2 > 0
+                        x1, y1, x2, y2 = map(int, match.groups())
+                        jack_ghost.tap_xiaomi((x1+x2)//2, (y1+y2)//2)
+                        print("Getappt: Dimitri Skripkin")
+                        time.sleep(3)
+                        break
+        
+        elif page == "confirm":
+            # Finde "Weiter" via XML
+            xml = jack_ghost.hol_xiaomi_ui()
+            root = ET.fromstring(xml)
+            for node in root.iter("node"):
+                txt = node.get("text", "")
+                if txt.strip() in ["Weiter", "Fortfahren", "Continue"]:
+                    bounds = node.get("bounds", "")
+                    match = re.search(r'\[(\d+),(\d+)\]\[(\d+),(\d+)\]', bounds)
+                    if match and int(match.group(3)) > 0:  # Nur wenn x2 > 0
+                        x1, y1, x2, y2 = map(int, match.groups())
+                        jack_ghost.tap_xiaomi((x1+x2)//2, (y1+y2)//2)
+                        print("Getappt: Weiter")
+                        time.sleep(4)
+                        break
+        
+        elif page == "logged_in":
+            print("ERFOLG: Erfolgreich eingeloggt")
+            return {"ok": True, "text": "Eingeloggt bei Claude"}
+        
+        else:
+            print("UNBEKANNT: Seite nicht erkannt")
+            time.sleep(2)
+    
+    return {"ok": False, "text": "Nicht geschafft, zu viele Schritte"}
+

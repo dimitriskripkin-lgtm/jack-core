@@ -1,0 +1,26 @@
+{
+  "name": "chrome_claude_test",
+  "description": "Chrome \u00f6ffnen und Claude.ai laden",
+  "steps": [
+    {
+      "type": "open_app",
+      "paket": "com.android.chrome"
+    },
+    {
+      "type": "wait",
+      "seconds": 3
+    },
+    {
+      "type": "chrome_search",
+      "query": "https://claude.ai",
+      "wait": 5
+    }
+  ],
+  "success_criteria": [
+    {
+      "type": "ui_check",
+      "text": "Claude",
+      "step": 3
+    }
+  ]
+}

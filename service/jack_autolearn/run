@@ -1,0 +1,3 @@
+#!/data/data/com.termux/files/usr/bin/sh
+cd ~/jack
+exec python3 jack_autolearn_loop.py
