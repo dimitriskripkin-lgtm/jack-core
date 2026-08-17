@@ -77,19 +77,28 @@ def collect_status(mit_xiaomi=False):
 
 _CB_FAILS = 0
 _CB_OPEN = False
+_CB_SINCE = 0.0
+_CB_COOLDOWN = 300
 _CB_THRESHOLD = 3
 
 def _cb_fail():
-    global _CB_FAILS, _CB_OPEN
+    global _CB_FAILS, _CB_OPEN, _CB_SINCE
+    import time as _ct
     _CB_FAILS += 1
     if _CB_FAILS >= _CB_THRESHOLD:
-        _CB_OPEN = True
+        _CB_OPEN = True; _CB_SINCE = _ct.time()
         try: import jack_log; jack_log.log_decision('CIRCUIT-BREAKER', 'Gemini nach ' + str(_CB_FAILS) + 'x Fehler abgeschaltet, Fallback Ollama')
         except Exception: pass
 
 def _cb_success():
-    global _CB_FAILS, _CB_OPEN
+    global _CB_FAILS, _CB_OPEN, _CB_SINCE
     _CB_FAILS = 0; _CB_OPEN = False
+
+def _cb_reset_check():
+    global _CB_FAILS, _CB_OPEN
+    import time as _ct3
+    if _CB_OPEN and (_ct3.time() - _CB_SINCE) > _CB_COOLDOWN:
+        _CB_OPEN = False; _CB_FAILS = 0
 
 def _ollama_fallback(question):
     try:
@@ -136,6 +145,7 @@ def ask_gemini(question, status=None):
     }
     data = json.dumps(payload).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+    _cb_reset_check()
     if _CB_OPEN:
         try: import jack_log; jack_log.log_decision("CIRCUIT-BREAKER", "Breaker offen, direkt Ollama")
         except Exception: pass
@@ -157,7 +167,7 @@ def ask_gemini(question, status=None):
                 _t.sleep(4 * (_a + 1)); continue
             if _code == 429:
                 return "Gemini ist gerade ueberlastet (Rate-Limit). Gleich nochmal probieren."
-            _cb_fail()
+            if _a >= 2: _cb_fail()
             if _a < 2:
                 _t.sleep(2 ** _a); continue
             return _ollama_fallback(question)
