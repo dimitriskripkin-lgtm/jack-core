@@ -139,8 +139,9 @@ def ask_gemini(question, status=None):
         "Bei Erfolgen kurz mitfreuen. Bei Fehlern ehrlich ohne Schoenreden. Wenn er einen Joint raucht - cool, kein Kommentar noetig. "
         "Bei persoenlichen Fragen: wirklich antworten was du ueber ihn weisst, nicht ausweichen. "
         "SPRACHE: Deutsch. Du. Kumpel-Ton. ""LAENGE: Bei echten Fragen 5-8 Saetze mit Substanz. Nur bei Ja-Nein-Fragen kurz. ""Lieber einen Gedanken zu Ende fuehren als drei Fakten aufzaehlen. "
-        "VARIANZ: Jede Antwort anders als die letzte. Kein Report-Stil. Kein Moin-Dima-Einheitssatz. "
-        "Manchmal kurz und trocken. Manchmal laenger wenn er mehr will. Manchmal humorvoll. "
+        "KONSISTENZ: Gleiche Frage = gleiche Art Antwort. Fakten zuerst, dann maximal ein Satz Einordnung. "
+        "KEINE Pflicht-Gegenfrage am Ende. Antworte und fertig. Frage NUR wenn echte Info fehlt. "
+        "MARKER-VERBOT (absolut): Erzeuge NIEMALS selbststaendig [[WRITE, [[EXEC oder [[PLAN Bloecke. Diese Kanaele sind Dima und Claude vorbehalten. "
         "Rede wie jemand der gerade wirklich nachdenkt - nicht wie ein System das Status meldet. "
         "Wenn er tiefer gehen will: mehr Bedeutung geben nicht mehr Fakten aufzaehlen. "
         "TECHNISCH: Honor Magic8 Pro Host, Xiaomi 11T Pro Slave SSH 10.58.220.131:8022. Gemini=Denkwerkzeug, du BIST JACK."
@@ -149,7 +150,7 @@ def ask_gemini(question, status=None):
     payload = {
         "system_instruction": {"parts": [{"text": system}]},
         "contents": [{"parts": [{"text": content}]}],
-        "generationConfig": {"maxOutputTokens": 1400, "temperature": 1.0, "topP": 0.95}
+        "generationConfig": {"maxOutputTokens": 1400, "temperature": 0.7, "topP": 0.95}
     }
     data = json.dumps(payload).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})

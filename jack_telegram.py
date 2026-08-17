@@ -684,6 +684,43 @@ def handle(text):
             except Exception as e:
                 send(f'⚠️ *Web-Fehler:* {e}')
 
+    _rt = text.strip()
+    if _rt == '/budget':
+        try:
+            import jack_budget as _jb; return str(_jb.status())[:3800]
+        except Exception as _e: return 'Budget-Fehler: ' + str(_e)[:120]
+    if _rt == '/missionen':
+        try:
+            import jack_missions as _jm; return str(_jm.uebersicht())[:3800]
+        except Exception as _e: return 'Missionen-Fehler: ' + str(_e)[:120]
+    if _rt == '/audit':
+        try:
+            import jack_audit as _ja; return str(_ja.report())[:3800]
+        except Exception as _e: return 'Audit-Fehler: ' + str(_e)[:120]
+    if _rt == '/scan':
+        try:
+            import jack_monitor as _jmo; return str(_jmo.vollscan())[:3800]
+        except Exception as _e: return 'Scan-Fehler: ' + str(_e)[:120]
+    if _rt == '/baum':
+        try:
+            import jack_memory_tree as _jmt
+            return (str(_jmt.statistik()) + chr(10) + str(_jmt.letzte_kette(5)))[:3800]
+        except Exception as _e: return 'Baum-Fehler: ' + str(_e)[:120]
+    if _rt == '/trace':
+        try:
+            import sqlite3 as _sq, os as _os
+            _c=_sq.connect(_os.path.expanduser('~/jack/jack_cognition.db'), timeout=5)
+            _rows=_c.execute('SELECT * FROM traces ORDER BY rowid DESC LIMIT 5').fetchall(); _c.close()
+            return 'Letzte Traces:' + chr(10) + chr(10).join(str(_r)[:180] for _r in _rows) if _rows else 'Keine Traces vorhanden.'
+        except Exception as _e: return 'Trace-Fehler: ' + str(_e)[:120]
+    if _rt == '/werkstatt':
+        try:
+            import os as _os
+            _w=_os.path.expanduser('~/jack_werkstatt'); _f=sorted(_os.listdir(_w)) if _os.path.isdir(_w) else []
+            return 'Werkstatt: ' + str(len(_f)) + ' Dateien' + chr(10) + chr(10).join(_f[-5:])
+        except Exception as _e: return 'Werkstatt-Fehler: ' + str(_e)[:120]
+    if _rt.startswith('/'):
+        return 'Unbekannter Befehl: ' + _rt.split()[0] + ' - /menu zeigt alle Befehle.'
     # Weiter zu jack_talk wenn kein fruehzeitiger Return
     try:
         import jack_talk as _jt

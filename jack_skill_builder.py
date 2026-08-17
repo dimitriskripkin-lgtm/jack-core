@@ -213,3 +213,20 @@ def python_luecken(vorhanden):
         },
     ]
     return [k for k in kandidaten if k["name"] not in vorhanden]
+
+
+def speichere_skill(skill_name, zweck, befehl, code, erwartet):
+    """Ueberschrieben: schreibt ins echte Schema (state/plan_json) - Mantel ueber Alt-Version."""
+    import sqlite3 as _sq, json as _js, time as _tm, os as _os
+    _db = _os.path.expanduser('~/jack/jack_skills.db')
+    _plan = {"name": skill_name, "steps": [{"type": "exec", "cmd": befehl, "desc": str(zweck)[:80]}]}
+    if erwartet:
+        _plan["success_criteria"] = [{"type": "contains", "value": str(erwartet)[:60], "step": 1}]
+    _c = _sq.connect(_db, timeout=5)
+    try:
+        _c.execute("INSERT OR IGNORE INTO skills (name, description, plan_json, state, executions, successes, created_ts, last_ts) VALUES (?,?,?,?,0,0,?,?)",
+            (skill_name, str(zweck)[:200], _js.dumps(_plan), 'CANDIDATE', int(_tm.time()), int(_tm.time())))
+        _c.commit()
+    finally:
+        _c.close()
+    return True
