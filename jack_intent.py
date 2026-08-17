@@ -1,3 +1,4 @@
+import configparser
 #!/usr/bin/env python3
 """JACK Intent-Engine: erkennt Aktionswuensche in natuerlicher Sprache.
 Hybrid: Keywords zuerst (instant), Gemini-Semantik als Fallback (praezise).
@@ -22,7 +23,9 @@ LEVEL_NAMEN = {
 }
 
 def get_level():
-    try: return int(open(LEVEL_FILE).read().strip())
+    try:
+        cfg=configparser.ConfigParser(); cfg.read(os.path.join(H,"config.ini"))
+        return cfg.getint("AUTONOMIE","level",fallback=4)
     except: return 1
 
 def set_level(n):

@@ -67,7 +67,7 @@ def find_xiaomi():
             continue
         if _ssh_ok(ip):
             with open(cache_file,"w") as f: f.write(ip)
-            log_error(f"[Cortex] Xiaomi auf neuer IP gefunden: {ip}")
+            log_status(f"[Cortex] Xiaomi auf neuer IP gefunden: {ip}")
             return ip
     return known
 
