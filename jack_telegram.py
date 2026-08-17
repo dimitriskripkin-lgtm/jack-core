@@ -296,11 +296,32 @@ def handle_callback(callback_data, callback_id):
         answer_callback(callback_id,"Ok")
         return
     # Kategorie-Menu - sofort pruefen
-    if callback_data.startswith("menu:"):
+    if callback_data.startswith("cmd:"):
+        _befehl = callback_data[4:]
+        answer_callback(callback_id, _befehl[:30])
+        import threading as _cth
+        def _crun():
+            try:
+                _r = handle(_befehl)
+                if _r: send(str(_r)[:3800])
+            except Exception as _ce:
+                send('Button-Fehler: ' + str(_ce)[:150])
+        _cth.Thread(target=_crun, daemon=True).start()
+        return None
+    if callback_data.startswith("menu:") and callback_data != "menu:hauptmenu":
         key = callback_data[5:]
-        antwort = menu_kategorie(key)
-        answer_callback(callback_id, "Oeffne " + key + "...")
-        return antwort
+        if key in MENU:
+            _kat = MENU[key]
+            _btns = []
+            for _bef, _desc, _bsp in _kat["befehle"]:
+                _payload = ("cmd:" + _bsp)[:62]
+                _btns.append([(_bef + " - " + _desc[:28], _payload)])
+            _btns.append([("<< Hauptmenue", "menu:hauptmenu")])
+            answer_callback(callback_id, _kat["label"])
+            send_keyboard(_kat["label"] + " (antippen = ausfuehren):", _btns)
+            return None
+        answer_callback(callback_id, "Unbekannt")
+        return "Unbekannte Kategorie"
     # Zurueck zum Hauptmenu
     if callback_data == "menu:hauptmenu":
         answer_callback(callback_id, "Hauptmenu")
@@ -587,7 +608,9 @@ def handle(text):
             import jack_chains
             _teile = text.strip().split(None, 1)
             if len(_teile) == 1:
-                return jack_chains.liste()
+                _kb=[[('System-Vollcheck','cmd:/kette system_vollcheck')],[('Xiaomi reparieren','cmd:/kette xiaomi_reparieren')],[('Notfall-Recovery','cmd:/kette notfall_recovery')],[('Morgen-Briefing','cmd:/kette morgen_briefing')]]
+                send_keyboard('Aktionsketten (antippen = starten):', _kb)
+                return None
             _kn = _teile[1].strip()
             send('Kette startet: ' + _kn)
             import threading as _kth
