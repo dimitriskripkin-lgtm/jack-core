@@ -72,6 +72,17 @@ def find_xiaomi():
         if _ssh_ok(ip):
             with open(cache_file,"w") as f: f.write(ip)
             log_status(f"[Cortex] Xiaomi auf neuer IP gefunden: {ip}")
+            try:
+                cfgp=os.path.expanduser('~/.ssh/config')
+                L=open(cfgp).read().splitlines(True)
+                for i,l in enumerate(L):
+                    if l.strip()=='Host xiaomi-jack':
+                        for j in range(i+1,min(i+9,len(L))):
+                            if L[j].strip().startswith('HostName'):
+                                L[j]='    HostName '+ip+chr(10); break
+                        break
+                open(cfgp,'w').write(''.join(L))
+            except Exception: pass
             return ip
     return known
 

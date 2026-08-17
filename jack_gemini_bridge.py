@@ -173,7 +173,7 @@ def ask_gemini(question, status=None):
             if _code == 429 and _a < 2:
                 _t.sleep(4 * (_a + 1)); continue
             if _code == 429:
-                return "Gemini ist gerade ueberlastet (Rate-Limit). Gleich nochmal probieren."
+                return _ollama_fallback(question)
             if _a >= 2: _cb_fail()
             if _a < 2:
                 _t.sleep(2 ** _a); continue

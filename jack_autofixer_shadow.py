@@ -26,7 +26,7 @@ def _get_open_errors(limit=5):
     try:
         c=sqlite3.connect(DB)
         rows=c.execute(
-            "SELECT id,module,error_type,error_msg,file_path,line_num,context "            "FROM errors WHERE resolved=0 ORDER BY timestamp DESC LIMIT ?",
+            "SELECT id,module,error_type,error_msg,file_path,line_num,context "            "FROM errors WHERE resolved=0 AND file_path != '' ORDER BY timestamp DESC LIMIT ?",
             (limit,)).fetchall()
         c.close(); return rows
     except Exception as e: _log(f"DB-Fehler: {e}","ERROR"); return []
