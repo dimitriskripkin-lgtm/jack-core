@@ -7,6 +7,18 @@ import os, sys, json, subprocess, time
 sys.path.insert(0, os.path.expanduser("~/jack"))
 import jack_config
 W = os.path.expanduser("~/jack/xiaomi_wissen.json")
+DANGER_PATTERNS = ['reset', 'clear', 'wipe', 'format', 'factory',
+                     'erase', 'masterclear', 'factoryreset', 'masterreset',
+                     'frp', 'oem', 'bootloader', 'developer_option',
+                     'backup_reset', 'delete_all', 'erase_all']
+
+def ist_gefaehrlich(activity):
+    low = activity.lower()
+    for p in DANGER_PATTERNS:
+        if p in low:
+            return True
+    return False
+
 KARTE = os.path.expanduser("~/jack/xiaomi_karte.json")
 KEY = os.path.expanduser("~/.ssh/id_jack")
 
@@ -81,6 +93,12 @@ def chunk(n=10):
     for a in acts:
         if gemacht >= n: break
         if a in karte: continue
+        if ist_gefaehrlich(a):
+            karte[a] = {'fokus': 'GEFAEHRLICH-BLOCKIERT', 'elemente': [],
+                        'geoeffnet': False, 'gefaehrlich': True,
+                        'ts': time.strftime('%Y-%m-%d %H:%M:%S')}
+            gemacht += 1
+            continue
         home()
         time.sleep(0.7)
         sh("su -c 'am start -n " + component(a) + "'")
