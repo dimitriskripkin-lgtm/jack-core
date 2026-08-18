@@ -369,7 +369,7 @@ def _lerner_loop():
                     ergebnis = jack_lerner.runde()
                     if ergebnis:
                         import jack_log
-                        jack_log.log_decision('LERNER-RUNDE', str(len(ergebnis)) + ' Experimente')
+                        jack_log.log_decision('LERNER-RUNDE', str(ergebnis)[:80])
             except Exception:
                 pass
         except Exception as e:

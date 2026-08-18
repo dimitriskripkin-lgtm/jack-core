@@ -225,4 +225,5 @@ SKRIPT_ALLOW = {
     "jack_stress.py",
     "jack_lerner.py",
     "jack_wissen_tief.py",
+    "jack_karte.py",
 }
