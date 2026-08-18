@@ -729,18 +729,20 @@ def handle(text):
         _frage = _rt[8:].strip() or None
         send('Vision: Screenshot vom Xiaomi laeuft...')
         import threading as _vth
-        def _vrun():
+        def _do_analyze(q=_frage):
             try:
-                import jack_vision as _jv
-                _r = _jv.analyze_screen(_frage) if _frage else _jv.analyze_screen()
-                send('VISION:' + chr(10) + str(_r))
-            except Exception as _e:
-                send('Vision-Fehler: ' + str(_e)[:150])
-        _vth.Thread(target=_vrun, daemon=True).start()
+                import jack_android as _ja2
+                if q:
+                    result = _ja2.run(q, max_rounds=5)
+                    send('VISION: ' + str(result)[:1500])
+                else:
+                    elements = _ja2.get_ui_tree()
+                    send('Vision: ' + str(len(elements)) + ' Elemente gefunden')
+            except Exception as e:
+                send('Vision-Fehler: ' + str(e)[:150])
+        _vth.Thread(target=_do_analyze, daemon=True).start()
         return None
-    if _rt.startswith('/harvest_stop'):
-        open(os.path.expanduser('~/jack/.harvest_stop'), 'w').write('stop')
-        return 'Harvest wird nach aktueller Runde gestoppt.'
+
     if _rt == '/harvest_status':
         import jack_harvest as _jh
         return _jh.status()
