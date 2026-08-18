@@ -106,7 +106,7 @@ def entscheide(max_els=12, use_vision=False):
     els = dump_elemente()
     if not els:
         return "Kein UI-Dump moeglich. Fokus: " + fok[:80]
-    kand = [e for e in els if e["clickable"] and (e["text"] or e["desc"] or e["rid"])]
+    kand = [e for e in els if (e["text"] or e["desc"]) and len(e["text"] or e["desc"]) >= 2]
     z = ["Fokus: " + fok[:80],
          "Elemente gesamt: " + str(len(els)) + " | klickbar mit Inhalt: " + str(len(kand))]
     for el in kand[:max_els]:
