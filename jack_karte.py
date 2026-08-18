@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""JACK Kartierung: Settings-Bildschirme des Xiaomi lesen und ablegen.
-Rein lesend: am start oeffnet nur den Bildschirm, setzt keine Werte.
-Chunkweise, idempotent, Fokus-Verifikation statt Screenshots raten."""
+"""JACK Kartierung v2: Settings-Bildschirme mit Fokus-Verifikation.
+Rein lesend. am start oeffnet nur, setzt keine Werte.
+v2: HOME vor/nach jedem Screen, Fokus-Check ob Ziel wirklich offen,
+sonst Eintrag als nicht geoeffnet markiert statt falsche Elemente speichern."""
 import os, sys, json, subprocess, time
 sys.path.insert(0, os.path.expanduser("~/jack"))
 import jack_config
@@ -23,16 +24,12 @@ def sh(cmd, t=15):
         return 1, "", "SSH-FEHLER: " + str(e)[:100]
 
 def lade_wissen():
-    try:
-        return json.load(open(W))
-    except Exception:
-        return {}
+    try: return json.load(open(W))
+    except Exception: return {}
 
 def lade_karte():
-    try:
-        return json.load(open(KARTE))
-    except Exception:
-        return {}
+    try: return json.load(open(KARTE))
+    except Exception: return {}
 
 def sichere_karte(d):
     json.dump(d, open(KARTE, "w"), indent=2, ensure_ascii=False)
@@ -44,32 +41,34 @@ def activities():
 
 def component(a):
     a = a.strip()
-    if a.startswith("com.android.settings/"):
-        return a
-    if a.startswith("/"):
-        return "com.android.settings" + a
+    if a.startswith("com.android.settings/"): return a
+    if a.startswith("/"): return "com.android.settings" + a
     return "com.android.settings/" + a
 
+def klasse(a):
+    return a.strip().split("/")[-1].split(".")[-1]
+
+def home():
+    sh("su -c 'input keyevent 3'")
+
 def fokus():
-    rc, out, _ = sh("dumpsys window windows | grep mCurrentFocus")
+    rc, out, _ = sh("dumpsys window 2>/dev/null | grep mCurrentFocus")
+    if not out:
+        rc, out, _ = sh("dumpsys activity top 2>/dev/null | grep ACTIVITY | tail -1")
     return out
 
 def dump_elemente():
     sh("su -c 'uiautomator dump /sdcard/jack_karte.xml' >/dev/null 2>&1; true")
     rc, out, _ = sh("cat /sdcard/jack_karte.xml")
-    if not out.startswith("<"):
-        return []
+    if not out.startswith("<"): return []
     import xml.etree.ElementTree as ET
-    try:
-        root = ET.fromstring(out)
-    except Exception:
-        return []
+    try: root = ET.fromstring(out)
+    except Exception: return []
     els = []
     for n in root.iter("node"):
         t = (n.get("text") or "").strip()
         d = (n.get("content-desc") or "").strip()
-        if t or d:
-            els.append((t or d)[:60])
+        if t or d: els.append((t or d)[:60])
     return els[:40]
 
 def chunk(n=10):
@@ -78,33 +77,47 @@ def chunk(n=10):
         return "KEY settings_activities FEHLT. Vorhanden: " + ", ".join(sorted(w.keys()))
     karte = lade_karte()
     gemacht = 0
+    echt = 0
     for a in acts:
-        if gemacht >= n:
-            break
-        if a in karte:
-            continue
+        if gemacht >= n: break
+        if a in karte: continue
+        home()
+        time.sleep(0.7)
         sh("su -c 'am start -n " + component(a) + "'")
         time.sleep(2)
         fok = fokus()
-        els = dump_elemente()
+        geoeffnet = klasse(a) in fok
+        els = dump_elemente() if geoeffnet else []
         karte[a] = {"fokus": fok[:120], "elemente": els,
+                    "geoeffnet": geoeffnet,
                     "ts": time.strftime("%Y-%m-%d %H:%M:%S")}
         gemacht += 1
+        if geoeffnet: echt += 1
+        home()
     sichere_karte(karte)
-    sh("su -c 'input keyevent 3'")
-    return str(gemacht) + " neue Bildschirme kartiert. Gesamt " + str(len(karte)) + "/" + str(len(acts))
+    return (str(gemacht) + " kartiert, davon " + str(echt) + " echt geoeffnet. Gesamt "
+            + str(len(karte)) + "/" + str(len(acts)))
 
 def status():
     acts, w = activities()
     if not acts:
         return "KEY settings_activities FEHLT. Vorhanden: " + ", ".join(sorted(w.keys()))
     karte = lade_karte()
-    return "Karte: " + str(len(karte)) + "/" + str(len(acts)) + " Bildschirme"
+    echt = sum(1 for v in karte.values() if v.get("geoeffnet"))
+    return ("Karte: " + str(len(karte)) + "/" + str(len(acts))
+            + " | echt geoeffnet: " + str(echt)
+            + " | nicht oeffenbar: " + str(len(karte) - echt))
 
 if __name__ == "__main__":
     a = sys.argv[1] if len(sys.argv) > 1 else "status"
     n = int(sys.argv[2]) if len(sys.argv) > 2 else 10
     if a == "chunk":
         print(chunk(n))
+    elif a == "reset":
+        if os.path.exists(KARTE):
+            os.rename(KARTE, KARTE + ".bak_v1")
+            print("Karte zurueckgesetzt (Alt: xiaomi_karte.json.bak_v1)")
+        else:
+            print("Keine Karte da")
     else:
         print(status())
