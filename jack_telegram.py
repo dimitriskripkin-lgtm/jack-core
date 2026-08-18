@@ -39,7 +39,7 @@ BESTAETIGUNG = 'bestaetige schreiben'
 PENDING_IMPROVE = {}
 BESTAETIGUNG_PATCH = 'bestaetige patch'
 
-FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/menu','/m','/trace','/level','/kette','/baum'}
+FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/menu','/m','/trace','/level','/kette','/baum','/lernen'}
 
 def load_secrets():
     token, chat_id = None, None
@@ -87,6 +87,7 @@ MENU = {
     "gedaechtnis": {
         "label": "🧠 Gedaechtnis & Lernen",
         "befehle": [
+            ("/lernen", "Autonome Lernrunde auf dem Xiaomi starten", "/lernen"),
             ("/baum", "Zeigt die letzte Gespraeches-Kette (was fuehrte wozu)", "/baum"),
                 ("/rag Python", "Suche nach Python", "/rag Python"),
                 ("/rag Skill", "Suche nach Skills", "/rag Skill"),
@@ -874,6 +875,36 @@ def handle(text):
                 send('Standort-Fehler: ' + str(_e2)[:100])
         import threading
         threading.Thread(target=_do_standort, daemon=True).start()
+        return None
+    if _rt == '/lernen' or _rt.startswith('/lernen '):
+        import subprocess as _sp_l, json as _j_l
+        try:
+            _b = _j_l.loads(_sp_l.run(['termux-battery-status'], capture_output=True, text=True, timeout=8).stdout)
+            if _b.get('percentage', 100) < 30:
+                return 'Akku unter 30% - Lernen ausgesetzt'
+            if float(_b.get('temperature', 0)) > 45:
+                return 'Temperatur ueber 45C - Lernen ausgesetzt'
+        except Exception:
+            pass
+        try:
+            for _l in open('/proc/meminfo'):
+                if 'MemAvailable' in _l:
+                    if int(_l.split()[1]) // 1024 < 800:
+                        return 'RAM unter 800MB - Lernen ausgesetzt'
+                    break
+        except Exception:
+            pass
+        send('Lernrunde startet: 5 Experimente auf Stufe-0-Parametern...')
+        import threading as _lth
+        def _lrun():
+            try:
+                import subprocess as _sp3
+                r = _sp3.run(['python3', os.path.expanduser('~/jack/jack_lerner.py'), 'runde'],
+                             capture_output=True, text=True, timeout=300, cwd=os.path.expanduser('~/jack'))
+                send('LERNRUNDE FERTIG:' + chr(10) + (r.stdout or r.stderr)[:2000])
+            except Exception as e:
+                send('Lern-Fehler: ' + str(e)[:150])
+        _lth.Thread(target=_lrun, daemon=True).start()
         return None
     if _rt.startswith('/'):
         return 'Unbekannter Befehl: ' + _rt.split()[0] + ' - /menu zeigt alle Befehle.'
