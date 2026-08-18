@@ -133,6 +133,57 @@ def entscheide(max_els=12, use_vision=False):
         z.append("  TAP?   " + label[:35])
     return chr(10).join(z)
 
+
+LIVE_SKIP = ['qr', 'scan', 'teilen', 'share', 'zurueck', 'zurück', 'back',
+             'loeschen', 'löschen', 'delete', 'reset', 'passwort', 'password',
+             'senden', 'kamera', 'camera', 'factory', 'wipe']
+
+def _tap(x, y):
+    sh("su -c 'input tap " + str(x) + " " + str(y) + "'")
+
+def live(max_taps=2):
+    """Live-Modus: max_taps Taps mit Verifikation. NOTFALL-BACK bei TABU-Screen."""
+    import time as _t
+    bericht = []
+    els = dump_elemente()
+    before_fok = fokus()
+    getappt = 0
+    for el in els:
+        if getappt >= max_taps:
+            break
+        label = el["text"] or el["desc"]
+        if not label or len(label) < 3:
+            continue
+        if not el["clickable"]:
+            continue
+        low = label.lower()
+        if tabu_grund(el):
+            continue
+        if any(s in low for s in LIVE_SKIP):
+            continue
+        pos = mitte(el["bounds"])
+        if not pos:
+            continue
+        _tap(pos[0], pos[1])
+        getappt += 1
+        _t.sleep(1.5)
+        after_fok = fokus()
+        tabu_im_fokus = any(t in after_fok.lower() for t in ['password', 'passwort', 'reset', 'delete', 'loeschen', 'factory', 'wipe'])
+        if tabu_im_fokus:
+            sh("su -c 'input keyevent 4'")
+            _t.sleep(0.8)
+            sh("su -c 'input keyevent 3'")
+            log_trace({"fokus": after_fok[:60], "element": label[:40], "entscheidung": "NOTFALL-BACK", "grund": "tabu_screen_nach_tap"})
+            bericht.append("NOTFALL-BACK nach Tap auf " + label[:30])
+            break
+        veraendert = after_fok != before_fok
+        log_trace({"fokus": after_fok[:60], "element": label[:40], "entscheidung": "LIVE-TAP", "grund": "veraendert" if veraendert else "unveraendert", "live": True})
+        bericht.append("TAP " + label[:30] + " -> " + ("neuer Screen: " + after_fok[:50] if veraendert else "keine Reaktion"))
+        before_fok = after_fok
+    sh("su -c 'input keyevent 3'")
+    return chr(10).join(bericht) if bericht else "Keine sicheren Tap-Kandidaten gefunden."
+
+
 if __name__ == "__main__":
     uv = "--vision" in sys.argv
     print(entscheide(use_vision=uv))
