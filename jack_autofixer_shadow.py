@@ -59,7 +59,48 @@ def _shadow_test(file_path,patch_response):
         return True,"Shadow OK",shadow_path
     except Exception as e: return False,str(e),None
 
-def _apply(file_path,shadow_path,err_id,summary):
+VORSCHLAEGE = os.path.expanduser("~/jack/patch_vorschlaege")
+
+def _sha(p):
+    import hashlib
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        for b in iter(lambda: f.read(65536), b""): h.update(b)
+    return h.hexdigest()
+
+def _apply(file_path, shadow_path, err_id, summary):
+    """GATE CRIT-001: veraendert NIE eine Produktivdatei. Nur Vorschlag + Metadaten."""
+    import uuid as _uu
+    try:
+        if os.path.islink(file_path) or os.path.islink(shadow_path):
+            _log("Symlink erkannt - blockiert", "WARN"); return
+        if not os.path.isfile(shadow_path):
+            _log("Shadow fehlt - blockiert", "WARN"); return
+        real = os.path.realpath(file_path)
+        os.makedirs(VORSCHLAEGE, exist_ok=True); os.chmod(VORSCHLAEGE, 0o700)
+        uid = _uu.uuid4().hex[:12]
+        base = os.path.basename(real) + "." + uid
+        ziel = os.path.join(VORSCHLAEGE, base + ".vorschlag")
+        fd = os.open(ziel, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "wb") as out, open(shadow_path, "rb") as src:
+            shutil.copyfileobj(src, out)
+        meta = {"error_id": err_id, "source_realpath": real,
+                "created_at": datetime.now().isoformat(),
+                "source_sha256": _sha(real), "proposal_sha256": _sha(ziel),
+                "summary": str(summary)[:300], "status": "wartet_freigabe"}
+        mp = os.path.join(VORSCHLAEGE, base + ".meta.json")
+        fd2 = os.open(mp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd2, "w") as m: json.dump(meta, m, indent=2)
+        _log("VORSCHLAG #" + str(err_id) + " -> " + base + " (nicht angewandt)")
+        try:
+            import jack_guard
+            jack_guard.notify("AutoFixer Vorschlag wartet: " + os.path.basename(real))
+        except Exception: pass
+    except Exception as e:
+        _log("Vorschlag fehlgeschlagen: " + str(e)[:120], "WARN")
+    return
+
+def _apply_ORIGINAL_DEAKTIVIERT(file_path,shadow_path,err_id,summary):
     ts=int(time.time())
     bak=os.path.join(BACKUP,os.path.basename(file_path)+f".bak_{ts}")
     shutil.copy2(file_path,bak)

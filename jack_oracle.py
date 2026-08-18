@@ -71,21 +71,44 @@ def resolve_alias(cmd):
         return ALIASES[low], low
     return cmd, cmd
 
+SUBCMD_ALLOW = {
+    "git": ["status", "log", "diff", "show", "branch", "ls-files", "rev-parse", "describe"],
+    "sv": ["status"],
+    "python3": ["--version", "-V"],
+    "ollama": ["list", "ps"],
+    "sqlite3": None,
+}
+PFAD_TABU = [".ssh", ".jack_secrets", "id_jack", "known_hosts", "authorized_keys",
+             ".jack_private_filter", "/data/data/com.termux/files/usr/etc",
+             "..", "~/.", "/proc/self/environ"]
+
 def is_safe(cmd):
-    KILL=["rm -rf","rmtree","os.remove","os.unlink","drop table","delete from",
-          "mkfs","dd if=","eval(","exec(","os.environ","jack_secrets","api_key",
-          ".ssh/","urllib","requests.","socket","curl","wget","nc ","netcat",
-          "|","&&","||",";","$(","`",">",">>"]
-    # Shell-Injection-Schutz: Pipes und Chaining verbieten
-    ALLOW=["echo","sv","free","df","ls","cat","git","ollama","sqlite3",
-           "python3","termux-battery-status","termux-wifi-connectioninfo",
-           "pwd","date","uptime","grep","wc","head","tail"]
-    low=cmd.lower()
+    """CRIT-005: Allowlist auf Tool UND Subcommand-Ebene, plus Pfad-Tabus.
+    Default deny. Unbekanntes Tool oder unbekannter Subcommand -> BLOCKIERT."""
+    KILL = ["rm -rf", "rmtree", "os.remove", "os.unlink", "drop table", "delete from",
+            "mkfs", "dd if=", "eval(", "exec(", "os.environ", "jack_secrets", "api_key",
+            ".ssh/", "urllib", "requests.", "socket", "curl", "wget", "nc ", "netcat",
+            "|", "&&", "||", ";", "$(", "`", ">", ">>", "chmod", "chown", "mv ", "cp "]
+    ALLOW = ["echo", "sv", "free", "df", "ls", "cat", "git", "ollama", "sqlite3",
+             "python3", "termux-battery-status", "termux-wifi-connectioninfo",
+             "pwd", "date", "uptime", "grep", "wc", "head", "tail"]
+    low = cmd.lower()
     for k in KILL:
-        if k in low: return False,"KILL: "+k
-    first=cmd.strip().split()[0] if cmd.strip() else ""
-    if first not in ALLOW: return False,"Nicht auf Whitelist: "+first
-    return True,"OK"
+        if k in low: return False, "KILL: " + k
+    for t in PFAD_TABU:
+        if t in low: return False, "TABU-Pfad: " + t
+    teile = cmd.strip().split()
+    if not teile: return False, "Leerer Befehl"
+    first = teile[0]
+    if first not in ALLOW: return False, "Nicht auf Whitelist: " + first
+    if first in SUBCMD_ALLOW:
+        erlaubt = SUBCMD_ALLOW[first]
+        if erlaubt is None:
+            return False, "Tool " + first + " nur mit expliziter Freigabe"
+        sub = teile[1] if len(teile) > 1 else ""
+        if sub not in erlaubt:
+            return False, "Subcommand nicht erlaubt: " + first + " " + (sub or "(leer)")
+    return True, "OK"
 
 def run_cmd(cmd):
     try:

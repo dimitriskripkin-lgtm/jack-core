@@ -251,7 +251,7 @@ async def route_voice(audio_path):
             return {"success": True, "stack": "B", "text": text, "audio": audio_or_error}
         return {"success": True, "stack": "B", "text": text}
     
-    return {"success": False, "error": error or "Beide Stacks fehlgeschlagen"}
+    return {"success": False, "error": audio_or_error or "Beide Stacks fehlgeschlagen"}
 
 if __name__ == "__main__":
     test_file = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser("~/.jack_hey.m4a")

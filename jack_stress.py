@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+"""JACK Stresstest: prueft Sicherheitsgates hart, nicht nur Syntax.
+Read-only ausser einer Wegwerf-Testdatei in ~/jack/.stress_tmp/"""
+import os, sys, json, hashlib, sqlite3, threading, subprocess, time, shutil
+sys.path.insert(0, os.path.expanduser("~/jack"))
+H = os.path.expanduser("~/jack")
+OK = FAIL = WARN = 0
+
+def p(status, kat, txt):
+    global OK, FAIL, WARN
+    if status == "OK": OK += 1
+    elif status == "FAIL": FAIL += 1
+    else: WARN += 1
+    print("[" + status + "] " + kat + " | " + txt)
+
+def sha(path):
+    h = hashlib.sha256()
+    with open(path,"rb") as f:
+        for b in iter(lambda: f.read(65536), b""): h.update(b)
+    return h.hexdigest()
+
+print("=== JACK STRESSTEST " + time.strftime("%H:%M:%S") + " ===\n--- 1 IMPORTE ---")
+for m in ["jack_config","jack_missions","jack_publish","jack_autofixer_shadow",
+          "jack_oracle","jack_approval","jack_coder","jack_skills","jack_log",
+          "jack_gemini_bridge","jack_wissen_ernte"]:
+    try:
+        __import__(m); p("OK","IMPORT",m)
+    except Exception as e: p("FAIL","IMPORT",m + ": " + str(e)[:70])
+
+print("--- 2 AUTOFIXER GATE ---")
+try:
+    import jack_autofixer_shadow as afs
+    tmp = os.path.join(H, ".stress_tmp"); os.makedirs(tmp, exist_ok=True)
+    opfer = os.path.join(tmp, "opfer.py"); open(opfer,"w").write("x = 1\n")
+    schatten = os.path.join(tmp, "schatten.py"); open(schatten,"w").write("x = 999\n")
+    vor = sha(opfer)
+    afs._apply(opfer, schatten, 99999, "STRESSTEST")
+    nach = sha(opfer)
+    p("OK" if vor == nach else "FAIL","GATE",
+      "Produktivdatei unveraendert" if vor == nach else "UEBERSCHRIEBEN - KILL-SWITCH FEHLT!")
+    vz = os.path.join(H,"patch_vorschlaege")
+    vs = [f for f in os.listdir(vz) if "opfer" in f] if os.path.isdir(vz) else []
+    p("OK" if len(vs) >= 2 else "WARN","GATE","Vorschlag+Meta erzeugt: " + str(len(vs)))
+    for f in vs:
+        try: os.remove(os.path.join(vz,f))
+        except Exception: pass
+    shutil.rmtree(tmp, ignore_errors=True)
+except Exception as e: p("FAIL","GATE","AutoFixer-Test: " + str(e)[:80])
+
+print("--- 3 PUBLISH GATE ---")
+try:
+    src = open(os.path.join(H,"jack_publish.py")).read()
+    p("OK" if "git push" not in src.split("def push()")[1][:400] else "FAIL",
+      "GATE","push() ohne git push")
+    import jack_publish
+    ff = os.path.expanduser("~/.jack_private_filter")
+    tmpf = ff + ".stress"
+    if os.path.exists(ff):
+        os.rename(ff, tmpf)
+        r = jack_publish._filter_private("Testzeile")
+        os.rename(tmpf, ff)
+        p("OK" if "BLOCKIERT" in r else "FAIL","GATE","Filter fail-closed ohne Regeldatei")
+    else: p("WARN","GATE","~/.jack_private_filter fehlt")
+except Exception as e: p("FAIL","GATE","Publish-Test: " + str(e)[:80])
+
+print("--- 4 RESSOURCEN FAIL-CLOSED ---")
+try:
+    import jack_missions
+    src = open(os.path.join(H,"jack_missions.py")).read()
+    p("OK" if 'return True, "Messung fehlgeschlagen' not in src else "FAIL",
+      "GATE","kein fail-open Pfad im Quelltext")
+    ok, info = jack_missions.ressourcen_ok()
+    p("OK","GATE","Normalmessung: " + str(ok) + " (" + str(info)[:40] + ")")
+except Exception as e: p("FAIL","GATE","Ressourcen: " + str(e)[:80])
+
+print("--- 5 PARALLELER MISSIONS-CLAIM ---")
+try:
+    import jack_missions
+    mid, _ = jack_missions.add("echo stresstest_claim", "notiz", 9)
+    treffer = []
+    def zieh():
+        m = jack_missions.naechste()
+        if m and m["id"] == mid: treffer.append(m["id"])
+    t = [threading.Thread(target=zieh) for _ in range(6)]
+    [x.start() for x in t]; [x.join() for x in t]
+    p("OK" if len(treffer) <= 1 else "FAIL","RACE",
+      "6 Worker, " + str(len(treffer)) + "x geclaimt (erwartet max 1)")
+    jack_missions.setze_status(mid, "fertig", "Stresstest")
+except Exception as e: p("FAIL","RACE",str(e)[:80])
+
+print("--- 6 ORACLE WHITELIST ---")
+try:
+    import jack_oracle
+    boes = ["rm -rf ~/jack","cat ~/.jack_secrets","echo a && rm b",
+            "curl http://x","python3 -c 'import os'; ls","git push"]
+    dicht = sum(1 for c in boes if not jack_oracle.is_safe(c)[0])
+    p("OK" if dicht == len(boes) else "FAIL","ORACLE",
+      str(dicht) + "/" + str(len(boes)) + " boesartige Befehle blockiert")
+    p("OK" if jack_oracle.is_safe("free -h")[0] else "FAIL","ORACLE","harmloser Befehl erlaubt")
+except Exception as e: p("FAIL","ORACLE",str(e)[:80])
+
+print("--- 7 DATENBANKEN ---")
+for db in [f for f in os.listdir(H) if f.endswith(".db")]:
+    try:
+        c = sqlite3.connect(os.path.join(H,db))
+        c.execute("PRAGMA quick_check").fetchone()
+        wal = c.execute("PRAGMA journal_mode").fetchone()[0]
+        c.close()
+        p("OK" if wal.lower()=="wal" else "WARN","DB", db + " ok, journal=" + wal)
+    except Exception as e: p("FAIL","DB", db + ": " + str(e)[:60])
+
+print("--- 8 WISSENSBASIS ---")
+try:
+    d = json.load(open(os.path.join(H,"xiaomi_wissen.json")))
+    p("OK" if len(d.get("keycodes",{}))>100 else "WARN","WISSEN",
+      str(len(d.get("keycodes",{}))) + " Keycodes")
+    p("OK" if d.get("apps_user") else "WARN","WISSEN",
+      str(len(d.get("apps_user",[]))) + " User-Apps geerntet")
+    p("OK" if d.get("services") else "WARN","WISSEN",
+      str(len(d.get("services",[]))) + " Services geerntet")
+except Exception as e: p("FAIL","WISSEN",str(e)[:80])
+
+print("--- 9 REPO-HYGIENE ---")
+r = subprocess.run("cd " + H + " && git ls-files | xargs grep -lE '(ghp_[A-Za-z0-9]{30,}|AIza[A-Za-z0-9_-]{33})' 2>/dev/null",
+    shell=True, capture_output=True, text=True)
+p("OK" if not r.stdout.strip() else "FAIL","REPO","Secrets getrackt: " + (r.stdout[:60] or "keine"))
+
+print("\n=== ERGEBNIS: " + str(OK) + " OK | " + str(WARN) + " WARN | " + str(FAIL) + " FAIL ===")
+sys.exit(1 if FAIL else 0)

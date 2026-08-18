@@ -14,15 +14,23 @@ def sh(c,cwd=None):
     try: return subprocess.run(c,shell=True,capture_output=True,text=True,timeout=25,cwd=cwd).stdout.strip()
     except Exception: return ""
 
+def _lade_filter():
+    """CRIT-P4: private Begriffe NIE im Repo. Fehlt die Datei -> fail-closed."""
+    fp = os.path.expanduser("~/.jack_private_filter")
+    if not os.path.isfile(fp) or os.path.islink(fp): return None
+    w = [z.strip() for z in open(fp, encoding="utf-8") if z.strip()]
+    return w or None
+
 def _filter_private(t):
-    "Entfernt private Sektionen aus context.md bevor push."
-    out=[]
-    skip=False
+    worte = _lade_filter()
+    if worte is None:
+        return "[EXPORT BLOCKIERT: ~/.jack_private_filter fehlt oder leer]"
+    out = []; skip = False
     for l in t.split("\n"):
-        if any(x in l for x in ["dima_profil","Max-Planck","Tupperware","Dalhoff Feinkost","Heinrich Staas","Schaeferhund","heisst Rex","hat einen Hund","Burnout","Michi mit 17","Cannabis","Kiyosaki","Hamsterrad","Nachtschicht-LKW","Sprinter Kuehlkoffer"]):
-            skip=True; out.append("[PRIVAT GEFILTERT]"); continue
-        if skip and l.startswith("- ") or (skip and l.strip()==""): continue
-        skip=False; out.append(l)
+        if any(x in l for x in worte):
+            skip = True; out.append("[PRIVAT GEFILTERT]"); continue
+        if skip and l.startswith("- ") or (skip and l.strip() == ""): continue
+        skip = False; out.append(l)
     return "\n".join(out)
 
 def scrub(t):
@@ -61,8 +69,9 @@ def build():
     return text
 
 def push():
+    """GATE CRIT-002: kein autonomer Netz-Push. Nur lokaler Build."""
     build()
-    return sh("git add -A && git commit -m auto-context && git push", cwd=OUT)
+    return "LOKAL GEBAUT, NICHT VEROEFFENTLICHT (Push gesperrt)"
 
 if __name__=="__main__":
     print(push() or "(nichts neu)")

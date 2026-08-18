@@ -126,7 +126,7 @@ def scan_ssh_verbindungen():
     """Bekannte SSH-Ziele pruefen."""
     ziele = {
         "xiaomi": {
-            "host": "10.58.220.131",
+            "host": __import__("jack_config").get_param("NETWORK","xiaomi_ip"),
             "port": 8022,
             "key": os.path.expanduser("~/.ssh/id_jack"),
             "user": "root",

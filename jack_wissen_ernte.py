@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+"""Erntet Ground-Truth-Systemwissen vom Xiaomi. Kein Raten, keine Vision.
+Jede Phase < 25s wegen Oracle-Timeout."""
+import os, sys, json, subprocess, time
+sys.path.insert(0, os.path.expanduser("~/jack"))
+W = os.path.expanduser("~/jack/xiaomi_wissen.json")
+KEY = os.path.expanduser("~/.ssh/id_jack")
+
+def _ip():
+    import jack_config
+    return jack_config.get_param("NETWORK", "xiaomi_ip")
+
+def sh(cmd, t=15):
+    try:
+        r = subprocess.run(["ssh","-i",KEY,"-o","BatchMode=yes",
+            "-o","StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null",
+            "-o","LogLevel=ERROR","-o","ConnectTimeout=4","-p","8022","root@"+_ip(), cmd],
+            capture_output=True, text=True, timeout=t)
+        if r.returncode != 0:
+            return "FEHLER(rc=" + str(r.returncode) + "): " + r.stderr.strip()[:200]
+        return r.stdout.strip()
+    except Exception as e: return "SSH-FEHLER: " + str(e)[:100]
+
+def lade():
+    try: return json.load(open(W))
+    except Exception: return {}
+
+def sichere(d):
+    d["_stand"] = time.strftime("%Y-%m-%d %H:%M:%S")
+    json.dump(d, open(W,"w"), indent=2, ensure_ascii=False)
+
+def basis():
+    d = lade()
+    size = sh("su -c 'wm size'")
+    if "SSH-FEHLER" in size: return "ABBRUCH: " + size
+    d["display"] = size.strip()
+    d["dichte"] = sh("su -c 'wm density'").strip()
+    d["android"] = sh("su -c 'getprop ro.build.version.release'").strip()
+    d["sdk"] = sh("su -c 'getprop ro.build.version.sdk'").strip()
+    d["modell"] = sh("su -c 'getprop ro.product.model'").strip()
+    d["miui"] = sh("su -c 'getprop ro.miui.ui.version.name'").strip()
+    sichere(d)
+    return "BASIS OK | " + d["modell"] + " | Android " + d["android"] + " (SDK " + d["sdk"] + ") | " + size.strip()
+
+def apps():
+    d = lade()
+    p3 = sh("su -c 'pm list packages -3'")
+    ps = sh("su -c 'pm list packages -s'")
+    u = sorted(x.replace("package:","") for x in p3.split() if "package:" in x)
+    s = sorted(x.replace("package:","") for x in ps.split() if "package:" in x)
+    d["apps_user"] = u; d["apps_system"] = s
+    sichere(d)
+    return "APPS OK | " + str(len(u)) + " User, " + str(len(s)) + " System"
+
+def dienste():
+    d = lade()
+    sv = sh("su -c 'service list'")
+    namen = [l.split()[1].rstrip(":") for l in sv.split("\n") if len(l.split()) > 1 and l.strip()[0].isdigit()]
+    d["services"] = sorted(set(namen))[:400]
+    cm = sh("su -c 'cmd -l'")
+    d["cmd_namespaces"] = sorted(set(cm.split()))[:300]
+    sichere(d)
+    return "DIENSTE OK | " + str(len(d["services"])) + " Services, " + str(len(d["cmd_namespaces"])) + " cmd-Namespaces"
+
+def settings():
+    d = lade()
+    r = {}
+    for ns in ("system", "secure", "global"):
+        out = sh("su -c 'settings list " + ns + "'", t=20)
+        keys = sorted(z.split("=")[0] for z in out.split("\n") if "=" in z)
+        r[ns] = keys
+    d["settings_keys"] = r
+    sichere(d)
+    return "SETTINGS OK | " + " ".join(k + ":" + str(len(v)) for k, v in r.items())
+
+def bericht():
+    d = lade()
+    if not d: return "Noch nichts geerntet."
+    z = ["Xiaomi-Wissen (" + d.get("_stand","?") + ")",
+         "Geraet: " + str(d.get("modell","?")) + " | Android " + str(d.get("android","?")),
+         "Display: " + str(d.get("display","?")) + " " + str(d.get("dichte","")),
+         "Apps: " + str(len(d.get("apps_user",[]))) + " User / " + str(len(d.get("apps_system",[]))) + " System",
+         "Services: " + str(len(d.get("services",[]))),
+         "Settings-Keys: " + str(sum(len(v) for v in d.get("settings_keys",{}).values())),
+         "Keycodes: " + str(len(d.get("keycodes",{})))]
+    return "\n".join(z)
+
+if __name__ == "__main__":
+    a = sys.argv[1] if len(sys.argv) > 1 else "bericht"
+    print({"basis":basis,"apps":apps,"dienste":dienste,"settings":settings,
+           "bericht":bericht}.get(a, bericht)())

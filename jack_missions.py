@@ -65,14 +65,30 @@ def add(aufgabe, typ="befehl", prioritaet=5):
     return mid, "OK"
 
 def naechste():
-    """Naechste offene Mission, hoechste Prioritaet zuerst (1 = wichtig)."""
+    """CRIT-006: atomarer Claim. SELECT+UPDATE in einer Transaktion,
+    damit zwei Worker nie dieselbe Mission ziehen."""
     init()
     c = _con()
-    r = c.execute("""SELECT * FROM missions
-        WHERE status='offen' AND versuche < ?
-        ORDER BY prioritaet ASC, id ASC LIMIT 1""", (MAX_VERSUCHE,)).fetchone()
-    c.close()
-    return dict(r) if r else None
+    try:
+        c.isolation_level = None
+        c.execute("BEGIN IMMEDIATE")
+        r = c.execute("""SELECT * FROM missions
+            WHERE status='offen' AND versuche < ?
+            ORDER BY prioritaet ASC, id ASC LIMIT 1""", (MAX_VERSUCHE,)).fetchone()
+        if not r:
+            c.execute("COMMIT"); c.close(); return None
+        cur = c.execute("""UPDATE missions SET status='laeuft', gestartet=?,
+            versuche=versuche+1 WHERE id=? AND status='offen' AND versuche < ?""",
+            (_jetzt(), r["id"], MAX_VERSUCHE))
+        if cur.rowcount != 1:
+            c.execute("ROLLBACK"); c.close(); return None
+        c.execute("COMMIT")
+        d = dict(r); d["status"] = "laeuft"; d["_geclaimt"] = True
+        c.close(); return d
+    except Exception as e:
+        try: c.execute("ROLLBACK")
+        except Exception: pass
+        c.close(); _log("CLAIM-FEHLER", str(e)[:100]); return None
 
 def setze_status(mid, status, ergebnis=None):
     if status not in STATI:
@@ -159,7 +175,7 @@ def ressourcen_ok():
             return False, "RAM knapp: " + str(frei_mb) + "MB frei, brauche " + str(MIN_FREI_MB) + "MB"
         return True, str(frei_mb) + "MB frei"
     except Exception as e:
-        return True, "Messung fehlgeschlagen, lasse durch: " + str(e)[:60]
+        return False, "BLOCKIERT: RAM-Messung fehlgeschlagen: " + str(e)[:60]
 
 
 def _fehlschlag(mid, versuche_bisher, grund):
@@ -184,7 +200,7 @@ def dispatch_once():
         if not frei_ok:
             _log("MISSION-VERSCHOBEN", "#" + str(mid) + " " + frei_info)
             return {"id": mid, "typ": typ, "status": "verschoben", "text": frei_info}
-    setze_status(mid, "laeuft")
+    # bereits durch naechste() geclaimt
 
     if typ == "notiz":
         setze_status(mid, "fertig", "Notiz vermerkt, keine Ausfuehrung")

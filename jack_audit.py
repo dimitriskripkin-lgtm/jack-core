@@ -8,7 +8,7 @@ except Exception:
 from datetime import datetime
 
 H = os.path.expanduser("~/jack")
-XIP, XPORT = "10.58.220.131", 8022
+XIP, XPORT = __import__("jack_config").get_param("NETWORK","xiaomi_ip"), 8022
 
 def _dienste():
     r = subprocess.run("sv status jack_cortex jack_telegram jack_waechter ollama", shell=True, capture_output=True, text=True)

@@ -62,3 +62,10 @@ CLAUDE.md
 jack_handshake_v*.json
 jack_personality.json
 jack_harvest.db*
+
+.jack_private_filter
+patch_vorschlaege/
+
+chrome_loaded.txt
+*.bak_p*
+.stress_tmp/

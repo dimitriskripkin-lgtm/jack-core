@@ -4,7 +4,7 @@ try:
 except Exception:
     _jlog = None
 
-XIAOMI_IP = "10.244.147.131"
+XIAOMI_IP = __import__("jack_config").get_param("NETWORK","xiaomi_ip")
 SSH_KEY = os.path.expanduser("~/.ssh/id_jack")
 CMD_FILE = "/sdcard/jack_cmd.json"
 RESULT_FILE = "/sdcard/jack_result.json"

@@ -868,7 +868,45 @@ def _offset_schreiben(wert):
     except:
         pass
 
+def _einzelinstanz():
+    """Verhindert Doppelbots: zweiter Prozess beendet sich selbst.
+    Lock ueber O_EXCL plus Lebendigkeitspruefung der eingetragenen PID."""
+    lock = os.path.expanduser("~/.jack_telegram.lock")
+    meine = os.getpid()
+    if os.path.exists(lock):
+        try:
+            alt = int(open(lock).read().strip())
+        except Exception:
+            alt = 0
+        lebt = False
+        if alt and alt != meine:
+            try:
+                os.kill(alt, 0)
+                cmd = open("/proc/" + str(alt) + "/cmdline").read()
+                lebt = "jack_telegram" in cmd
+            except Exception:
+                lebt = False
+        if lebt:
+            print("[TG] Bot laeuft bereits als PID " + str(alt) + " - beende mich.")
+            raise SystemExit(0)
+        try: os.remove(lock)
+        except Exception: pass
+    try:
+        fd = os.open(lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w") as f: f.write(str(meine))
+    except FileExistsError:
+        print("[TG] Lock-Rennen verloren - beende mich.")
+        raise SystemExit(0)
+    import atexit
+    def _weg():
+        try:
+            if int(open(lock).read().strip()) == meine: os.remove(lock)
+        except Exception: pass
+    atexit.register(_weg)
+    print("[TG] Einzelinstanz-Lock gesetzt (PID " + str(meine) + ")")
+
 def main():
+    _einzelinstanz()
     try: send("JACK online. Alle Dienste gestartet.")
     except Exception: pass
     vibrate(200)
