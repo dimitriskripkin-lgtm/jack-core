@@ -64,9 +64,9 @@ def home():
     sh("su -c 'input keyevent 3'")
 
 def fokus():
-    rc, out, _ = sh("dumpsys window 2>/dev/null | grep mCurrentFocus")
+    rc, out, _ = sh("su -c 'dumpsys window windows' 2>/dev/null | grep mCurrentFocus")
     if not out:
-        rc, out, _ = sh("dumpsys activity top 2>/dev/null | grep ACTIVITY | tail -1")
+        rc, out, _ = sh("su -c 'dumpsys activity top' 2>/dev/null | grep ACTIVITY | tail -1")
     return out
 
 def dump_elemente():
@@ -124,7 +124,7 @@ def status():
     echt = sum(1 for v in karte.values() if v.get("geoeffnet"))
     return ("Karte: " + str(len(karte)) + "/" + str(len(acts))
             + " | echt geoeffnet: " + str(echt)
-            + " | nicht oeffenbar: " + str(len(karte) - echt))
+            + " | nicht oeffenbar: " + str(len(karte) - echt) + " | gefaehrlich: " + str(sum(1 for v in karte.values() if v.get("gefaehrlich"))))
 
 if __name__ == "__main__":
     a = sys.argv[1] if len(sys.argv) > 1 else "status"
