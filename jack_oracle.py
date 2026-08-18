@@ -56,11 +56,11 @@ ALIASES = {
     "dienste": "sv status jack_cortex jack_telegram jack_waechter ollama",
     "ram": "free -h",
     "speicher": "df -h /data/data/com.termux/files",
-    "fehler": "python3 -c \"import sqlite3,os; con=sqlite3.connect(os.path.expanduser('~/jack/jack_errors.db')); [print(r) for r in con.execute('SELECT timestamp,module,error_msg FROM errors WHERE resolved=0 ORDER BY id DESC LIMIT 5').fetchall()]\"",
+    "fehler": "python3 ~/jack/jack_errors_status.py",
     "datum": "date",
     "uptime": "uptime",
     "modelle": "ollama list",
-    "budget": "python3 -c \"import sys,os; sys.path.insert(0,os.path.expanduser('~/jack')); import jack_budget; print(jack_budget.status())\"",
+    "budget": "python3 ~/jack/jack_budget_status.py",
     "ram_check": "free -h",
     "log": "tail -10 /data/data/com.termux/files/home/jack/jack_decisions.log",
 }
@@ -101,6 +101,10 @@ def is_safe(cmd):
     if not teile: return False, "Leerer Befehl"
     first = teile[0]
     if first not in ALLOW: return False, "Nicht auf Whitelist: " + first
+    if first == "python3":
+        ok, grund = _py_skript_ok(teile)
+        if not ok: return False, grund
+        return True, "OK"
     if first in SUBCMD_ALLOW:
         erlaubt = SUBCMD_ALLOW[first]
         if erlaubt is None:
@@ -185,3 +189,38 @@ if __name__=="__main__":
                 import jack_log; jack_log.log_decision("ORACLE-FEHLER",str(e)[:100])
             except Exception as _le: _jlog and _jlog.fehler("oracle","unbenannt",_le)
         time.sleep(60)
+
+
+JACK_DIR = os.path.expanduser("~/jack")
+
+def _py_skript_ok(teile):
+    """python3 darf NUR .py-Skripte aus ~/jack starten. Kein -c, kein -m,
+    keine Traversierung, keine Symlinks. Argumente danach nur [A-Za-z0-9_.-]."""
+    if len(teile) < 2:
+        return False, "python3 ohne Skript nicht erlaubt"
+    ziel = teile[1]
+    if ziel.startswith("-"):
+        return False, "python3-Flags nicht erlaubt: " + ziel
+    pfad = os.path.realpath(os.path.expanduser(ziel))
+    if not pfad.endswith(".py"):
+        return False, "Nur .py-Skripte: " + os.path.basename(pfad)
+    if os.path.dirname(pfad) != os.path.realpath(JACK_DIR):
+        return False, "Skript ausserhalb ~/jack: " + pfad[:60]
+    if os.path.basename(pfad) not in SKRIPT_ALLOW:
+        return False, "Skript nicht freigegeben: " + os.path.basename(pfad)
+    if not os.path.isfile(pfad):
+        return False, "Skript existiert nicht"
+    if os.path.islink(os.path.expanduser(ziel)):
+        return False, "Symlink als Skript blockiert"
+    for a in teile[2:]:
+        if not all(ch.isalnum() or ch in "_.-" for ch in a):
+            return False, "Unerlaubtes Argument: " + a[:30]
+    return True, "OK"
+
+SKRIPT_ALLOW = {
+    "jack_wissen_ernte.py",
+    "jack_errors_status.py",
+    "jack_budget_status.py",
+    "jack_freigabe.py",
+    "jack_stress.py",
+}

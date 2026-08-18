@@ -196,17 +196,38 @@ def _publisher_loop():
 
 
 def _missions_loop():
+    """Arbeitet die Queue leer statt nach jeder Mission 5 Minuten zu pennen.
+    Nur bei leerer Queue lange schlafen. Vorher: 5 Missionen = 25 Minuten."""
+    _leerlauf = 300
+    _aktiv = 2
+    _max_runde = 20
     while True:
+        gearbeitet = 0
         try:
             import jack_missions
-            r = jack_missions.dispatch_once()
-            if r and r.get("status") in ("fertig","blockiert","fehler","wartet_freigabe"):
-                notify("Mission #" + str(r["id"]) + " [" + r["typ"] + "] " + r["status"] + ":" + chr(10) + str(r.get("text",""))[:600])
+            jack_missions.recover_stale()
+            while gearbeitet < _max_runde:
+                r = jack_missions.dispatch_once()
+                if not r:
+                    break
+                gearbeitet += 1
+                if r.get("status") in ("fertig","blockiert","fehler","wartet_freigabe"):
+                    notify("Mission #" + str(r["id"]) + " [" + r["typ"] + "] " +
+                           r["status"] + ":" + chr(10) + str(r.get("text",""))[:600])
+                if r.get("status") == "verschoben":
+                    break
+                _tm.sleep(_aktiv)
+            if gearbeitet >= _max_runde:
+                try:
+                    import jack_log
+                    jack_log.log_decision("MISSIONS-DROSSEL",
+                        "Rundenlimit " + str(_max_runde) + " erreicht, Pause")
+                except Exception: pass
         except Exception as e:
             try:
                 import jack_log; jack_log.log_decision("MISSIONS-ERR", str(e)[:80])
             except Exception: pass
-        _tm.sleep(300)
+        _tm.sleep(_leerlauf if gearbeitet == 0 else 10)
 
 def _scout_loop():
     """Laeuft einmal taeglich, erzeugt Fingerabdruck und loggt Aenderungen."""

@@ -475,3 +475,49 @@ if __name__ == "__main__":
             print("Erstes Element:", els[0])
         cleanup_screenshots()
         print("Cleanup: OK")
+
+
+# --- Wissensbasis-Lookup: nachschlagen statt raten ---
+_WISSEN_CACHE = {"keycodes": None, "syntax": None}
+
+def _wissen():
+    """Laedt xiaomi_wissen.json einmal und haelt es im Speicher."""
+    if _WISSEN_CACHE["keycodes"] is None:
+        try:
+            d = json.load(open(os.path.expanduser("~/jack/xiaomi_wissen.json")))
+            _WISSEN_CACHE["keycodes"] = d.get("keycodes", {})
+            _WISSEN_CACHE["syntax"] = d.get("befehls_syntax", {})
+        except Exception:
+            _WISSEN_CACHE["keycodes"] = {}
+            _WISSEN_CACHE["syntax"] = {}
+    return _WISSEN_CACHE
+
+def keycode(name):
+    """Nummer zu einem Tastennamen. Akzeptiert 'BACK', 'KEYCODE_BACK', 'back', 4.
+    Gibt None zurueck wenn unbekannt - der Aufrufer soll dann NICHT raten."""
+    if isinstance(name, int): return name
+    s = str(name).strip().upper()
+    if s.isdigit(): return int(s)
+    if s.startswith("KEYCODE_"): s = s[8:]
+    return _wissen()["keycodes"].get(s)
+
+def keycode_suche(teil):
+    """Alle Tastennamen die einen Teilstring enthalten. Fuer Diagnose."""
+    t = str(teil).strip().upper()
+    return {k: v for k, v in _wissen()["keycodes"].items() if t in k}
+
+def syntax(aktion):
+    """Befehlsmuster nachschlagen, z.B. syntax('tap')."""
+    return _wissen()["syntax"].get(str(aktion).strip().lower())
+
+def keyevent_sicher(name):
+    """Wie keyevent(), aber schlaegt den Code nach statt ihn zu erraten.
+    Unbekannter Name -> (False, Grund), kein blinder Tastendruck."""
+    code = keycode(name)
+    if code is None:
+        return False, "Unbekannter Tastencode: " + str(name)
+    try:
+        keyevent(code)
+        return True, "KEYCODE " + str(name) + " = " + str(code)
+    except Exception as e:
+        return False, str(e)[:120]

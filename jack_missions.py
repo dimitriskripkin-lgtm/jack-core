@@ -237,3 +237,32 @@ def dispatch_once():
 
     setze_status(mid, "fehler", "Unbekannter Typ: " + str(typ))
     return {"id": mid, "typ": typ, "status": "fehler", "text": "Unbekannter Typ"}
+
+
+LEASE_MINUTEN = 10
+
+def recover_stale():
+    """Holt Missionen zurueck, die im Zustand laeuft haengengeblieben sind
+    (Worker gestorben, OOM, Dienst-Neustart). Versuchszaehler bleibt stehen,
+    nach MAX_VERSUCHE ist endgueltig Schluss."""
+    init()
+    c = _con()
+    try:
+        rows = c.execute("""SELECT id, aufgabe, versuche, gestartet FROM missions
+            WHERE status='laeuft' AND gestartet IS NOT NULL
+              AND gestartet < datetime('now','localtime','-""" + str(LEASE_MINUTEN) + """ minutes')""").fetchall()
+        n = 0
+        for r in rows:
+            if r["versuche"] >= MAX_VERSUCHE:
+                c.execute("UPDATE missions SET status='fehler', beendet=?, ergebnis=? WHERE id=?",
+                    (_jetzt(), "Aufgegeben: Lease abgelaufen nach " + str(r["versuche"]) + " Versuchen", r["id"]))
+            else:
+                c.execute("UPDATE missions SET status='offen' WHERE id=? AND status='laeuft'", (r["id"],))
+            n += 1
+        c.commit()
+        if n: _log("MISSION-RECOVER", str(n) + " haengende Mission(en) zurueckgeholt")
+        return n
+    except Exception as e:
+        _log("RECOVER-FEHLER", str(e)[:100]); return 0
+    finally:
+        c.close()

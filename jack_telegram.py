@@ -847,6 +847,34 @@ def handle(text):
             return 'Ingest: ' + st + chr(10) + 'DB: ' + str(n) + ' Eintraege'
         except Exception as e: return 'Ingest-Fehler: ' + str(e)
 
+    _NUTZUNG = {
+        '/rag': 'Nutzung: /rag <suchbegriff>\nBeispiel: /rag KEYCODE_BACK',
+        '/ssh': 'Nutzung: /ssh <befehl>\nBeispiel: /ssh uptime',
+        '/agent': 'Nutzung: /agent <ziel>\nBeispiel: /agent oeffne die Einstellungen',
+        '/find': 'Nutzung: /find <was>\nBeispiel: /find Suchleiste',
+        '/vision': 'Nutzung: /vision <frage>\nBeispiel: /vision was siehst du',
+        '/explore': 'Nutzung: /explore <paket>\nBeispiel: /explore com.android.settings',
+    }
+    _c0 = _rt.split()[0].lower()
+    if _c0 in _NUTZUNG:
+        return _NUTZUNG[_c0]
+
+    if _rt.lower() == '/standort':
+        send('Frage Position vom Xiaomi ab, kann bis 50s dauern...')
+        def _do_standort():
+            try:
+                import jack_sensors as _js2
+                loc = _js2.get_location()
+                if 'error' in loc:
+                    send('Standort-Fehler: ' + str(loc['error'])); return
+                send('Standort: ' + str(loc.get('latitude')) + ', ' +
+                     str(loc.get('longitude')) + ' (Genauigkeit: ' +
+                     str(loc.get('accuracy')) + 'm)')
+            except Exception as _e2:
+                send('Standort-Fehler: ' + str(_e2)[:100])
+        import threading
+        threading.Thread(target=_do_standort, daemon=True).start()
+        return None
     if _rt.startswith('/'):
         return 'Unbekannter Befehl: ' + _rt.split()[0] + ' - /menu zeigt alle Befehle.'
     # Weiter zu jack_talk wenn kein fruehzeitiger Return

@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+"""Stufe 0: reichert die geernteten Namen mit echten Bedeutungen an.
+Quellen: AOSP Settings.java (JavaDoc) und die geraeteeigene cmd-Hilfe.
+Rein lesend. Jede Phase unter 25 Sekunden."""
+import os, sys, re, json, base64, urllib.request, subprocess, time
+sys.path.insert(0, os.path.expanduser("~/jack"))
+W = os.path.expanduser("~/jack/xiaomi_wissen.json")
+KEY = os.path.expanduser("~/.ssh/id_jack")
+AOSP = ("https://android.googlesource.com/platform/frameworks/base/+/"
+        "refs/heads/main/core/java/android/provider/Settings.java?format=TEXT")
+
+def _ip():
+    import jack_config
+    return jack_config.get_param("NETWORK", "xiaomi_ip")
+
+def sh(cmd, t=20):
+    try:
+        r = subprocess.run(["ssh","-i",KEY,"-o","BatchMode=yes",
+            "-o","StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null",
+            "-o","LogLevel=ERROR","-o","ConnectTimeout=4","-p","8022",
+            "root@"+_ip(), cmd], capture_output=True, text=True, timeout=t)
+        raus = (r.stdout or "").strip()
+        if not raus:
+            raus = (r.stderr or "").strip()
+        return raus
+    except Exception:
+        return ""
+
+def lade():
+    try: return json.load(open(W))
+    except Exception: return {}
+
+def sichere(d):
+    d["_stand"] = time.strftime("%Y-%m-%d %H:%M:%S")
+    json.dump(d, open(W, "w"), indent=2, ensure_ascii=False)
+
+def bedeutungen():
+    """AOSP JavaDoc zu Settings-Keys. Das ist die Bedienungsanleitung."""
+    d = lade()
+    try:
+        with urllib.request.urlopen(AOSP, timeout=30) as r:
+            src = base64.b64decode(r.read()).decode("utf-8", "replace")
+    except Exception as e:
+        return "AOSP-Download fehlgeschlagen: " + str(e)[:100]
+    besch = {}
+    muster = re.compile(
+        r'/\*\*(.*?)\*/\s*(?:@\w+[^\n]*\s*)*public\s+static\s+final\s+String\s+'
+        r'(\w+)\s*=\s*"([^"]+)"', re.S)
+    for doc, konst, key in muster.findall(src):
+        text = re.sub(r'^\s*\*\s?', '', doc, flags=re.M)
+        text = re.sub(r'\{@\w+\s+([^}]*)\}', r'\1', text)
+        text = re.sub(r'<[^>]+>', '', text)
+        text = " ".join(text.split())
+        if text and len(text) > 15:
+            besch[key] = text[:400]
+    d["settings_bedeutung"] = besch
+    sichere(d)
+    eigene = d.get("settings_keys", {})
+    alle = set()
+    for v in eigene.values(): alle.update(v)
+    treffer = len(alle & set(besch))
+    return ("BEDEUTUNGEN OK | " + str(len(besch)) + " aus AOSP | " +
+            str(treffer) + " von " + str(len(alle)) + " eigenen Keys erklaert")
+
+def cmd_hilfe():
+    """Eingebaute Hilfe der Kommando-Namespaces. Vom Geraet, immer aktuell."""
+    d = lade()
+    ns = d.get("cmd_namespaces", [])
+    wichtig = [n for n in ns if n in (
+        "package","notification","settings","wifi","power","display","media_session",
+        "activity","input_method","statusbar","battery","alarm","jobscheduler",
+        "location","connectivity","audio","device_policy","shortcut","uimode")]
+    vorhanden = d.get("cmd_hilfe", {})
+    neu = 0
+    for n in wichtig:
+        if n in vorhanden: continue
+        out = sh("su -c 'cmd " + n + " help'", t=12)
+        if out:
+            vorhanden[n] = out[:3000]; neu += 1
+        if neu >= 8: break
+    d["cmd_hilfe"] = vorhanden
+    sichere(d)
+    return ("CMD-HILFE | " + str(neu) + " neu, " + str(len(vorhanden)) + "/" +
+            str(len(wichtig)) + " Namespaces dokumentiert" +
+            (" (nochmal aufrufen fuer den Rest)" if len(vorhanden) < len(wichtig) else ""))
+
+def bildschirme():
+    """Welche Einstellungs-Bildschirme existieren und wie man sie oeffnet."""
+    d = lade()
+    out = sh("su -c 'dumpsys package com.android.settings'", t=25)
+    acts = sorted(set(re.findall(r'com\.android\.settings/([\w.$]+)', out)))
+    d["settings_activities"] = acts[:400]
+    sichere(d)
+    return "BILDSCHIRME OK | " + str(len(acts)) + " Settings-Activities gefunden"
+
+def bericht():
+    d = lade()
+    eigene = set()
+    for v in d.get("settings_keys", {}).values(): eigene.update(v)
+    b = d.get("settings_bedeutung", {})
+    return "\n".join([
+        "Wissensstand (" + str(d.get("_stand", "?")) + ")",
+        "Keycodes: " + str(len(d.get("keycodes", {}))),
+        "Settings-Keys vom Geraet: " + str(len(eigene)),
+        "davon mit AOSP-Bedeutung: " + str(len(eigene & set(b))),
+        "cmd-Hilfen: " + str(len(d.get("cmd_hilfe", {}))),
+        "Settings-Bildschirme: " + str(len(d.get("settings_activities", []))),
+        "Apps: " + str(len(d.get("apps_user", []))) + " User / " +
+            str(len(d.get("apps_system", []))) + " System"])
+
+def rag():
+    """Bedeutungen ins durchsuchbare Gedaechtnis."""
+    import sqlite3
+    d = lade(); b = d.get("settings_bedeutung", {})
+    if not b: return "Erst bedeutungen ausfuehren"
+    eigene = set()
+    for v in d.get("settings_keys", {}).values(): eigene.update(v)
+    con = sqlite3.connect(os.path.expanduser("~/jack/jack_memory.db"))
+    cols = [r[1] for r in con.execute("PRAGMA table_info(ingested_context)")]
+    tc = "content" if "content" in cols else cols[1]
+    n = 0
+    for k in sorted(eigene & set(b)):
+        try:
+            con.execute("INSERT INTO ingested_context (" + tc + ") VALUES (?)",
+                ("Android-Einstellung " + k + ": " + b[k] +
+                 " Lesen mit: settings get <namespace> " + k,))
+            n += 1
+        except Exception: pass
+    con.commit()
+    ges = con.execute("SELECT COUNT(*) FROM ingested_context").fetchone()[0]
+    con.close()
+    return "RAG | " + str(n) + " Bedeutungen eingespeist, " + str(ges) + " gesamt"
+
+if __name__ == "__main__":
+    a = sys.argv[1] if len(sys.argv) > 1 else "bericht"
+    print({"bedeutungen": bedeutungen, "cmd_hilfe": cmd_hilfe,
+           "bildschirme": bildschirme, "rag": rag,
+           "bericht": bericht}.get(a, bericht)())
