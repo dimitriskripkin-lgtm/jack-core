@@ -134,6 +134,26 @@ def entscheide(max_els=12, use_vision=False):
     return chr(10).join(z)
 
 
+def zustand():
+    """Fokus plus XML-Signatur (Texte, Desc, checked) - merkt auch Dialoge und Toggles."""
+    import hashlib, xml.etree.ElementTree as ET
+    rc, out, _ = sh("su -c 'uiautomator dump /sdcard/jack_navi_z.xml' >/dev/null 2>&1; cat /sdcard/jack_navi_z.xml")
+    sig = "leer"
+    if out.startswith("<"):
+        try:
+            root = ET.fromstring(out)
+            parts = []
+            for n in root.iter("node"):
+                t = (n.get("text") or "").strip()
+                d = (n.get("content-desc") or "").strip()
+                c = n.get("checked", "false")
+                if t or d:
+                    parts.append(t + "|" + d + "|" + c)
+            sig = hashlib.md5(chr(10).join(sorted(parts)).encode()).hexdigest()[:12]
+        except Exception:
+            sig = "fehler"
+    return fokus() + "#" + sig
+
 LIVE_SKIP = ['qr', 'scan', 'teilen', 'share', 'zurueck', 'zurück', 'back',
              'loeschen', 'löschen', 'delete', 'reset', 'passwort', 'password',
              'senden', 'kamera', 'camera', 'factory', 'wipe']
@@ -145,8 +165,8 @@ def live(max_taps=2):
     """Live-Modus: max_taps Taps mit Verifikation. NOTFALL-BACK bei TABU-Screen."""
     import time as _t
     bericht = []
+    before_z = zustand()
     els = dump_elemente()
-    before_fok = fokus()
     getappt = 0
     for el in els:
         if getappt >= max_taps:
@@ -167,7 +187,8 @@ def live(max_taps=2):
         _tap(pos[0], pos[1])
         getappt += 1
         _t.sleep(1.5)
-        after_fok = fokus()
+        after_z = zustand()
+        after_fok = after_z.split('#')[0]
         tabu_im_fokus = any(t in after_fok.lower() for t in ['password', 'passwort', 'reset', 'delete', 'loeschen', 'factory', 'wipe'])
         if tabu_im_fokus:
             sh("su -c 'input keyevent 4'")
@@ -176,7 +197,7 @@ def live(max_taps=2):
             log_trace({"fokus": after_fok[:60], "element": label[:40], "entscheidung": "NOTFALL-BACK", "grund": "tabu_screen_nach_tap"})
             bericht.append("NOTFALL-BACK nach Tap auf " + label[:30])
             break
-        veraendert = after_fok != before_fok
+        veraendert = (after_z != before_z)
         log_trace({"fokus": after_fok[:60], "element": label[:40], "entscheidung": "LIVE-TAP", "grund": "veraendert" if veraendert else "unveraendert", "live": True})
         bericht.append("TAP " + label[:30] + " -> " + ("neuer Screen: " + after_fok[:50] if veraendert else "keine Reaktion"))
         before_fok = after_fok
