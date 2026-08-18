@@ -329,6 +329,56 @@ def _proaktiv_loop():
             except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _t2.sleep(1800)  # alle 30min
 
+def _lerner_loop():
+    """Autonomer Lerner: 1 Runde pro Stunde, nur 16-22 Uhr, mit Hardware-Drosselung."""
+    import time as _tm
+    _tm.sleep(300)  # 5 Min nach Start warten
+    while True:
+        try:
+            import datetime as _dt
+            h = _dt.datetime.now().hour
+            # Zeitfenster: nur 16-22 Uhr (Dimas Schlafzeit)
+            if not (16 <= h < 22):
+                _tm.sleep(3600)
+                continue
+            # Hardware-Drosselung: Akku
+            import subprocess as _sp, json as _j
+            try:
+                _b = _j.loads(_sp.run(['termux-battery-status'], capture_output=True, text=True, timeout=8).stdout)
+                if _b.get('percentage', 100) < 30:
+                    import jack_log; jack_log.log_decision('LERNER-SKIP', 'Akku unter 30%')
+                    _tm.sleep(3600)
+                    continue
+                if float(_b.get('temperature', 0)) > 45:
+                    import jack_log; jack_log.log_decision('LERNER-SKIP', 'Temp ueber 45C')
+                    _tm.sleep(3600)
+                    continue
+            except Exception:
+                pass
+            # Hardware-Drosselung: RAM
+            try:
+                for _l in open('/proc/meminfo'):
+                    if 'MemAvailable' in _l:
+                        if int(_l.split()[1]) // 1024 < 800:
+                            import jack_log; jack_log.log_decision('LERNER-SKIP', 'RAM unter 800MB')
+                            _tm.sleep(3600)
+                            break
+                else:
+                    # RAM OK, Lernrunde starten
+                    import jack_lerner
+                    ergebnis = jack_lerner.runde()
+                    if ergebnis:
+                        import jack_log
+                        jack_log.log_decision('LERNER-RUNDE', str(len(ergebnis)) + ' Experimente')
+            except Exception:
+                pass
+        except Exception as e:
+            try:
+                import jack_log; jack_log.log_decision('LERNER-ERR', str(e)[:80])
+            except Exception:
+                pass
+        _tm.sleep(3600)  # 1 Stunde Pause
+
 def start_consolidated():
     _th.Thread(target=_autolearn_loop,daemon=True,name="autolearn").start()
     _th.Thread(target=_publisher_loop,daemon=True,name="publisher").start()
@@ -336,6 +386,8 @@ def start_consolidated():
     _th.Thread(target=_scout_loop,daemon=True,name="scout").start()
     _th.Thread(target=_monitor_loop,daemon=True,name="monitor").start()
     _th.Thread(target=_sanity_loop,daemon=True,name="sanity").start()
+    _th.Thread(target=_lerner_loop,daemon=True,name="lerner").start()
+
     _th.Thread(target=_proaktiv_loop,daemon=True,name="proaktiv").start()
     print("[Konsolidiert] Autolearn+Publisher+Missionen als Threads gestartet")
 
