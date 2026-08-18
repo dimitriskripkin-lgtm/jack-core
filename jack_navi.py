@@ -161,6 +161,13 @@ LIVE_SKIP = ['qr', 'scan', 'teilen', 'share', 'zurueck', 'zurück', 'back',
 def _tap(x, y):
     sh("su -c 'input tap " + str(x) + " " + str(y) + "'")
 
+FOKUS_TABU = ['password', 'passwort', 'reset', 'delete', 'loeschen', 'factory',
+              'wipe', 'security', 'perm', 'privacy', 'lock', 'keyguard',
+              'biometric', 'finger', 'face_unlock', 'account', 'konto', 'sim']
+
+NON_ACTION = ['keine ergebnisse', 'nicht gefunden', 'keine daten',
+              'nicht verfuegbar', 'loading', 'laedt']
+
 def live(max_taps=2):
     """Live-Modus: max_taps Taps mit Verifikation. NOTFALL-BACK bei TABU-Screen."""
     import time as _t
@@ -181,6 +188,8 @@ def live(max_taps=2):
             continue
         if any(s in low for s in LIVE_SKIP):
             continue
+        if any(s in low for s in NON_ACTION):
+            continue
         pos = mitte(el["bounds"])
         if not pos:
             continue
@@ -189,7 +198,7 @@ def live(max_taps=2):
         _t.sleep(1.5)
         after_z = zustand()
         after_fok = after_z.split('#')[0]
-        tabu_im_fokus = any(t in after_fok.lower() for t in ['password', 'passwort', 'reset', 'delete', 'loeschen', 'factory', 'wipe'])
+        tabu_im_fokus = any(t in after_fok.lower() for t in FOKUS_TABU)
         if tabu_im_fokus:
             sh("su -c 'input keyevent 4'")
             _t.sleep(0.8)
