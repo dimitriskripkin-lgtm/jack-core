@@ -329,7 +329,17 @@ def _proaktiv_loop():
             except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _t2.sleep(1800)  # alle 30min
 
+def _lerner_stop():
+    """Not-Aus per Datei. Anlegen stoppt, loeschen erlaubt wieder."""
+    return os.path.exists(os.path.expanduser("~/.jack_lerner_stop"))
+
 def _lerner_loop():
+    if _lerner_stop():
+        try:
+            import jack_log
+            jack_log.log_decision("LERNER", "gestoppt per ~/.jack_lerner_stop")
+        except Exception: pass
+        return
     """Autonomer Lerner: 1 Runde pro Stunde, nur 16-22 Uhr, mit Hardware-Drosselung."""
     import time as _tm
     _tm.sleep(300)  # 5 Min nach Start warten
