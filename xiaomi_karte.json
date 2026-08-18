@@ -1,0 +1,497 @@
+{
+  ".ActionDisabledByAppOpsDialog": {
+    "fokus": "ACTIVITY com.android.settings/.ActionDisabledByAppOpsDialog 8dada51 pid=26857",
+    "elemente": [
+      "Eingeschränkte Einstellung",
+      "Aus Sicherheitsgründen ist diese Einstellung derzeit nicht v",
+      "OK"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:49:12"
+  },
+  ".ActivityPicker": {
+    "fokus": "ACTIVITY com.android.settings/.ActivityPicker b0e91b7 pid=26857",
+    "elemente": [
+      "Aktivität auswählen",
+      "AGPS Einstellungen",
+      "Akku und Leistung",
+      "Akku und Leistung",
+      "Akku und Leistung",
+      "Allgemeine Einstellungen",
+      "Android S Easter Egg",
+      "Android S Easter Egg",
+      "Anrufeinstellungen",
+      "Anrufeinstellungen",
+      "Anrufkonten",
+      "Anzeigegröße",
+      "APNs",
+      "Apps verwalten",
+      "Auf Rückseite tippen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:49:22"
+  },
+  ".AgpsSettings": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiGxzwAnimSettingsInternalActivity 45fdcaf pid=26857",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:49:26"
+  },
+  ".AirplaneModeVoiceActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiGxzwAnimSettingsInternalActivity 45fdcaf pid=26857",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:49:30"
+  },
+  ".AllowBindAppWidgetActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiGxzwAnimSettingsInternalActivity 45fdcaf pid=26857",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:49:34"
+  },
+  ".AppWidgetPickActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiGxzwAnimSettingsInternalActivity 45fdcaf pid=26857",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:51:44"
+  },
+  ".BatteryInfo": {
+    "fokus": "ACTIVITY com.android.settings/.BatteryInfo e819b64 pid=26857",
+    "elemente": [
+      "Zurück",
+      "Akkuinfo",
+      "Akkustatus:",
+      "Voll",
+      "Netzteil:",
+      "Steckdose",
+      "Akkustand:",
+      "100",
+      "Akkustand:",
+      "100",
+      "Akkuzustand:",
+      "Gut",
+      "Akkuspannung:",
+      "8906 mV",
+      "Akkutemperatur:",
+      "32.0°C",
+      "Akkutechnik:",
+      "Li-poly",
+      "Zeit seit dem Start:",
+      "150:09:13"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:51:53"
+  },
+  ".ChooseGalleryLockPattern": {
+    "fokus": "ACTIVITY com.android.settings/.BatteryInfo e819b64 pid=26857",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:51:57"
+  },
+  ".ChooseSmsLockPattern": {
+    "fokus": "ACTIVITY com.android.settings/.BatteryInfo e819b64 pid=26857",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:52:01"
+  },
+  ".ConfirmAccessControl": {
+    "fokus": "ACTIVITY com.android.settings/.BatteryInfo e819b64 pid=26857",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:52:05"
+  },
+  ".ConfirmGalleryLockPattern": {
+    "fokus": "ACTIVITY com.android.settings/.BatteryInfo e819b64 pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:52:10"
+  },
+  ".ConfirmLockPassword": {
+    "fokus": "ACTIVITY com.android.settings/.ConfirmLockPassword 9898d33 pid=26860",
+    "elemente": [
+      "Zurück",
+      "Passwort bestätigen",
+      "Passwort vergessen",
+      "Abbrechen",
+      "Weiter"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:52:17"
+  },
+  ".ConfirmLockPattern": {
+    "fokus": "ACTIVITY com.android.settings/.ConfirmLockPassword 9898d33 pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:52:21"
+  },
+  ".ConfirmSmsLockPattern": {
+    "fokus": "ACTIVITY com.android.settings/.ConfirmLockPassword 9898d33 pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:52:25"
+  },
+  ".ConfirmSpacePasswordActivity": {
+    "fokus": "ACTIVITY com.android.settings/.ConfirmLockPassword 9898d33 pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:52:30"
+  },
+  ".ConfirmSpacePatternActivity": {
+    "fokus": "ACTIVITY com.android.settings/.ConfirmLockPassword 9898d33 pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:52:34"
+  },
+  ".DevModeReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:52:38"
+  },
+  ".FallbackHome": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:52:42"
+  },
+  ".FontSizeSettingsForSetupWizardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.FontSizeSettingsForSetupWizardActivity ce6be1f pid=26860",
+    "elemente": [
+      "Zurück",
+      "Ein­stellungen für Seh­behinderte",
+      "Anzeigegröße und Text",
+      "Vergrößerung",
+      "Auf dem Bildschirm heranzoomen",
+      "Vorlesen",
+      "Tippe auf dem Bildschirm auf Elemente, damit sie vorgelesen ",
+      "TalkBack",
+      "Der Screenreader ist in erster Linie für Blinde und Menschen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:52:50"
+  },
+  ".HubReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:52:54"
+  },
+  ".MainSettings": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [
+      "Einstellungen",
+      "In Einstellungen durchsuchen",
+      "Über das Telefon",
+      "Update",
+      "Updates für Systemapps",
+      "5",
+      "Sicherheitsstatus",
+      "SIM-Karten und Mobile Netzwerke",
+      "WLAN",
+      "HONOR Magic8 Pro Dima",
+      "Bluetooth",
+      "Aus",
+      "Persönlicher Hotspot",
+      "Aus",
+      "VPN",
+      "Verbindung und Teilen",
+      "Mehrere Nutzer"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:53:01"
+  },
+  ".ManualDisplayActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:53:06"
+  },
+  ".MiuiBandMode": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiBandMode e1a2a7d pid=4226",
+    "elemente": [
+      "Zurück",
+      "Einstellungen",
+      "selection",
+      "LTE B1 Preferred",
+      "LTE B2 Preferred",
+      "LTE B3 Preferred",
+      "LTE B4 Preferred",
+      "LTE B5 Preferred",
+      "LTE B7 Preferred",
+      "LTE B8 Preferred",
+      "LTE B20 Preferred",
+      "LTE B28 Preferred",
+      "LTE B38 Preferred",
+      "LTE B40 Preferred",
+      "LTE B41 Preferred",
+      "GSM 900",
+      "GSM 1800"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:53:13"
+  },
+  ".MiuiBluetoothDeviceActionReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:53:17"
+  },
+  ".MiuiConfirmCommonPassword": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiBandMode e1a2a7d pid=4226",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:53:22"
+  },
+  ".MiuiFactoryResetBroadcastReceiver": {
+    "fokus": "GEFAEHRLICH-BLOCKIERT",
+    "elemente": [],
+    "geoeffnet": false,
+    "gefaehrlich": true,
+    "ts": "2026-08-18 17:53:22"
+  },
+  ".MiuiFactoryResetReceived": {
+    "fokus": "GEFAEHRLICH-BLOCKIERT",
+    "elemente": [],
+    "geoeffnet": false,
+    "gefaehrlich": true,
+    "ts": "2026-08-18 17:53:22"
+  },
+  ".MiuiGxzwAnimSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiGxzwAnimSettingsInternalActivity 51d9846 pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:53:26"
+  },
+  ".MiuiSecurityChooseUnlock": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiSecurityChooseUnlock c29e896 pid=26860",
+    "elemente": [
+      "Zurück",
+      "Bildschirmsperre festlegen",
+      "Muster",
+      "Einfaches Muster mit deinem Finger zeichnen, um Gerät zu ent",
+      "PIN",
+      "Gib 4-16 Ziffern ein, um das Gerät zu entsperren.",
+      "Passwort",
+      "4 oder mehr Buchstaben oder Ziffern eingeben, um Gerät zu en"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:53:33"
+  },
+  ".MiuiSettings": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:53:37"
+  },
+  ".MiuiSettingsReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:53:41"
+  },
+  ".MiuiSmartCoverGuideActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiSmartCoverGuideActivity 9dda990 pid=26860",
+    "elemente": [
+      "Zurück",
+      "Einstellungen",
+      "Smartcover",
+      "FALLTYP AUSWÄHLEN"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:53:49"
+  },
+  ".MiuiSoundSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiSoundSettingsActivity 3a771bc pid=26860",
+    "elemente": [
+      "Zurück",
+      "Ton und Vibration",
+      "Benachrichtigungen",
+      "Tröpfchen",
+      "Klingelton",
+      "Unbekannter Klingelton",
+      "Wecker",
+      "Naturalarm",
+      "LAUTSTÄRKE ANPASSEN",
+      "Medien",
+      "Medien",
+      "Klingelton",
+      "Klingelton",
+      "Alarm",
+      "Alarm",
+      "Sound-Assistent",
+      "Passe deine Sound-Einstellungen an"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:53:56"
+  },
+  ".MonitoringCertInfoActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MonitoringCertInfoActivity 7f646dd pid=26860",
+    "elemente": [
+      "Zertifikat vertrauen oder entfernen",
+      "Dritte können deine Netzwerkaktivitäten überwachen, einschli",
+      "Abbrechen",
+      "Zertifikat prüfen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:54:04"
+  },
+  ".NewFingerprintActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiSecurityChooseUnlock$InternalActivity f9f4166 pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:54:08"
+  },
+  ".PrivacyPasswordChooseLockPattern": {
+    "fokus": "ACTIVITY com.android.settings/.PrivacyPasswordChooseLockPattern 7f56373 pid=26860",
+    "elemente": [
+      "Zurück",
+      "Datenschutzpasswort",
+      "Datenschutzpasswort festlegen",
+      "Entsperrmuster zeichnen:"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:54:16"
+  },
+  ".PrivacyPasswordConfirmLockPattern": {
+    "fokus": "ACTIVITY com.android.settings/.PrivacyPasswordChooseLockPattern 7f56373 pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:54:20"
+  },
+  ".QuickEnableDetailedWifiLogReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:54:25"
+  },
+  ".RegulatoryInfoDisplayActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:54:29"
+  },
+  ".RemoteBugreportActivity": {
+    "fokus": "ACTIVITY com.android.settings/.RemoteBugreportActivity 3b52173 pid=26860",
+    "elemente": [],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:54:36"
+  },
+  ".SetUpMiuiSecurityChooseUnlock": {
+    "fokus": "ACTIVITY com.android.settings/.SetUpMiuiSecurityChooseUnlock 5886b30 pid=26860",
+    "elemente": [
+      "Passwort festlegen",
+      "Merke dir dein Passwort. Wenn du es vergisst, kannst du es n",
+      "Muster",
+      "Einfaches Muster mit deinem Finger zeichnen, um Gerät zu ent",
+      "PIN",
+      "Gib 4-16 Ziffern ein, um das Gerät zu entsperren.",
+      "Passwort",
+      "4 oder mehr Buchstaben oder Ziffern eingeben, um Gerät zu en",
+      "Überspringen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:54:44"
+  },
+  ".Settings": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [
+      "Einstellungen",
+      "In Einstellungen durchsuchen",
+      "Über das Telefon",
+      "Update",
+      "Updates für Systemapps",
+      "5",
+      "Sicherheitsstatus",
+      "SIM-Karten und Mobile Netzwerke",
+      "WLAN",
+      "HONOR Magic8 Pro Dima",
+      "Bluetooth",
+      "Aus",
+      "Persönlicher Hotspot",
+      "Aus",
+      "VPN",
+      "Verbindung und Teilen",
+      "Mehrere Nutzer"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 17:54:52"
+  },
+  ".Settings$AccessibilityDaltonizerSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:54:57"
+  },
+  ".Settings$AccessibilityDetailsSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:01"
+  },
+  ".Settings$AccessibilityInversionSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:05"
+  },
+  ".Settings$AccountDashboardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:09"
+  },
+  ".Settings$AccountSyncSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:14"
+  },
+  ".Settings$AdaptiveBrightnessActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:18"
+  },
+  ".Settings$AddNetworkActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:22"
+  },
+  ".Settings$AdvancedAppsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:26"
+  },
+  ".Settings$AdvancedConnectedDeviceActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:31"
+  },
+  ".Settings$AlarmsAndRemindersActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:35"
+  },
+  ".Settings$AlarmsAndRemindersAppActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:39"
+  },
+  ".Settings$AndroidBeamSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:44"
+  },
+  ".Settings$ApnSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 17:55:48"
+  }
+}
