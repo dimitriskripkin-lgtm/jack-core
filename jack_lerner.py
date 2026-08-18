@@ -209,7 +209,7 @@ def runde(anzahl=5, mit_ui=False):
         if not lebt:
             journal_abarbeiten()
             return "NOTSTOPP Kanarienvogel: " + grund + "\n" + "\n".join(getan)
-        time.sleep(1)
+        time.sleep(60)
     return ("RUNDE OK | " + str(ok) + " gelernt, " + str(uebersprungen) +
             " uebersprungen\n" + "\n".join(getan[:6]))
 
@@ -236,3 +236,23 @@ if __name__ == "__main__":
         for ns, k, b in kandidaten(15): print("  [" + ns + "] " + k + ": " + b[:70])
     elif a == "kanarie": print(kanarienvogel())
     else: print(bericht())
+
+
+# SOS-INCIDENT 18.08.2026: nur explizit freigegebene Parameter
+# Kein Audio, Vibration, Klingelton, Lautstaerke
+POSITIV = {
+    "system.font_scale",
+    "system.screen_off_timeout",
+    "system.accelerometer_rotation",
+    "global.enable_back_animation",
+    "system.pointer_speed",
+}
+
+def kandidaten(limit=40):
+    d = _wissen()
+    besch = d.get("settings_bedeutung", {})
+    raus = []
+    for ns_key in sorted(POSITIV):
+        ns, key = ns_key.split(".", 1)
+        raus.append((ns, key, besch.get(key, ns_key)))
+    return raus[:limit]
