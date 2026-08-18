@@ -493,5 +493,369 @@
     "elemente": [],
     "geoeffnet": false,
     "ts": "2026-08-18 17:55:48"
+  },
+  ".Settings$AppBubbleNotificationSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:05:40"
+  },
+  ".Settings$AppDrawOverlaySettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:05:44"
+  },
+  ".Settings$AppInteractAcrossProfilesSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:05:48"
+  },
+  ".Settings$AppManageExternalStorageActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:05:52"
+  },
+  ".Settings$AppMediaManagementAppsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:05:57"
+  },
+  ".Settings$AppMemoryUsageActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:01"
+  },
+  ".Settings$AppNotificationSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:06"
+  },
+  ".Settings$AppPictureInPictureSettingsActivity": {
+    "fokus": "GEFAEHRLICH-BLOCKIERT",
+    "elemente": [],
+    "geoeffnet": false,
+    "gefaehrlich": true,
+    "ts": "2026-08-18 18:06:06"
+  },
+  ".Settings$AppUsageAccessSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:10"
+  },
+  ".Settings$AppWriteSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:14"
+  },
+  ".Settings$AssistGestureSettingsActivity": {
+    "fokus": "GEFAEHRLICH-BLOCKIERT",
+    "elemente": [],
+    "geoeffnet": false,
+    "gefaehrlich": true,
+    "ts": "2026-08-18 18:06:15"
+  },
+  ".Settings$AutomaticStorageManagerSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:19"
+  },
+  ".Settings$BatterySaverScheduleSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:23"
+  },
+  ".Settings$BatterySaverSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:27"
+  },
+  ".Settings$BlueToothPairingActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:32"
+  },
+  ".Settings$BluetoothBroadcastActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:36"
+  },
+  ".Settings$BluetoothDeviceDetailActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:40"
+  },
+  ".Settings$BluetoothFindBroadcastsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:45"
+  },
+  ".Settings$BluetoothSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:49"
+  },
+  ".Settings$BugReportHandlerPickerActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:53"
+  },
+  ".Settings$ButtonNavigationSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:06:59"
+  },
+  ".Settings$CaptioningSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:04"
+  },
+  ".Settings$ConfigureNotificationSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:08"
+  },
+  ".Settings$ConfigureWifiSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:13"
+  },
+  ".Settings$ConversationListSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:17"
+  },
+  ".Settings$CreateShortcutActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:21"
+  },
+  ".Settings$DarkThemeSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:26"
+  },
+  ".Settings$DataSaverSummaryActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:30"
+  },
+  ".Settings$DataUsageSummaryActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:34"
+  },
+  ".Settings$DateTimeSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:38"
+  },
+  ".Settings$DevelopmentSettingsDashboardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:43"
+  },
+  ".Settings$DeviceAdminSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:47"
+  },
+  ".Settings$DeviceNameEditActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:51"
+  },
+  ".Settings$DisplaySettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:07:56"
+  },
+  ".Settings$DreamSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:00"
+  },
+  ".Settings$DualWifiSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:04"
+  },
+  ".Settings$EdgeModeSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:09"
+  },
+  ".Settings$EdgeSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:13"
+  },
+  ".Settings$EnterprisePrivacySettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:18"
+  },
+  ".Settings$FaceSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:22"
+  },
+  ".Settings$FactoryResetActivity": {
+    "fokus": "GEFAEHRLICH-BLOCKIERT",
+    "elemente": [],
+    "geoeffnet": false,
+    "gefaehrlich": true,
+    "ts": "2026-08-18 18:08:24"
+  },
+  ".Settings$FingerprintSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:28"
+  },
+  ".Settings$GestureNavigationSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:33"
+  },
+  ".Settings$HighPowerApplicationsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:37"
+  },
+  ".Settings$IccLockSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:42"
+  },
+  ".Settings$ImeiInformationActivity": {
+    "fokus": "GEFAEHRLICH-BLOCKIERT",
+    "elemente": [],
+    "geoeffnet": false,
+    "gefaehrlich": true,
+    "ts": "2026-08-18 18:08:42"
+  },
+  ".Settings$InteractAcrossProfilesSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:46"
+  },
+  ".Settings$LanguageAndInputSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:50"
+  },
+  ".Settings$LocalePickerActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:55"
+  },
+  ".Settings$LocationSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:08:59"
+  },
+  ".Settings$LockScreenSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:03"
+  },
+  ".Settings$ManageAccountsSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:08"
+  },
+  ".Settings$ManageApplicationsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:12"
+  },
+  ".Settings$ManageAssistActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:16"
+  },
+  ".Settings$ManageDomainUrlsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:21"
+  },
+  ".Settings$ManageExternalSourcesActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:25"
+  },
+  ".Settings$ManageExternalStorageActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:29"
+  },
+  ".Settings$ManageVoiceActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:33"
+  },
+  ".Settings$ManagedProfileSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:38"
+  },
+  ".Settings$MediaControlsSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:42"
   }
 }
