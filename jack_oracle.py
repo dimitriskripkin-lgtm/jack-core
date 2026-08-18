@@ -223,4 +223,6 @@ SKRIPT_ALLOW = {
     "jack_budget_status.py",
     "jack_freigabe.py",
     "jack_stress.py",
+    "jack_lerner.py",
+    "jack_wissen_tief.py",
 }
