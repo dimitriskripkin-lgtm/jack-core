@@ -1,0 +1,199 @@
+#!/usr/bin/env python3
+"""
+Phase 7: cmd-Namespace-Crawler
+Inventarisiert alle cmd-Namespaces auf Xiaomi (nur lesend).
+8 Anforderungen aus Onboarding Teil 8 erfüllt.
+"""
+import sqlite3, subprocess, time, os, sys
+
+DB = os.path.expanduser("~/jack/jack_cmd_crawler.db")
+XIAOMI_HOST = "10.58.220.131"
+XIAOMI_PORT = "8022"
+XIAOMI_KEY = os.path.expanduser("~/.ssh/id_jack")
+
+def ssh_cmd(args, timeout=5):
+    """SSH-Befehl zum Xiaomi mit Timeout und stderr-Fang"""
+    cmd = [
+        "ssh", "-i", XIAOMI_KEY, "-p", XIAOMI_PORT,
+        "-o", "ConnectTimeout=3",
+        "-o", "StrictHostKeyChecking=no",
+        f"root@{XIAOMI_HOST}"
+    ] + args
+    try:
+        r = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            stdin=subprocess.DEVNULL
+        )
+        return r.returncode, r.stdout, r.stderr
+    except subprocess.TimeoutExpired:
+        return -1, "", "TIMEOUT"
+    except Exception as e:
+        return -2, "", str(e)
+
+def get_xiaomi_temp():
+    """Temperatur vom Xiaomi holen"""
+    rc, out, err = ssh_cmd(["cat", "/sys/class/thermal/thermal_zone0/temp"])
+    if rc == 0 and out.strip().isdigit():
+        return int(out.strip()) / 1000.0
+    return None
+
+def init_db():
+    """DB initialisieren mit Resume-Support"""
+    conn = sqlite3.connect(DB)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS cmd_namespaces (
+            namespace TEXT PRIMARY KEY,
+            help_output TEXT,
+            stderr_output TEXT,
+            return_code INTEGER,
+            crawl_timestamp TEXT,
+            status TEXT
+        )
+    """)
+    conn.commit()
+    return conn
+
+def get_namespace_list():
+    """Liste aller cmd-Namespaces vom Xiaomi holen"""
+    # Versuch 1: cmd ohne Argument (zeigt alle Services)
+    rc, out, err = ssh_cmd(["cmd"], timeout=10)
+    if rc == 0 and out.strip():
+        # Parse die Ausgabe - normalerweise eine Liste von Services
+        namespaces = []
+        for line in out.split("\n"):
+            line = line.strip()
+            if line and not line.startswith("Found") and not line.startswith("Available"):
+                # Extrahiere Service-Namen (erste Spalte)
+                parts = line.split()
+                if parts and parts[0].isalnum() or '_' in parts[0]:
+                    namespaces.append(parts[0])
+        if namespaces:
+            return namespaces
+    
+    # Versuch 2: cmd -l
+    rc, out, err = ssh_cmd(["cmd", "-l"], timeout=10)
+    if rc == 0 and out.strip():
+        namespaces = []
+        for line in out.split("\n"):
+            line = line.strip()
+            if line and not line.startswith("Found") and not line.startswith("Available"):
+                parts = line.split()
+                if parts:
+                    namespaces.append(parts[0])
+        if namespaces:
+            return namespaces
+    
+    # Versuch 3: cmd help (manche Systeme zeigen da die Liste)
+    rc, out, err = ssh_cmd(["cmd", "help"], timeout=10)
+    if rc == 0 and "Available commands" in out:
+        namespaces = []
+        for line in out.split("\n"):
+            if line.strip() and not line.strip().startswith("Available") and not line.strip().startswith("Usage"):
+                parts = line.strip().split()
+                if parts and (parts[0].isalnum() or '_' in parts[0]):
+                    namespaces.append(parts[0])
+        if namespaces:
+            return namespaces
+    
+    print(f"FEHLER: Konnte Namespace-Liste nicht holen")
+    print(f"Versuch 1 (cmd): rc={rc}, stdout={len(out)} bytes")
+    print(f"Versuch 2 (cmd -l): rc={rc}, stdout={len(out)} bytes")
+    print(f"Versuch 3 (cmd help): rc={rc}, stdout={len(out)} bytes")
+    return []
+
+def crawl_namespace(conn, namespace, temp_check_interval=10):
+    """Einen einzelnen Namespace crawlen (nur help/list)"""
+    # Prüfen ob schon gecrawlt
+    existing = conn.execute(
+        "SELECT status FROM cmd_namespaces WHERE namespace=?",
+        (namespace,)
+    ).fetchone()
+    if existing and existing[0] == "OK":
+        return  # Skip, schon erledigt
+    
+    print(f"[{namespace}] Crawle...")
+    
+    # Versuch 1: cmd <namespace> help
+    rc, out, err = ssh_cmd(["cmd", namespace, "help"])
+    status = "OK" if rc == 0 else f"RC={rc}"
+    
+    # Thermik-Check
+    if temp_check_interval > 0:
+        temp = get_xiaomi_temp()
+        if temp and temp > 45.0:
+            print(f"  ⚠ Thermik-Bremse: {temp}°C > 45°C, pausiere 30s")
+            time.sleep(30)
+    
+    # In DB schreiben (Resume-Support)
+    conn.execute("""
+        INSERT OR REPLACE INTO cmd_namespaces 
+        (namespace, help_output, stderr_output, return_code, crawl_timestamp, status)
+        VALUES (?, ?, ?, ?, datetime('now'), ?)
+    """, (namespace, out, err, rc, status))
+    conn.commit()
+    
+    print(f"  → {status} ({len(out)} bytes stdout, {len(err)} bytes stderr)")
+    return status
+
+def main():
+    print("=== Phase 7: cmd-Namespace-Crawler ===")
+    print("Modus: Nur Inventarisierung (Runde 1)")
+    print(f"Ziel: {XIAOMI_HOST}:{XIAOMI_PORT}")
+    print()
+    
+    # Xiaomi-Verbindung testen
+    rc, _, err = ssh_cmd(["echo", "test"], timeout=5)
+    if rc != 0:
+        print(f"FEHLER: Xiaomi nicht erreichbar: {err}")
+        sys.exit(1)
+    print("✓ Xiaomi erreichbar")
+    
+    # Namespace-Liste holen
+    namespaces = get_namespace_list()
+    if not namespaces:
+        print("FEHLER: Keine Namespaces gefunden")
+        sys.exit(1)
+    print(f"✓ {len(namespaces)} Namespaces gefunden")
+    print()
+    
+    # DB initialisieren
+    conn = init_db()
+    
+    # Prüfen wie viele schon gecrawlt sind (Resume)
+    done = conn.execute("SELECT COUNT(*) FROM cmd_namespaces WHERE status='OK'").fetchone()[0]
+    print(f"Fortschritt: {done}/{len(namespaces)} bereits gecrawlt")
+    print()
+    
+    # Crawlen
+    success = 0
+    failed = 0
+    for i, ns in enumerate(namespaces, 1):
+        # Thermik-Check alle 10 Aufrufe
+        if i % 10 == 0:
+            temp = get_xiaomi_temp()
+            if temp and temp > 45.0:
+                print(f"\n⚠ Thermik-Bremse nach {i} Aufrufen: {temp}°C, pausiere 30s\n")
+                time.sleep(30)
+        
+        status = crawl_namespace(conn, ns, temp_check_interval=0)
+        if status == "OK":
+            success += 1
+        else:
+            failed += 1
+        
+        # Kleine Pause um Xiaomi nicht zu überlasten
+        time.sleep(0.5)
+    
+    print()
+    print("=== Fertig ===")
+    print(f"Erfolg: {success}")
+    print(f"Fehler: {failed}")
+    print(f"Gesamt: {len(namespaces)}")
+    
+    conn.close()
+
+if __name__ == "__main__":
+    main()
