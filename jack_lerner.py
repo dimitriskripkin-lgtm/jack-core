@@ -151,12 +151,25 @@ def experiment(ns, key, beschreibung, mit_ui=False):
     sh("su -c 'settings put " + ns + " " + key + " " + neu + "'")
     time.sleep(1.5)
     gesetzt, _ = sh("su -c 'settings get " + ns + " " + key + "'")
+    try:
+        from wirkungs_check import check_ui as _wc
+        if _wc() is False:
+            sh("su -c 'settings put " + ns + " " + key + " " + alt + "'")
+            return False, "SOS-SCHUTZ: Notfall-Activity nach Setzen " + key
+    except Exception:
+        pass
     nach = _uidump() if mit_ui else set()
     diff = (nach - vor) | (vor - nach) if mit_ui else set()
 
     sh("su -c 'settings put " + ns + " " + key + " " + alt + "'")
     time.sleep(1.0)
     zurueck, _ = sh("su -c 'settings get " + ns + " " + key + "'")
+    try:
+        from wirkungs_check import check_ui as _wc2
+        if _wc2() is False:
+            return False, "SOS-SCHUTZ: Notfall-Activity nach Restore " + key
+    except Exception:
+        pass
     restore_ok = zurueck.strip() == alt.strip()
 
     rest = [e for e in _journal_lesen()
