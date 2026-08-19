@@ -71,3 +71,4 @@ chrome_loaded.txt
 .stress_tmp/
 navi_trace.jsonl
 navi_trace.jsonl
+service/jack_autolearn/supervise/
