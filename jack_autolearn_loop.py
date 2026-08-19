@@ -194,6 +194,29 @@ def test_candidate_skills():
     conn.close()
     return tested
 
+def health_check_faehigkeiten(cycle_num):
+    # P3: alle 6 Zyklen drei R0/R1-Faehigkeiten live pruefen
+    try:
+        import sqlite3 as _sq, jack_faehigkeiten as _jf
+        c = _sq.connect(_jf.DB, timeout=5)
+        rows = c.execute("SELECT id FROM faehigkeiten WHERE risiko<=1 AND verifiziert_am IS NOT NULL").fetchall()
+        c.close()
+    except Exception as e:
+        log("HEALTH: DB-Fehler " + str(e)[:80]); return
+    if not rows: return
+    start = (cycle_num // 6) % len(rows)
+    ok = 0
+    for i in range(3):
+        fid = rows[(start + i) % len(rows)][0]
+        r = _jf.aufrufen(fid, timeout=10)
+        if r.get("ok"): ok += 1
+        else:
+            log("HEALTH FAIL: " + fid + " | " + str(r.get("fehler", ""))[:60])
+            try:
+                import jack_log; jack_log.log_decision("FAEHIGKEIT-HEALTH-FAIL", fid)
+            except Exception: pass
+    log("HEALTH: " + str(ok) + "/3 Faehigkeiten ok")
+
 def run_cycle(cycle_num):
     log(f"=== ZYKLUS {cycle_num} START ===")
     
@@ -208,6 +231,8 @@ def run_cycle(cycle_num):
     log(f"GENESIS: {genesis_count} neue Skills")
     
     tested = test_candidate_skills()
+    if cycle_num % 6 == 0:
+        health_check_faehigkeiten(cycle_num)
     log(f"TESTED: {tested} Skills geprüft")
     
     log(f"=== ZYKLUS {cycle_num} ENDE ===")

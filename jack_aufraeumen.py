@@ -25,9 +25,14 @@ def import_graph():
     imp = {}
     for f in pys:
         s = lies(f)
-        for m in re.findall(r"^\s*(?:from|import)\s+([a-zA-Z_]\w*)", s, re.M):
-            if m in namen and m != f[:-3]:
-                imp.setdefault(m, set()).add(f[:-3])
+        for m in re.finditer(r"^\s*import\s+(.+?)\s*$|^\s*from\s+([a-zA-Z_][\w.]*)\s+import", s, re.M):
+            if m.group(2):
+                teile = [m.group(2).split(".")[0]]
+            else:
+                teile = [p.strip().split(" as ")[0].strip().split(".")[0] for p in m.group(1).split(",") if p.strip()]
+            for name in teile:
+                if name in namen and name != f[:-3]:
+                    imp.setdefault(name, set()).add(f[:-3])
     return imp
 
 def externe_refs():
