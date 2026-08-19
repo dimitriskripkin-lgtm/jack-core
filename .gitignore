@@ -69,3 +69,5 @@ patch_vorschlaege/
 chrome_loaded.txt
 *.bak_p*
 .stress_tmp/
+navi_trace.jsonl
+navi_trace.jsonl

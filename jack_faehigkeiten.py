@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+"""jack_faehigkeiten.py - Deterministische Faehigkeits-Registry."""
+import sqlite3, os, subprocess, sys
+from datetime import datetime
+DB = os.path.expanduser("~/jack/jack_faehigkeiten.db")
+RTXT = {0:"intern", 1:"lesend", 2:"veraendernd", 3:"TABU"}
+def conn():
+    c = sqlite3.connect(DB)
+    c.execute("""CREATE TABLE IF NOT EXISTS faehigkeiten (
+        id TEXT PRIMARY KEY,
+        quelle TEXT NOT NULL,
+        aufruf TEXT NOT NULL,
+        beschreibung TEXT,
+        risiko INTEGER NOT NULL,
+        rueckgabe TEXT,
+        verifiziert_am TEXT,
+        geraet TEXT NOT NULL,
+        erstellt TEXT NOT NULL
+    )""")
+    c.commit()
+    return c
+def jetzt():
+    return datetime.now().isoformat(timespec="seconds")
+TERMUX = {
+    3: ["termux-sms-send","termux-telephony-call","termux-wifi-enable",
+        "termux-volume","termux-reset","termux-wallpaper",
+        "termux-backup","termux-restore"],
+    2: ["termux-torch","termux-vibrate","termux-camera-photo",
+        "termux-microphone-record","termux-dialog","termux-tts-speak",
+        "termux-brightness","termux-notification","termux-clipboard-set",
+        "termux-wake-lock","termux-infrared-transmit",
+        "termux-saf-write","termux-saf-mkdir","termux-saf-rm",
+        "termux-media-player","termux-nfc","termux-fingerprint",
+        "termux-keystore","termux-share","termux-open",
+        "termux-open-url","termux-download"],
+    1: ["termux-battery-status","termux-wifi-connectioninfo",
+        "termux-wifi-scaninfo","termux-sensor","termux-location",
+        "termux-sms-inbox","termux-sms-list","termux-clipboard-get",
+        "termux-tts-engines","termux-camera-info",
+        "termux-telephony-deviceinfo","termux-telephony-cellinfo",
+        "termux-audio-info","termux-notification-list",
+        "termux-infrared-frequencies","termux-saf-ls",
+        "termux-saf-stat","termux-saf-read","termux-call-log",
+        "termux-contact-list","termux-media-scan","termux-toast"],
+    0: ["termux-am","termux-info","termux-reload-settings",
+        "termux-fix-shebang","termux-job-scheduler",
+        "termux-apps-info-app-version-name"]
+}
+def seed():
+    c = conn()
+    n = 0
+    ts = jetzt()
+    for risiko, befehle in TERMUX.items():
+        for b in befehle:
+            id_ = b.replace("-","_")
+            if not c.execute("SELECT id FROM faehigkeiten WHERE id=?", (id_,)).fetchone():
+                c.execute("INSERT INTO faehigkeiten VALUES (?,?,?,?,?,?,?,?,?)",
+                    (id_,"termux-api",b,None,risiko,"json/text",None,"honor",ts))
+                n += 1
+    c.commit(); c.close()
+    print("Eingetragen:", n)
+def suche(s):
+    c = conn()
+    like = "%"+s+"%"
+    rows = c.execute(
+        "SELECT id,aufruf,risiko,verifiziert_am FROM faehigkeiten "
+        "WHERE aufruf LIKE ? OR beschreibung LIKE ? ORDER BY risiko",
+        (like,like)).fetchall()
+    c.close()
+    for r in rows:
+        v = r[3] if r[3] else "UNVERIFIZIERT"
+        print("R"+str(r[2])+" "+r[0].ljust(32)+" "+RTXT[r[2]]+" "+v)
+def auflisten(risiko=None, nur_verifiziert=False):
+    c = conn()
+    sql = "SELECT id,aufruf,risiko,geraet,verifiziert_am FROM faehigkeiten"
+    par = []; bed = []
+    if risiko is not None:
+        bed.append("risiko=?"); par.append(risiko)
+    if nur_verifiziert:
+        bed.append("verifiziert_am IS NOT NULL")
+    if bed:
+        sql += " WHERE "+" AND ".join(bed)
+    sql += " ORDER BY risiko,id"
+    for r in c.execute(sql,par):
+        v = r[4] if r[4] else "UNVERIFIZIERT"
+        print("R"+str(r[2])+" "+r[0].ljust(35)+" "+r[3]+" "+v)
+    c.close()
+def aufrufen(fid, timeout=8):
+    c = conn()
+    row = c.execute(
+        "SELECT aufruf,risiko,verifiziert_am FROM faehigkeiten WHERE id=?",
+        (fid,)).fetchone()
+    c.close()
+    if not row:
+        return {"ok":False,"fehler":"Unbekannt: "+fid}
+    aufruf, risiko, verifiziert = row
+    if risiko >= 2:
+        return {"ok":False,"fehler":"GESPERRT Risiko="+str(risiko)}
+    if not verifiziert:
+        return {"ok":False,"fehler":"UNVERIFIZIERT - erst verifiziere() aufrufen"}
+    try:
+        r = subprocess.run(aufruf.split(),capture_output=True,text=True,timeout=timeout)
+        return {"ok":True,"stdout":r.stdout.strip(),"stderr":r.stderr.strip()}
+    except Exception as e:
+        return {"ok":False,"fehler":str(e)}
+def verifiziere(fid, timeout=8):
+    c = conn()
+    row = c.execute("SELECT aufruf,risiko FROM faehigkeiten WHERE id=?", (fid,)).fetchone()
+    if not row:
+        print("Unbekannt:",fid); c.close(); return
+    aufruf, risiko = row
+    if risiko >= 2:
+        print("UEBERSPRUNGEN R"+str(risiko)); c.close(); return
+    try:
+        r = subprocess.run(aufruf.split(),capture_output=True,text=True,timeout=timeout)
+        c.execute("UPDATE faehigkeiten SET verifiziert_am=? WHERE id=?",(jetzt(),fid))
+        c.commit()
+        print("OK:",fid,"->",r.stdout.strip()[:80])
+    except Exception as e:
+        print("FEHLER:",fid,str(e))
+    c.close()
+if __name__ == "__main__":
+    m = sys.argv[1] if len(sys.argv) > 1 else "info"
+    if m == "seed":
+        seed()
+    elif m == "liste":
+        r = int(sys.argv[2]) if len(sys.argv) > 2 else None
+        auflisten(risiko=r)
+    elif m == "suche" and len(sys.argv) > 2:
+        suche(sys.argv[2])
+    elif m == "verifiziere" and len(sys.argv) > 2:
+        verifiziere(sys.argv[2])
+    elif m == "verifiziere_alle":
+        c = conn()
+        ids = [r[0] for r in c.execute(
+            "SELECT id FROM faehigkeiten WHERE risiko<=1 AND verifiziert_am IS NULL")]
+        c.close()
+        [verifiziere(fid) for fid in ids]
+    elif m == "info":
+        c = conn()
+        n = c.execute("SELECT COUNT(*) FROM faehigkeiten").fetchone()[0]
+        v = c.execute("SELECT COUNT(*) FROM faehigkeiten WHERE verifiziert_am IS NOT NULL").fetchone()[0]
+        c.close()
+        print("Faehigkeiten:",n,"| verifiziert:",v,"| unverifiziert:",n-v)
+    else:
+        print("Modi: seed|liste [r]|suche STW|verifiziere ID|verifiziere_alle|info")

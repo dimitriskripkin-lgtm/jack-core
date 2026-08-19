@@ -857,5 +857,1927 @@
     "elemente": [],
     "geoeffnet": false,
     "ts": "2026-08-18 18:09:42"
+  },
+  ".Settings$MediaManagementAppsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:48"
+  },
+  ".Settings$MemorySettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:53"
+  },
+  ".Settings$MiracastSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:09:57"
+  },
+  ".Settings$MiuiApnEditorActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:01"
+  },
+  ".Settings$MiuiNfcActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:05"
+  },
+  ".Settings$MiuiSilentModeAcivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:09"
+  },
+  ".Settings$MobileDataUsageListActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:14"
+  },
+  ".Settings$MobileNetworkActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:18"
+  },
+  ".Settings$MobileNetworkListActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:23"
+  },
+  ".Settings$ModuleLicensesActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:27"
+  },
+  ".Settings$MyDeviceInfoActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:32"
+  },
+  ".Settings$NetworkDashboardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:36"
+  },
+  ".Settings$NetworkProviderSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:40"
+  },
+  ".Settings$NightDisplaySettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:45"
+  },
+  ".Settings$NightDisplaySuggestionActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:49"
+  },
+  ".Settings$NotificationAccessDetailsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:54"
+  },
+  ".Settings$NotificationAccessSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:10:58"
+  },
+  ".Settings$NotificationAppListActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:03"
+  },
+  ".Settings$NotificationAppListSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:07"
+  },
+  ".Settings$NotificationAssistantSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:11"
+  },
+  ".Settings$NotificationFilterActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:18"
+  },
+  ".Settings$NotificationReviewPermissionsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:22"
+  },
+  ".Settings$NotificationStationActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:27"
+  },
+  ".Settings$OneHandedSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:31"
+  },
+  ".Settings$OverlaySettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:35"
+  },
+  ".Settings$PadStatusActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:39"
+  },
+  ".Settings$PageLayoutActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:44"
+  },
+  ".Settings$PaymentSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:48"
+  },
+  ".Settings$PhysicalKeyboardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:52"
+  },
+  ".Settings$PictureInPictureSettingsActivity": {
+    "fokus": "GEFAEHRLICH-BLOCKIERT",
+    "elemente": [],
+    "geoeffnet": false,
+    "gefaehrlich": true,
+    "ts": "2026-08-18 18:11:53"
+  },
+  ".Settings$PopupSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:11:57"
+  },
+  ".Settings$PowerMenuSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:01"
+  },
+  ".Settings$PowerUsageSummaryActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:06"
+  },
+  ".Settings$PremiumSmsAccessActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:10"
+  },
+  ".Settings$PrintJobSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:14"
+  },
+  ".Settings$PrintSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:19"
+  },
+  ".Settings$PrivacyControlsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:23"
+  },
+  ".Settings$PrivacyDashboardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:28"
+  },
+  ".Settings$PrivacySettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:32"
+  },
+  ".Settings$PublicVolumeSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:37"
+  },
+  ".Settings$ReduceBrightColorsSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:43"
+  },
+  ".Settings$RunningServicesActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:47"
+  },
+  ".Settings$SMQQtiFeedbackActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:52"
+  },
+  ".Settings$SavedAccessPointsSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:12:56"
+  },
+  ".Settings$ScanningSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:00"
+  },
+  ".Settings$ScreenProjectionActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:05"
+  },
+  ".Settings$SecurityAdvancedSettings": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:09"
+  },
+  ".Settings$SecurityDashboardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:13"
+  },
+  ".Settings$SimSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:18"
+  },
+  ".Settings$SimStatusActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:22"
+  },
+  ".Settings$SmartAutoRotateSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:26"
+  },
+  ".Settings$SpeakerSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:31"
+  },
+  ".Settings$SpellCheckersSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:35"
+  },
+  ".Settings$StorageDashboardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:39"
+  },
+  ".Settings$StorageUseActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:44"
+  },
+  ".Settings$SystemDashboardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:48"
+  },
+  ".Settings$TetherSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:52"
+  },
+  ".Settings$TextToSpeechSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:13:57"
+  },
+  ".Settings$TrustedCredentialsSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:01"
+  },
+  ".Settings$TurnScreenOnSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:05"
+  },
+  ".Settings$UsageAccessSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:12"
+  },
+  ".Settings$UserDictionarySettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:16"
+  },
+  ".Settings$UserSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:21"
+  },
+  ".Settings$VpnSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:25"
+  },
+  ".Settings$VrListenersSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:29"
+  },
+  ".Settings$WifiAPITestActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:34"
+  },
+  ".Settings$WifiCallingDisclaimerActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:38"
+  },
+  ".Settings$WifiCallingSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:42"
+  },
+  ".Settings$WifiDetailsSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:47"
+  },
+  ".Settings$WifiDisplaySettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:51"
+  },
+  ".Settings$WifiInfoActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:14:55"
+  },
+  ".Settings$WifiP2pSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:00"
+  },
+  ".Settings$WifiScanningSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:04"
+  },
+  ".Settings$WifiSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:08"
+  },
+  ".Settings$WifiTetherSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:13"
+  },
+  ".Settings$WirelessSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:17"
+  },
+  ".Settings$WriteSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:22"
+  },
+  ".Settings$ZenAccessDetailSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:26"
+  },
+  ".Settings$ZenAccessSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:31"
+  },
+  ".Settings$ZenModeAutomationSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:35"
+  },
+  ".Settings$ZenModeEventRuleSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:42"
+  },
+  ".Settings$ZenModeScheduleRuleSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:46"
+  },
+  ".Settings$ZenModeSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MainSettings 891226d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:50"
+  },
+  ".SettingsInitialize": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:15:55"
+  },
+  ".SettingsLicenseActivity": {
+    "fokus": "ACTIVITY com.android.htmlviewer/com.android.settings.SettingsLicenseActivity 9648d34 pid=14086",
+    "elemente": [
+      "Einen Moment…"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:16:03"
+  },
+  ".SetupFingerprintSuggestionActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:16:07"
+  },
+  ".SetupRedactionInterstitial": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:16:12"
+  },
+  ".ShortcutConfirmAccessControl": {
+    "fokus": "ACTIVITY com.android.htmlviewer/com.android.settings.SettingsLicenseActivity 9648d34 pid=14086",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:16:16"
+  },
+  ".TestingSettingsBroadcastReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:16:21"
+  },
+  ".TextReadingForSetupWizardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.TextReadingForSetupWizardActivity 22a1d71 pid=26860",
+    "elemente": [
+      "Zurück",
+      "Ein­stellungen für Seh­behinderte",
+      "Vorschau",
+      "Vorschau",
+      "Chrome",
+      "Einstellungen",
+      "Kamera",
+      "Play Store",
+      "Themen",
+      "Uhr",
+      "Schriftgröße",
+      "Text vergrößern oder verkleinern",
+      "Verkleinern",
+      "Schriftgröße",
+      "Vergrößern",
+      "Anzeigegröße",
+      "Alles vergrößern oder verkleinern",
+      "Verkleinern",
+      "Anzeigegröße",
+      "Vergrößern",
+      "Fettdruck",
+      "Text mit hohem Kontrast",
+      "Textfarbe in Schwarz oder Weiß ändern. Maximiert den Kontras"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:16:28"
+  },
+  ".UsageStatsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.UsageStatsActivity 4390fc0 pid=26860",
+    "elemente": [
+      "Sortieren nach:",
+      "Nutzungszeit",
+      "App",
+      "Zuletzt verwendet",
+      "Nutzungszeit",
+      "Systemlauncher",
+      "18:16:32",
+      "12:26:35",
+      "Termux",
+      "16.08.2026",
+      "4:23:53",
+      "Einstellungen",
+      "18:16:32",
+      "4:06:46",
+      "Chrome",
+      "14:12:35",
+      "2:47:32",
+      "TikTok",
+      "17.08.2026",
+      "40:34",
+      "Google",
+      "16.08.2026",
+      "20:59",
+      "Hintergrundbild Karussell",
+      "15.08.2026",
+      "05:51",
+      "Claude",
+      "13.08.2026",
+      "02:26",
+      "Vinted",
+      "16.08.2026",
+      "01:58",
+      "Sicherheit",
+      "14:14:33",
+      "01:55",
+      "Dateimanager +",
+      "14:19:41",
+      "01:52",
+      "Meta Horizon",
+      "16.08.2026"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:16:36"
+  },
+  ".WebViewImplementation": {
+    "fokus": "ACTIVITY com.android.settings/.WebViewImplementation 3548b84 pid=26860",
+    "elemente": [
+      "Zurück",
+      "WebView-Implementierung",
+      "Android System WebView 150.0.7871.181"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:16:44"
+  },
+  ".accessibility.AccessibilitySettingsForSetupWizardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.accessibility.AccessibilitySettingsForSetupWizardActivity 9a39d4b pid=26860",
+    "elemente": [
+      "Zurück",
+      "Ein­stellungen für Seh­behinderte",
+      "Anzeigegröße und Text",
+      "Vergrößerung",
+      "Auf dem Bildschirm heranzoomen",
+      "Vorlesen",
+      "Tippe auf dem Bildschirm auf Elemente, damit sie vorgelesen ",
+      "TalkBack",
+      "Der Screenreader ist in erster Linie für Blinde und Menschen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:16:51"
+  },
+  ".accessibility.MiuiAccessibilitySettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.accessibility.MiuiAccessibilitySettingsActivity c77c1cf pid=26860",
+    "elemente": [
+      "Zurück",
+      "Allgemein",
+      "Sehen",
+      "Hören",
+      "Körperlich",
+      "Schaltfläche „Bedienungshilfen“",
+      "Schnell auf Bedienungshilfen zugreifen",
+      "Verknüpfung auf dem Sperrbildschirm",
+      "Du kannst zulassen, dass die Bedienungshilfenverknüpfung auc",
+      "Zugänglichkeitsmenü",
+      "Aus / Steuere dein Gerät über praktische Verknüpfungen",
+      "Heruntergeladene Apps"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:17:00"
+  },
+  ".accessibility.accessibilitymenu.AccessibilityMenuService": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:17:04"
+  },
+  ".accounts.AddAccountSettings": {
+    "fokus": "ACTIVITY com.android.settings/.accounts.MiuiChooseAccountActivity b3f5e3d pid=26860",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:17:08"
+  },
+  ".ai.AiSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.ai.AiSettingsActivity 65f8a63 pid=26860",
+    "elemente": [
+      "Zurück",
+      "AI-Taste",
+      "AI-TASTE",
+      "AI-Taste gedrückt halten um mit Google Assistant zu sprechen",
+      "AI-TASTE DRÜCKEN",
+      "Drücken",
+      "Mit Google Assistant sprechen",
+      "AI-TASTE GEDRÜCKT HALTEN",
+      "Drücken und halten",
+      "Mit Google Assistant sprechen",
+      "AI-TASTE ZWEIMAL DRÜCKEN",
+      "Doppelt drücken",
+      "Mit Google Assistant sprechen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:17:16"
+  },
+  ".applications.DefaultHomeSettings": {
+    "fokus": "ACTIVITY com.android.settings/.applications.DefaultHomeSettings df6f5cd pid=26860",
+    "elemente": [
+      "Zurück",
+      "Standardstartbildschirm",
+      "Systemlauncher",
+      "Microsoft Launcher"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:17:23"
+  },
+  ".applications.InstalledAppDetails": {
+    "fokus": "ACTIVITY com.android.settings/.applications.DefaultHomeSettings df6f5cd pid=8933",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:17:28"
+  },
+  ".applications.InstalledAppOpenByDefaultActivity": {
+    "fokus": "ACTIVITY com.android.settings/.applications.DefaultHomeSettings df6f5cd pid=8933",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:17:32"
+  },
+  ".applications.ManageApplicationsActivity": {
+    "fokus": "ACTIVITY com.miui.securitycenter/com.miui.appmanager.AppManagerMainActivity 321a8ec pid=9390",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:17:38"
+  },
+  ".applications.MiuiSmsDefaultDialog": {
+    "fokus": "ACTIVITY com.miui.securitycenter/com.miui.appmanager.AppManagerMainActivity 321a8ec pid=9390",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:17:43"
+  },
+  ".applications.ResolverSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.applications.ResolverSettingsActivity bcee94 pid=8933",
+    "elemente": [
+      "Einstellungen wird wiederholt beendet",
+      "Fehlerbericht zur Analyse an Xiaomi senden? Dieser kann pers",
+      "Abbrechen",
+      "Melden"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:17:56"
+  },
+  ".applications.autofill.AutofillPickerTrampolineActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:00"
+  },
+  ".applications.specialaccess.deviceadmin.DeviceAdminAdd": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:05"
+  },
+  ".applications.specialaccess.deviceadmin.ProfileOwnerAdd": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:09"
+  },
+  ".backup.UserBackupSettingsActivity": {
+    "fokus": "ACTIVITY com.google.android.apps.restore/.backup.optin.navroot.NavRootActivity 536c4ea pid=6597",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:14"
+  },
+  ".biometrics.BiometricEnrollActivity": {
+    "fokus": "ACTIVITY com.google.android.apps.restore/.backup.optin.navroot.NavRootActivity 536c4ea pid=6597",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:18"
+  },
+  ".biometrics.face.FaceEnrollIntroduction": {
+    "fokus": "ACTIVITY com.google.android.apps.restore/.backup.optin.navroot.NavRootActivity 536c4ea pid=6597",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:22"
+  },
+  ".biometrics.fingerprint.FingerprintEnrollIntroduction": {
+    "fokus": "ACTIVITY com.google.android.apps.restore/.backup.optin.navroot.NavRootActivity 536c4ea pid=6597",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:27"
+  },
+  ".biometrics.fingerprint.FingerprintEnrollSuggestionActivity": {
+    "fokus": "ACTIVITY com.google.android.apps.restore/.backup.optin.navroot.NavRootActivity 536c4ea pid=6597",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:32"
+  },
+  ".bluetooth.BluetoothPairingDialog": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:36"
+  },
+  ".bluetooth.BluetoothPairingRequest": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:40"
+  },
+  ".bluetooth.BluetoothPermissionActivity": {
+    "fokus": "ACTIVITY com.google.android.gms/.backup.navroot.BackupSettingsNavRootActivity d37f4d pid=23200",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:45"
+  },
+  ".bluetooth.BluetoothPermissionRequest": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:18:49"
+  },
+  ".bluetooth.DevicePickerActivity": {
+    "fokus": "ACTIVITY com.android.settings/.bluetooth.DevicePickerActivity 7cebe00 pid=14778",
+    "elemente": [
+      "Zurück",
+      "Bluetooth-Gerät auswählen",
+      "Aktualisieren",
+      "Aktualisieren"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:18:57"
+  },
+  ".bluetooth.MiHeadsetService": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:01"
+  },
+  ".bluetooth.MiuiFastConnectResourceProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:06"
+  },
+  ".bluetooth.MiuiHeadsetActivity": {
+    "fokus": "ACTIVITY com.android.settings/.bluetooth.MiuiHeadsetActivity 94ffd61 pid=14778",
+    "elemente": [
+      "Zurück",
+      "Einstellungen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:19:13"
+  },
+  ".bluetooth.MiuiHeadsetActivityPlugin": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:18"
+  },
+  ".bluetooth.QcomLeAudioReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:24"
+  },
+  ".bluetooth.QrCodeScanModeActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:29"
+  },
+  ".bluetooth.RequestPermissionActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:33"
+  },
+  ".bluetooth.plugin.MiuiUpdatePluginsReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:38"
+  },
+  ".cloud.UpdateReleaseDataReceive": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:43"
+  },
+  ".cloud.UpdateReleaseDataTransferReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:47"
+  },
+  ".cloudbackup.SettingsCloudBackupService": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:52"
+  },
+  ".connecteddevice.usb.UsbModeChooserReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:19:57"
+  },
+  ".dashboard.SummaryProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:01"
+  },
+  ".dashboard.suggestions.SuggestionStateProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:06"
+  },
+  ".datausage.AppDataUsageActivity": {
+    "fokus": "ACTIVITY com.android.settings/.MiuiSettings 31e55f3 pid=14780",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:11"
+  },
+  ".development.DevelopmentSettingsDisabledActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:15"
+  },
+  ".development.MiuiSetFullBackupPassword": {
+    "fokus": "ACTIVITY com.android.settings/.development.MiuiSetFullBackupPassword 722eeda pid=14780",
+    "elemente": [
+      "Abbrechen",
+      "OK",
+      "Neues Sicherungspasswort eingeben",
+      "Neues Sicherungspasswort bestätigen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:20:22"
+  },
+  ".development.qstile.DevelopmentTiles$AnimationSpeed": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:26"
+  },
+  ".development.qstile.DevelopmentTiles$ForceRTL": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:31"
+  },
+  ".development.qstile.DevelopmentTiles$GPUProfiling": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:35"
+  },
+  ".development.qstile.DevelopmentTiles$ShowLayout": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:40"
+  },
+  ".development.qstile.DevelopmentTiles$ShowTaps": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:45"
+  },
+  ".development.qstile.DevelopmentTiles$WinscopeTrace": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:49"
+  },
+  ".development.qstile.DevelopmentTiles$WirelessDebugging": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:20:54"
+  },
+  ".deviceinfo.MiuiSARCustActivity": {
+    "fokus": "ACTIVITY com.android.settings/.development.MiuiSetFullBackupPassword 722eeda pid=14780",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:21:01"
+  },
+  ".deviceinfo.legal.ModuleLicenseProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:21:05"
+  },
+  ".display.DarkModeActivity": {
+    "fokus": "ACTIVITY com.android.settings/.display.DarkModeActivity 10ce6c8 pid=14780",
+    "elemente": [
+      "Zurück",
+      "Uhrzeit für Dunkelmodus einstellen",
+      "Uhrzeit für Dunkelmodus einstellen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:21:13"
+  },
+  ".display.PaperModeTimeReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:21:17"
+  },
+  ".display.ScreenEnhanceEngineActivity": {
+    "fokus": "ACTIVITY com.android.settings/.display.ScreenEnhanceEngineActivity 9534ea5 pid=14780",
+    "elemente": [
+      "Zurück",
+      "AI-Bilder-Engine",
+      "Superauflösung",
+      "AI-Bildverbesserung",
+      "Ein",
+      "AI-HDR-Verbesserung",
+      "Ein",
+      "MEMC",
+      "Aus"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:21:25"
+  },
+  ".display.ScreenEnhanceEngineAiActivity": {
+    "fokus": "ACTIVITY com.android.settings/.display.ScreenEnhanceEngineAiActivity 3564017 pid=14780",
+    "elemente": [
+      "Zurück",
+      "AI-Bildverbesserung",
+      "Bilder verbessern",
+      "Objekte (z.B. Pflanzen, Tiere, Gebäude) erkennen und dynamis",
+      "1. Durch diese Funktion erhöht sich der Energieverbrauch lei"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:21:32"
+  },
+  ".display.ScreenEnhanceEngineMemcActivity": {
+    "fokus": "ACTIVITY com.android.settings/.display.ScreenEnhanceEngineMemcActivity 4545796 pid=14780",
+    "elemente": [
+      "Zurück",
+      "MEMC",
+      "MEMC",
+      "Fügt zusätzliche Bilder zu Videos hinzu, um den Inhalt flüss",
+      "1. Diese Funktion erhöht den Energieverbrauch leicht.\n2. Die"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:21:40"
+  },
+  ".display.ScreenEnhanceEngineS2hActivity": {
+    "fokus": "ACTIVITY com.android.settings/.display.ScreenEnhanceEngineS2hActivity 94533f0 pid=14780",
+    "elemente": [
+      "Zurück",
+      "AI-HDR-Verbesserung",
+      "AI-HDR-Verbesserung",
+      "Video mit HDR-Effekten bearbeiten, um mehr Details in dunkle"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:21:48"
+  },
+  ".display.ScreenEnhanceEngineSrActivity": {
+    "fokus": "ACTIVITY com.android.settings/.display.ScreenEnhanceEngineSrActivity 48040ea pid=14780",
+    "elemente": [
+      "Zurück",
+      "Superauflösung",
+      "Videos verbessern",
+      "Die Auflösung von Videos hochskalieren.",
+      "Durch diese Funktion erhöht sich der Energieverbrauch leicht"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:21:56"
+  },
+  ".display.ScreenResolutionDialogActivity": {
+    "fokus": "ACTIVITY com.android.settings/.display.ScreenEnhanceEngineS2hActivity 94533f0 pid=14781",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:22:00"
+  },
+  ".display.ScreenZoomActivity": {
+    "fokus": "ACTIVITY com.android.settings/.display.ScreenZoomActivity bb9c4ee pid=14781",
+    "elemente": [
+      "Abbrechen",
+      "OK",
+      "Anzeigegröße",
+      "Symbole",
+      "Wetter",
+      "Galerie",
+      "Telefon",
+      "Notizen",
+      "Text",
+      "Erika Sommer",
+      "9:35 Uhr | 26 Sek",
+      "Max Meier",
+      "16. August | 1 Min 16 Sek",
+      "Thomas Peters",
+      "16. August | 2 Min 24 Sek",
+      "S",
+      "XS",
+      "S",
+      "L"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:22:08"
+  },
+  ".display.TranslucentActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:22:12"
+  },
+  ".dndmode.DoNotDisturbModeActivity": {
+    "fokus": "ACTIVITY com.android.settings/.dndmode.DoNotDisturbModeActivity 12d0805 pid=14781",
+    "elemente": [
+      "Zurück",
+      "Nicht stören",
+      "Nicht stören",
+      "Anrufe und Benachrichtigungen die bei 'Nicht stören' eingehe",
+      "GEPLANT",
+      "Wiederhole 'Nicht stören'",
+      "AUSNAHMEN",
+      "Ausnahmen",
+      "Berühren, zum Konfigurieren",
+      "Wiederholungsanrufe",
+      "Ruft der gleiche Teilnehmer wiederholt an bleibt das Gerät i"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:22:20"
+  },
+  ".dndmode.DoNotDisturbModeReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:22:24"
+  },
+  ".dndmode.QuietActivity": {
+    "fokus": "ACTIVITY com.android.settings/.dndmode.QuietActivity 3533291 pid=14781",
+    "elemente": [
+      "Zurück",
+      "Nicht stören",
+      "Störungen immer zulassen",
+      "Alle Störungen lautlos",
+      "Nur Ausnahmen zulassen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:22:33"
+  },
+  ".emergency.EmergencyActionContentProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:22:38"
+  },
+  ".emergency.ui.SosExitAlertActivity": {
+    "fokus": "ACTIVITY com.android.settings/.emergency.ui.SosExitAlertActivity fa40fc7 pid=14781",
+    "elemente": [
+      "Einstellungen wird wiederholt beendet",
+      "Fehlerbericht zur Analyse an Xiaomi senden? Dieser kann pers",
+      "Abbrechen",
+      "Melden"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:22:55"
+  },
+  ".emergency.ui.SosLaunchingActivity": {
+    "fokus": "ACTIVITY com.android.settings/.emergency.ui.SosLaunchingActivity 7d5c823 pid=8377",
+    "elemente": [
+      "17℃",
+      "Schauer AQI 28",
+      "Ottersberg",
+      "Mods/Hacks/Apk",
+      "Mods/Hacks/Apk",
+      "Mods/Hacks/Apk",
+      "Player/IPTV",
+      "Player/IPTV",
+      "Player/IPTV",
+      "Musik & Video",
+      "Musik & Video",
+      "Musik & Video",
+      "1 ungelesen von Google",
+      "Google",
+      "1",
+      "Google",
+      "Shopping/eBay usw.",
+      "Shopping/eBay usw.",
+      "Shopping/eBay usw.",
+      "Kalender",
+      "Kalender",
+      "Kalender",
+      "Gmail",
+      "Gmail",
+      "Gmail",
+      "HP",
+      "HP",
+      "HP",
+      "Notizen",
+      "Notizen",
+      "Notizen",
+      "KI",
+      "KI",
+      "KI",
+      "Sicherheit/Finanzen/Banking",
+      "Sicherheit/Finanzen/Banking",
+      "Sicherheit/Finanzen/Banking",
+      "Dateimanager +",
+      "Dateimanager +",
+      "Dateimanager +"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:23:06"
+  },
+  ".enterprise.ActionDisabledByAdminDialog": {
+    "fokus": "ACTIVITY com.android.settings/.enterprise.ActionDisabledByAdminDialog 6cb7327 pid=8378",
+    "elemente": [
+      "Vom IT-Administrator blockiert",
+      "OK"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:23:14"
+  },
+  ".freeform.FlashBackContentProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:23:18"
+  },
+  ".fuelgauge.AdvancedPowerUsageDetailActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:23:25"
+  },
+  ".fuelgauge.BatterySaverModeVoiceActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:23:29"
+  },
+  ".fuelgauge.PowerModeChangeReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:23:33"
+  },
+  ".fuelgauge.RequestIgnoreBatteryOptimizations": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:23:38"
+  },
+  ".fuelgauge.batterytip.AnomalyConfigReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:23:42"
+  },
+  ".haptic.HapticDetailActivity": {
+    "fokus": "ACTIVITY com.android.settings/.haptic.HapticDetailActivity 9efdd31 pid=8378",
+    "elemente": [
+      "Zurück",
+      "Klar",
+      "Grundton",
+      "Pop",
+      "Hohe Frequenzen machen die Details jeder Aktion klarer",
+      "Symbole neu anordnen",
+      "Helligkeit anpassen",
+      "Lautstärke anpassen",
+      "Scroll-Leiste"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:23:49"
+  },
+  ".haptic.HapticInterestingActivity": {
+    "fokus": "ACTIVITY com.android.settings/.haptic.HapticInterestingActivity 48acffa pid=8378",
+    "elemente": [
+      "Zurück",
+      "Realistische Berührung",
+      "Durch realistische fühlbare Empfindung wird die Interaktion ",
+      "Abgeschlossene Aufgaben",
+      "Entsperren per Fingerabdruck",
+      "Gerät sperren",
+      "Ausgewähltes Element"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:23:57"
+  },
+  ".homepage.DeepLinkHomepageActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:24:01"
+  },
+  ".homepage.contextualcards.CardContentProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:24:06"
+  },
+  ".inputmethod.AvailableVirtualKeyboardActivity": {
+    "fokus": "ACTIVITY com.android.settings/.inputmethod.AvailableVirtualKeyboardActivity b95451a pid=8378",
+    "elemente": [
+      "Zurück",
+      "Verfügbare Bildschirmtastatur",
+      "Persönlich",
+      "Arbeit",
+      "Gboard",
+      "Mehrsprachige Eingabe",
+      "Ein",
+      "CleverKeys Keyboard",
+      "Deutsch",
+      "Aus",
+      "Emoji&Font Keyboard",
+      "Aus",
+      "Giphy Keyboard",
+      "Deutsch",
+      "Aus",
+      "Google Spracheingabe",
+      "Automatisch",
+      "Ein",
+      "Snapchat Tastatur",
+      "Deutsch",
+      "Aus"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:24:14"
+  },
+  ".inputmethod.InputMethodAndSubtypeEnablerActivity": {
+    "fokus": "ACTIVITY com.android.settings/.inputmethod.AvailableVirtualKeyboardActivity b95451a pid=8379",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:24:18"
+  },
+  ".inputmethod.UserDictionaryAddWordActivity": {
+    "fokus": "ACTIVITY com.android.settings/.haptic.HapticInterestingActivity 48acffa pid=8380",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:24:22"
+  },
+  ".localepicker.AppLocalePickerActivity": {
+    "fokus": "ACTIVITY com.android.settings/.haptic.HapticInterestingActivity 48acffa pid=8380",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:24:27"
+  },
+  ".media.BluetoothPairingReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:24:31"
+  },
+  ".mqsas.PrivacyDialogActivity": {
+    "fokus": "ACTIVITY com.android.settings/.mqsas.PrivacyDialogActivity b983954 pid=8380",
+    "elemente": [
+      "Logs werden hochgeladen",
+      "Scheinbar sind auf deinem Gerät in letzter Zeit Fehler aufge",
+      "Nächstes Mal automatisch hochladen",
+      "Abbrechen",
+      "Hochladen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:24:39"
+  },
+  ".network.PrivateDnsSettingsActivity": {
+    "fokus": "ACTIVITY com.android.settings/.network.PrivateDnsSettingsActivity 820bf72 pid=8380",
+    "elemente": [
+      "Private-DNS-Modus wählen",
+      "Aus",
+      "Automatisch",
+      "Hostname Private-DNS-Anbieter",
+      "Abbruch",
+      "Speichern"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:24:47"
+  },
+  ".network.TetherProvisioningActivity": {
+    "fokus": "ACTIVITY com.android.settings/.network.TetherProvisioningActivity 7ebc1ec pid=8380",
+    "elemente": [
+      "Einstellungen wird wiederholt beendet",
+      "Fehlerbericht zur Analyse an Xiaomi senden? Dieser kann pers",
+      "Abbrechen",
+      "Melden"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:25:00"
+  },
+  ".network.TetherProvisioningCarrierDialogActivity": {
+    "fokus": "ACTIVITY com.android.settings/.network.TetherProvisioningCarrierDialogActivity da8c9dc pid=8382",
+    "elemente": [
+      "Tethering nicht verfügbar",
+      "Weitere Informationen erhältst du bei deinem Mobilfunkanbiet",
+      "OK"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:25:08"
+  },
+  ".network.telephony.UserPLMNEditorActivity": {
+    "fokus": "ACTIVITY com.android.settings/.network.TetherProvisioningCarrierDialogActivity da8c9dc pid=18759",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:25:13"
+  },
+  ".network.telephony.UserPLMNListActivity": {
+    "fokus": "ACTIVITY com.android.settings/.network.telephony.UserPLMNListActivity 87ef013 pid=18759",
+    "elemente": [],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:25:20"
+  },
+  ".nfc.PaymentDefaultDialog": {
+    "fokus": "ACTIVITY com.android.settings/.network.telephony.UserPLMNListActivity 87ef013 pid=18759",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:25:27"
+  },
+  ".notification.MiuiMusicMuteActivity": {
+    "fokus": "ACTIVITY com.android.settings/.notification.MiuiMusicMuteActivity 5c07d6d pid=18759",
+    "elemente": [
+      "Lautlos-Modus",
+      "Medienton abspielen, wenn der Lautlos-Modus aktiviert ist?",
+      "Abbrechen",
+      "OK"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:25:35"
+  },
+  ".notification.RedactionSettingsStandalone": {
+    "fokus": "ACTIVITY com.android.settings/.notification.MiuiMusicMuteActivity 5c07d6d pid=18761",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:25:39"
+  },
+  ".notification.app.ChannelPanelActivity": {
+    "fokus": "ACTIVITY com.android.settings/.network.telephony.UserPLMNListActivity 87ef013 pid=18764",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:25:43"
+  },
+  ".notification.history.NotificationHistoryActivity": {
+    "fokus": "ACTIVITY com.android.settings/.notification.history.NotificationHistoryActivity 2887150 pid=18764",
+    "elemente": [
+      "Benachrichtigungs­verlauf",
+      "Nach oben navigieren",
+      "Benachrichtigungsverlauf verwenden",
+      "Benachrichtigungsverlauf ist deaktiviert",
+      "Benachrichtigungsverlauf aktivieren, um neue und zurückgeste"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:25:51"
+  },
+  ".notification.zen.ZenModeVoiceActivity": {
+    "fokus": "ACTIVITY com.android.settings/.notification.history.NotificationHistoryActivity 2887150 pid=18764",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:25:55"
+  },
+  ".notification.zen.ZenOnboardingActivity": {
+    "fokus": "ACTIVITY com.android.settings/.notification.zen.ZenOnboardingActivity 9afe101 pid=18764",
+    "elemente": [
+      "Einstellungen für „Bitte nicht stören“ ändern?",
+      "Kein optisches oder akustisches Signal bei Benachrichtigunge",
+      "Du siehst oder hörst keine Benachrichtigungen. Anrufe von ma",
+      "Kein Ton bei Benachrichtigungen",
+      "(Aktuelle Einstellung)",
+      "EINSTELLUNGEN",
+      "FERTIG"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:26:03"
+  },
+  ".notification.zen.ZenSuggestionActivity": {
+    "fokus": "ACTIVITY com.android.settings/.notification.zen.ZenOnboardingActivity 473d46 pid=18764",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:26:07"
+  },
+  ".panel.SettingsPanelActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:26:12"
+  },
+  ".password.ConfirmDeviceCredentialActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:26:17"
+  },
+  ".password.ConfirmDeviceCredentialActivity$InternalActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:26:21"
+  },
+  ".password.ScreenLockSuggestionActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:26:25"
+  },
+  ".password.SetNewPasswordActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:26:29"
+  },
+  ".privacy.PrivacyGrantDialog": {
+    "fokus": "ACTIVITY com.android.settings/.privacy.PrivacyGrantDialog b166034 pid=18767",
+    "elemente": [],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:26:37"
+  },
+  ".privacypassword.PrivacyPasswordConfirmAccessControl": {
+    "fokus": "ACTIVITY com.android.settings/.privacy.PrivacyGrantDialog b166034 pid=18767",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:26:41"
+  },
+  ".privacypassword.TransparentHelper": {
+    "fokus": "ACTIVITY com.android.settings/.privacypassword.PrivacyPasswordSetting 9e2d773 pid=18767",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:26:45"
+  },
+  ".provider.MiuiSettingsDataProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:26:50"
+  },
+  ".recents.PrivacyThumbnailBlurSettings": {
+    "fokus": "ACTIVITY com.android.settings/.recents.PrivacyThumbnailBlurSettings 2ec33d5 pid=18767",
+    "elemente": [
+      "Zurück",
+      "App-Vorschauen weichzeichnen",
+      "Vorschauen werden weichgezeichnet",
+      "Galerie",
+      "Kamera",
+      "Vorschauen werden nicht weichgezeichnet",
+      "3C All-in-One Toolbox",
+      "432 Player",
+      "89.0 RTL",
+      "89.0 RTL",
+      "AetherSX2",
+      "Apk Extractor"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:26:57"
+  },
+  ".safetycenter.SafetySourceBroadcastReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:27:02"
+  },
+  ".search.SearchResultTrampoline": {
+    "fokus": "ACTIVITY com.android.settings/.search.SearchResultTrampoline e2af527 pid=18767",
+    "elemente": [
+      "Einstellungen wird wiederholt beendet",
+      "Fehlerbericht zur Analyse an Xiaomi senden? Dieser kann pers",
+      "Abbrechen",
+      "Melden"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:27:15"
+  },
+  ".search.SearchStateReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:27:21"
+  },
+  ".search.SettingsSearchIndexablesProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:27:26"
+  },
+  ".search.provider.SettingsProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:27:30"
+  },
+  ".search.provider.UpdateReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:27:35"
+  },
+  ".security.CredentialStorage": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:27:40"
+  },
+  ".security.RequestManageCredentials": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:27:44"
+  },
+  ".settingspanel.MiuiSettingsPanelActivity": {
+    "fokus": "ACTIVITY com.android.settings/.settingspanel.MiuiSettingsPanelActivity 9abddfb pid=26965",
+    "elemente": [
+      "Mehr anzeigen",
+      "Fertig"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:27:52"
+  },
+  ".sim.SimDialogActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:27:56"
+  },
+  ".sim.SimSelectNotification": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:00"
+  },
+  ".sim.receivers.SimCompleteBootReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:05"
+  },
+  ".sim.receivers.SimSlotChangeReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:09"
+  },
+  ".sim.receivers.SuwFinishReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:14"
+  },
+  ".slices.SettingsSliceProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:18"
+  },
+  ".slices.SliceDeepLinkSpringBoard": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:23"
+  },
+  ".support.SupportDashboardActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:27"
+  },
+  ".usagestats.DeviceTimeoverActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:31"
+  },
+  ".usagestats.TimeoverActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:36"
+  },
+  ".users.ProfileUpdateReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:40"
+  },
+  ".wallpaper.StyleSuggestionActivity": {
+    "fokus": "ACTIVITY com.android.thememanager/.settings.WallpaperSettingsActivity 510d8fb pid=31982",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:45"
+  },
+  ".wallpaper.WallpaperSuggestionActivity": {
+    "fokus": "ACTIVITY com.android.thememanager/.settings.WallpaperSettingsActivity d25b052 pid=31982",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:28:49"
+  },
+  ".wifi.NetworkRequestDialogActivity": {
+    "fokus": "ACTIVITY com.android.settings/.wifi.NetworkRequestDialogActivity 1429354 pid=26969",
+    "elemente": [
+      "Ein Fehler ist aufgetreten. Die Anwendung hat die Anfrage zu",
+      "OK"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:29:00"
+  },
+  ".wifi.RequestToggleWiFiActivity": {
+    "fokus": "ACTIVITY com.android.thememanager/.settings.WallpaperSettingsActivity 510d8fb pid=31982",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:29:04"
+  },
+  ".wifi.WifiAssistantDialog": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:29:09"
+  },
+  ".wifi.WifiConfigInfo": {
+    "fokus": "ACTIVITY com.android.settings/.wifi.WifiConfigInfo da0c650 pid=31983",
+    "elemente": [
+      "Zurück",
+      "Einstellungen",
+      "Configured networks",
+      "- DSBLE ID: 93 SSID: \"iPhone\" PROVIDER-NAME: null BSSID: nul"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:29:17"
+  },
+  ".wifi.WifiConnectionDialog": {
+    "fokus": "ACTIVITY com.android.settings/.wifi.WifiConfigInfo da0c650 pid=31983",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:29:22"
+  },
+  ".wifi.WifiConnectionReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:29:26"
+  },
+  ".wifi.WifiDialogActivity": {
+    "fokus": "ACTIVITY com.android.settings/.wifi.WifiDialogActivity 2a30f9a pid=31983",
+    "elemente": [
+      "SSID eingeben",
+      "QR-Code scannen",
+      "SICHERHEIT",
+      "Keine",
+      "Speichern"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:29:34"
+  },
+  ".wifi.WifiNoInternetDialog": {
+    "fokus": "ACTIVITY com.android.settings/.wifi.WifiConfigInfo da0c650 pid=31983",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:29:38"
+  },
+  ".wifi.WifiPickerActivity": {
+    "fokus": "ACTIVITY com.android.settings/.wifi.WifiPickerActivity 80eb90e pid=31983",
+    "elemente": [
+      "Zurück",
+      "QR-Code scannen",
+      "WLAN auswählen",
+      "WLAN",
+      "HONOR Magic8 Pro Dima,Verbunden,WLAN Signal drei Balken.,Sic",
+      "WLAN Signal zwei Balken.",
+      "HONOR Magic8 Pro Dima",
+      "Tippen, um Passwort zu teilen",
+      "HONOR Magic8 Pro Dima Netzwerkdetails",
+      "GESPEICHERTE NETZWERKE",
+      "Dima Wlan,Gespeichert / Automatische Verbindung ist deaktivi",
+      "WLAN Signal drei Balken.",
+      "Dima Wlan",
+      "Dima Wlan Netzwerkdetails",
+      "Verfügbare Netzwerke",
+      "Aktualisieren",
+      "DIRECT-F9-HP ENVY 4520 series,WLAN Signal voll.,Sicheres Net",
+      "WLAN Signal drei Balken.",
+      "DIRECT-F9-HP ENVY 4520 series",
+      "DIRECT-F9-HP ENVY 4520 series Netzwerkdetails",
+      "FRITZ!Box 7590 EA,WLAN Signal zwei Balken.,Sicheres Netzwerk",
+      "WLAN Signal ein Balken.",
+      "FRITZ!Box 7590 EA",
+      "FRITZ!Box 7590 EA Netzwerkdetails",
+      "Netzwerk hinzufügen",
+      "WEITERE EINSTELLUNGEN",
+      "Weitere Einstellungen"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:29:46"
+  },
+  ".wifi.WifiProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:29:51"
+  },
+  ".wifi.WifiScanModeActivity": {
+    "fokus": "ACTIVITY com.android.settings/.wifi.WifiPickerActivity 80eb90e pid=31983",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:29:55"
+  },
+  ".wifi.WifiStatusTest": {
+    "fokus": "ACTIVITY com.android.settings/.wifi.WifiStatusTest e96bfe5 pid=31983",
+    "elemente": [
+      "Refresh stats",
+      "Wi-Fi state:",
+      "Enabled",
+      "Network state:",
+      "Verbunden mit \"HONOR Magic8 Pro Dima\"",
+      "Supplicant state:",
+      "COMPLETED",
+      "RSSI:",
+      "BSSID:",
+      "SSID:",
+      "Hidden SSID:",
+      "IPaddr:",
+      "MAC addr:",
+      "Network ID:",
+      "Transmit link speed:",
+      "Receive link speed:",
+      "Scan results:",
+      "null",
+      "null",
+      "Pingtest ausführen",
+      "Hostnamen (www.google.com) IPv4 pingen:",
+      "HTTP-Client-Test:"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:30:03"
+  },
+  ".wifi.addappnetworks.AddAppNetworksActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:30:08"
+  },
+  ".wifi.calling.WifiCallingSuggestionActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:30:17"
+  },
+  ".wifi.dpp.MiuiWifiDppConfiguratorActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:30:22"
+  },
+  ".wifi.dpp.MiuiWifiDppEnrolleeActivity": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:30:26"
+  },
+  ".wifi.linkturbo.WifiLinkTurboSettings": {
+    "fokus": "ACTIVITY com.android.settings/.wifi.linkturbo.WifiLinkTurboSettings 998df06 pid=31984",
+    "elemente": [
+      "Zurück",
+      "Netzwerkbeschleunigung",
+      "Mobile Daten für höhere Geschwindigkeit verwenden",
+      "Sowohl WLAN als auch mobile Daten nutzen, um die Geschwindig"
+    ],
+    "geoeffnet": true,
+    "ts": "2026-08-18 18:30:33"
+  },
+  ".wifi.passpoint.PasspointConfigureReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:30:38"
+  },
+  "1000": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:30:42"
+  },
+  "androidx.core.content.FileProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:30:47"
+  },
+  "androidx.startup.InitializationProvider": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:30:54"
+  },
+  "com.android.settingslib.bluetooth.BluetoothDiscoverableTimeoutReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:30:58"
+  },
+  "com.iqiyi.android.qigsaw.core.splitinstall.remote.SplitInstallService": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:31:03"
+  },
+  "com.miui.backup.service.BRService": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:31:08"
+  },
+  "com.xiaomi.mipush.sdk.PushServiceReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:31:12"
+  },
+  "com.xiaomi.passport.accountmanager.MiAuthenticatorService": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:31:17"
+  },
+  "com.xiaomi.push.service.receivers.NetworkStatusReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:31:22"
+  },
+  "com.xiaomi.push.service.receivers.PingReceiver": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:31:26"
+  },
+  "miui.settings.commonlib.ApplicationReceiverStub": {
+    "fokus": "ACTIVITY com.miui.home/.launcher.Launcher 51af4bb pid=3788",
+    "elemente": [],
+    "geoeffnet": false,
+    "ts": "2026-08-18 18:31:31"
   }
 }
