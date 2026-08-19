@@ -72,3 +72,9 @@ chrome_loaded.txt
 navi_trace.jsonl
 navi_trace.jsonl
 service/jack_autolearn/supervise/
+xiaomi_packages.xml
+xiaomi_dumpsys_package.txt
+service/jack_autolearn/supervise/
+SYSTEM_STATE.md
+.delta_snapshot
+jack_outcomes.jsonl
