@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """JACK schreibt und testet Code - NUR in der Werkstatt, mit Risiko-Gate."""
+import jack_ast_gate
 import os, re, subprocess, time
 try:
     import jack_logging as _jlog
@@ -73,6 +74,10 @@ def run_code(filename, timeout=10):
     if not os.path.exists(path):
         return False, f"Datei fehlt: {fn}"
     code = open(path).read()
+    # AST-Gate: strukturelle Pruefung vor String-Blacklist
+    ast_ok, ast_probs = jack_ast_gate.check_code(code)
+    if not ast_ok:
+        return False, f"AST-GATE BLOCKIERT: {ast_probs}"
     risk = assess_risk(code)
     if risk:
         return False, f"AUSFUEHRUNG BLOCKIERT - gefaehrliches Muster: {risk!r}"
