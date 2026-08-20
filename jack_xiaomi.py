@@ -15,7 +15,7 @@ SSH_KEY = os.path.expanduser("~/.ssh/id_jack")
 SSH_OPTS = [
     "-i", SSH_KEY,
     "-o", "BatchMode=yes",
-    "-o", "StrictHostKeyChecking=no",
+    "-o", "StrictHostKeyChecking=accept-new",
     "-o", "UserKnownHostsFile=/dev/null",
     "-o", "ConnectTimeout=5",
     "-o", "ControlMaster=auto",

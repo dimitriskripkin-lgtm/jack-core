@@ -41,7 +41,7 @@ def _ip():
 def sh(cmd, t=15):
     try:
         r = subprocess.run(["ssh","-i",KEY,"-o","BatchMode=yes",
-            "-o","StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null",
+            "-o","StrictHostKeyChecking=accept-new","-o","UserKnownHostsFile=/dev/null",
             "-o","LogLevel=ERROR","-o","ConnectTimeout=4","-p","8022",
             "root@"+_ip(), cmd], capture_output=True, text=True, timeout=t)
         return (r.stdout or "").strip(), r.returncode
