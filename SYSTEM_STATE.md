@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-20 08:49
+# JACK SYSTEM STATE — 2026-08-20 11:45
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: UP
 
 ## Resources
-- RAM verfuegbar: 2950MB
+- RAM verfuegbar: 3132MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 1710
+- Memory-Eintraege: 1745
 - Offene Fehler: 0
 
 ## Config
@@ -24,10 +24,10 @@
 - autolearn: AN
 
 ## Letzte Log-Eintraege
-[2026-08-20 08:39:14] SHADOW-FIXER | Keine offenen Fehler
-[2026-08-20 08:44:14] SELF-AUDIT | SYSTEM_STATE.md generiert
-[2026-08-20 08:44:14] SCHEDULER | Power-Time aktiv - schwere Jobs erlaubt
-[2026-08-20 08:44:16] EXPLORE | Xiaomi: CPU=Load: 0.14 RAM=1848MB frei Akku=100% Temp=34.8C
-[2026-08-20 08:44:16] SHADOW-FIXER | Keine offenen Fehler
+[2026-08-20 11:40:16] SELF-AUDIT | SYSTEM_STATE.md generiert
+[2026-08-20 11:40:16] SCHEDULER | Power-Time aktiv - schwere Jobs erlaubt
+[2026-08-20 11:40:17] EXPLORE | Xiaomi: CPU=Load: 0.22 RAM=1790MB frei Akku=100% Temp=33.6C
+[2026-08-20 11:40:18] SHADOW-FIXER | Keine offenen Fehler
+[2026-08-20 11:40:33] MONITOR-EVENT | 1 Events
 
-*Generiert: 2026-08-20 08:49*
+*Generiert: 2026-08-20 11:45*
