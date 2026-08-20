@@ -80,34 +80,74 @@ def dump_ui():
     return xml_content
 
 def parse_ui_xml(xml_content):
-    """UI-XML parsen und Elemente extrahieren"""
     try:
         root = ET.fromstring(xml_content)
     except ET.ParseError as e:
         print(f"FEHLER: XML-Parse-Error: {e}")
         return None, None, []
-    
-    # Package und Activity aus Root-Node extrahieren
     package = root.get("package", "unknown")
     activity = root.get("activity", "unknown")
-    
     elements = []
-    for node in root.iter("node"):
-        elem = {
-            "class": node.get("class", ""),
-            "text": node.get("text", ""),
-            "content_desc": node.get("content-desc", ""),
-            "resource_id": node.get("resource-id", ""),
-            "bounds": node.get("bounds", ""),
-            "clickable": node.get("clickable") == "true",
-            "enabled": node.get("enabled") == "true",
-            "package": node.get("package", "")
-        }
-        # Nur interessante Elemente (Buttons, Inputs, Labels)
+    def walk(node, pc):
+        cl = node.get("clickable") == "true"
+        elem = {"class": node.get("class", ""), "text": node.get("text", ""), "content_desc": node.get("content-desc", ""), "resource_id": node.get("resource-id", ""), "bounds": node.get("bounds", ""), "clickable": cl, "clickable_parent": pc, "enabled": node.get("enabled") == "true", "package": node.get("package", "")}
         if elem["clickable"] or elem["text"] or elem["content_desc"]:
             elements.append(elem)
-    
+        for child in node:
+            walk(child, pc or cl)
+    for top in root:
+        walk(top, False)
     return package, activity, elements
+
+def execute_action(action_id, dry_run=False):
+    """Fuehrt eine Action aus und verifiziert den Folge-Screen."""
+    import re
+    conn = sqlite3.connect(os.path.expanduser("~/jack/jack_screen_states.db"))
+    row = conn.execute("SELECT action_type, element_text, bounds, screen_hash FROM actions WHERE id=?", (action_id,)).fetchone()
+    if not row: return False, "Action nicht gefunden"
+    action_type, element_text, bounds, screen_hash = row
+    # Bounds parsen: [72,252][499,350] -> Mitte (285, 301)
+    m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", bounds or "")
+    if not m: return False, f"Bounds ungueltig: {bounds}"
+    x = (int(m.group(1)) + int(m.group(3))) // 2
+    y = (int(m.group(2)) + int(m.group(4))) // 2
+    if dry_run:
+        return True, f"DRY-RUN: wuerde auf ({x},{y}) tippen fuer '{element_text}'"
+    # Vorher-Screen speichern
+    before_hash = get_current_screen_hash()
+    # Aktion ausfuehren
+    ssh_cmd(["su", "-c", f"input tap {x} {y}"], timeout=10)
+    time.sleep(2)
+    # Nachher-Screen pruefen
+    after_hash = get_current_screen_hash()
+    if after_hash != before_hash:
+        return True, f"OK: Screen geaendert von {before_hash[:8]} zu {after_hash[:8]}"
+    else:
+        return False, f"KEIN WECHSEL: immer noch auf {before_hash[:8]}"
+
+def get_current_screen_hash():
+    """Holt den Hash des aktuellen Screens via dumpsys."""
+    pkg, act = get_foreground()
+    if not pkg: return "unknown"
+    data = pkg + "|" + (act or "")
+    import hashlib
+    return hashlib.sha256(data.encode()).hexdigest()[:16]
+
+
+
+def dump_and_parse():
+    """UI-Dump holen, parsen, und Hash+Package+Activity+Elemente zurueckgeben."""
+    ensure_unlocked()
+    xml_content = dump_ui()
+    if not xml_content:
+        return "unknown", "unknown", "unknown", []
+    package, activity, elements = parse_ui_xml(xml_content)
+    fg_pkg, fg_act = get_foreground()
+    if fg_pkg:
+        package, activity = fg_pkg, fg_act
+    screen_hash = compute_screen_hash(package, activity, elements)
+    return screen_hash, package, activity, elements
+
 
 def compute_screen_hash(package, activity, elements=None):
     # STABILE Identitaet: nur Package+Activity (Badges/Zaehler/Uhr variieren)
