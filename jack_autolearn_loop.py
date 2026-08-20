@@ -13,7 +13,7 @@ from datetime import datetime
 DB_SKILLS = os.path.expanduser("~/jack/jack_skills.db")
 DB_MEMORY = os.path.expanduser("~/jack/jack_memory.db")
 LOG_FILE = os.path.expanduser("~/jack/autolearn.log")
-PAUSE_SECONDS = 300
+PAUSE_SECONDS = 120
 
 def log(msg):
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
