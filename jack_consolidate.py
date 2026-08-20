@@ -11,6 +11,11 @@ def run_consolidation():
         print("[WARN] DB path not found for consolidation.")
         return
 
+    try:
+        import jack_memory_stale as _jms
+        _jms.mark_stale_memories()
+    except Exception as _e:
+        print('[WARN] Stale-Marking uebersprungen: ' + str(_e)[:80])
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
