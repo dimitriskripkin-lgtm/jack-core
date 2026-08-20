@@ -38,10 +38,12 @@ def temp():
     if akku_t>=50:return t(False,'Temp Akku',f'{akku_t:.1f}C (Limit 50C)')
     return t(True,'Temp',f'CPU {cpu_mx:.1f}C | Akku {akku_t:.1f}C')
 def pub():
-    r=subprocess.run(['git','-C',os.path.expanduser('~/jack-context'),
-        'log','--format=%ct','-1'],capture_output=True,text=True)
-    try:age=int((time.time()-int(r.stdout.strip()))//60);return t(age<10,'Publisher',f'{age}min her')
-    except:return t(False,'Publisher','kein log')
+    p = os.path.expanduser('~/jack-context/context.md')
+    try:
+        age = int((time.time() - os.path.getmtime(p)) // 60)
+        return t(age < 10, 'Publisher', f'context.md {age}min alt (lokal, Push gesperrt CRIT-002)')
+    except Exception:
+        return t(False, 'Publisher', 'context.md fehlt')
 def oll():
     try:urllib.request.urlopen('http://localhost:11434/api/tags',timeout=3);return t(True,'Ollama','up')
     except:return t(False,'Ollama','down')
