@@ -78,3 +78,4 @@ service/jack_autolearn/supervise/
 SYSTEM_STATE.md
 .delta_snapshot
 jack_outcomes.jsonl
+jack_screen_states.db
