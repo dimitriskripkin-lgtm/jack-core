@@ -37,7 +37,7 @@ def run_consolidation():
     sources = set(r[1] for r in rows)
     total_len = sum(len(r[2]) for r in rows)
 
-    summary_text = f"Synthetisiert aus {len(rows)} Memory-Blöcken. Quellen: {', '.join(list(sources)[:3])}. Gesamtzeichen: {total_len}."
+    summary_text = f"Synthetisiert aus {len(rows)} Memory-Blöcken. Quellen: {', '.join([s for s in list(sources) if s][:3])}. Gesamtzeichen: {total_len}."
 
     c.execute("INSERT INTO consolidated_knowledge (topic, summary, source_count) VALUES (?, ?, ?)",
               ("Auto-Synthesis", summary_text, len(rows)))
