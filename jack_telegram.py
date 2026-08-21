@@ -910,12 +910,82 @@ def handle(text):
         return None
     if _rt.startswith('/'):
         return 'Unbekannter Befehl: ' + _rt.split()[0] + ' - /menu zeigt alle Befehle.'
-    # Weiter zu jack_talk wenn kein fruehzeitiger Return
+
+    # --- APP LAUNCH HOOK (Qwen 20.08.) ---
+    import re as _re_launch
+    _m_launch = _re_launch.search(r'(?:öffne|starte|mach auf)\s+([a-zA-Z0-9äöüß\s]+?)(?:\s+und|\s*auf|$)', text, _re_launch.I)
+    if _m_launch:
+        _app_name = _m_launch.group(1).strip()
+        send(f'🚀 Starte {_app_name} auf Xiaomi...')
+        def _do_launch(an=_app_name):
+            try:
+                import subprocess
+                cmd = f"PKG=$(pm list packages | grep -i '{an}' | head -1 | cut -d: -f2); if [ -n \"$PKG\" ]; then monkey -p $PKG -c android.intent.category.LAUNCHER 1; else echo NOT_FOUND; fi"
+                r = subprocess.run(['ssh', 'xiaomi-jack', 'su', '-c', cmd], capture_output=True, text=True, timeout=15)
+                if 'NOT_FOUND' in r.stdout or r.returncode != 0:
+                    send(f'⚠️ {_app_name} nicht gefunden.')
+                else:
+                    send(f'✅ {_app_name} gestartet.')
+            except Exception as e:
+                send(f' Launch Fehler: {e}')
+        import threading
+        threading.Thread(target=_do_launch, daemon=True).start()
+        return None
+    # --- ENDE APP LAUNCH HOOK ---
+
+    # LLM Call mit Timeout und EXEC-Parser
     try:
         import jack_talk as _jt
-        return _jt.talk_to_gemini(text)
+        import signal
+        
+        def timeout_handler(signum, frame):
+            raise TimeoutError("LLM-Timeout nach 15s")
+        
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(15)
+        
+        resp = _jt.talk_to_gemini(text)
+        signal.alarm(0)
+        
+        if not resp:
+            return None
+        
+        # EXEC-Parser inline
+        cmd = None
+        if '[[EXEC:' in resp:
+            start = resp.find('[[EXEC:') + 7
+            end = resp.find(']]', start)
+            if end != -1: cmd = resp[start:end].strip()
+        elif '[[EXECUTE:' in resp:
+            start = resp.find('[[EXECUTE:') + 10
+            end = resp.find(']]', start)
+            if end != -1: cmd = resp[start:end].strip()
+        
+        if cmd:
+            # SSH-Befehle bereinigen
+            if 'sshpass' in cmd or '10.58.220.131' in cmd:
+                import re
+                match = re.search(r"'(am start.*?)'", cmd)
+                if match:
+                    cmd = 'ssh xiaomi-jack su -c "' + match.group(1) + '"'
+                else:
+                    cmd = 'ssh xiaomi-jack su -c "' + cmd.split()[-1].strip("'") + '"'
+            
+            PENDING_EXEC.clear()
+            PENDING_EXEC['cmd'] = cmd
+            preview = cmd if len(cmd) < 800 else cmd[:800] + ' ...'
+            send_keyboard('VORSCHLAG:' + chr(10) + preview, [[(' Ausführen', 'run_exec'), (' Abbrechen', 'cancel_exec')]])
+            
+            # Tag entfernen
+            import re
+            resp = re.sub(r'\[\[EXEC(?:UTE)?:.*?\]\]', '', resp).strip()
+        
+        return resp if resp else None
+    except TimeoutError:
+        return "⚠️ LLM-Timeout (15s). Bitte nochmal versuchen."
     except Exception as _te:
-        return f"Fehler: {_te}"
+        return f"LLM-Fehler: {_te}"
+
 
 def _offset_lesen():
     try:
@@ -1037,6 +1107,8 @@ def main():
                         try:
                             get_voice(fid, op)
                             rw2, heard, ans = process_voice_message(op)
+                            import jack_exec_parser
+                            ans = jack_exec_parser.parse_and_prepare(str(ans), PENDING_EXEC, send_keyboard) or ""
                             send("Du: " + str(heard) + chr(10) + chr(10) + "JACK: " + str(ans))
                             try: send_voice(rw2)
                             except Exception: pass

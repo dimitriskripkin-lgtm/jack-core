@@ -306,7 +306,7 @@ def talk_to_gemini(prompt):
             _jlog and _jlog.fehler("talk","unbenannt",_le)
         if result and result.startswith('[Ollama]'):
             return result + '\n\n💾 Lokal (llama3.2)'
-        return result + "\n\n🌐 Gemini"
+        return result + "\n\n🤖 Groq (gpt-oss-120b) | Online"
     except Exception:
         result = talk_to_ollama(prompt, [])
         return result + "\n\n💾 Lokal (llama3.2)"
