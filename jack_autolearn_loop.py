@@ -244,7 +244,21 @@ def main():
     log("=" * 60)
     
     cycle_num = 1
+    # P2 Memory-Pruning: Einmal am Tag um 4 Uhr (Qwen 21.08.)
+    _last_pruning_date = None
+    
     while True:
+        _now = datetime.datetime.now()
+        _today = _now.date()
+        if _now.hour == 4 and _last_pruning_date != _today:
+            try:
+                import jack_memory_pruning
+                _pr = jack_memory_pruning.run()
+                log(f"PRUNING: {_pr}")
+                _last_pruning_date = _today
+            except Exception as _e:
+                log(f"PRUNING-FEHLER: {_e}")
+
         # P1 Error-to-Rule: Regeln aus Fehlern generieren (Qwen 21.08. final)
         try:
             import jack_error_to_rule
