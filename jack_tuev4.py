@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+"""TÜV v4: Checkt JEDEN Bot-Befehl auf Handler + testet read-only live.
+Qwen 21.08. - Output als Report zum Kopieren."""
+import os, re, sys
+sys.path.insert(0, os.path.expanduser("~/jack"))
+
+J = os.path.expanduser("~/jack")
+TG = os.path.join(J, "jack_telegram.py")
+src = open(TG, encoding="utf-8").read()
+
+# Alle bekannten Befehle sammeln
+cmds = set()
+m = re.search(r"FAST_CMDS\s*=\s*\{([^}]+)\}", src)
+if m:
+    cmds.update(re.findall(r"'(/[^']+)'", m.group(1)))
+cmds.update("/" + c for c in re.findall(r"_rt\s*==\s*'/([a-z_]+)'", src))
+cmds.update("/" + c for c in re.findall(r"_rt\.startswith\('/([a-z_]+)'", src))
+cmds.update("/" + c for c in re.findall(r"text\.strip\(\)\s*==\s*'/([a-z_]+)'", src))
+cmds.update("/" + c for c in re.findall(r"text\.strip\(\)\.startswith\('/([a-z_]+)'", src))
+cmds.update(re.findall(r'"(/[a-z_]+)"\s*,\s*"[^"]+"\s*,\s*"/', src))
+
+def has_handler(cmd):
+    n = cmd.lstrip("/")
+    pats = [
+        f"_rt == '{cmd}'", f"_rt.startswith('{cmd}')",
+        f"text.strip()=='{cmd}'", f"text.strip() == '{cmd}'",
+        f"text.strip().startswith('{cmd}')",
+        f"'{cmd}' in text", f"'/', '{n}'",
+    ]
+    return any(p in src for p in pats)
+
+# Live-Tests fuer read-only Befehle
+def live_test(cmd):
+    try:
+        if cmd == "/akku":
+            return "OK" if os.path.exists("/sys/class/power_supply/battery/capacity") else "KEIN SYSFS"
+        if cmd == "/outcomes":
+            import jack_outcome_tracker as o
+            o.get_stats(1); return "OK"
+        if cmd == "/activity":
+            import jack_activity_logger as a
+            a.get_recent(hours=1); return "OK"
+        if cmd == "/appmap":
+            import jack_intent_apps as j
+            assert len(j.MAP) > 0; return f"OK ({len(j.MAP)} Apps)"
+        if cmd == "/errors":
+            import sqlite3
+            c = sqlite3.connect(os.path.join(J, "jack_errors.db"))
+            c.execute("SELECT COUNT(*) FROM errors").fetchone(); return "OK"
+        if cmd == "/selftest":
+            import jack_selftest; return "OK (Modul laedt)"
+        if cmd == "/sehen":
+            import jack_vision
+            assert hasattr(jack_vision, "analyze_screen"); return "OK (analyze_screen da)"
+        return "KEIN-LIVE-TEST"
+    except Exception as e:
+        return "FEHLER: " + str(e)[:60]
+
+# Report bauen
+report = []
+for cmd in sorted(cmds):
+    h = has_handler(cmd)
+    lt = live_test(cmd)
+    if not h:
+        status = "HANDLER-FEHLT"
+    elif "FEHLER" in lt:
+        status = "MODUL-DEFETT"
+    else:
+        status = "OK"
+    report.append((cmd, status, lt))
+
+print("TÜV v4 REPORT — " + str(len(report)) + " Befehle")
+print("=" * 62)
+for cmd, status, lt in report:
+    print(f"{cmd:18} | {status:14} | {lt}")
+print("=" * 62)
+ok = sum(1 for _, s, _ in report if s == "OK")
+fehlt = [c for c, s, _ in report if s == "HANDLER-FEHLT"]
+defekt = [c for c, s, _ in report if s == "MODUL-DEFETT"]
+print(f"OK: {ok}/{len(report)}")
+if fehlt: print("HANDLER FEHLT: " + ", ".join(fehlt))
+if defekt: print("MODUL DEFETT: " + ", ".join(defekt))

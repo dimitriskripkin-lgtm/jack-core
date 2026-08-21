@@ -655,6 +655,16 @@ def handle(text):
         threading.Thread(target=jack_explorer.run_exploration,args=(n,send),daemon=True).start()
         return 'Starte Xiaomi-Exploration ('+str(n)+' Apps)...'
     if text.strip()=='/appmap':
+        try:
+            import jack_intent_apps as _jia
+            _m = _jia.MAP
+            _lines = ['APP-MAP (' + str(len(_m)) + ' Eintraege, live verifiziert):']
+            for _k, _v in list(_m.items()):
+                _lines.append(_k + ': ' + _v)
+            return chr(10).join(_lines)
+        except Exception as _e:
+            return 'AppMap-Fehler: ' + str(_e)[:100]
+    if False:  # alter appmap-block deaktiviert
         import json,os as _os
         f=_os.path.expanduser('~/jack/xiaomi_app_map.json')
         try:
@@ -681,6 +691,13 @@ def handle(text):
         import threading as _th2
         _th2.Thread(target=jack_planner.run_plan,args=(skill['plan'],send),daemon=True).start()
         return 'Starte Skill: '+sname+' ['+skill['state']+']'
+    if text.strip().startswith('/sehen'):
+        try:
+            import jack_vision
+            _frage = text.strip()[6:].strip() or "Was siehst du?"
+            return jack_vision.analyze_screen(_frage)
+        except Exception as e:
+            return 'Vision-Fehler: ' + str(e)[:100]
     if text.strip() in ['/selftest','/test']:
         try:
             import jack_cortex as _jc

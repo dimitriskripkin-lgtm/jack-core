@@ -1,0 +1,2 @@
+#!/data/data/com.termux/files/usr/bin/sh
+exec python3 /data/data/com.termux/files/home/jack/jack_focus_monitor.py
