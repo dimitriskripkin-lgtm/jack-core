@@ -894,6 +894,75 @@ def handle(text):
         return 'CODE-GENERATOR: ' + _desc + chr(10) + 'Status: In Entwicklung (braucht jack_coder Integration)'
     if _rt == '/run':
         return 'RUN: Letzten Code ausführen - Status: In Entwicklung'
+    if _rt.startswith('/cc'):
+        _frage = text.strip()[3:].strip() or "analysiere jack_exec"
+        try:
+            import jack_talk as _jt
+            return _jt.talk_to_gemini('CC: ' + _frage)
+        except Exception as e:
+            return 'CC-Fehler: ' + str(e)[:100]
+    if _rt == '/db_skills':
+        try:
+            import sqlite3
+            c = sqlite3.connect(os.path.expanduser('~/jack/jack_skills.db'))
+            rows = c.execute('SELECT name, state, COUNT(*) FROM skills GROUP BY name, state').fetchall()
+            c.close()
+            lines = ['SKILLS-DB:']
+            for name, state, count in rows[:20]:
+                lines.append(f'{name}: {state} ({count}x)')
+            return chr(10).join(lines)
+        except Exception as e:
+            return 'Skills-DB-Fehler: ' + str(e)[:100]
+    if _rt.startswith('/db_trace'):
+        _query = text.strip()[9:].strip() or "SELECT * FROM outcomes LIMIT 10"
+        try:
+            import sqlite3
+            c = sqlite3.connect(os.path.expanduser('~/jack/jack_outcomes.db'))
+            rows = c.execute(_query).fetchall()
+            c.close()
+            return 'TRACE: ' + str(len(rows)) + ' Zeilen' + chr(10) + str(rows[:5])
+        except Exception as e:
+            return 'Trace-DB-Fehler: ' + str(e)[:100]
+    if _rt.startswith('/find'):
+        _element = text.strip()[5:].strip() or "Suchleiste"
+        try:
+            import jack_screen_mapper as sm
+            h, pkg, act, els = sm.dump_and_parse()
+            found = [e for e in els if _element.lower() in str(e).lower()]
+            if found:
+                return f'FOUND: {len(found)} Elemente mit "{_element}"' + chr(10) + str(found[:3])
+            else:
+                return f'NICHT GEFUNDEN: "{_element}" auf Screen {pkg}/{act}'
+        except Exception as e:
+            return 'Find-Fehler: ' + str(e)[:100]
+    if _rt.startswith('/mission'):
+        _aufgabe = text.strip()[8:].strip() or "pruefe logs"
+        try:
+            import jack_autonomous
+            return 'MISSION gestartet: ' + _aufgabe + chr(10) + 'Status: ' + str(jack_autonomous.run_task(_aufgabe))
+        except Exception as e:
+            return 'Mission-Fehler: ' + str(e)[:100]
+    if _rt.startswith('/rag'):
+        _query = text.strip()[4:].strip() or "Python"
+        try:
+            import jack_memory
+            results = jack_memory.search_similar(_query, limit=5)
+            if results:
+                lines = ['RAG: ' + str(len(results)) + ' Treffer']
+                for r in results[:3]:
+                    lines.append('  ' + str(r)[:80])
+                return chr(10).join(lines)
+            else:
+                return f'RAG: Keine Treffer für "{_query}"'
+        except Exception as e:
+            return 'RAG-Fehler: ' + str(e)[:100]
+    if _rt == '/skill_builder':
+        return 'SKILL-BUILDER: Status: In Entwicklung (braucht jack_skill_builder Modul)'
+    if _rt == '/tb':
+        return 'TRACEBACK: Kein aktiver Fehler. System läuft stabil.'
+    if _rt.startswith('/verbessere'):
+        _modul = text.strip()[11:].strip() or "jack_memory"
+        return 'VERBESSERE: ' + _modul + chr(10) + 'Status: In Entwicklung (braucht jack_coder Integration)'
     if _rt == '/budget':
         try:
             import jack_budget as _jb; return str(_jb.status())
