@@ -1,88 +1,39 @@
-"""Intent-Katalog: Deep-Navigation für Settings (Qwen 21.08.)
-Nutzt 19415 Intents aus jack_cmd_crawler.db für präzise Navigation."""
-import sqlite3, os, re
+"""Settings-Navigation mit standardisierten Actions (Qwen 21.08.)
+Nutzt Android-Standard-Actions statt interne Activity-Namen."""
+import os
 
-J = os.path.expanduser("~/jack")
-DB_PATH = os.path.join(J, "jack_cmd_crawler.db")
-
-# Keyword -> Package + Component-Teil
-SETTINGS_MAP = {
-    'wlan': ('com.android.settings', 'ConfigureWifi'),
-    'wifi': ('com.android.settings', 'ConfigureWifi'),
-    'bluetooth': ('com.android.settings', 'Bluetooth'),
-    'display': ('com.android.settings', 'Display'),
-    'helligkeit': ('com.android.settings', 'Display'),
-    'akku': ('com.android.settings', 'Battery'),
-    'battery': ('com.android.settings', 'Battery'),
-    'sound': ('com.android.settings', 'Sound'),
-    'ton': ('com.android.settings', 'Sound'),
-    'notification': ('com.android.settings', 'Notification'),
-    'benachrichtigung': ('com.android.settings', 'Notification'),
-    'apps': ('com.android.settings', 'Application'),
-    'anwendungen': ('com.android.settings', 'Application'),
-    'storage': ('com.android.settings', 'Storage'),
-    'speicher': ('com.android.settings', 'Storage'),
-    'security': ('com.android.settings', 'Security'),
-    'sicherheit': ('com.android.settings', 'Security'),
-    'location': ('com.android.settings', 'Location'),
-    'standort': ('com.android.settings', 'Location'),
-    'date': ('com.android.settings', 'DateTime'),
-    'datum': ('com.android.settings', 'DateTime'),
-    'zeit': ('com.android.settings', 'DateTime'),
-    'language': ('com.android.settings', 'LocalePicker'),
-    'sprache': ('com.android.settings', 'LocalePicker'),
-    'developer': ('com.android.settings', 'DevelopmentSettings'),
-    'entwickler': ('com.android.settings', 'DevelopmentSettings'),
+# Keyword -> Android Settings Action
+SETTINGS_ACTIONS = {
+    'wlan': 'android.settings.WIFI_SETTINGS',
+    'wifi': 'android.settings.WIFI_SETTINGS',
+    'bluetooth': 'android.settings.BLUETOOTH_SETTINGS',
+    'display': 'android.settings.DISPLAY_SETTINGS',
+    'helligkeit': 'android.settings.DISPLAY_SETTINGS',
+    'akku': 'android.settings.BATTERY_SAVER_SETTINGS',
+    'battery': 'android.settings.BATTERY_SAVER_SETTINGS',
+    'sound': 'android.settings.SOUND_SETTINGS',
+    'ton': 'android.settings.SOUND_SETTINGS',
+    'notification': 'android.settings.NOTIFICATION_SETTINGS',
+    'benachrichtigung': 'android.settings.NOTIFICATION_SETTINGS',
+    'apps': 'android.settings.APPLICATION_SETTINGS',
+    'anwendungen': 'android.settings.APPLICATION_SETTINGS',
+    'storage': 'android.settings.INTERNAL_STORAGE_SETTINGS',
+    'speicher': 'android.settings.INTERNAL_STORAGE_SETTINGS',
+    'security': 'android.settings.SECURITY_SETTINGS',
+    'sicherheit': 'android.settings.SECURITY_SETTINGS',
+    'location': 'android.settings.LOCATION_SCANNER_SETTINGS',
+    'standort': 'android.settings.LOCATION_SCANNER_SETTINGS',
+    'date': 'android.settings.DATE_SETTINGS',
+    'datum': 'android.settings.DATE_SETTINGS',
+    'zeit': 'android.settings.DATE_SETTINGS',
+    'language': 'android.settings.LOCALE_SETTINGS',
+    'sprache': 'android.settings.LOCALE_SETTINGS',
+    'developer': 'android.settings.APPLICATION_DEVELOPMENT_SETTINGS',
+    'entwickler': 'android.settings.APPLICATION_DEVELOPMENT_SETTINGS',
 }
 
-def find_settings_intent(keyword):
-    """Sucht Settings-Intent basierend auf Keyword."""
-    kw = keyword.lower()
-    if kw not in SETTINGS_MAP:
-        return None
-    
-    package, component_part = SETTINGS_MAP[kw]
-    
-    try:
-        con = sqlite3.connect(DB_PATH, timeout=5)
-        query = """
-            SELECT package, component, action
-            FROM intents
-            WHERE package = ? AND component LIKE ?
-            LIMIT 1
-        """
-        row = con.execute(query, (package, f'%{component_part}%')).fetchone()
-        con.close()
-        return row
-    except Exception:
-        return None
-
-def build_deep_command(intent_row):
-    """Baut SSH-Befehl für Deep-Navigation."""
-    if not intent_row:
-        return None
-    
-    package, component, action = intent_row
-    
-    # Component ist oft .ActivityName, muss zu package/.ActivityName werden
-    if component.startswith('.'):
-        full_component = package + '/' + component
-    else:
-        full_component = package + '/' + component
-    
-    # Intent-Parameter bauen
-    intent_parts = ['am', 'start', '-n', full_component]
-    
-    if action and action != 'android.intent.action.VIEW':
-        intent_parts.extend(['-a', action])
-    
-    intent_cmd = ' '.join(intent_parts)
-    ssh_cmd = f'ssh xiaomi-jack "su -c \'{intent_cmd}\'"'
-    
-    return ssh_cmd
-
 def suggest_deep_navigation(user_text):
-    """Analysiert User-Text und schlägt Deep-Navigation vor."""
+    """Analysiert User-Text und schlägt Settings-Navigation vor."""
     text_lower = user_text.lower()
     
     # Prüfe ob es eine Settings-Anfrage ist
@@ -90,10 +41,10 @@ def suggest_deep_navigation(user_text):
         return None, None
     
     # Suche nach Keyword
-    for kw in SETTINGS_MAP:
+    for kw, action in SETTINGS_ACTIONS.items():
         if kw in text_lower:
-            intent = find_settings_intent(kw)
-            if intent:
-                return intent, build_deep_command(intent)
+            intent_cmd = f"am start -a {action}"
+            ssh_cmd = f'ssh xiaomi-jack "su -c \'{intent_cmd}\'"'
+            return (action,), ssh_cmd
     
     return None, None
