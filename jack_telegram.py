@@ -1091,7 +1091,11 @@ def main():
                             rw2, heard, ans = process_voice_message(op)
                             import jack_exec_parser
                             ans = jack_exec_parser.parse_and_prepare(str(ans), PENDING_EXEC, send_keyboard) or ""
-                            send("Du: " + str(heard) + chr(10) + chr(10) + "JACK: " + str(ans))
+                            import jack_intent_apps
+                            if jack_intent_apps.try_app_launch(str(heard), PENDING_EXEC, send_keyboard):
+                                send("Du: "+str(heard)+chr(10)+chr(10)+"JACK: App-Befehl bereit - Freigabe tippen.")
+                            else:
+                                send("Du: "+str(heard)+chr(10)+chr(10)+"JACK: "+str(ans))
                             try: send_voice(rw2)
                             except Exception: pass
                             for f in (op, rw2):
