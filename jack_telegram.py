@@ -836,6 +836,12 @@ def handle(text):
                 send('Harvest-Fehler: ' + str(_e)[:150])
         _hth.Thread(target=_hrun, daemon=True).start()
         return None
+    if _rt == '/activity':
+        try:
+            import jack_activity_logger as _al
+            return _al.generate_summary(24)
+        except Exception as e:
+            return 'Activity-Fehler: ' + str(e)[:100]
     if _rt == '/outcomes':
         try:
             import jack_outcome_tracker as _ot
