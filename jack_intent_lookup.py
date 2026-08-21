@@ -66,9 +66,9 @@ def build_deep_command(intent_row):
     
     # Component ist oft .ActivityName, muss zu package/.ActivityName werden
     if component.startswith('.'):
-        full_component = package + component
+        full_component = package + '/' + component
     else:
-        full_component = component
+        full_component = package + '/' + component
     
     # Intent-Parameter bauen
     intent_parts = ['am', 'start', '-n', full_component]

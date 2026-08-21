@@ -985,6 +985,17 @@ def handle(text):
         return 'Unbekannter Befehl: ' + _rt.split()[0] + ' - /menu zeigt alle Befehle.'
 
 
+    # Deep-Navigation VOR App-Handler (Qwen 21.08.)
+    try:
+        import jack_intent_lookup as _il
+        _intent, _cmd = _il.suggest_deep_navigation(text)
+        if _cmd:
+            PENDING_EXEC.clear()
+            PENDING_EXEC['cmd'] = _cmd
+            send_keyboard('VORSCHLAG (Deep):' + chr(10) + _cmd, [[(' Ausfuehren', 'run_exec'), (' Abbrechen', 'cancel_exec')]])
+            return None
+    except Exception:
+        pass
     import jack_intent_apps
     if jack_intent_apps.try_app_launch(text, PENDING_EXEC, send_keyboard):
         return None
@@ -1186,8 +1197,30 @@ def main():
                             else:
                                 pass
                             import jack_exec_parser
-                            import jack_intent_apps
-                            if jack_intent_apps.try_app_launch(str(heard), PENDING_EXEC, send_keyboard):
+                            # Deep-Navigation VOR App-Handler (Voice)
+                            try:
+                                import jack_intent_lookup as _il2
+                                _intent2, _cmd2 = _il2.suggest_deep_navigation(str(heard))
+                                if _cmd2:
+                                    PENDING_EXEC.clear()
+                                    PENDING_EXEC['cmd'] = _cmd2
+                                    send_keyboard('VORSCHLAG (Deep):' + chr(10) + _cmd2, [[(' Ausfuehren', 'run_exec'), (' Abbrechen', 'cancel_exec')]])
+                                    _deep_handled = True
+                                else:
+                                    _deep_handled = False
+                            except Exception:
+                                _deep_handled = False
+                            if not _deep_handled:
+                                import jack_intent_apps
+                                if jack_intent_apps.try_app_launch(str(heard), PENDING_EXEC, send_keyboard):
+                                    _app_handled = True
+                                else:
+                                    _app_handled = False
+                            else:
+                                _app_handled = False
+                            if _deep_handled:
+                                send("Du: "+str(heard)+chr(10)+chr(10)+"JACK: Deep-Navigation bereit - Freigabe tippen.")
+                            elif _app_handled:
                                 send("Du: "+str(heard)+chr(10)+chr(10)+"JACK: App-Befehl bereit - Freigabe tippen.")
                             else:
                                 send("Du: "+str(heard)+chr(10)+chr(10)+"JACK: "+str(ans))
