@@ -17,6 +17,15 @@ def run(cmd, timeout=120):
     ok, msg = pruefe(cmd)
     if not ok:
         return msg
+    # Xiaomi UI-Befehle: Screen vorher entsperren (Qwen 21.08.)
+    _ui = ('monkey', 'am start', 'input ', 'uiautomator')
+    if 'xiaomi-jack' in cmd and any(u in cmd for u in _ui):
+        try:
+            import jack_xiaomi_unlock
+            _us = jack_xiaomi_unlock.ensure_unlocked()
+            import jack_log; jack_log.log_decision('UNLOCK', _us, cmd[:60])
+        except Exception:
+            pass
     try:
         r = subprocess.run(['bash','-lc',cmd], capture_output=True,
                            text=True, timeout=timeout,
