@@ -79,9 +79,16 @@ def live_test(cmd):
         return "FEHLER: " + str(e)[:60]
 
 report = []
-for cmd in sorted(cmds):
+# Commands mit Parametern auf Basis-Command reduzieren
+base_cmds = set()
+for cmd in cmds:
     if not cmd.startswith("/"):
         continue
+    # Nur den Basis-Command extrahieren (vor dem ersten Leerzeichen)
+    base = cmd.split()[0]
+    base_cmds.add(base)
+
+for cmd in sorted(base_cmds):
     h = has_handler(cmd)
     lt = live_test(cmd)
     if not h:

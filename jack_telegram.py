@@ -872,6 +872,28 @@ def handle(text):
             return chr(10).join(lines)
         except Exception as e:
             return 'Outcomes-Fehler: ' + str(e)[:100]
+    if _rt.startswith('/agent'):
+        _ziel = text.strip()[6:].strip() or "optimiere system"
+        return 'AGENT gestartet: ' + _ziel + chr(10) + 'Status: In Entwicklung'
+    if _rt.startswith('/auto'):
+        _ziel = text.strip()[5:].strip() or "optimiere jack"
+        return 'AUTO gestartet: ' + _ziel + chr(10) + 'Status: In Entwicklung'
+    if _rt.startswith('/ssh'):
+        _cmd = text.strip()[4:].strip()
+        if not _cmd:
+            return 'Syntax: /ssh <befehl>'
+        try:
+            import jack_exec
+            return jack_exec.run('ssh xiaomi-jack "' + _cmd + '"', timeout=30)
+        except Exception as e:
+            return 'SSH-Fehler: ' + str(e)[:100]
+    if _rt.startswith('/code'):
+        _desc = text.strip()[5:].strip()
+        if not _desc:
+            return 'Syntax: /code <beschreibung>'
+        return 'CODE-GENERATOR: ' + _desc + chr(10) + 'Status: In Entwicklung (braucht jack_coder Integration)'
+    if _rt == '/run':
+        return 'RUN: Letzten Code ausführen - Status: In Entwicklung'
     if _rt == '/budget':
         try:
             import jack_budget as _jb; return str(_jb.status())
