@@ -775,6 +775,18 @@ def handle(text):
                 send('Harvest-Fehler: ' + str(_e)[:150])
         _hth.Thread(target=_hrun, daemon=True).start()
         return None
+    if _rt == '/outcomes':
+        try:
+            import jack_outcome_tracker as _ot
+            stats = _ot.get_stats(10)
+            if not stats: return 'Noch keine Outcomes gespeichert.'
+            lines = ['OUTCOMES (Top 10 Befehle):']
+            for cmd, total, succ in stats:
+                rate = (succ / total * 100) if total > 0 else 0
+                lines.append(f'{cmd[:50]} - {total}x ({rate:.0f}% Erfolg)')
+            return chr(10).join(lines)
+        except Exception as e:
+            return 'Outcomes-Fehler: ' + str(e)[:100]
     if _rt == '/budget':
         try:
             import jack_budget as _jb; return str(_jb.status())

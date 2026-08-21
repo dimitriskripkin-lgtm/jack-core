@@ -46,6 +46,12 @@ def run(cmd, timeout=120):
         try:
             import jack_log; jack_log.log_decision('EXEC', cmd[:80], 'rc=' + str(rc))
         except Exception: pass
+        # Outcome-Tracking: Befehl + Ergebnis speichern (Qwen 21.08.)
+        try:
+            import jack_outcome_tracker
+            jack_outcome_tracker.log_outcome(cmd[:500], rc, out[:1000])
+        except Exception:
+            pass
         return 'rc=' + str(rc) + chr(10) + out
     except subprocess.TimeoutExpired:
         return 'TIMEOUT nach ' + str(timeout) + 's'
