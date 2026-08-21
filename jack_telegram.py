@@ -128,10 +128,71 @@ MENU = {
     },
 }
 
+# MENU_EXTRA_ALL_COMMANDS_QWEN
+MENU["befehle"] = {
+    "label": "🔧 Alle Befehle",
+    "befehle": [
+        ("/outcomes","Erfolgsquote aller Befehle","/outcomes"),
+        ("/menu","Befehlszentrale","/menu"),
+        ("/befehle","Schnellbuttons","/befehle"),
+        ("/status","Systemstatus","/status"),
+        ("/selftest","Kernchecks","/selftest"),
+        ("/trace","Threads/RAM/Aktionen","/trace"),
+        ("/scan","Vollscan","/scan"),
+        ("/level","Autonomie-Level","/level"),
+        ("/errors","Offene Fehler","/errors"),
+        ("/log","Letzte Aktionen","/log"),
+        ("/budget","API-Budget","/budget"),
+        ("/audit","Systembericht","/audit"),
+        ("/skills","Skills","/skills"),
+        ("/baum","Gedächtnisbaum","/baum"),
+        ("/lernen","Lernstatus","/lernen"),
+        ("/kette","Aktionsketten","/kette"),
+        ("/mission","Aufgabe starten","/mission pruefe logs"),
+        ("/auto","Autonom arbeiten","/auto optimiere jack"),
+        ("/bugfix","Bugfix-Lauf","/bugfix"),
+        ("/find","Screen-Element suchen","/find Suchleiste"),
+        ("/vision","Screenshot analysieren","/vision was siehst du"),
+        ("/harvest","Fakten ernten","/harvest claude 20"),
+        ("/harvest_status","Harvest Status","/harvest_status"),
+        ("/harvest_lernen","Harvest destillieren","/harvest_lernen"),
+        ("/fakten","Gelernte Fakten","/fakten"),
+        ("/explore","App erkunden","/explore com.android.settings"),
+        ("/explore_deep","Deep Explore","/explore_deep com.miui.gallery"),
+        ("/appmap","App-Map anzeigen","/appmap"),
+        ("/agent","UI-Agent starten","/agent öffne Einstellungen"),
+        ("/ssh","SSH-Agent Xiaomi","/ssh uptime"),
+        ("/code","Code schreiben","/code akku script"),
+        ("/run","Letzten Code ausführen","/run"),
+        ("/werkstatt","Werkstatt anzeigen","/werkstatt"),
+        ("/cc","Claude Code fragen","/cc analysiere jack_exec"),
+        ("/verbessere","Modul verbessern","/verbessere jack_memory"),
+        ("/akku","Akku/Temp","/akku"),
+        ("/sensor","Sensoren","/sensor"),
+        ("/standort","GPS","/standort"),
+        ("/sehen","Kamera sehen","/sehen was liegt da")
+    ]
+}
+# END_MENU_EXTRA_ALL_COMMANDS_QWEN
+
+
 def menu_hauptseite():
     """Sendet Hauptmenue mit Kategorie-Buttons."""
     buttons = [[(_v["label"], "menu:"+_k)] for _k, _v in MENU.items()]
     return buttons
+
+# MENU_HAUPTSEITE_EXTRA_QWEN
+_old_menu_hauptseite_qwen = menu_hauptseite
+def menu_hauptseite():
+    kb = _old_menu_hauptseite_qwen()
+    try:
+        if "menu:befehle" not in str(kb):
+            kb.append([("🔧 Alle Befehle", "menu:befehle")])
+    except Exception:
+        pass
+    return kb
+# END_MENU_HAUPTSEITE_EXTRA_QWEN
+
 
 def menu_kategorie(key):
     """Text fuer eine Kategorie."""
