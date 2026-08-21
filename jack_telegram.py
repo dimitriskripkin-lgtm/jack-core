@@ -1089,6 +1089,17 @@ def main():
                         try:
                             get_voice(fid, op)
                             rw2, heard, ans = process_voice_message(op)
+                            if isinstance(ans, str) and ans.startswith('__APPCMD__:'):
+                                _pkg = ans.split(':', 1)[1]
+                                _cmd = 'ssh xiaomi-jack "su -c \'monkey -p ' + _pkg + ' -c android.intent.category.LAUNCHER 1\'"'
+                                PENDING_EXEC.clear()
+                                PENDING_EXEC['cmd'] = _cmd
+                                send_keyboard('VORSCHLAG:' + chr(10) + _cmd, [[('🟢 Ausfuehren', 'run_exec'), ('🔴 Abbrechen', 'cancel_exec')]])
+                                send('Du: ' + str(heard) + chr(10) + chr(10) + 'JACK: App-Befehl erkannt - Freigabe tippen.')
+                                ans = ''
+                                rw2 = None
+                            else:
+                                pass
                             import jack_exec_parser
                             ans = jack_exec_parser.parse_and_prepare(str(ans), PENDING_EXEC, send_keyboard) or ""
                             import jack_intent_apps
