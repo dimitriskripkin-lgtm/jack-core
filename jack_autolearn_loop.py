@@ -245,6 +245,12 @@ def main():
     
     cycle_num = 1
     while True:
+        # P1 Error-to-Rule: Regeln aus Fehlern generieren (Qwen 21.08. final)
+        try:
+            import jack_error_to_rule
+            log(jack_error_to_rule.run())
+        except Exception as _e:
+            log(f"Error-to-Rule Fehler: {_e}")
         success = run_cycle(cycle_num)
         if not success:
             log("FEHLER: Zyklus abgebrochen")

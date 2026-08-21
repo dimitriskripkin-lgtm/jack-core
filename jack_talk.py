@@ -237,6 +237,12 @@ def talk_to_gemini(prompt):
     try:
         _persona=open(os.path.expanduser('~/jack/jack_persona.md'),encoding='utf-8').read().strip()
     except Exception: _persona=''
+    # P1 Error-to-Rule: Gelernte Regeln an Persona anhaengen (Qwen 21.08. final)
+    try:
+        _rules = open(os.path.expanduser('~/jack/jack_learned_rules.md'), encoding='utf-8').read().strip()
+        if _rules and 'Keine offenen Fehler' not in _rules:
+            _persona = _persona + chr(10) + chr(10) + _rules
+    except Exception: pass
     context = (
         f"JETZT: {_now}.\n"
         +(_persona+chr(10) if _persona else "")
