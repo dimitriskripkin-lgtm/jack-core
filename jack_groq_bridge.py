@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os,json,urllib.request
 
-MODEL="llama-3.3-70b-versatile"
+MODEL="openai/gpt-oss-120b"
 API_URL="https://api.groq.com/openai/v1/chat/completions"
 UA="Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36"
 
