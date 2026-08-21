@@ -132,6 +132,7 @@ MENU = {
 MENU["befehle"] = {
     "label": "🔧 Alle Befehle",
     "befehle": [
+        ("/activity","Activity-Log der letzten 24h","/activity"),
         ("/outcomes","Erfolgsquote aller Befehle","/outcomes"),
         ("/menu","Befehlszentrale","/menu"),
         ("/befehle","Schnellbuttons","/befehle"),

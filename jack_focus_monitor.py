@@ -18,6 +18,14 @@ def main():
             print("Stop-Datei - Ende."); return
         f = fokus()
         if f and f != letzter:
+            # Activity-Logger: Screen-Wechsel automatisch loggen (Qwen 21.08.)
+            try:
+                import jack_activity_logger
+                _old_pkg = letzter.split(" ")[-1].split("/")[0].split("{")[1] if "{" in letzter else "unknown"
+                _new_pkg = f.split(" ")[-1].split("/")[0].split("{")[1] if "{" in f else "unknown"
+                jack_activity_logger.log_event("xiaomi", "screen_change", f"{_old_pkg} -> {_new_pkg}")
+            except Exception:
+                pass
             low = f.lower()
             print("WECHSEL: " + f[:80])
             if "aod" not in low and "keyguard" not in low:
