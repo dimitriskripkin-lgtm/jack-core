@@ -911,27 +911,6 @@ def handle(text):
     if _rt.startswith('/'):
         return 'Unbekannter Befehl: ' + _rt.split()[0] + ' - /menu zeigt alle Befehle.'
 
-    # --- APP LAUNCH HOOK (Qwen 20.08.) ---
-    import re as _re_launch
-    _m_launch = _re_launch.search(r'(?:öffne|starte|mach auf)\s+([a-zA-Z0-9äöüß\s]+?)(?:\s+und|\s*auf|$)', text, _re_launch.I)
-    if _m_launch:
-        _app_name = _m_launch.group(1).strip()
-        send(f'🚀 Starte {_app_name} auf Xiaomi...')
-        def _do_launch(an=_app_name):
-            try:
-                import subprocess
-                cmd = f"PKG=$(pm list packages | grep -i '{an}' | head -1 | cut -d: -f2); if [ -n \"$PKG\" ]; then monkey -p $PKG -c android.intent.category.LAUNCHER 1; else echo NOT_FOUND; fi"
-                r = subprocess.run(['ssh', 'xiaomi-jack', 'su', '-c', cmd], capture_output=True, text=True, timeout=15)
-                if 'NOT_FOUND' in r.stdout or r.returncode != 0:
-                    send(f'⚠️ {_app_name} nicht gefunden.')
-                else:
-                    send(f'✅ {_app_name} gestartet.')
-            except Exception as e:
-                send(f' Launch Fehler: {e}')
-        import threading
-        threading.Thread(target=_do_launch, daemon=True).start()
-        return None
-    # --- ENDE APP LAUNCH HOOK ---
 
     # LLM Call mit Timeout und EXEC-Parser
     try:
