@@ -912,6 +912,9 @@ def handle(text):
         return 'Unbekannter Befehl: ' + _rt.split()[0] + ' - /menu zeigt alle Befehle.'
 
 
+    import jack_intent_apps
+    if jack_intent_apps.try_app_launch(text, PENDING_EXEC, send_keyboard):
+        return None
     # LLM Call mit Timeout und EXEC-Parser
     try:
         import jack_talk as _jt
