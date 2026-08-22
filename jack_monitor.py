@@ -2,6 +2,19 @@
 """JACK Monitor: Event-driven Ueberwachung + /scan Befehl.
 Kein Dauerloop. Prueft nur was sich aendert und meldet sofort."""
 import os, json, sqlite3, subprocess, datetime
+
+# HEAT-PROTECT (Qwen): Ollama nicht neu starten wenn CPU heiss
+def _heat_protect_check(svc):
+    if svc == "ollama":
+        try:
+            temp = int(open('/sys/class/thermal/thermal_zone0/temp').read().strip()) / 1000
+            if temp > 55:
+                print("HEAT-PROTECT: ollama NICHT neu gestartet (CPU %.1f C > 55 C)" % temp)
+                return True
+        except Exception:
+            pass
+    return False
+
 try:
     import jack_logging as _jlog
 except Exception:
