@@ -23,10 +23,33 @@ def process_voice_message(ogg_path):
         subprocess.run(["ffmpeg","-y","-i",ogg_path,"-ar","16000","-ac","1","-c:a","pcm_s16le",wav_path], check=True, capture_output=True)
     except Exception as e:
         return None, "", f"ffmpeg-Fehler: {e}"
+    # P8 (Qwen 22.08.): Whisper auf Xiaomi wenn Honor heiss, Fallback lokal
+    import jack_heat_protection as _hp
     try:
-        with jack_guard.Guard("whisper"):
-            result = subprocess.run([WHISPER_PATH,"-m",MODEL_PATH,"-f",wav_path,"-l","de","-nt","-t","6"], capture_output=True, text=True)
-        text = " ".join(result.stdout.split()).strip()
+        if _hp.worker_target() == "xiaomi":
+            try:
+                # WAV auf Xiaomi kopieren
+                subprocess.run(["scp", wav_path, "xiaomi-jack:/tmp/jack_voice.wav"], check=True, timeout=10, capture_output=True)
+                # Whisper auf Xiaomi ausfuehren + WAV loeschen
+                result = subprocess.run(
+                    ["ssh", "xiaomi-jack", 
+                     "~/whisper.cpp/build/bin/whisper-cli -m ~/whisper.cpp/models/ggml-small.bin -f /tmp/jack_voice.wav -l de -nt -t 4 && rm /tmp/jack_voice.wav"],
+                    capture_output=True, text=True, timeout=30
+                )
+                text = " ".join(result.stdout.split()).strip()
+                if not text:
+                    raise ValueError("Leeres Ergebnis von Xiaomi")
+                print(f"P8: Whisper auf Xiaomi OK")
+            except Exception as e:
+                print(f"P8: Xiaomi-Whisper Fehler ({e}), Fallback lokal")
+                with jack_guard.Guard("whisper"):
+                    result = subprocess.run([WHISPER_PATH,"-m",MODEL_PATH,"-f",wav_path,"-l","de","-nt","-t","6"], capture_output=True, text=True)
+                text = " ".join(result.stdout.split()).strip()
+        else:
+            # Honor kuehl - lokale Ausfuehrung
+            with jack_guard.Guard("whisper"):
+                result = subprocess.run([WHISPER_PATH,"-m",MODEL_PATH,"-f",wav_path,"-l","de","-nt","-t","6"], capture_output=True, text=True)
+            text = " ".join(result.stdout.split()).strip()
     except Exception as e:
         return None, "", f"Whisper-Fehler: {e}"
     if not text:
