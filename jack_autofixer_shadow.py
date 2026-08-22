@@ -124,6 +124,15 @@ def _check_resources():
     return True,"OK"
 
 def run(limit=5):
+    # HEAT-PROTECT (Qwen 21.08.): Shadow-Fixer nur bei < 55°C
+    try:
+        import jack_heat_protection
+        if not jack_heat_protection.check_heat("shadow"):
+            print("Shadow-Fixer run() übersprungen (Hitze)")
+            return []
+    except Exception as e:
+        print(f"Heat-Check-Fehler: {e}")
+
     ok,reason=_check_resources()
     if not ok: _log(f"Ressourcen kritisch - abgebrochen: {reason}","WARN"); return
     errors=_get_open_errors(limit)

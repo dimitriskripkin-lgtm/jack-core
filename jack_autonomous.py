@@ -158,6 +158,16 @@ def main():
             jack_log.log_decision('EXPLORE', f"Xiaomi: CPU={_xr.get('cpu_user','?')} RAM={_xr.get('ram','?')} Akku={_xr.get('battery','?')} Temp={_xr.get('temp_c','?')}C")
         
         def _run_autofixer():
+            # HEAT-PROTECT (Qwen 21.08.): Shadow-Fixer nur bei < 55°C
+            try:
+                import jack_heat_protection
+                if not jack_heat_protection.check_heat("shadow"):
+                    print("Shadow-Fixer übersprungen (Hitze)")
+                    return
+            except Exception as e:
+                print(f"Heat-Check-Fehler: {e}")
+            import jack_autofixer_shadow as _afs
+            _afs.run(limit=3)
             import jack_autofixer_shadow as _afs
             _afs.run(limit=3)
 
