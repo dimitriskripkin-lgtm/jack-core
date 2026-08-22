@@ -248,7 +248,7 @@ def main():
     _last_pruning_date = None
     
     while True:
-        _now = datetime.datetime.now()
+        _now = datetime.now()
         _today = _now.date()
         if _now.hour == 4 and _last_pruning_date != _today:
             try:
