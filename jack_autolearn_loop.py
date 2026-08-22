@@ -52,8 +52,6 @@ def genesis_skills():
         "/data/data/com.termux/files/home/.termux/boot/termux.log",
         "/data/data/com.termux/files/home/jack/startup.log",
         "/data/data/com.termux/files/home/jack/orchestrator.log",
-        os.path.expanduser("\~/jack/startup.log"),
-        os.path.expanduser("\~/jack/orchestrator.log"),
     ]
     
     error_counts = {}
