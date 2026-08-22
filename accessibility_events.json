@@ -1,0 +1,177 @@
+[
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787414374.8342247
+  },
+  {
+    "type": "window_change",
+    "package": "com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher",
+    "timestamp": 1787414397.1726956
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787414418.9390683
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787414424.3462033
+  },
+  {
+    "type": "window_change",
+    "package": "com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher",
+    "timestamp": 1787414582.4474657
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787414587.9092712
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787414632.1467397
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787414637.778581
+  },
+  {
+    "type": "window_change",
+    "package": "com.google.android.documentsui/com.android.documentsui.picker.PickActivity",
+    "timestamp": 1787414643.2425911
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787414648.6568496
+  },
+  {
+    "type": "window_change",
+    "package": "com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher",
+    "timestamp": 1787414725.3712974
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787414730.8931947
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787414956.8697953
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787414973.168666
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787415164.4098227
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787415186.49769
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787415246.764764
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787415258.562098
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787415320.6528554
+  },
+  {
+    "type": "window_change",
+    "package": "com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher",
+    "timestamp": 1787415336.9795117
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787415342.496329
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787415387.123396
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787415409.2742922
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787415523.5740032
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787415599.747312
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787415704.5951881
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787415732.0006895
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787415813.464693
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787415830.3076358
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787415906.5698407
+  },
+  {
+    "type": "window_change",
+    "package": "ai.qwenlm.chat.android/ai.qwenlm.chat.android.MainActivity",
+    "timestamp": 1787415933.8773296
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787416070.547441
+  },
+  {
+    "type": "window_change",
+    "package": "com.google.android.documentsui/com.android.documentsui.picker.PickActivity",
+    "timestamp": 1787416076.136466
+  },
+  {
+    "type": "window_change",
+    "package": "com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher",
+    "timestamp": 1787416081.6116009
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787416087.0637553
+  }
+]
