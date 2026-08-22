@@ -699,18 +699,7 @@ def handle(text):
         except Exception as e:
             return 'Vision-Fehler: ' + str(e)[:100]
     if text.strip() in ['/selftest','/test']:
-        try:
-            import jack_cortex as _jc
-            try:
-                import jack_heat_protection as _hp
-                _ws = _hp.get_status()
-                _wt_info = chr(10) + 'WORKER-TARGET: ' + _ws['next_worker'] + chr(10) + f'Honor: {_ws["honor_temp_c"]}°C | Xiaomi: {"ON " + str(_ws["xiaomi_temp_c"]) + "°C" if _ws["xiaomi_online"] else "OFF"}'
-                return result + _wt_info if 'result' in dir() else _wt_info
-            except Exception:
-                return result if 'result' in dir() else 'Selftest OK'
-            return _jc.selftest()
-        except Exception as e:
-            return f"Selftest Fehler: {e}"
+        return _jc.selftest()
     if text.strip() == '/kette' or text.strip().startswith('/kette '):
         try:
             import jack_chains
