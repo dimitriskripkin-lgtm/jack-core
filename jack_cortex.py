@@ -157,7 +157,7 @@ def check_and_heal():
     # SSH Test
     try:
         ssh_test = subprocess.run(
-            ["ssh", "-i", os.path.expanduser("~/.ssh/id_jack"), "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-p", str(XIAOMI_SSH_PORT), "-o", "ConnectTimeout=3", f"root@{XIAOMI_IP}", "su -c 'whoami'"],
+            ["ssh", "xiaomi-jack", "su -c 'whoami'"],
             capture_output=True, text=True, timeout=5
         )
         if ssh_test.returncode != 0:
