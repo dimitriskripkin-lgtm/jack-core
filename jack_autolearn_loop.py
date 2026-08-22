@@ -49,7 +49,11 @@ def genesis_skills():
         LOG_FILE,
         os.path.expanduser("~/jack/jack_telegram.log"),
         os.path.expanduser("~/jack/autolearn_stdout.log"),
-        "/data/data/com.termux/files/home/.termux/boot/termux.log"
+        "/data/data/com.termux/files/home/.termux/boot/termux.log",
+        "/data/data/com.termux/files/home/jack/startup.log",
+        "/data/data/com.termux/files/home/jack/orchestrator.log",
+        os.path.expanduser("\~/jack/startup.log"),
+        os.path.expanduser("\~/jack/orchestrator.log"),
     ]
     
     error_counts = {}
@@ -84,7 +88,7 @@ def genesis_skills():
                 continue
             is_error = False
             msg = ""
-            if "FEHLER:" in line or "WARN:" in line or "ERROR:" in line:
+            if "FEHLER:" in line or "WARN:" in line or "ERROR:" in line or "fail:" in line.lower():
                 is_error = True
                 msg = line.split("]", 1)[-1].strip() if "]" in line else line.strip()
             elif "Exception:" in line or "Error:" in line:
