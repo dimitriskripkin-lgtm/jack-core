@@ -42,8 +42,8 @@ def _xi():
     try:
         import jack_config as _jc
         ip = _jc.get_param('NETWORK','xiaomi_ip')
-        return subprocess.run(["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),"-o","BatchMode=yes",
-          "-o","StrictHostKeyChecking=no","-o","ConnectTimeout=6","-p","8022",f"root@{ip}","true"],
+        # FIX (Qwen 22.08.): Nutze SSH-Config Alias statt manueller Optionen
+        return subprocess.run(["ssh","xiaomi-jack","true"],
           capture_output=True,timeout=12).returncode==0
     except Exception: return False
 
