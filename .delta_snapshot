@@ -1,1 +1,1 @@
-{"ram": 2210, "temp": 70.0, "fehler": 2, "akku": 30, "laden": "DISCHARGING", "tote_dienste": []}
+{"ram": 2957, "temp": 42.6, "fehler": 0, "akku": 99, "laden": "DISCHARGING", "tote_dienste": ["ollama"]}

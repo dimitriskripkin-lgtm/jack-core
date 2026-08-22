@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-22 12:45
+# JACK SYSTEM STATE — 2026-08-22 14:56
 
 ## Services
 - jack_cortex: UP
@@ -7,10 +7,10 @@
 - ollama: UP
 
 ## Resources
-- RAM verfuegbar: 2130MB
+- RAM verfuegbar: 2876MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 2124
-- Offene Fehler: 2
+- Memory-Eintraege: 2150
+- Offene Fehler: 0
 
 ## Config
 - Xiaomi IP: 10.58.220.131
@@ -23,16 +23,12 @@
 - voice_pipeline: AN
 - autolearn: AN
 
-## Letzte Fehler
-- [jack_cortex] [Cortex] Loop-Error: Command '['ssh', '-i', '/data/data/com.termux/files/home/.ssh/id_jack', '-o', '
-- [jack_cortex] [Cortex] Loop-Error: Command '['ssh', '-i', '/data/data/com.termux/files/home/.ssh/id_jack', '-o', '
-
 ## Letzte Log-Eintraege
-2026-08-22 12:42:06 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | #3285 jack_cortex Versuch 3/3
-2026-08-22 12:42:08 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | #3285 Versuch 3 fehlgeschlagen: Patch fehlgeschlagen: Keine gueltigen SEARCH/REPLACE-Bloecke
-2026-08-22 12:42:08 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Fertig: 0 fixed, 1 skipped, 1 eskaliert
-2026-08-22 12:43:00 | INFO    | jack.legacy_wrapper  | MONITOR-EVENT | 1 Events
-2026-08-22 12:45:15 | INFO    | jack.legacy_wrapper  | WAECHTER-START | Nacht-Ueberwachung mit Queue
+2026-08-22 14:51:52 | INFO    | jack.legacy_wrapper  | SCHEDULER | Power-Time aktiv - schwere Jobs erlaubt
+2026-08-22 14:51:53 | INFO    | jack.legacy_wrapper  | EXPLORE | Xiaomi: CPU=Load: 0.13 RAM=2021MB frei Akku=93% Temp=35.1C
+2026-08-22 14:51:53 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
+2026-08-22 14:51:53 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
+2026-08-22 14:53:37 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
 
 
-*Generiert: 2026-08-22 12:45*
+*Generiert: 2026-08-22 14:56*
