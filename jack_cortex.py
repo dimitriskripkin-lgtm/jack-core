@@ -10,26 +10,21 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 logging.info("JACK CORTEX gestartet")
-
 import os, time, subprocess, sqlite3, sys
-
 sys.path.append(os.path.expanduser('~/jack'))
 import jack_config
 try:
     import jack_logging as _jlog
 except Exception:
     _jlog = None
-
 ERROR_DB = os.path.expanduser('~/jack/jack_errors.db')  # errors-Tabelle lebt hier, nicht in db_path
 XIAOMI_IP = jack_config.get_param('NETWORK', 'xiaomi_ip')
 XIAOMI_SSH_PORT = 8022
 SSH_FAIL_COUNT = 0
 SSH_FAIL_THRESHOLD = 3
 SSH_ERR_COUNT = 0
-
 def log_status(msg):
     print('[Cortex-Status] ' + str(msg))
-
 def log_error(msg):
     import inspect, linecache
     if os.path.exists(ERROR_DB):
@@ -45,9 +40,6 @@ def log_error(msg):
             try:
                 import jack_log; jack_log.log_decision("CORTEX-EXCEPT", str(_e)[:100])
             except Exception as _le: _jlog and _jlog.fehler("cortex","unbenannt",_le)
-
-
-
 def _ssh_ok(ip):
     try:
         r = subprocess.run(
@@ -56,8 +48,6 @@ def _ssh_ok(ip):
         return r.returncode == 0
     except Exception:
         return False
-
-
 def find_xiaomi():
     cache_file = os.path.expanduser("~/jack/.last_xiaomi_ip")
     known = jack_config.get_param('NETWORK', 'xiaomi_ip')
@@ -95,16 +85,11 @@ def find_xiaomi():
             except Exception: pass
             return ip
     return known
-
-
 XIAOMI_LAST_STATE = None
-
 XIAOMI_PENDING = None
 XIAOMI_PENDING_COUNT = 0
-
 XIAOMI_SEIT = [0.0, None]
 XIAOMI_MELDUNGEN = [0, '']
-
 def notify_xiaomi_state(connected):
     global XIAOMI_LAST_STATE
     import time as _t, datetime as _d, os as _o, json as _j
@@ -137,8 +122,6 @@ def notify_xiaomi_state(connected):
             headers={'Content-Type':'application/json'}), timeout=5)
     except Exception as e:
         log_status('[Cortex] Notify-Fehler: ' + str(e)[:80])
-
-
 def check_and_heal():
     global SSH_FAIL_COUNT, SSH_ERR_COUNT, XIAOMI_IP
     quick = subprocess.run(
@@ -150,13 +133,11 @@ def check_and_heal():
         SSH_FAIL_COUNT += 1
         if SSH_FAIL_COUNT == 1 or SSH_FAIL_COUNT % 5 == 0:
             log_status(f"[Cortex] Xiaomi nicht erreichbar (SSH {SSH_FAIL_COUNT}x fehlgeschlagen)")
-        
         if SSH_FAIL_COUNT >= SSH_FAIL_THRESHOLD:
             log_status(f"[Cortex] Versuche WiFi-Recovery auf Xiaomi (Fail #{SSH_FAIL_COUNT})")
             try:
                 recovery = subprocess.run(
-                    ["ssh", "-i", os.path.expanduser("~/.ssh/id_jack"), "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "-p", str(XIAOMI_SSH_PORT), f"root@{XIAOMI_IP}", 
-                     "su -c 'svc wifi disable; sleep 3; svc wifi enable'"],
+                    ["ssh", "xiaomi-jack", "su -c 'svc wifi disable; sleep 3; svc wifi enable"],
                     capture_output=True, text=True, timeout=25
                 )
                 if recovery.returncode == 0:
@@ -167,14 +148,12 @@ def check_and_heal():
             except Exception as e:
                 log_status(f"[Cortex] WiFi-Recovery Exception: {e!s}")
         return
-    
     # SSH OK, reset counter
     notify_xiaomi_state(True)
     if SSH_FAIL_COUNT > 0:
         log_status(f"[Cortex] Xiaomi erreichbar wieder (nach {SSH_FAIL_COUNT} Fails)")
         SSH_FAIL_COUNT = 0
         notify_xiaomi_state(True)
-    
     # SSH Test
     try:
         ssh_test = subprocess.run(
@@ -195,7 +174,6 @@ def check_and_heal():
     except Exception as e:
         log_error(f"[Cortex] SSH-Exception: {e!s}")
         return
-
 def selftest():
     import subprocess,os as _os
     svcs=['jack_telegram','jack_cortex','jack_waechter','ollama']
@@ -219,7 +197,6 @@ def selftest():
     lines.append('-----------------------------')
     lines.append(str(ok)+'/'+str(len(svcs))+' ALLES OK' if ok==len(svcs) else str(ok)+'/'+str(len(svcs))+' DIENSTE AKTIV')
     return chr(10).join(lines)
-
 def main():
     my_pid = os.getpid()
     try:
@@ -244,6 +221,5 @@ def main():
                 log_error(f"[Cortex] Oracle-Error: {str(_e)[:80]}")
         time.sleep(60)
         pass  # Auto-Explore deaktiviert
-
 if __name__ == "__main__":
     main()
