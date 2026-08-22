@@ -51,9 +51,7 @@ def log_error(msg):
 def _ssh_ok(ip):
     try:
         r = subprocess.run(
-            ["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),"-o","BatchMode=yes",
-             "-o","StrictHostKeyChecking=no","-o","UserKnownHostsFile=/dev/null",
-             "-o","ConnectTimeout=3","-p",str(XIAOMI_SSH_PORT),f"root@{ip}","true"],
+            ["ssh", "xiaomi-jack", "true"],
             capture_output=True, timeout=6)
         return r.returncode == 0
     except Exception:
@@ -144,9 +142,7 @@ def notify_xiaomi_state(connected):
 def check_and_heal():
     global SSH_FAIL_COUNT, SSH_ERR_COUNT, XIAOMI_IP
     quick = subprocess.run(
-        ["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),"-o","BatchMode=yes",
-         "-o","StrictHostKeyChecking=no","-o","ConnectTimeout=3",
-         "-p",str(XIAOMI_SSH_PORT),f"root@{XIAOMI_IP}","true"],
+        ["ssh", "xiaomi-jack", "true"],
         capture_output=True, timeout=6)
     if quick.returncode != 0:
         XIAOMI_IP = find_xiaomi()
