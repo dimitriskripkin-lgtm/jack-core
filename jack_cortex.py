@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+import logging
+import os
+log_dir = os.path.expanduser("~/jack/logs")
+os.makedirs(log_dir, exist_ok=True)
+logging.basicConfig(
+    filename=os.path.join(log_dir, 'jack_cortex.log'),
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logging.info("JACK CORTEX gestartet")
+
 import os, time, subprocess, sqlite3, sys
 
 sys.path.append(os.path.expanduser('~/jack'))
