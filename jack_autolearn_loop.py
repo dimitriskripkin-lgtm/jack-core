@@ -253,19 +253,22 @@ def main():
         if _now.hour == 4 and _last_pruning_date != _today:
             try:
                 import jack_memory_pruning
-                # Phase 3 (Qwen 22.08.): Pruning via SSH auf Xiaomi ausfuehren
-                import subprocess
-                try:
-                    result = subprocess.run(
-                        ["ssh", "xiaomi-jack", "cd ~/jack && python3 jack_memory_pruning.py"],
-                        capture_output=True, text=True, timeout=60
-                    )
-                    if result.returncode == 0:
-                        _pr = f"Xiaomi-Pruning: {result.stdout[:80]}"
-                    else:
-                        _pr = f"Xiaomi-Pruning FEHLER: {result.stderr[:80]}"
-                except Exception as e:
-                    # Fallback: lokal ausfuehren
+                # Phase 3+P4 (Qwen 22.08.): worker_target() entscheidet wo Pruning laeuft
+                import subprocess, jack_heat_protection as _hp
+                if _hp.worker_target() == "xiaomi":
+                    try:
+                        result = subprocess.run(
+                            ["ssh", "xiaomi-jack", "cd ~/jack && python3 jack_memory_pruning.py"],
+                            capture_output=True, text=True, timeout=60
+                        )
+                        if result.returncode == 0:
+                            _pr = f"Xiaomi-Pruning: {result.stdout[:80]}"
+                        else:
+                            _pr = f"Xiaomi-Pruning FEHLER: {result.stderr[:80]}"
+                    except Exception as e:
+                        _pr = jack_memory_pruning.run()
+                else:
+                    print("P4: Honor kuehl - Pruning laeuft lokal")
                     _pr = jack_memory_pruning.run()
                 log(f"PRUNING: {_pr}")
                 _last_pruning_date = _today
