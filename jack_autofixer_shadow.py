@@ -124,6 +124,20 @@ def _check_resources():
     return True,"OK"
 
 def run(limit=5):
+    try:
+        import jack_circuit_breaker as cb
+        if not cb.check_allowed():
+            print("Shadow-Fixer durch Circuit-Breaker gestoppt")
+            return []
+    except Exception as e:
+        print(f"CB-Fehler: {e}")
+    try:
+        import jack_heat_protection
+        if not jack_heat_protection.check_heat("shadow"):
+            print("Shadow-Fixer übersprungen (Hitze)")
+            return []
+    except: pass
+
     # HEAT-PROTECT (Qwen 21.08.): Shadow-Fixer nur bei < 55°C
     try:
         import jack_heat_protection
