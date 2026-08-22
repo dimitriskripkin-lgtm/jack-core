@@ -699,7 +699,8 @@ def handle(text):
         except Exception as e:
             return 'Vision-Fehler: ' + str(e)[:100]
     if text.strip() in ['/selftest','/test']:
-        return _jc.selftest()
+        import jack_cortex
+        return jack_cortex.selftest()
     if text.strip() == '/kette' or text.strip().startswith('/kette '):
         try:
             import jack_chains
