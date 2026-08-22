@@ -22,12 +22,41 @@ def get_temp(device="honor"):
     return 0
 
 def xiaomi_online():
-    """Prueft ob Xiaomi via SSH erreichbar ist."""
+    """Prueft ob Xiaomi via SSH erreichbar ist UND Ollama läuft."""
     try:
+        # SSH-Connect-Test
         r = subprocess.run(["ssh","-o","ConnectTimeout=5","xiaomi-jack","echo ok"],
                           capture_output=True, text=True, timeout=8)
-        return r.returncode == 0 and "ok" in r.stdout
+        if r.returncode != 0 or "ok" not in r.stdout:
+            return False
+        # Ollama-API-Test (via SSH-Tunnel auf Honor)
+        r2 = subprocess.run(["curl","-s","-o","/dev/null","-w","%{http_code}","http://localhost:11434/api/tags"],
+                           capture_output=True, text=True, timeout=5)
+        return r2.stdout.strip() == "200"
     except:
+        return False
+
+def fallback_to_local_ollama():
+    """P9 (Qwen 22.08.): Startet lokales Ollama wenn Xiaomi offline."""
+    print("P9: Xiaomi offline - starte lokales Ollama als Fallback")
+    try:
+        # Pruefe ob lokales Ollama deaktiviert ist
+        if os.path.exists("/data/data/com.termux/files/usr/var/service/_ollama_disabled"):
+            print("P9: Versuche lokales Ollama zu reaktivieren...")
+            os.rename("/data/data/com.termux/files/usr/var/service/_ollama_disabled",
+                     "/data/data/com.termux/files/usr/var/service/ollama")
+            subprocess.run(["sv","up","ollama"], capture_output=True, timeout=10)
+        else:
+            # Manuell starten wenn kein Service
+            subprocess.run(["pkill","-f","ollama serve"], capture_output=True)
+            subprocess.Popen(["nohup","ollama","serve"], 
+                           stdout=open("/dev/null","w"), 
+                           stderr=open("/dev/null","w"),
+                           start_new_session=True)
+        print("P9: Lokales Ollama gestartet")
+        return True
+    except Exception as e:
+        print(f"P9: Fallback-Start fehlgeschlagen: {e}")
         return False
 
 def worker_target():
