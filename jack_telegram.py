@@ -569,6 +569,7 @@ def oracle_sign(cmd, uuid, ts):
     except: return ""
 
 def handle(text):
+    import jack_exec  # FIX-UNBOUND (Qwen 22.08.): Import oben, sonst UnboundLocalError
     if not text:
         return None
     if text.startswith("/find "):
