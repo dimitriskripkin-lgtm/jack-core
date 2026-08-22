@@ -1,77 +1,57 @@
-"""Accessibility Events via Shizuku (P6, Qwen 22.08.)
-Ersetzt jack_focus_monitor.py - fängt echte Accessibility Events ab."""
+"""Window-Events via Shizuku rish (P6 real v3, Qwen 22.08.)
+Pollt mCurrentFocus alle 5s. Kein Fake-Shizuku mehr."""
 import subprocess, json, time, os
 
 J = os.path.expanduser("~/jack")
+LOG = os.path.join(J, "accessibility_events.json")
+RISH = "/data/data/com.termux/files/usr/bin/rish"
 
-def start_listener():
-    """Startet Shizuku Accessibility Service Listener."""
-    # Shizuku muss installiert und aktiviert sein
+def shizuku_cmd(cmd):
     try:
-        result = subprocess.run(
-            ["sh", "-c", "shizuku start-service com.example.accessibility"],
-            capture_output=True, text=True, timeout=5
-        )
-        if result.returncode == 0:
-            print("Shizuku Accessibility Service gestartet")
-            return True
-        else:
-            print(f"Shizuku FEHLER: {result.stderr}")
-            return False
-    except Exception as e:
-        print(f"Shizuku nicht verfügbar: {e}")
-        return False
+        r = subprocess.run(["sh", RISH, "-c", cmd], capture_output=True, text=True, timeout=10)
+        if r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip()
+    except Exception:
+        pass
+    return None
 
-def get_events():
-    """Holt Accessibility Events von Shizuku."""
-    try:
-        result = subprocess.run(
-            ["sh", "-c", "shizuku get-events"],
-            capture_output=True, text=True, timeout=5
-        )
-        if result.returncode == 0:
-            events = json.loads(result.stdout) if result.stdout.strip() else []
-            return events
-        return []
-    except:
-        return []
+def get_focus():
+    out = shizuku_cmd("dumpsys window 2>/dev/null | grep -m1 mCurrentFocus")
+    if out and "u0 " in out:
+        return out.split("u0 ")[-1].split("}")[0].strip()
+    if out:
+        return out.split()[-1].split("}")[0].strip()
+    return None
 
-def process_event(event):
-    """Verarbeitet ein Accessibility Event."""
-    event_type = event.get("type", "unknown")
-    package = event.get("package", "unknown")
-    timestamp = event.get("timestamp", time.time())
-    
-    # Log to file
-    log_file = os.path.join(J, "accessibility_events.json")
+def log_event(ev):
     try:
         events = []
-        if os.path.exists(log_file):
-            with open(log_file, encoding="utf-8") as f:
+        if os.path.exists(LOG):
+            with open(LOG, encoding="utf-8") as f:
                 events = json.load(f)
-        events.append(event)
-        # Keep only last 1000 events
-        events = events[-1000:]
-        with open(log_file, "w", encoding="utf-8") as f:
-            json.dump(events, f, indent=2)
-    except:
+        events.append(ev)
+        with open(LOG, "w", encoding="utf-8") as f:
+            json.dump(events[-1000:], f, indent=2)
+    except Exception:
         pass
-    
-    print(f"Event: {event_type} | {package} | {timestamp}")
-    return True
 
 def main():
-    """Haupt-Loop: Pollt Events von Shizuku."""
-    if not start_listener():
-        print("Shizuku nicht verfügbar - fallback zu jack_focus_monitor")
+    if not os.path.exists(RISH):
+        print("P6: rish fehlt. Beende.")
         return
-    
-    print("Accessibility Listener läuft...")
+    test = shizuku_cmd("id")
+    if not test:
+        print("P6: rish ohne Antwort - Termux in Shizuku-App autorisieren. Beende.")
+        return
+    print(f"P6: rish OK ({test[:40]}), Listener laeuft...")
+    last = None
     while True:
-        events = get_events()
-        for event in events:
-            process_event(event)
-        time.sleep(2)
+        focus = get_focus()
+        if focus and focus != last:
+            log_event({"type": "window_change", "package": focus, "timestamp": time.time()})
+            print(f"Event: {focus}")
+            last = focus
+        time.sleep(5)
 
 if __name__ == "__main__":
     main()
