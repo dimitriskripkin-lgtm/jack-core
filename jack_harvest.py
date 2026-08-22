@@ -5,6 +5,23 @@ Daten -> jack_harvest.db (gitignored, NIE im Publisher)."""
 import os, sys, json, time, sqlite3, hashlib, subprocess
 sys.path.insert(0, os.path.expanduser('~/jack'))
 import jack_vision
+# P5 (Qwen 22.08.): Harvest auf Xiaomi ausfuehren
+def _run_on_xiaomi():
+    import subprocess
+    try:
+        result = subprocess.run(
+            ["ssh", "xiaomi-jack", "cd ~/jack && python3 jack_harvest.py"],
+            capture_output=True, text=True, timeout=300
+        )
+        if result.returncode == 0:
+            print(f"Harvest auf Xiaomi OK: {result.stdout[:200]}")
+            return True
+        print(f"Xiaomi-Fehler: {result.stderr[:200]}")
+    except Exception as e:
+        print(f"SSH-Aufruf fehlgeschlagen: {e}")
+    return False
+
+
 
 DB = os.path.expanduser('~/jack/jack_harvest.db')
 STOP = os.path.expanduser('~/jack/.harvest_stop')
