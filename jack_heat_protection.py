@@ -65,20 +65,25 @@ def worker_target():
     Logik:
       - Honor > 55°C -> Xiaomi (wenn online)
       - Honor <= 55°C -> Honor (lokale Ausfuehrung ist billiger)
-      - Xiaomi offline -> Honor (mit Heat-Protection)
+      - Xiaomi offline -> Honor (mit Fallback auf lokales Ollama)
     """
     honor_temp = get_temp("honor")
-    
+
     if honor_temp <= HONOR_TEMP_WARN:
         return "honor"  # Honor ist kuehl genug
-    
+
     # Honor ist heiss -> Xiaomi wenn moeglich
     if xiaomi_online():
         xiaomi_temp = get_temp("xiaomi")
         if xiaomi_temp > 0 and xiaomi_temp < HONOR_TEMP_BLOCK:
             print(f"WORKER-TARGET: Xiaomi (Honor {honor_temp:.1f}°C > {HONOR_TEMP_WARN}°C, Xiaomi {xiaomi_temp:.1f}°C)")
             return "xiaomi"
-    
+
+    # P9 (Qwen 22.08.): Fallback auf lokales Ollama wenn Xiaomi offline
+    if not xiaomi_online():
+        print("P9: Xiaomi offline - aktiviere lokales Ollama als Fallback")
+        fallback_to_local_ollama()
+
     # Fallback: Honor trotz Hitze (mit Heat-Protection)
     print(f"WORKER-TARGET: Honor-FALLBACK (Honor {honor_temp:.1f}°C, Xiaomi offline oder zu heiss)")
     return "honor"
