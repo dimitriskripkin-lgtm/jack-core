@@ -28,14 +28,14 @@ def process_voice_message(ogg_path):
     try:
         if _hp.worker_target() == "xiaomi":
             try:
-                # WAV auf Xiaomi kopieren
-                subprocess.run(["scp", wav_path, "xiaomi-jack:/tmp/jack_voice.wav"], check=True, timeout=10, capture_output=True)
-                # Whisper auf Xiaomi ausfuehren + WAV loeschen
-                result = subprocess.run(
-                    ["ssh", "xiaomi-jack", 
-                     "~/whisper.cpp/build/bin/whisper-cli -m ~/whisper.cpp/models/ggml-small.bin -f /tmp/jack_voice.wav -l de -nt -t 4 && rm /tmp/jack_voice.wav"],
-                    capture_output=True, text=True, timeout=30
-                )
+                # P10 (Qwen 22.08.): SSH-PIPE statt scp (schneller, kein Temp-File)
+                # Audio via stdin an Xiaomi streamen, dort direkt verarbeiten
+                with open(wav_path, 'rb') as f:
+                    result = subprocess.run(
+                        ["ssh", "xiaomi-jack", 
+                         "~/whisper.cpp/build/bin/whisper-cli -m ~/whisper.cpp/models/ggml-small.bin -f - -l de -nt -t 4"],
+                        stdin=f, capture_output=True, text=True, timeout=30
+                    )
                 text = " ".join(result.stdout.split()).strip()
                 if not text:
                     raise ValueError("Leeres Ergebnis von Xiaomi")
