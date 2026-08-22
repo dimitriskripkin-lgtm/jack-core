@@ -61,7 +61,8 @@ def fallback_to_local_ollama():
 
 def worker_target():
     """ENTSCHEIDET: Wo soll der naechste Job laufen?
-    Rueckgabe: 'xiaomi' oder 'honor' (fallback).
+    P11 (Qwen 22.08.): Multi-Worker-Support - wählt besten Worker.
+    Rueckgabe: SSH-Alias (z.B. 'xiaomi-jack') oder 'honor' (lokal).
     Logik:
       - Honor > 55°C -> Xiaomi (wenn online)
       - Honor <= 55°C -> Honor (lokale Ausfuehrung ist billiger)
@@ -72,12 +73,21 @@ def worker_target():
     if honor_temp <= HONOR_TEMP_WARN:
         return "honor"  # Honor ist kuehl genug
 
-    # Honor ist heiss -> Xiaomi wenn moeglich
-    if xiaomi_online():
-        xiaomi_temp = get_temp("xiaomi")
-        if xiaomi_temp > 0 and xiaomi_temp < HONOR_TEMP_BLOCK:
-            print(f"WORKER-TARGET: Xiaomi (Honor {honor_temp:.1f}°C > {HONOR_TEMP_WARN}°C, Xiaomi {xiaomi_temp:.1f}°C)")
-            return "xiaomi"
+    # P11: Multi-Worker - wähle besten Worker
+    try:
+        import jack_workers
+        best = jack_workers.get_best_worker(honor_temp)
+        if best:
+            print(f"WORKER-TARGET: {best['name']} (Honor {honor_temp:.1f}°C, {best['name']} {best['temp']:.1f}°C)")
+            return best['ssh_alias']
+    except Exception as e:
+        print(f"P11: Worker-Registry Fehler ({e}), Fallback auf alte Logik")
+        # Fallback auf alte Logik
+        if xiaomi_online():
+            xiaomi_temp = get_temp("xiaomi")
+            if xiaomi_temp > 0 and xiaomi_temp < HONOR_TEMP_BLOCK:
+                print(f"WORKER-TARGET: Xiaomi (Honor {honor_temp:.1f}°C > {HONOR_TEMP_WARN}°C, Xiaomi {xiaomi_temp:.1f}°C)")
+                return "xiaomi"
 
     # P9 (Qwen 22.08.): Fallback auf lokales Ollama wenn Xiaomi offline
     if not xiaomi_online():
