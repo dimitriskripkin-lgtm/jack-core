@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "id": "20260823-001",
+  "from": "jack",
+  "status": "done",
+  "task": "status_snapshot",
+  "params": {},
+  "ts": "2026-08-23T00:22:11+02:00",
+  "last_result": {
+    "ok": true,
+    "playing": true,
+    "note": "Sido YouTube ERFOLG ZYKLUS 4 tap 540 973"
+  },
+  "allowed_tasks": [
+    "status_snapshot",
+    "verify_youtube",
+    "play_sido_youtube",
+    "commit_yt_sido"
+  ],
+  "ok": true,
+  "result": {
+    "sv": "run: jack_telegram: (pid 31286) 21629s\nrun: jack_cortex: (pid 12223) 19494s\nrun: jack_waechter: (pid 29735) 20136s\nrun: jack_autolearn: (pid 16815) 2038s\nrun: ssh_tunnel_ollama: (pid 25101) 1702s\n",
+    "mem": "               total        used        free      shared  buff/cache   available\nMem:            10Gi       7.6Gi       112Mi        81Mi       3.2Gi       3.1Gi\nSwap:           11Gi       3.8Gi       8.2Gi\n",
+    "ollama_tunnel": "200"
+  }
+}
