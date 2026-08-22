@@ -1,0 +1,7 @@
+#!/data/data/com.termux/files/usr/bin/sh
+export HOME=/data/data/com.termux/files/home
+export PATH=/data/data/com.termux/files/usr/bin
+export USER=u0_a400
+export AUTOSSH_GATETIME=0
+cd /data/data/com.termux/files/home
+exec /data/data/com.termux/files/usr/bin/autossh -M 0 -N -L 11434:localhost:11434 -o BatchMode=yes -o ControlMaster=no -o ControlPath=none -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -o ConnectTimeout=8 xiaomi-jack
