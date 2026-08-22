@@ -167,7 +167,21 @@ def main():
             except Exception as e:
                 print(f"Heat-Check-Fehler: {e}")
             import jack_autofixer_shadow as _afs
-            _afs.run(limit=3)
+            # Phase 3 (Qwen 22.08.): Shadow-Fixer via SSH auf Xiaomi ausfuehren
+            import subprocess
+            try:
+                result = subprocess.run(
+                    ["ssh", "xiaomi-jack", "cd ~/jack && python3 jack_autofixer_shadow.py"],
+                    capture_output=True, text=True, timeout=120
+                )
+                if result.returncode == 0:
+                    print(f"Shadow-Fixer auf Xiaomi: {result.stdout[:100]}")
+                else:
+                    print(f"Shadow-Fixer auf Xiaomi FEHLER: {result.stderr[:100]}")
+            except Exception as e:
+                print(f"SSH-Aufruf Shadow-Fixer fehlgeschlagen: {e}")
+                # Fallback: lokal ausfuehren
+                _afs.run(limit=3)
             import jack_autofixer_shadow as _afs
             _afs.run(limit=3)
 
