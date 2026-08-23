@@ -10,6 +10,28 @@ import json
 import subprocess
 from datetime import datetime
 
+def detect_futile_skills():
+    """Skills die oft laufen aber nie erfolgreich sind -> DEFEKT + Alarm."""
+    conn = sqlite3.connect(DB_SKILLS)
+    c = conn.cursor()
+    rows = c.execute(
+        "SELECT name, executions FROM skills "
+        "WHERE executions > 20 AND successes = 0 AND state != 'DEFEKT'"
+    ).fetchall()
+    for name, ex in rows:
+        c.execute("UPDATE skills SET state='DEFEKT', last_error=? WHERE name=?",
+                  (f"Futility: {ex} Versuche, 0 Erfolge", name))
+        log(f"FUTILITY: {name} auf DEFEKT ({ex} Versuche, 0 Erfolge)")
+        try:
+            import jack_autonomous
+            jack_autonomous.notify(f"Skill '{name}' nutzlos: {ex} Versuche, 0 Erfolge.")
+        except Exception:
+            pass
+    conn.commit()
+    conn.close()
+    return len(rows)
+
+
 DB_SKILLS = os.path.expanduser("~/jack/jack_skills.db")
 DB_MEMORY = os.path.expanduser("~/jack/jack_memory.db")
 LOG_FILE = os.path.expanduser("~/jack/autolearn.log")
@@ -220,7 +242,6 @@ def health_check_faehigkeiten(cycle_num):
     log("HEALTH: " + str(ok) + "/3 Faehigkeiten ok")
 
 def run_cycle(cycle_num):
-    detect_futile_skills()
     log(f"=== ZYKLUS {cycle_num} START ===")
     
     if not check_db_integrity():
@@ -229,6 +250,7 @@ def run_cycle(cycle_num):
         
     promoted = promote_candidate_skills()
     log(f"PROMOTED: {promoted} Skills")
+    detect_futile_skills()
     
     genesis_count = genesis_skills()
     log(f"GENESIS: {genesis_count} neue Skills")
