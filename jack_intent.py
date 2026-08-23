@@ -178,6 +178,25 @@ def _klingt_nach_aktion(text):
     return any(s in t for s in FRAGE) or any(s in t for s in FRUST)
 
 def detect(text, gemini_fallback=True):
+    # UI_INTENT_GATE: gleiche Leitung wie Voice/Telegram/exec
+    try:
+        import jack_exec
+        _ui = jack_exec.handle_ui_intent(text or "")
+        if _ui:
+            _log_intent(text or "", "ui_exec", "handle_ui_intent", 1.0, True, str(_ui)[:300])
+            return {
+                "intent": "ui_exec",
+                "confidence": 1.0,
+                "methode": "handle_ui_intent",
+                "level_ok": True,
+                "text": text,
+                "ergebnis": _ui,
+                "ausgefuehrt": True,
+                "beschreibung": "UI via jack_exec",
+            }
+    except Exception:
+        pass
+
     """Hauptfunktion. Gibt Intent-Dict zurueck oder None."""
     level = get_level()
     r = _keyword_detect(text)
@@ -224,6 +243,9 @@ def _ssh(cmd, timeout=10):
         capture_output=True, text=True, timeout=timeout)
 
 def execute(d):
+    # UI_INTENT_GATE execute
+    if isinstance(d, dict) and d.get("intent") == "ui_exec":
+        return d.get("ergebnis") or d.get("beschreibung") or "UI ok"
     _gid = None
     try:
         import jack_gedanken as _gd
