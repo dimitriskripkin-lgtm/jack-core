@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.expanduser("~/jack"))
 
-SAFE_DIRS = [os.path.expanduser("~/jack"), os.path.expanduser("~/jack_werkstatt"), "/data/local/tmp"]
+SAFE_DIRS = [os.path.expanduser("~/jack_werkstatt"), "/data/local/tmp"]
 FORBIDDEN_DIRS = ["/system/", "/data/system/", "/data/app/", "/data/data/"]
 AUTONOM_PREFIX = "jack autonom:"
 

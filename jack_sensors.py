@@ -11,7 +11,7 @@ import jack_config as _jc; XIAOMI=_jc.get_param("NETWORK","xiaomi_ip"); PORT=_jc
 def _ssh(cmd, timeout=30):
     full=["ssh","-i",KEY,"-o","BatchMode=yes","-o","StrictHostKeyChecking=no",
           "-o","UserKnownHostsFile=/dev/null","-o","ConnectTimeout=6","-p",PORT,
-          f"root@{XIAOMI}", cmd]
+          "xiaomi-jack", cmd]
     try:
         r=subprocess.run(full,capture_output=True,text=True,timeout=timeout)
         return r.stdout.strip(), r.stderr.strip()
