@@ -207,6 +207,19 @@ def main():
     # Oracle-Polling Counter
     _oracle_tick = 0
     while True:
+        # NOTFALL-FIX (Qwen 23.08.): Wenn Xiaomi offline, skippe check_and_heal()
+        try:
+            import subprocess
+            r = subprocess.run(["ssh", "xiaomi-jack", "true"], capture_output=True, timeout=5)
+            if r.returncode != 0:
+                print("Xiaomi offline - Cortex pausiert 60s")
+                time.sleep(60)
+                continue
+        except:
+            print("Xiaomi-Check fehlgeschlagen - Cortex pausiert 60s")
+            time.sleep(60)
+            continue
+        
         try: check_and_heal()
         except Exception as e: log_error(f"[Cortex] Loop-Error: {e!s}")
         _oracle_tick += 1
