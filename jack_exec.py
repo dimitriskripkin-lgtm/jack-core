@@ -92,6 +92,66 @@ def run(cmd, timeout=120):
     except Exception as e:
         return 'Fehler: ' + str(e)[:200]
 
+
+def handle_ui_intent(text):
+    """Sprache/Text -> UI-Aktion. None = kein UI-Intent (normal weiterchatten)."""
+    import os, re, urllib.parse
+    raw = (text or "").strip()
+    if not raw:
+        return None
+    low = raw.lower()
+    # Kill
+    if any(w in low for w in ("stopp", "stop", "kill", "abbruch", "hör auf", "hoer auf")):
+        kill = "/data/data/com.termux/files/home/jack/.jack_ui_kill"
+        flag = "/data/data/com.termux/files/home/jack/.jack_ui_run"
+        open(kill, "w").write("1")
+        if os.path.isfile(flag):
+            try: os.remove(flag)
+            except Exception: pass
+        return "KILL: UI/Forschung gestoppt."
+    # Forschen / Suchen
+    if any(w in low for w in ("forsch", "recherch", "google", "such nach", "suche nach", "such dir", "interessiert")):
+        topic = raw
+        for sep in ("suche nach", "such nach", "forsch nach", "recherchiere", "forsche", "google"):
+            if sep in low:
+                topic = raw[low.find(sep) + len(sep):].strip(" .,!")
+                break
+        if not topic or len(topic) < 2:
+            topic = "Ollama Termux"
+        # Chrome oeffnen + Google-Suche
+        flag = "/data/data/com.termux/files/home/jack/.jack_ui_run"
+        kill = "/data/data/com.termux/files/home/jack/.jack_ui_kill"
+        if os.path.isfile(kill):
+            try: os.remove(kill)
+            except Exception: pass
+        open(flag, "w").write(topic)
+        url = "https://www.google.com/search?q=" + urllib.parse.quote(topic)
+        cmd = (
+            "ssh -o BatchMode=yes -o ConnectTimeout=8 xiaomi-jack "
+            "su -c \"input keyevent 224; input keyevent 82; "
+            "input swipe 540 1500 540 1000 160; "
+            "am start -a android.intent.action.VIEW -d %s "
+            "-n com.android.chrome/com.google.android.apps.chrome.Main\""
+        ) % repr(url)
+        out = run(cmd, timeout=40)
+        return "Forschung: %s\nStop: sag STOPP oder /kill\n%s" % (topic, str(out)[:600])
+    # Tippen
+    m = re.search(r"(?:tippe?|klicke?|dr[uü]cke?)\s+(?:auf\s+)?(.+)$", low)
+    if m:
+        q = raw[m.start(1):].strip()
+        return tap_text(q)
+    # Nur Chrome oeffnen
+    if "chrome" in low and any(w in low for w in ("öffne", "oeffne", "open", "start")):
+        if not any(w in low for w in ("forsch", "such", "recherch")):
+            cmd = (
+                "ssh -o BatchMode=yes -o ConnectTimeout=8 xiaomi-jack "
+                "su -c \"input keyevent 224; am start -n "
+                "com.android.chrome/com.google.android.apps.chrome.Main\""
+            )
+            return "Chrome: " + str(run(cmd, timeout=30))[:500]
+    return None
+
+
 def extrahiere(text):
     O='[[EXEC]]'
     C='[[/EXEC]]'

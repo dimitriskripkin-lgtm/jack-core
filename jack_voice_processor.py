@@ -54,6 +54,14 @@ def process_voice_message(ogg_path):
         return None, "", f"Whisper-Fehler: {e}"
     if not text:
         return None, "", "Nichts verstanden - nochmal?"
+    # UI-Intents vor Chat-LLM (Hauptleitung jack_exec)
+    try:
+        import jack_exec
+        _ui = jack_exec.handle_ui_intent(text)
+        if _ui:
+            return None, text, _ui
+    except Exception as _uie:
+        pass
     try:
         if text.lower().strip().startswith("claude"):
             import jack_claude
