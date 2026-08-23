@@ -137,3 +137,21 @@ def get_status():
         "next_worker": target,
         "thresholds": {"warn": HONOR_TEMP_WARN, "block": HONOR_TEMP_BLOCK, "emergency": HONOR_TEMP_EMERGENCY}
     }
+
+
+def emergency_stop():
+    """NIGHT-FIX (Qwen 23.08.): Stoppt alle autonomen Loops bei >80°C.
+    Wird von jack_cortex Main-Loop aufgerufen."""
+    import subprocess
+    temp = get_temp("honor")
+    if temp >= HONOR_TEMP_BLOCK:
+        print(f"EMERGENCY: Honor {temp}°C >= {HONOR_TEMP_BLOCK}°C - stoppe alle Loops")
+        # Shadow-Fixer killen
+        subprocess.run(["pkill", "-f", "jack_autofixer_shadow"], capture_output=True)
+        # Autolearn pausieren
+        subprocess.run(["sv", "stop", "jack_autolearn"], capture_output=True)
+        # Lokales Ollama killen (falls doch gestartet)
+        subprocess.run(["pkill", "-9", "-f", "ollama serve"], capture_output=True)
+        subprocess.run(["pkill", "-9", "-f", "llama-server"], capture_output=True)
+        return True
+    return False

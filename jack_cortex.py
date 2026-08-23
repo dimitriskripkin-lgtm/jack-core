@@ -207,17 +207,23 @@ def main():
     # Oracle-Polling Counter
     _oracle_tick = 0
     while True:
-        # NOTFALL-FIX (Qwen 23.08.): Wenn Xiaomi offline, skippe check_and_heal()
+        # NIGHT-FIX (Qwen 23.08.): Xiaomi-Offline OHNE Error-Log + Emergency-Stop
+        import jack_heat_protection as _hp
+        
+        # Emergency-Stop bei >80°C
+        if _hp.emergency_stop():
+            time.sleep(120)  # 2 Minuten warten nach Emergency
+            continue
+        
+        # Xiaomi-Check (still, kein Error-Log)
         try:
             import subprocess
             r = subprocess.run(["ssh", "xiaomi-jack", "true"], capture_output=True, timeout=5)
             if r.returncode != 0:
-                print("Xiaomi offline - Cortex pausiert 60s")
-                time.sleep(60)
+                time.sleep(60)  # Still pausieren, kein Error
                 continue
-        except:
-            print("Xiaomi-Check fehlgeschlagen - Cortex pausiert 60s")
-            time.sleep(60)
+        except Exception:
+            time.sleep(60)  # Still pausieren, kein Error
             continue
         
         try: check_and_heal()
