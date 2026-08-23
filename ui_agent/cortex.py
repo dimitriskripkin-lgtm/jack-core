@@ -9,6 +9,10 @@ from package_mapper import find_app
 from capture import _su
 from preflight import ensure_ready
 from replay import run as replay_run
+try:
+    from replay import run_guarded as replay_run_guarded
+except Exception:
+    replay_run_guarded = None
 from ui_agent.step_guard import ensure_ready as guard_ensure_ready, run_step
 
 
@@ -49,7 +53,10 @@ def handle(goal: str, dry=False):
     name = find_skill(goal)
     if name:
         print(f"Gewählter Skill: {name}")
-        replay_run(name, max_steps=5, dry=dry)
+        if replay_run_guarded is not None:
+            replay_run_guarded(name, max_steps=5, dry=dry)
+        else:
+            replay_run(name, max_steps=5, dry=dry)
         return True
 
     # Kein Skill → Direct-Launch aus Package-Index versuchen
