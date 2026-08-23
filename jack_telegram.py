@@ -1368,6 +1368,7 @@ def main():
                         except Exception: pass
         except Exception as e:
             time.sleep(2)
+        import jack_heartbeat; jack_heartbeat.beat('jack_telegram')
         time.sleep(1)
 
 if __name__ == '__main__':

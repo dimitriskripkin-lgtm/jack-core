@@ -116,6 +116,17 @@ def _load_persona():
 
 def ask_gemini(question, status=None):
     _persona = _load_persona()
+    global _CB_FAILS, _CB_RESET_AT
+    import time as _tt2
+    if _CB_FAILS >= _CB_THRESHOLD and _tt2.time() < _CB_RESET_AT:
+        import jack_log; jack_log.log_decision("GEMINI-CB-SKIP", f"CB aktiv, nutze Ollama")
+        try:
+            from jack_talk import talk_to_ollama
+            return talk_to_ollama(question, [])
+        except Exception as _e:
+            return f"Gemini CB aktiv + Ollama Fehler: {_e}"
+    elif _tt2.time() >= _CB_RESET_AT and _CB_FAILS > 0:
+        _CB_FAILS = 0
     import jack_budget
     _ok,_m=jack_budget.check_and_count('text')
     if not _ok: return _m
