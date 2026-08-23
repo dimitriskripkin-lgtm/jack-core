@@ -39,7 +39,7 @@ BESTAETIGUNG = 'bestaetige schreiben'
 PENDING_IMPROVE = {}
 BESTAETIGUNG_PATCH = 'bestaetige patch'
 
-FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/menu','/m','/trace','/level','/kette','/baum','/lernen'}
+FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/menu','/m','/trace','/level','/kette','/baum','/lernen','/tap','/forsche','/kill','/stop'}
 
 def load_secrets():
     token, chat_id = None, None
@@ -171,7 +171,10 @@ MENU["befehle"] = {
         ("/akku","Akku/Temp","/akku"),
         ("/sensor","Sensoren","/sensor"),
         ("/standort","GPS","/standort"),
-        ("/sehen","Kamera sehen","/sehen was liegt da")
+        ("/sehen","Kamera sehen","/sehen was liegt da"),
+        ("/tap","Screen tippen","/tap Chrome"),
+        ("/forsche","Recherchieren","/forsche Ollama"),
+        ("/kill","Stop","/kill")
     ]
 }
 # END_MENU_EXTRA_ALL_COMMANDS_QWEN
@@ -692,6 +695,69 @@ def handle(text):
         import threading as _th2
         _th2.Thread(target=jack_planner.run_plan,args=(skill['plan'],send),daemon=True).start()
         return 'Starte Skill: '+sname+' ['+skill['state']+']'
+
+    # --- UI: tap / forsche / kill (Hauptleitung jack_exec) ---
+    if text.strip().startswith('/tap'):
+        q = text.strip()[4:].strip()
+        if not q:
+            send(chat_id, "Nutzung: /tap Chrome\\nOder: /tap Einstellungen")
+            return
+        try:
+            import jack_exec
+            out = jack_exec.tap_text(q)
+            send(chat_id, "TAP: " + str(out)[:1500])
+        except Exception as e:
+            send(chat_id, "TAP Fehler: " + str(e)[:300])
+        return
+
+    if text.strip().startswith('/forsche'):
+        topic = text.strip()[8:].strip() or "Ollama Termux"
+        try:
+            flag = "/data/data/com.termux/files/home/jack/.jack_ui_run"
+            kill = "/data/data/com.termux/files/home/jack/.jack_ui_kill"
+            if os.path.isfile(kill):
+                os.remove(kill)
+            open(flag, "w").write(topic)
+            import urllib.parse
+            q = urllib.parse.quote(topic)
+            url = "https://www.google.com/search?q=" + q
+            # Chrome mit Suche (Xiaomi)
+            cmd = (
+                "ssh -o BatchMode=yes -o ConnectTimeout=8 xiaomi-jack "
+                "\"su -c 'input keyevent 224; input keyevent 82; input swipe 540 1500 540 1000 160; "
+                "am start -a android.intent.action.VIEW -d %s "
+                "-n com.android.chrome/com.google.android.apps.chrome.Main'\""
+            ) % repr(url)
+            import jack_exec
+            out = jack_exec.run(cmd, timeout=40)
+            send(
+                chat_id,
+                "Forschung gestartet: " + topic + "\\nChrome/Suche auf Xiaomi.\\n"
+                "Stoppen: /kill\\n\\n" + str(out)[:800],
+            )
+        except Exception as e:
+            send(chat_id, "Forsche Fehler: " + str(e)[:300])
+        return
+
+    if text.strip() in ("/kill", "/stop"):
+        try:
+            kill = "/data/data/com.termux/files/home/jack/.jack_ui_kill"
+            open(kill, "w").write("1")
+            flag = "/data/data/com.termux/files/home/jack/.jack_ui_run"
+            if os.path.isfile(flag):
+                os.remove(flag)
+            # leichte Stopps
+            import subprocess
+            subprocess.run(
+                "pkill -f run_guarded_settings; pkill -f jack_ui_; pkill -f ui_agent.cortex",
+                shell=True, capture_output=True,
+            )
+            send(chat_id, "KILL: UI/Forschung gestoppt (.jack_ui_kill gesetzt).")
+        except Exception as e:
+            send(chat_id, "KILL Fehler: " + str(e)[:300])
+        return
+
+
     if text.strip().startswith('/sehen'):
         try:
             import jack_vision
