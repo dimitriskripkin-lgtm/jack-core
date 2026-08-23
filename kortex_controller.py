@@ -269,4 +269,5 @@ def radar_kleinanzeigen_webapp():
     from flask import Response
     return Response(html, mimetype="text/html")
 
-app.run(host="127.0.0.1", port=5005, debug=False)
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5005, debug=False)
