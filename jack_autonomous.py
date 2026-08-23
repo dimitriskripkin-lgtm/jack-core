@@ -133,6 +133,37 @@ def _maybe_self_improve():
             import jack_log; jack_log.log_decision("SELF-IMPROVE-FEHLER", str(e)[:100])
         except Exception: pass
 
+
+def _heartbeat_sv_check():
+    """HEARTBEAT_SV_CHECK: tote Dienste per is_alive -> sv restart."""
+    try:
+        import jack_heartbeat
+        import subprocess
+        dienste = [
+            ("jack_telegram", 180),
+            ("jack_cortex", 300),
+            ("jack_publisher", 400),
+            ("jack_autolearn", 900),
+        ]
+        for name, max_age in dienste:
+            try:
+                if not jack_heartbeat.is_alive(name, max_age=max_age):
+                    age = jack_heartbeat.age(name)
+                    subprocess.run(
+                        ["sv", "restart", name],
+                        capture_output=True, timeout=30,
+                    )
+                    try:
+                        import jack_log
+                        jack_log.log_decision("HB_RESTART", name, "age=%s" % age)
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+
 def main():
     import jack_log; jack_log.log_decision("WAECHTER-START", "Nacht-Ueberwachung mit Queue")
     import jack_queue
@@ -210,6 +241,7 @@ def main():
                 jack_log.log_decision("QUEUE-SKIPPED", res.get("reason", name))
         
         import jack_heartbeat; jack_heartbeat.beat("jack_waechter")
+        _heartbeat_sv_check()
         import jack_heartbeat; jack_heartbeat.beat('jack_waechter')
         time.sleep(HEARTBEAT)
 

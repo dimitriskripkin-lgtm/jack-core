@@ -22,7 +22,17 @@ def build_write_keyboard(filename):
 sys.path.append(os.path.expanduser('~/jack'))
 import jack_claude
 import jack_gemini_bridge, jack_config, jack_talk, jack_write, jack_coder, jack_sensors, jack_improve, jack_log, jack_budget, jack_skills, jack_agent
+
 from jack_voice_processor import process_voice_message
+
+def _ui_gate_text(text):
+    """UI_GATE_TEXT — gleicher Intent wie Voice/Slash."""
+    try:
+        import jack_exec
+        return jack_exec.handle_ui_intent(text or "")
+    except Exception:
+        return None
+
 try:
     from kortex_memory import add_memory, search_memory, get_recent
 except Exception as _ke:

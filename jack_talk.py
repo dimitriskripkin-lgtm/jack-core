@@ -181,7 +181,7 @@ def _status_als_text():
     return chr(10).join(z)
 
 
-def talk_to_gemini(prompt):
+def _talk_to_gemini_impl(prompt):
     # Persoenliche Gespraeche -> Groq (besser Persona-Treue)
     # System-Calls, Vision, Reasoning -> Gemini
     _personal = ["wer bin ich","wer bist du","was denkst","erzaehl","erklaer mir","wie geht","was magst","was haeltst","kumpel","zusammen","gefuehl","meinung","freund","ueber mich","über mich","ueber dich","über dich","ueber uns","wer bist","ich bin","selbst","charakter","person"]
@@ -359,3 +359,20 @@ def build_final_prompt(user_query, persona_text, id_ctx, mem_ctx, hist_ctx, live
     prompt_parts.append(f"<user_query>\n{user_query}\n</user_query>")
 
     return "\n\n".join(prompt_parts)
+
+def talk_to_gemini(*args, **kwargs):
+    """UI_GATE_TALK: Intent vor Chat."""
+    text = ""
+    if args:
+        text = args[0] if isinstance(args[0], str) else ""
+    if not text:
+        text = kwargs.get("text") or kwargs.get("msg") or kwargs.get("prompt") or kwargs.get("message") or ""
+    try:
+        import jack_exec
+        ui = jack_exec.handle_ui_intent(str(text))
+        if ui:
+            return ui
+    except Exception:
+        pass
+    return _talk_to_gemini_impl(*args, **kwargs)
+
