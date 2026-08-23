@@ -51,34 +51,51 @@ def do_step(action, target):
 
 
 def _guard_exec_step(step):
-    """Ein Skill-Step ausfuehren (dict)."""
+    """Ein Skill-Step ausfuehren (dict) — action+target wie do_step."""
     if not isinstance(step, dict):
         step = {"action": str(step)}
-    kind = (step.get("action") or step.get("type") or step.get("op") or step.get("cmd") or "").upper()
-    text = step.get("text") or step.get("query") or step.get("arg") or ""
-    if "SETTING" in kind or kind == "OPEN_SETTINGS":
-        guard_su("am start -a android.settings.SETTINGS")
-        return
-    if kind in ("BACK", "INPUT_BACK") or kind.endswith("BACK"):
+    action = (step.get("action") or step.get("type") or step.get("op") or "").upper()
+    target = str(step.get("target") or step.get("text") or step.get("query") or step.get("arg") or "")
+    tu = target.upper()
+    # BACK / HOME
+    if action in ("BACK",) or tu == "BACK":
         guard_su("input keyevent 4")
         return
-    if kind in ("HOME", "INPUT_HOME") or kind.endswith("HOME"):
+    if action in ("HOME",) or tu == "HOME":
         guard_su("input keyevent 3")
         return
-    if "CHROME" in kind:
+    # OPEN *
+    if action in ("OPEN", "OPEN_SEARCH", "OPEN_SETTINGS") or "SETTING" in tu:
+        if "SETTING" in tu or action == "OPEN_SETTINGS":
+            guard_su("am start -a android.settings.SETTINGS")
+            return
+        if "CHROME" in tu:
+            guard_su("am start -n com.android.chrome/com.google.android.apps.chrome.Main")
+            return
+        if target.startswith("http") or "SEARCH" in action:
+            guard_su("am start -a android.intent.action.VIEW -d " + target)
+            return
+    if "CHROME" in action:
         guard_su("am start -n com.android.chrome/com.google.android.apps.chrome.Main")
         return
-    if "TAP" in kind or kind == "TAP_TEXT":
+    # Text-Tap
+    if target and tu not in ("MANUAL", "USER_ACTION", ""):
         try:
             from jack_vision_selector import tap_text
-            tap_text(str(text or step.get("label") or ""), partial=True)
+            ok, msg = tap_text(target, partial=True)
+            print("   tap_text:", ok, msg)
         except Exception as e:
-            print("tap fail", e)
+            # fallback capture.tap_text API
+            try:
+                from action import tap_text as tt
+                r = tt(target)
+                print("   action.tap_text:", r)
+            except Exception as e2:
+                raise RuntimeError("tap fail %s / %s" % (e, e2))
         return
     if step.get("shell"):
         guard_su(str(step["shell"]))
         return
-    # Fallback: original path may still handle it
     raise RuntimeError("guard cannot exec step: %r" % step)
 
 
