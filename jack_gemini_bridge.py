@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 import os, json, subprocess, sqlite3, urllib.request
 from datetime import datetime
+
+_CB_FAILS = 0
+_CB_RESET_AT = 0.0
+_CB_OPEN = False
 try:
     import jack_logging as _jlog
 except Exception:
