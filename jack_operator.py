@@ -6,6 +6,38 @@ except Exception:
     _jlog = None
 import os, json, subprocess
 
+# OPERATOR_WHITELIST — nur diagnostische/reparatur-sichere Kommandos
+_OPERATOR_ALLOW_PREFIX = (
+    "sv status", "sv restart jack_", "free", "uptime", "df ",
+    "termux-battery", "cat /proc/", "echo ", "python3 -c ",
+    "ssh xiaomi-jack true", "ssh xiaomi-jack uptime",
+    "ssh xiaomi-jack \"su -c 'cat ",  # eng
+)
+_OPERATOR_DENY = (
+    "rm -rf", "mkfs", "dd if=", "drop table", "> /dev/",
+    "reboot", "shutdown", "chmod -R", "jack_secrets", "id_jack",
+    "curl ", "wget ", "pip install", "npm ",
+)
+
+def _operator_action_allowed(action: str):
+    a = (action or "").strip()
+    low = a.lower()
+    for d in _OPERATOR_DENY:
+        if d in low:
+            return False, "DENY:" + d
+    for pfx in _OPERATOR_ALLOW_PREFIX:
+        if low.startswith(pfx.lower()) or low.startswith(pfx.lower().strip()):
+            return True, "OK"
+    # sv restart nur jack_* 
+    if low.startswith("sv restart "):
+        rest = a.split(None, 2)
+        if len(rest) >= 3 and rest[2].startswith("jack_"):
+            return True, "OK"
+        return False, "sv restart nur jack_*"
+    return False, "nicht auf Operator-Whitelist"
+
+
+
 JACK_HOME = "/data/data/com.termux/files/home"
 
 class JackOperator:
@@ -119,6 +151,11 @@ class JackOperator:
         
         for i, action in enumerate(actions, 1):
             print(f"[{i}/{len(actions)}] $ {action}")
+            ok_wl, wl_msg = _operator_action_allowed(action)
+            if not ok_wl:
+                print(f"  ✗ BLOCKED ({wl_msg})")
+                results.append({"action": action, "success": False, "error": "WHITELIST " + wl_msg})
+                continue
             try:
                 result = subprocess.run(action, shell=True, capture_output=True, text=True, timeout=15)
                 output = result.stdout.strip() + result.stderr.strip()
