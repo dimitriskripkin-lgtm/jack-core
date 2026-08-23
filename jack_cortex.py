@@ -238,6 +238,7 @@ def main():
                 _jo.cycle()
             except Exception as _e:
                 log_error(f"[Cortex] Oracle-Error: {str(_e)[:80]}")
+        import jack_heartbeat; jack_heartbeat.beat('jack_cortex')
         time.sleep(60)
         pass  # Auto-Explore deaktiviert
 if __name__ == "__main__":

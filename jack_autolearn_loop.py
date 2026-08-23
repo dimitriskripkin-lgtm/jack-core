@@ -220,6 +220,7 @@ def health_check_faehigkeiten(cycle_num):
     log("HEALTH: " + str(ok) + "/3 Faehigkeiten ok")
 
 def run_cycle(cycle_num):
+    detect_futile_skills()
     log(f"=== ZYKLUS {cycle_num} START ===")
     
     if not check_db_integrity():
@@ -287,6 +288,7 @@ def main():
         if not success:
             log("FEHLER: Zyklus abgebrochen")
             break
+        import jack_heartbeat; jack_heartbeat.beat("jack_autolearn")
         log(f"PAUSE: {PAUSE_SECONDS}s")
         time.sleep(PAUSE_SECONDS)
         cycle_num += 1

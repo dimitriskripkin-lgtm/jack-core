@@ -209,6 +209,8 @@ def main():
                 import jack_log
                 jack_log.log_decision("QUEUE-SKIPPED", res.get("reason", name))
         
+        import jack_heartbeat; jack_heartbeat.beat("jack_waechter")
+        import jack_heartbeat; jack_heartbeat.beat('jack_waechter')
         time.sleep(HEARTBEAT)
 
 
