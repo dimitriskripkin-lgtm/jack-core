@@ -169,6 +169,18 @@ def main():
             import jack_autofixer_shadow as _afs
             # Phase 3+P4 (Qwen 22.08.): worker_target() entscheidet wo Shadow-Fixer laeuft
             import subprocess, jack_heat_protection as _hp
+            
+            # NIGHT-FIX (Qwen 23.08.): Xiaomi-Online-Check VOR SSH-Call
+            # Wenn Xiaomi offline → skippen, kein Error, kein Fallback
+            try:
+                _r = subprocess.run(["ssh", "xiaomi-jack", "true"], capture_output=True, timeout=5)
+                if _r.returncode != 0:
+                    print("Shadow-Fixer übersprungen (Xiaomi offline)")
+                    return
+            except Exception:
+                print("Shadow-Fixer übersprungen (Xiaomi nicht erreichbar)")
+                return
+            
             if _hp.worker_target() == "xiaomi":
                 try:
                     result = subprocess.run(
