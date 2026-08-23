@@ -13,10 +13,44 @@ def pruefe(cmd):
         return False, 'BLOCKIERT: zu lang'
     return True, 'OK'
 
+
+def tap_text(query, partial=True):
+    """Text-Tap via jack_vision_selector (Roadmap: vor Monkey/Koordinaten)."""
+    q = (query or "").strip()
+    if not q:
+        return "FEHLER: leerer Tap-Text"
+    try:
+        import jack_xiaomi_unlock
+        us = jack_xiaomi_unlock.ensure_unlocked()
+        try:
+            import jack_log
+            jack_log.log_decision("UNLOCK", str(us)[:80], "tap_text:" + q[:40])
+        except Exception:
+            pass
+    except Exception:
+        pass
+    try:
+        from jack_vision_selector import tap_text as _vs_tap
+        ok, msg = _vs_tap(q, partial=partial)
+        out = ("OK: " if ok else "FEHLER: ") + str(msg)
+        try:
+            import jack_log
+            jack_log.log_decision("TAP_TEXT", q[:60], out[:80])
+        except Exception:
+            pass
+        return out
+    except Exception as e:
+        return "FEHLER tap_text: " + str(e)[:200]
+
 def run(cmd, timeout=120):
     ok, msg = pruefe(cmd)
     if not ok:
         return msg
+    # High-level UI: kein Shell, sondern vision_selector
+    _c = (cmd or "").strip()
+    _cl = _c.lower()
+    if _cl.startswith("tap_text:") or _cl.startswith("tap:"):
+        return tap_text(_c.split(":", 1)[1].strip())
     # Xiaomi UI-Befehle: Screen vorher entsperren (Qwen 21.08.)
     _ui = ('monkey', 'am start', 'input ', 'uiautomator')
     if 'xiaomi-jack' in cmd and any(u in cmd for u in _ui):
