@@ -96,7 +96,15 @@ def _guard_exec_step(step):
     if step.get("shell"):
         guard_su(str(step["shell"]))
         return
-    raise RuntimeError("guard cannot exec step: %r" % step)
+    # letzter Fallback: Original do_step
+    try:
+        ok, msg = do_step(action, target)
+        print("   do_step fallback:", ok, msg)
+        if not ok:
+            raise RuntimeError("do_step failed: %s" % msg)
+        return
+    except NameError:
+        raise RuntimeError("guard cannot exec step: %r" % step)
 
 
 def run(name, max_steps=5, dry=False):
