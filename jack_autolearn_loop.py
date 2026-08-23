@@ -12,19 +12,14 @@ from datetime import datetime
 
 
 def _skill_cmd_allowed(cmd):
-    """SSH_SKILL_WHITELIST: shell aus plan_json nur lokal-safe oder ssh xiaomi-jack."""
+    """SSH_SKILL_WHITELIST: nur xiaomi-jack oder lokal-safe."""
     c = (cmd or "").strip()
     low = c.lower()
-    deny = ("rm -rf", "mkfs", "dd if=", "drop table", "reboot", "shutdown",
-            "jack_secrets", "id_jack", "chmod -R /", "wget ", "curl http")
-    for d in deny:
+    for d in ("rm -rf", "mkfs", "dd if=", "drop table", "reboot", "shutdown", "jack_secrets", "id_jack", "wget ", "curl http"):
         if d in low:
             return False, "DENY:" + d
     if "ssh " in low or low.startswith("ssh"):
-        # nur xiaomi-jack Alias oder bekannte IP
-        if "xiaomi-jack" in c or "10.58.220.131" in c:
-            if any(x in low for x in (";", "&&", "||", "`", "$(")):
-                return False, "DENY:ssh-metachar"
+        if ("xiaomi-jack" in c or "10.58.220.131" in c) and not any(x in low for x in (";", "&&", "||", "`", "$(")):
             return True, "OK-ssh-xiaomi"
         return False, "DENY:ssh-nur-xiaomi-jack"
     return True, "OK-local"
@@ -217,7 +212,7 @@ def test_candidate_skills():
             if cmd:
                 log(f"TESTE SKILL: {name} -> {cmd[:30]}...")
                 try:
-ok_c, why = _skill_cmd_allowed(cmd)
+                    ok_c, why = _skill_cmd_allowed(cmd)
                     if not ok_c:
                         print("SKILL_CMD_BLOCK", name, why, cmd[:80])
                         continue
