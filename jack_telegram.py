@@ -689,6 +689,19 @@ def handle(text):
             return chr(10).join(lines)
         except: return 'Noch keine App-Map. /explore zuerst.'
 
+
+    if text.strip() in ("/mission", "/missions"):
+        try:
+            import subprocess
+            r = subprocess.run(
+                ["python3", "/data/data/com.termux/files/home/jack/jack_mission_run.py"],
+                capture_output=True, text=True, timeout=180,
+            )
+            out = ((r.stdout or "") + (r.stderr or "")).strip()[:1500]
+            return "MISSION:\n" + out
+        except Exception as e:
+            return "Mission Fehler: " + str(e)[:300]
+
     if text.strip() in ("/overmind", "/om"):
         try:
             import subprocess
