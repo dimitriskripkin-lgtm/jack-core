@@ -705,12 +705,18 @@ def handle(text):
     if text.strip() in ("/overmind", "/om"):
         try:
             import subprocess
+            # Kurzer Health zuerst
+            h = subprocess.run(
+                ["python3", "/data/data/com.termux/files/home/jack/jack_health.py"],
+                capture_output=True, text=True, timeout=20,
+            )
+            health_line = ((h.stdout or "") + (h.stderr or "")).strip()[:400]
             r = subprocess.run(
                 ["python3", "/data/data/com.termux/files/home/jack/jack_overmind_client.py"],
                 capture_output=True, text=True, timeout=120,
             )
-            out = ((r.stdout or "") + (r.stderr or "")).strip()[:1500]
-            return "OVERMIND:\n" + out
+            out = ((r.stdout or "") + (r.stderr or "")).strip()[:1200]
+            return "OVERMIND\n" + health_line + "\n---\n" + out
         except Exception as e:
             return "Overmind Fehler: " + str(e)[:300]
 
