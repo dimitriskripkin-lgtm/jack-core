@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-24 14:39
+# JACK SYSTEM STATE — 2026-08-24 14:44
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: DOWN
 
 ## Resources
-- RAM verfuegbar: 3248MB
+- RAM verfuegbar: 3347MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 2756
+- Memory-Eintraege: 2758
 - Offene Fehler: 0
 
 ## Config
@@ -24,15 +24,16 @@
 - autolearn: AN
 
 ## Letzte Log-Eintraege
-2026-08-24 14:36:37 | INFO    | jack.legacy_wrapper  | SELF-AUDIT | SYSTEM_STATE.md generiert
-2026-08-24 14:36:37 | INFO    | jack.legacy_wrapper  | SCHEDULER | Power-Time aktiv - schwere Jobs erlaubt
-2026-08-24 14:37:09 | INFO    | jack.legacy_wrapper  | EXPLORE | Xiaomi: CPU=unbekannt RAM=unbekannt Akku=unbekannt Temp=unbekanntC
-2026-08-24 14:37:09 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
-2026-08-24 14:37:09 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
+2026-08-24 14:42:20 | INFO    | jack.legacy_wrapper  | PUBLISHER-PUSH | OK
+2026-08-24 14:42:21 | INFO    | jack.legacy_wrapper  | PUBLISHER-PUSH | OK
+2026-08-24 14:42:23 | INFO    | jack.legacy_wrapper  | EXPLORE | Xiaomi: CPU=unbekannt RAM=unbekannt Akku=unbekannt Temp=unbekanntC
+2026-08-24 14:42:23 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
+2026-08-24 14:42:23 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
 
 
-*Generiert: 2026-08-24 14:39*
-## 2026-08-24 BLOCK5
-- SSH ControlMaster aktiv → \~110ms Reuse
-- Throttle API weiterhin 180s
-- auto_fix Genesis off, fail-closed, health, mission DB log
+*Generiert: 2026-08-24 14:44*
+## UI-Pfad Drift-Regel (BLOCK6)
+- Produktion: jack_exec.handle_ui_intent + tap_text
+- Experiment: ui_agent/ (step_guard, cortex, replay)
+- Regel: step_guard in jack_exec verdrahten, ui_agent NICHT weiter aufblasen
+- Stand 24.08.: step_guard.py vorhanden, noch NICHT in jack_exec importiert

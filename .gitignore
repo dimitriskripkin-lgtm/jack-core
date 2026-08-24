@@ -96,3 +96,8 @@ jack_learned_rules.json
 *.bak_*
 *\~
 .focus_state
+
+# Einmal-Logs
+*.log
+vision_test*
+

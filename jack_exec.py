@@ -14,7 +14,18 @@ def pruefe(cmd):
     return True, 'OK'
 
 
+
+def _guard_ready():
+    """Optional: step_guard Preflight (BLOCK6). Fail-open wenn Modul fehlt."""
+    try:
+        from ui_agent.step_guard import ensure_ready
+        ok, why = ensure_ready()
+        return ok, why
+    except Exception as e:
+        return True, "guard_unavailable:" + str(e)[:80]
+
 def tap_text(query, partial=True):
+
     """Text-Tap via jack_vision_selector (Roadmap: vor Monkey/Koordinaten)."""
     q = (query or "").strip()
     if not q:
