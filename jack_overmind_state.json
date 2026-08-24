@@ -1,0 +1,32 @@
+{
+  "ts": "2026-08-24T07:35:16",
+  "host": "honor",
+  "git_tip": "d5e3144 fix(talk): restore + UI on raw text, env only for LLM",
+  "ssh_xiaomi": true,
+  "adb_device": true,
+  "adb_raw": "List of devices attached\n10.58.220.131:5555\tdevice",
+  "sv": "run: /data/data/com.termux/files/usr/var/service/jack_autolearn: (pid 14129) 1463s\nrun: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 11260) 57923s\nrun: /data/data/com.termux/files/usr/var/service/jack_focus_monitor: (pid 10698) 77724s\nrun: /data/data/com.termux/files/usr/var/service/jack_publisher: (pid 24986) 44328s; run: log: (pid 24985) 44328s\nrun: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 9416) 1898s\nrun: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 22043) 2672s",
+  "heartbeats_age_s": {
+    "jack_telegram": 2.768190383911133,
+    "jack_cortex": 42.424630880355835,
+    "jack_waechter": 255.0927813053131,
+    "jack_autolearn": 9.74873161315918,
+    "jack_publisher": 127.63675117492676
+  },
+  "ui_pipeline": "jack_exec.handle_ui_intent + tap_text; Telegram /tap /forsche /skills; Stop per kill-cmd; Voice+talk vor LLM gegated",
+  "allowed_actions": [
+    "status",
+    "adb_heal",
+    "sv_status",
+    "ssh_check",
+    "tap_text",
+    "forsche",
+    "skills_list"
+  ],
+  "forbidden": [
+    "core_patch_without_approval",
+    "rm_rf",
+    "read_secrets"
+  ],
+  "last_errors_hint": "Mon Aug 24 07:10:00 CEST 2026: Ollama auf Honor disabled - skip\nMon Aug 24 07:20:00 CEST 2026: Cortex laeuft bereits\nMon Aug 24 07:20:00 CEST 2026: Ollama auf Honor disabled - skip\nMon Aug 24 07:30:00 CEST 2026: Cortex laeuft bereits\nMon Aug 24 07:30:00 CEST 2026: Ollama auf Honor disabled - skip\n"
+}
