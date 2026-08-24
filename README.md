@@ -11,7 +11,9 @@
 
 ## Executive Summary
 
-JACK is a production-grade, distributed AI operating system engineered to run natively on un-emulated Android hardware. Built to overcome the vulnerabilities and latency of cloud dependencies, JACK orchestrates system-level tasks, dynamic UI navigation, and LLM execution directly on two bare-metal smartphones via a resilient Host-Worker architecture.
+JACK is a distributed AI operating system engineered to run natively on un-emulated Android hardware. Built to overcome the vulnerabilities of cloud dependencies, JACK orchestrates system-level tasks, dynamic UI navigation, and LLM execution directly on two consumer smartphones via a resilient Host-Worker architecture.
+
+> **Status:** Active development on two personal devices (Honor Magic8 Pro + Xiaomi 11T Pro). Built and maintained entirely on a smartphone. Not a simulation, not a lab setup — real hardware, real constraints.
 
 ---
 
