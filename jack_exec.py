@@ -25,6 +25,9 @@ def _guard_ready():
         return True, "guard_unavailable:" + str(e)[:80]
 
 def tap_text(query, partial=True):
+    ok_g, why_g = _guard_ready()
+    if not ok_g:
+        return "GUARD_BLOCK: " + str(why_g)[:120]
 
     """Text-Tap via jack_vision_selector (Roadmap: vor Monkey/Koordinaten)."""
     q = (query or "").strip()
