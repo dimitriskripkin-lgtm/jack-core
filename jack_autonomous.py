@@ -268,6 +268,11 @@ def main():
         _adb_heal_if_needed()
         _heartbeat_sv_check()
         import jack_heartbeat; jack_heartbeat.beat('jack_waechter')
+        try:
+            import jack_graceful
+            jack_graceful.main()
+        except Exception:
+            pass
         time.sleep(HEARTBEAT)
 
 

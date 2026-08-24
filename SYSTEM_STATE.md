@@ -39,3 +39,29 @@
 - jack_graceful.py: Xiaomi offline → Mission pausieren
 - adb_heal: Zähler + unauthorized
 - step_guard in tap_text aktiv
+
+## Overmind / Mission (Referenz 24.08.2026)
+
+### Komponenten
+- jack_overmind_state.py – Lagebild (git, ssh, adb, heartbeats)
+- jack_overmind_client.py – Teacher (mock|file|api) → nur ALLOWED_ACTIONS
+- ALLOWED: status, ssh_check, adb_heal, sv_status, skills_list
+- FORBIDDEN: core_patch, rm_rf, read_secrets, shell, eval, exec
+- fail-closed: Mission ohne forbidden-Feld wird nicht ausgeführt
+- Heat-Skip ab 65°C Honor; API-Throttle 180s
+- jack_mission_run.py – active JSON → plan → client → result + DB
+- jack_mission_queue.py – Queue; Telegram /mission next
+- jack_graceful.py – Xiaomi offline → Mission pausieren (Wächter ruft auf)
+- jack_deadman.py – still >3h → Telegram
+- jack_health.py – Snapshot Dienste/SSH/Heartbeats
+- jack_net_discover.py – Xiaomi-IP nach Hotspot-Wechsel finden
+- jack_adb_heal.py – ADB-TCP reconnect + Zähler
+
+### Telegram
+- /overmind – Health + Overmind-Lauf
+- /mission next – nächste Queue-Mission aktiv + run
+- /skills – Skill-Liste
+
+### UI
+- Produktion: jack_exec (handle_ui_intent, tap_text + step_guard)
+- ui_agent/ = Experiment (außer step_guard)
