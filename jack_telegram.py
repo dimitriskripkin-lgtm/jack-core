@@ -688,7 +688,7 @@ def handle(text):
                 lines.append(k.split('.')[-1]+': '+str(v.get('clickable',0))+' Buttons')
             return chr(10).join(lines)
         except: return 'Noch keine App-Map. /explore zuerst.'
-    if text.strip()=='/skills','/overmind':
+    if text.strip()=='/skills':
         import jack_skill_lib as _sk
         skills=_sk.list_all()
         if not skills: return 'Keine Skills gespeichert.'
