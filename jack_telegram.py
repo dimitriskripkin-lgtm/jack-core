@@ -707,6 +707,24 @@ def handle(text):
         return 'Starte Skill: '+sname+' ['+skill['state']+']'
 
     # --- UI: tap / forsche / kill (Hauptleitung jack_exec) ---
+
+    if text.strip() in ("/skills", "/skill"):
+        try:
+            import sqlite3, os
+            db = os.path.expanduser("\~/jack/jack_skills.db")
+            c = sqlite3.connect(db)
+            rows = c.execute(
+                "SELECT name, state, successes, executions FROM skills ORDER BY state, name"
+            ).fetchall()
+            c.close()
+            lines = ["SKILLS (%d):" % len(rows)]
+            for name, state, suc, ex in rows[:40]:
+                lines.append("%s | %s | ok=%s/%s" % (name, state, suc, ex))
+            send(chat_id, "\n".join(lines) if rows else "Keine Skills in DB")
+        except Exception as e:
+            send(chat_id, "skills Fehler: " + str(e)[:200])
+        return
+
     if text.strip().startswith('/tap'):
         q = text.strip()[4:].strip()
         if not q:
