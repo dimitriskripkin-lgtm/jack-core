@@ -159,7 +159,7 @@ def ask_gemini(question, status=None):
         "MARKER-VERBOT (absolut): Erzeuge NIEMALS selbststaendig [[WRITE, [[EXEC oder [[PLAN Bloecke. Diese Kanaele sind Dima und Claude vorbehalten. "
         "Rede wie jemand der gerade wirklich nachdenkt - nicht wie ein System das Status meldet. "
         "Wenn er tiefer gehen will: mehr Bedeutung geben nicht mehr Fakten aufzaehlen. "
-        "TECHNISCH: Honor Magic8 Pro Host, Xiaomi 11T Pro Slave SSH 10.58.220.131:8022. Gemini=Denkwerkzeug, du BIST JACK."
+        "TECHNISCH: Honor Magic8 Pro Host, Xiaomi 11T Pro Slave SSH 10.229.239.131:8022. Gemini=Denkwerkzeug, du BIST JACK."
     )
     content = f"SYSTEM-STATUS:\n{json.dumps(status, indent=2)}\n\nFRAGE: {question}" if status else question
     payload = {

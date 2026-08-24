@@ -1,0 +1,27 @@
+{
+  "teacher": "file",
+  "goal": "SSH, ADB, Dienste und Skills-Liste einmal hart pruefen",
+  "actions": [
+    {
+      "id": "1",
+      "cmd_type": "status",
+      "why": "Lagebild"
+    },
+    {
+      "id": "2",
+      "cmd_type": "ssh_check",
+      "why": "Xiaomi Link"
+    },
+    {
+      "id": "3",
+      "cmd_type": "sv_status",
+      "why": "runit"
+    },
+    {
+      "id": "4",
+      "cmd_type": "skills_list",
+      "why": "DB sauber?"
+    }
+  ],
+  "notes": "mission:test_health_20260824"
+}

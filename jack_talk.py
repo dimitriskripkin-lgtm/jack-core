@@ -29,7 +29,7 @@ def get_window_ctx():
     return chr(10).join([f"Dima: {c} | JACK: {r}" for c,r in _ROLLING_WINDOW])
 
 def get_embedding(text):
-    url = 'http://10.58.220.131:11434/api/embeddings'
+    url = 'http://10.229.239.131:11434/api/embeddings'
     data = json.dumps({'model': 'nomic-embed-text', 'prompt': text}).encode('utf-8')
     req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
     try:
@@ -39,7 +39,7 @@ def get_embedding(text):
         return None
 
 def talk_to_ollama(prompt, context_memories):
-    url = 'http://10.58.220.131:11434/api/chat'
+    url = 'http://10.229.239.131:11434/api/chat'
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Prompt auf Voice-Brevity optimiert
     system_prompt = (

@@ -5,9 +5,9 @@ def _ip():
         import configparser
         c = configparser.ConfigParser()
         c.read(os.path.expanduser("~/jack/config.ini"))
-        return c.get("NETWORK", "xiaomi_ip", fallback="10.58.220.131")
+        return c.get("NETWORK", "xiaomi_ip", fallback="10.229.239.131")
     except Exception:
-        return "10.58.220.131"
+        return "10.229.239.131"
 
 def check_ui():
     """True=ok, False=ALARM, None=Xiaomi offline (fail-safe!)"""

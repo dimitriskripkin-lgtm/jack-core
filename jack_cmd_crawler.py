@@ -7,7 +7,7 @@ Inventarisiert alle cmd-Namespaces auf Xiaomi (nur lesend).
 import sqlite3, subprocess, time, os, sys
 
 DB = os.path.expanduser("~/jack/jack_cmd_crawler.db")
-XIAOMI_HOST = "10.58.220.131"
+XIAOMI_HOST = "10.229.239.131"
 XIAOMI_PORT = "8022"
 XIAOMI_KEY = os.path.expanduser("~/.ssh/id_jack")
 

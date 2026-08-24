@@ -1,0 +1,26 @@
+{"ts": "2026-08-23T16:26:02", "before": "testhash1", "action": "test_action", "target": "dummy", "after": "testhash2", "success": true, "extra": {"note": "foundation_test"}}
+{"ts": "2026-08-23T16:30:22", "before": "13bdf63b7d2be0b5", "action": "ping", "target": "foundation_ok", "after": "13bdf63b7d2be0b5", "success": true, "extra": {}}
+{"ts": "2026-08-23T16:31:11", "before": "13bdf63b7d2be0b5", "action": "tap_text", "target": "Google", "after": "13bdf63b7d2be0b5", "success": false, "extra": {"msg": "Getippt auf 'Google' bei (540, 704)", "before_pkg": "com.miui.home", "after_pkg": "com.miui.home"}}
+{"ts": "2026-08-23T16:42:07", "before": "e8eb4fd61ad8829e", "action": "TAP", "target": "Install &amp; Run Ollama in Termux on Android (2026 Guide)", "after": "e8eb4fd61ad8829e", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:42:24", "before": "e8eb4fd61ad8829e", "action": "TAP", "target": "HOW TO INSTALL AND RUN OLLAMA IN TERMUX ON ANDROID (2026 GUI", "after": "e8eb4fd61ad8829e", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:42:41", "before": "e8eb4fd61ad8829e", "action": "SWIPE_DOWN", "target": "SWIPE_DOWN", "after": "e8eb4fd61ad8829e", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:42:58", "before": "e8eb4fd61ad8829e", "action": "SWIPE_UP", "target": "SWIPE_UP", "after": "e8eb4fd61ad8829e", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:43:14", "before": "e8eb4fd61ad8829e", "action": "SWIPE_DOWN", "target": "SWIPE_DOWN", "after": "e8eb4fd61ad8829e", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:43:31", "before": "e8eb4fd61ad8829e", "action": "SWIPE_DOWN", "target": "SWIPE_DOWN", "after": "e8eb4fd61ad8829e", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:43:48", "before": "e8eb4fd61ad8829e", "action": "SWIPE_DOWN", "target": "SWIPE_DOWN", "after": "e8eb4fd61ad8829e", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:45:09", "before": "e8eb4fd61ad8829e", "action": "TAP", "target": "Install &amp; Run Ollama in Termux on Android (2026 Guide)", "after": "13bdf63b7d2be0b5", "success": true, "extra": {}}
+{"ts": "2026-08-23T16:45:32", "before": "13bdf63b7d2be0b5", "action": "TAP", "target": "Google", "after": "13bdf63b7d2be0b5", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:45:47", "before": "13bdf63b7d2be0b5", "action": "TAP", "target": "Google", "after": "13bdf63b7d2be0b5", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:46:04", "before": "13bdf63b7d2be0b5", "action": "TAP", "target": "Play Store", "after": "13bdf63b7d2be0b5", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:46:21", "before": "13bdf63b7d2be0b5", "action": "OPEN_SEARCH", "target": "OPEN_SEARCH", "after": "e8eb4fd61ad8829e", "success": true, "extra": {}}
+{"ts": "2026-08-23T16:46:37", "before": "e8eb4fd61ad8829e", "action": "TAP", "target": "Step-by-Step Installation Guide", "after": "e8eb4fd61ad8829e", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:46:55", "before": "e8eb4fd61ad8829e", "action": "SWIPE_UP", "target": "SWIPE_UP", "after": "e8eb4fd61ad8829e", "success": false, "extra": {}}
+{"ts": "2026-08-23T16:49:00", "before": "e8eb4fd61ad8829e", "action": "user_action", "target": "manual", "after": "4211928661c21e80", "success": true, "extra": {"pkg": "com.miui.home", "act": ".launcher.Launcher", "els": 8}}
+{"ts": "2026-08-23T16:49:05", "before": "4211928661c21e80", "action": "user_action", "target": "manual", "after": "6274844248a8a8cd", "success": true, "extra": {"pkg": "com.android.settings", "act": "com.android.settings.MiuiSettings", "els": 25}}
+{"ts": "2026-08-23T16:49:53", "before": "906a56f47e32f45e", "action": "user_action", "target": "manual", "after": "e8eb4fd61ad8829e", "success": true, "extra": {"pkg": "com.android.chrome", "act": "com.google.android.apps.chrome.Main", "els": 12}}
+{"ts": "2026-08-23T16:51:18", "before": "e8eb4fd61ad8829e", "action": "user_action", "target": "manual", "after": "13bdf63b7d2be0b5", "success": true, "extra": {"pkg": "com.miui.home", "act": "com.miui.home.launcher.Launcher", "els": 7}}
+{"ts": "2026-08-23T16:52:05", "before": "7c619dbef5709692", "action": "user_action", "target": "manual", "after": "13bdf63b7d2be0b5", "success": true, "extra": {"pkg": "com.miui.home", "act": "com.miui.home.launcher.Launcher", "els": 25}}
+{"ts": "2026-08-23T16:52:11", "before": "13bdf63b7d2be0b5", "action": "user_action", "target": "manual", "after": "1adbac4aebc3752d", "success": true, "extra": {"pkg": "moe.shizuku.privileged.api", "act": "moe.shizuku.manager.MainActivity", "els": 14}}
+{"ts": "2026-08-23T16:52:18", "before": "1adbac4aebc3752d", "action": "user_action", "target": "manual", "after": "775e0a766d7e54e2", "success": true, "extra": {"pkg": "com.termux", "act": "com.termux.app.TermuxActivity", "els": 0}}
+{"ts": "2026-08-23T16:52:49", "before": "13bdf63b7d2be0b5", "action": "user_action", "target": "manual", "after": "9bfc7a3a5616b06e", "success": true, "extra": {"pkg": "com.android.chrome", "act": "org.chromium.chrome.browser.ChromeTabbedActivity", "els": 1}}
+{"ts": "2026-08-23T16:53:27", "before": "9bfc7a3a5616b06e", "action": "user_action", "target": "manual", "after": "13bdf63b7d2be0b5", "success": true, "extra": {"pkg": "com.miui.home", "act": "com.miui.home.launcher.Launcher", "els": 7}}

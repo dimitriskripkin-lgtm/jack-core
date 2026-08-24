@@ -174,9 +174,9 @@ def _adb_heal_if_needed():
         )
         text = (r.stdout or "") + (r.stderr or "")
         ok = any(
-            "10.58.220.131" in ln and ln.split()[1] == "device"
+            "10.229.239.131" in ln and ln.split()[1] == "device"
             for ln in text.splitlines()
-            if "10.58.220.131" in ln and len(ln.split()) >= 2
+            if "10.229.239.131" in ln and len(ln.split()) >= 2
         )
         if ok:
             return

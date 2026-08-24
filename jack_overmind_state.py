@@ -4,7 +4,7 @@ import json, os, subprocess, time
 from datetime import datetime
 
 H = "/data/data/com.termux/files/home/jack"
-IP = "10.58.220.131"
+IP = "10.229.239.131"
 
 def sh(cmd, timeout=8):
     try:

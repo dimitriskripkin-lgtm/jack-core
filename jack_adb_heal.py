@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """SSH ok -> ADB-TCP an -> adb connect. Return 0 nur bei status device."""
 import subprocess, sys
-IP, PORT = "10.58.220.131", "5555"
+IP, PORT = "10.229.239.131", "5555"
 SSH = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=8", "xiaomi-jack"]
 
 def run(cmd, timeout=15):

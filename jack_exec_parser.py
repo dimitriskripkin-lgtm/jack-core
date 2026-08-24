@@ -14,7 +14,7 @@ def parse_and_prepare(resp, PENDING_EXEC, send_keyboard):
         
     if _cmd:
         # Halluzinierte SSH-Befehle bereinigen
-        if 'sshpass' in _cmd or '10.58.220.131' in _cmd:
+        if 'sshpass' in _cmd or '10.229.239.131' in _cmd:
             match = re.search(r"'(am start.*?)'", _cmd)
             if match:
                 _cmd = 'ssh xiaomi-jack su -c "' + match.group(1) + '"'

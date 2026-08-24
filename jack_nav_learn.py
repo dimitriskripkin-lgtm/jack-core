@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+import os, time, json, hashlib, subprocess
+
+H = "/data/data/com.termux/files/home/jack"
+POLICY = H + "/nav_policy.json"
+LOG = H + "/nav_learn.log"
+HOME = "/data/data/com.termux/files/home"
+SSH = "/data/data/com.termux/files/usr/bin/ssh"
+ROUNDS = 12
+
+DEFAULT = {
+    "gestures": [
+        {"name": "up_short", "cmd": "input swipe 540 1300 540 900 150", "ok": 0, "fail": 0},
+        {"name": "up_mid", "cmd": "input swipe 540 1400 540 700 180", "ok": 0, "fail": 0},
+        {"name": "down_short", "cmd": "input swipe 540 900 540 1300 150", "ok": 0, "fail": 0},
+        {"name": "down_mid", "cmd": "input swipe 540 700 540 1400 180", "ok": 0, "fail": 0},
+        {"name": "left", "cmd": "input swipe 900 1200 200 1200 160", "ok": 0, "fail": 0},
+        {"name": "right", "cmd": "input swipe 200 1200 900 1200 160", "ok": 0, "fail": 0},
+        {"name": "up_long", "cmd": "input swipe 540 1600 540 500 220", "ok": 0, "fail": 0},
+        {"name": "unlock_short", "cmd": "input swipe 540 1500 540 1000 150", "ok": 0, "fail": 0},
+    ]
+}
+
+def log(msg):
+    line = "[%s] %s" % (time.strftime("%H:%M:%S"), msg)
+    print(line, flush=True)
+    with open(LOG, "a") as f:
+        f.write(line + "\n")
+
+def sh(cmd, timeout=12):
+    env = os.environ.copy()
+    env["HOME"] = HOME
+    env["PATH"] = "/data/data/com.termux/files/usr/bin"
+    r = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout, env=env)
+    return r.returncode, ((r.stdout or "") + (r.stderr or "")).strip()
+
+def su(cmd):
+    return sh('%s -o BatchMode=yes -o ConnectTimeout=6 xiaomi-jack "su -c \'%s\'"' % (
+        SSH, cmd.replace("'", "'\"'\"'")))
+
+def load_policy():
+    if os.path.isfile(POLICY):
+        with open(POLICY) as f:
+            return json.load(f)
+    return json.loads(json.dumps(DEFAULT))
+
+def save_policy(pol):
+    def score(g):
+        n = g["ok"] + g["fail"]
+        return 0.5 if n == 0 else g["ok"] / float(n)
+    pol["gestures"].sort(key=score, reverse=True)
+    pol["updated"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+    with open(POLICY, "w") as f:
+        json.dump(pol, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
+def screen_sig():
+    # schnell: nur Focus + Activity, kein uiautomator
+    rc, out = sh(
+        '%s -o BatchMode=yes -o ConnectTimeout=6 xiaomi-jack '
+        '"dumpsys window 2>/dev/null | grep -E mCurrentFocus|mFocusedApp | head -3"' % SSH
+    )
+    return hashlib.md5((out or "").encode()).hexdigest()[:10], (out or "")[:80]
+
+def unlock():
+    su("input keyevent 224")
+    time.sleep(0.15)
+    su("input keyevent 82")
+    time.sleep(0.1)
+    su("input swipe 540 1500 540 1000 150")
+    time.sleep(0.25)
+
+def pick(pol, i):
+    gs = pol["gestures"]
+    untried = [g for g in gs if g["ok"] + g["fail"] < 2]
+    if untried and i % 2 == 0:
+        return untried[i % len(untried)]
+    return gs[i % len(gs)]
+
+def main():
+    log("=== NAV LEARN FAST rounds=%d ===" % ROUNDS)
+    pol = load_policy()
+    unlock()
+    sig, foc = screen_sig()
+    log("START %s | %s" % (sig, foc))
+    for i in range(ROUNDS):
+        g = pick(pol, i)
+        before, _ = screen_sig()
+        log("TRY %s" % g["name"])
+        su(g["cmd"])
+        time.sleep(0.35)
+        after, foc = screen_sig()
+        if after != before:
+            g["ok"] = g.get("ok", 0) + 1
+            log("ok %s | %s" % (g["name"], foc[:50]))
+        else:
+            g["fail"] = g.get("fail", 0) + 1
+            log("fail %s (no change)" % g["name"])
+        save_policy(pol)
+    log("=== RANKING ===")
+    for g in pol["gestures"]:
+        n = g["ok"] + g["fail"]
+        rate = (100.0 * g["ok"] / n) if n else 0
+        log("%s ok=%d fail=%d rate=%.0f%%" % (g["name"], g["ok"], g["fail"], rate))
+    log("PROTOCOL -> %s" % POLICY)
+
+if __name__ == "__main__":
+    main()

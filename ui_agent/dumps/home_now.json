@@ -1,0 +1,335 @@
+{
+  "ok": true,
+  "hash": "13bdf63b7d2be0b5",
+  "package": "com.miui.home",
+  "activity": "com.miui.home.launcher.Launcher",
+  "elements": [
+    {
+      "label": "1Bildschirm",
+      "x": 484,
+      "y": 2015,
+      "clickable": true,
+      "bounds": "[466,1997][503,2034]",
+      "text": "",
+      "content_desc": "1Bildschirm"
+    },
+    {
+      "label": "2Bildschirm",
+      "x": 521,
+      "y": 2015,
+      "clickable": true,
+      "bounds": "[503,1997][540,2034]",
+      "text": "",
+      "content_desc": "2Bildschirm"
+    },
+    {
+      "label": "3Bildschirm",
+      "x": 558,
+      "y": 2015,
+      "clickable": true,
+      "bounds": "[540,1997][577,2034]",
+      "text": "",
+      "content_desc": "3Bildschirm"
+    },
+    {
+      "label": "4Bildschirm",
+      "x": 595,
+      "y": 2015,
+      "clickable": true,
+      "bounds": "[577,1997][614,2034]",
+      "text": "",
+      "content_desc": "4Bildschirm"
+    },
+    {
+      "label": "ChatGPT",
+      "x": 337,
+      "y": 317,
+      "clickable": true,
+      "bounds": "[236,164][439,470]",
+      "text": "",
+      "content_desc": "ChatGPT"
+    },
+    {
+      "label": "ChatGPT",
+      "x": 337,
+      "y": 242,
+      "clickable": false,
+      "bounds": "[270,175][404,309]",
+      "text": "",
+      "content_desc": "ChatGPT"
+    },
+    {
+      "label": "ChatGPT",
+      "x": 337,
+      "y": 392,
+      "clickable": false,
+      "bounds": "[236,314][439,470]",
+      "text": "ChatGPT",
+      "content_desc": ""
+    },
+    {
+      "label": "Excel",
+      "x": 540,
+      "y": 317,
+      "clickable": true,
+      "bounds": "[439,164][642,470]",
+      "text": "",
+      "content_desc": "Excel"
+    },
+    {
+      "label": "Excel",
+      "x": 540,
+      "y": 242,
+      "clickable": false,
+      "bounds": "[473,175][607,309]",
+      "text": "",
+      "content_desc": "Excel"
+    },
+    {
+      "label": "Excel",
+      "x": 540,
+      "y": 392,
+      "clickable": false,
+      "bounds": "[439,314][642,470]",
+      "text": "Excel",
+      "content_desc": ""
+    },
+    {
+      "label": "AetherSX2",
+      "x": 743,
+      "y": 317,
+      "clickable": true,
+      "bounds": "[642,164][845,470]",
+      "text": "",
+      "content_desc": "AetherSX2"
+    },
+    {
+      "label": "AetherSX2",
+      "x": 743,
+      "y": 242,
+      "clickable": false,
+      "bounds": "[676,175][810,309]",
+      "text": "",
+      "content_desc": "AetherSX2"
+    },
+    {
+      "label": "AetherSX2",
+      "x": 743,
+      "y": 392,
+      "clickable": false,
+      "bounds": "[642,314][845,470]",
+      "text": "AetherSX2",
+      "content_desc": ""
+    },
+    {
+      "label": "APK Installer",
+      "x": 134,
+      "y": 629,
+      "clickable": true,
+      "bounds": "[33,476][236,782]",
+      "text": "",
+      "content_desc": "APK Installer"
+    },
+    {
+      "label": "APK Installer",
+      "x": 134,
+      "y": 554,
+      "clickable": false,
+      "bounds": "[67,487][201,621]",
+      "text": "",
+      "content_desc": "APK Installer"
+    },
+    {
+      "label": "APK Installer",
+      "x": 134,
+      "y": 704,
+      "clickable": false,
+      "bounds": "[33,626][236,782]",
+      "text": "APK Installer",
+      "content_desc": ""
+    },
+    {
+      "label": "Tesla",
+      "x": 337,
+      "y": 629,
+      "clickable": true,
+      "bounds": "[236,476][439,782]",
+      "text": "",
+      "content_desc": "Tesla"
+    },
+    {
+      "label": "Tesla",
+      "x": 337,
+      "y": 554,
+      "clickable": false,
+      "bounds": "[270,487][404,621]",
+      "text": "",
+      "content_desc": "Tesla"
+    },
+    {
+      "label": "Tesla",
+      "x": 337,
+      "y": 704,
+      "clickable": false,
+      "bounds": "[236,626][439,782]",
+      "text": "Tesla",
+      "content_desc": ""
+    },
+    {
+      "label": "Notizen",
+      "x": 540,
+      "y": 629,
+      "clickable": true,
+      "bounds": "[439,476][642,782]",
+      "text": "",
+      "content_desc": "Notizen"
+    },
+    {
+      "label": "Notizen",
+      "x": 540,
+      "y": 554,
+      "clickable": false,
+      "bounds": "[473,487][607,621]",
+      "text": "",
+      "content_desc": "Notizen"
+    },
+    {
+      "label": "Notizen",
+      "x": 540,
+      "y": 704,
+      "clickable": false,
+      "bounds": "[439,626][642,782]",
+      "text": "Notizen",
+      "content_desc": ""
+    },
+    {
+      "label": "Grok",
+      "x": 743,
+      "y": 629,
+      "clickable": true,
+      "bounds": "[642,476][845,782]",
+      "text": "",
+      "content_desc": "Grok"
+    },
+    {
+      "label": "Grok",
+      "x": 743,
+      "y": 554,
+      "clickable": false,
+      "bounds": "[676,487][810,621]",
+      "text": "",
+      "content_desc": "Grok"
+    },
+    {
+      "label": "Grok",
+      "x": 743,
+      "y": 704,
+      "clickable": false,
+      "bounds": "[642,626][845,782]",
+      "text": "Grok",
+      "content_desc": ""
+    },
+    {
+      "label": "Shizuku",
+      "x": 946,
+      "y": 629,
+      "clickable": true,
+      "bounds": "[845,476][1048,782]",
+      "text": "",
+      "content_desc": "Shizuku"
+    },
+    {
+      "label": "Shizuku",
+      "x": 946,
+      "y": 554,
+      "clickable": false,
+      "bounds": "[879,487][1013,621]",
+      "text": "",
+      "content_desc": "Shizuku"
+    },
+    {
+      "label": "Shizuku",
+      "x": 946,
+      "y": 704,
+      "clickable": false,
+      "bounds": "[845,626][1048,782]",
+      "text": "Shizuku",
+      "content_desc": ""
+    },
+    {
+      "label": "Bugjaeger",
+      "x": 134,
+      "y": 941,
+      "clickable": true,
+      "bounds": "[33,788][236,1094]",
+      "text": "",
+      "content_desc": "Bugjaeger"
+    },
+    {
+      "label": "Bugjaeger",
+      "x": 134,
+      "y": 866,
+      "clickable": false,
+      "bounds": "[67,799][201,933]",
+      "text": "",
+      "content_desc": "Bugjaeger"
+    },
+    {
+      "label": "Bugjaeger",
+      "x": 134,
+      "y": 1016,
+      "clickable": false,
+      "bounds": "[33,938][236,1094]",
+      "text": "Bugjaeger",
+      "content_desc": ""
+    },
+    {
+      "label": "Telegram",
+      "x": 133,
+      "y": 2134,
+      "clickable": true,
+      "bounds": "[32,2082][235,2186]",
+      "text": "",
+      "content_desc": "Telegram"
+    },
+    {
+      "label": "Chrome",
+      "x": 336,
+      "y": 2134,
+      "clickable": true,
+      "bounds": "[235,2082][438,2186]",
+      "text": "",
+      "content_desc": "Chrome"
+    },
+    {
+      "label": "Telefon",
+      "x": 539,
+      "y": 2134,
+      "clickable": true,
+      "bounds": "[438,2082][641,2186]",
+      "text": "",
+      "content_desc": "Telefon"
+    },
+    {
+      "label": "Messages",
+      "x": 742,
+      "y": 2134,
+      "clickable": true,
+      "bounds": "[641,2082][844,2186]",
+      "text": "",
+      "content_desc": "Messages"
+    },
+    {
+      "label": "Kamera",
+      "x": 945,
+      "y": 2134,
+      "clickable": true,
+      "bounds": "[844,2082][1047,2186]",
+      "text": "",
+      "content_desc": "Kamera"
+    }
+  ],
+  "xml_len": 38032,
+  "state": "normal",
+  "ts": "2026-08-23T17:42:29"
+}

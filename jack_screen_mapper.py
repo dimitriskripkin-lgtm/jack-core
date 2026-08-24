@@ -6,7 +6,7 @@ Extrahiert UI-Elemente vom Xiaomi und speichert Screen-Signaturen.
 import sqlite3, subprocess, xml.etree.ElementTree as ET, hashlib, os, time
 
 DB_FILE = os.path.expanduser("~/jack/jack_screen_states.db")
-XIAOMI_HOST = "10.58.220.131"
+XIAOMI_HOST = "10.229.239.131"
 XIAOMI_PORT = "8022"
 XIAOMI_KEY = os.path.expanduser("~/.ssh/id_jack")
 

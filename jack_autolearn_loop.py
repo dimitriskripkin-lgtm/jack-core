@@ -19,7 +19,7 @@ def _skill_cmd_allowed(cmd):
         if d in low:
             return False, "DENY:" + d
     if "ssh " in low or low.startswith("ssh"):
-        if ("xiaomi-jack" in c or "10.58.220.131" in c) and not any(x in low for x in (";", "&&", "||", "`", "$(")):
+        if ("xiaomi-jack" in c or "10.229.239.131" in c) and not any(x in low for x in (";", "&&", "||", "`", "$(")):
             return True, "OK-ssh-xiaomi"
         return False, "DENY:ssh-nur-xiaomi-jack"
     return True, "OK-local"

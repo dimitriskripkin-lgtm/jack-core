@@ -1264,7 +1264,7 @@ def handle(text):
         
         if cmd:
             # SSH-Befehle bereinigen
-            if 'sshpass' in cmd or '10.58.220.131' in cmd:
+            if 'sshpass' in cmd or '10.229.239.131' in cmd:
                 import re
                 match = re.search(r"'(am start.*?)'", cmd)
                 if match:
