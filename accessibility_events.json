@@ -4198,5 +4198,100 @@
     "type": "window_change",
     "package": "com.termux/com.termux.app.TermuxActivity",
     "timestamp": 1787572658.6407833
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787572669.6908343
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787572840.4648244
+  },
+  {
+    "type": "window_change",
+    "package": "AOD",
+    "timestamp": 1787572884.3971908
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573075.8942318
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787573081.7698116
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573093.546078
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787573110.0223484
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573164.6923504
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787573170.2067013
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573192.0615714
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787573203.0899463
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573219.5960896
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787573230.5464995
+  },
+  {
+    "type": "window_change",
+    "package": "com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher",
+    "timestamp": 1787573241.6021044
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573247.0966082
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787573258.1975627
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573269.8997638
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787573280.837627
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573325.1114135
   }
 ]

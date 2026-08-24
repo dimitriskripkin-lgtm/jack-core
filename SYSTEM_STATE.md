@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-24 13:57
+# JACK SYSTEM STATE — 2026-08-24 14:07
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: DOWN
 
 ## Resources
-- RAM verfuegbar: 3986MB
+- RAM verfuegbar: 3761MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 2740
+- Memory-Eintraege: 2744
 - Offene Fehler: 0
 
 ## Config
@@ -24,11 +24,11 @@
 - autolearn: AN
 
 ## Letzte Log-Eintraege
-2026-08-24 13:54:46 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
-2026-08-24 13:54:46 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
-2026-08-24 13:56:54 | INFO    | jack.legacy_wrapper  | PUBLISHER-PUSH | OK
-2026-08-24 13:56:55 | INFO    | jack.legacy_wrapper  | PUBLISHER-FEHLER | To https://github.com/dimitriskripkin-lgtm/jack-context.git
+2026-08-24 14:05:39 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
+2026-08-24 14:05:39 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
+2026-08-24 14:05:59 | INFO    | jack.legacy_wrapper  | PUBLISHER-PUSH | OK
+2026-08-24 14:06:00 | INFO    | jack.legacy_wrapper  | PUBLISHER-FEHLER | To https://github.com/dimitriskripkin-lgtm/jack-context.git
  ! [remote rejected]   main -> main (can
 
 
-*Generiert: 2026-08-24 13:57*
+*Generiert: 2026-08-24 14:07*
