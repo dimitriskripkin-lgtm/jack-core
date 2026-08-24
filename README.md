@@ -19,7 +19,7 @@ JACK is a production-grade, distributed AI operating system engineered to run na
 
 ```text
 +------------------------------------------+          SSH ControlMaster          +------------------------------------------+
-|        HONOR MAGIC8 PRO (HOST)           |             (~95ms latency)         |        XIAOMI 11T PRO (WORKER)           |
+|        HONOR MAGIC8 PRO (HOST)           |             (~143ms latency)         |        XIAOMI 11T PRO (WORKER)           |
 |  Snapdragon 8 Elite | 11GB RAM | Termux  | <---------------------------------> |   Magisk Root | 8GB RAM | Termux Native  |
 +------------------------------------------+                                     +------------------------------------------+
 | - Telegram & Voice Orchestrator          |                                     | - Ollama (llama3.2:3b / nomic-embed)     |
@@ -87,11 +87,22 @@ Incoming Task ---> Intent Handler Gate
 
 ---
 
+## Origin
+
+> On 06.06.2026, a cloud VPS failure wiped a running AI system with no recovery path.
+> The lesson was immediate: **never again depend on infrastructure you do not own.**
+
+JACK was engineered from scratch on Android — the only hardware available — as a direct response.
+No server. No subscription. No single point of failure outside physical hardware.
+
+---
+
 ## Developer & System Author
 
-**Dimitri** — Mobile Edge Computing & Automation Engineer.
+**Dimitri** — Mobile Edge Computing & Automation Engineer from Bremen, Germany.
 * **Specialization:** Android Internals, Termux Subsystems, Shizuku/ADB Automation, Distributed Local AI Infrastructure.
 * **Engineering Philosophy:** Built 100% on bare-metal mobile devices. No cloud crutches. Total system ownership.
+* **Constraint:** Developed entirely on a smartphone. No PC. No lab. No budget. JACK is proof that edge AI works with consumer hardware.
 
 ---
 
