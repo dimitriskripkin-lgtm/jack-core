@@ -48,7 +48,7 @@ def api_teacher(state):
         "heartbeats_age_s": state.get("heartbeats_age_s"),
     }, ensure_ascii=False)
     body = {
-        "model": "grok-3",
+        "model": "grok-4.6",
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": user},
