@@ -80,7 +80,7 @@ def api_teacher(state):
         allow = set(state.get("allowed_actions") or [])
         acts = []
         for a in plan.get("actions") or []:
-            if a.get("cmd_type") in allow or a.get("cmd_type") in ("ssh_check", "adb_heal", "status"):
+            if a.get("cmd_type") in allow or a.get("cmd_type") in ("ssh_check", "adb_heal", "status", "sv_status"):
                 acts.append(a)
         plan["actions"] = acts[:5]
         return plan
@@ -137,6 +137,18 @@ def execute_plan(plan):
                 )
                 r["out"] = ((p.stdout or "") + (p.stderr or ""))[:200]
                 r["ok"] = "SSH_OK" in r["out"]
+            elif ctype == "sv_status":
+                p = subprocess.run(
+                    "sv status /data/data/com.termux/files/usr/var/service/jack_telegram "
+                    "/data/data/com.termux/files/usr/var/service/jack_cortex "
+                    "/data/data/com.termux/files/usr/var/service/jack_waechter "
+                    "/data/data/com.termux/files/usr/var/service/jack_autolearn "
+                    "/data/data/com.termux/files/usr/var/service/jack_publisher "
+                    "2>/dev/null | head -20",
+                    shell=True, capture_output=True, text=True, timeout=15,
+                )
+                r["out"] = ((p.stdout or "") + (p.stderr or "")).strip()[:800]
+                r["ok"] = "run:" in r["out"] or "down:" in r["out"]
             elif ctype == "status":
                 r["out"] = json.dumps({
                     "ssh": a.get("why"),
