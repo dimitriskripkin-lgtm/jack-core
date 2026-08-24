@@ -23,7 +23,18 @@ Ausfuehrung nur ueber erlaubte Hooks, kein blinder Shell.
 """
 import json, os, subprocess, sys
 
+
 H = "/data/data/com.termux/files/home/jack"
+
+# === BLOCK 2 HARDENING ===
+ALLOWED_ACTIONS = {
+    "status", "ssh_check", "adb_heal", "sv_status", "skills_list",
+}
+FORBIDDEN_ACTIONS = {
+    "core_patch_without_approval", "rm_rf", "read_secrets",
+    "shell", "raw_shell", "eval", "exec",
+}
+
 STATE = H + "/jack_overmind_state.json"
 PLAN = H + "/jack_overmind_plan.json"
 RESULT = H + "/jack_overmind_result.json"
@@ -119,10 +130,13 @@ def api_teacher(state):
         plan["teacher"] = "grok_api"
         _api_mark()
         # nur erlaubte cmd_types
-        allow = set(state.get("allowed_actions") or [])
+        # HARD Whitelist + Forbidden (BLOCK 2)
         acts = []
         for a in plan.get("actions") or []:
-            if a.get("cmd_type") in allow or a.get("cmd_type") in ("ssh_check", "adb_heal", "status", "sv_status", "skills_list"):
+            ctype = a.get("cmd_type")
+            if ctype in FORBIDDEN_ACTIONS:
+                continue
+            if ctype in ALLOWED_ACTIONS:
                 acts.append(a)
         plan["actions"] = acts[:5]
         return plan
@@ -164,6 +178,15 @@ def execute_plan(plan):
     for a in plan.get("actions") or []:
         ctype = a.get("cmd_type")
         r = {"id": a.get("id"), "cmd_type": ctype, "ok": False, "out": ""}
+        # HARD gate
+        if ctype in FORBIDDEN_ACTIONS:
+            r["out"] = "FORBIDDEN"
+            results.append(r)
+            continue
+        if ctype not in ALLOWED_ACTIONS:
+            r["out"] = "NOT_ALLOWED"
+            results.append(r)
+            continue
         try:
             if ctype == "adb_heal":
                 p = subprocess.run(

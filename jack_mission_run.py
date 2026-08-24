@@ -12,11 +12,17 @@ def main():
     if not mission_path.is_file():
         print("NO_MISSION"); return 1
     m = json.loads(mission_path.read_text())
+    # FAIL-CLOSED: forbidden muss explizit gesetzt sein
+    forbidden = m.get("forbidden")
+    if forbidden is None:
+        print("FAIL_CLOSED: forbidden field missing")
+        return 2
     plan = {
         "teacher": m.get("teacher") or "file",
         "goal": m.get("goal") or m.get("title") or "",
         "actions": m.get("steps") or [],
         "notes": "mission:" + str(m.get("id")),
+        "forbidden": forbidden,
     }
     plan_path.write_text(json.dumps(plan, indent=2, ensure_ascii=False))
     r = subprocess.run(
