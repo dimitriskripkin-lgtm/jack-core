@@ -1,0 +1,17 @@
+{
+  "teacher": "file",
+  "goal": "verify_adb",
+  "actions": [
+    {
+      "id": "1",
+      "cmd_type": "ssh_check",
+      "why": "Link check"
+    },
+    {
+      "id": "2",
+      "cmd_type": "status",
+      "why": "report"
+    }
+  ],
+  "notes": "von Session gelegt"
+}

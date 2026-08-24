@@ -15,7 +15,21 @@ def load_state():
     path, st = s.collect()
     return st
 
+
+def file_teacher(state):
+    """Plan aus jack_overmind_plan_in.json — von Grok/Dima gelegt."""
+    path = H + "/jack_overmind_plan_in.json"
+    if not os.path.isfile(path):
+        return None
+    try:
+        plan = json.load(open(path))
+        plan["teacher"] = plan.get("teacher") or "file"
+        return plan
+    except Exception as e:
+        return {"teacher": "file_error", "goal": "none", "actions": [], "notes": str(e)[:200]}
+
 def mock_teacher(state):
+
     """Ersetzt spaeter API. Liefert Maschinenplan."""
     actions = []
     if not state.get("ssh_xiaomi"):
@@ -66,7 +80,7 @@ def execute_plan(plan):
 
 def main():
     state = load_state()
-    plan = mock_teacher(state)
+    plan = file_teacher(state) or mock_teacher(state)
     open(PLAN, "w").write(json.dumps(plan, indent=2, ensure_ascii=False))
     results = execute_plan(plan)
     out = {"ts": state.get("ts"), "plan": plan, "results": results}
