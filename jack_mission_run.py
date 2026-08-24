@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Aktive Mission -> plan_in -> overmind client -> result."""
-import json, subprocess, sys
+import json, subprocess, sys, time
 from pathlib import Path
 
 H = Path("/data/data/com.termux/files/home/jack")
@@ -35,30 +35,36 @@ def main():
         plan_path.unlink()
     except Exception:
         pass
+    oks, fails = [], []
     if result_path.is_file():
         res = json.loads(result_path.read_text())
-        oks = [x.get("ok") for x in res.get("results") or []]
-        # DONE_LINE
+        results = res.get("results") or []
+        oks = [x.get("ok") for x in results]
+        fails = [x.get("id") for x in results if not x.get("ok")]
         print("DONE_ALL", all(oks) if oks else False, "N", len(oks))
-        # BLOCK4: Mission-Ergebnis in DB
+        if fails:
+            print("FAIL_IDS", fails)
+        # DB-Log
         try:
-            import sqlite3, time
+            import sqlite3
             con = sqlite3.connect(str(H / "jack_missions.db"))
             con.execute(
                 "INSERT INTO missions (aufgabe, typ, status, prioritaet, erstellt, beendet, ergebnis, versuche) VALUES (?,?,?,?,?,?,?,?)",
-                (str(m.get("goal") or m.get("title") or m.get("id")), "overmind",
-                 "done" if oks and all(oks) else "fail", 5,
-                 int(time.time()), int(time.time()),
-                 str(fails)[:200] if fails else "ok", 1)
+                (
+                    str(m.get("goal") or m.get("title") or m.get("id")),
+                    "overmind",
+                    "done" if oks and all(oks) else "fail",
+                    int(m.get("priority") or 5),
+                    int(time.time()),
+                    int(time.time()),
+                    (str(fails)[:200] if fails else "ok"),
+                    1,
+                ),
             )
-            con.commit(); con.close()
+            con.commit()
+            con.close()
         except Exception as e:
             print("DB_LOG_FAIL", e)
-
-        fails = [x.get("id") for x in res.get("results") or [] if not x.get("ok")]
-        if fails:
-            print("FAIL_IDS", fails)
-
     return r.returncode
 
 if __name__ == "__main__":
