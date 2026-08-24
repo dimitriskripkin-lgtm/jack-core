@@ -164,6 +164,30 @@ def _heartbeat_sv_check():
         pass
 
 
+
+def _adb_heal_if_needed():
+    """ADB_HEAL_HOOK: wenn SSH ok und adb nicht device -> jack_adb_heal.py"""
+    try:
+        import subprocess, os
+        r = subprocess.run(
+            ["adb", "devices"], capture_output=True, text=True, timeout=8
+        )
+        text = (r.stdout or "") + (r.stderr or "")
+        ok = any(
+            "10.58.220.131" in ln and ln.split()[1] == "device"
+            for ln in text.splitlines()
+            if "10.58.220.131" in ln and len(ln.split()) >= 2
+        )
+        if ok:
+            return
+        heal = os.path.expanduser("\~/jack/jack_adb_heal.py")
+        if not os.path.isfile(heal):
+            return
+        subprocess.run(["python3", heal], capture_output=True, text=True, timeout=60)
+    except Exception:
+        pass
+
+
 def main():
     import jack_log; jack_log.log_decision("WAECHTER-START", "Nacht-Ueberwachung mit Queue")
     import jack_queue
