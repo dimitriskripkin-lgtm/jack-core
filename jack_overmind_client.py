@@ -1,3 +1,21 @@
+
+OVERMIND_MIN_INTERVAL = 180  # Sekunden zwischen API-Teacher-Calls
+OVERMIND_LAST_API = "/data/data/com.termux/files/home/jack/.overmind_last_api"
+
+def _api_allowed():
+    import time, os
+    try:
+        if os.path.isfile(OVERMIND_LAST_API):
+            age = time.time() - os.path.getmtime(OVERMIND_LAST_API)
+            if age < OVERMIND_MIN_INTERVAL:
+                return False, int(OVERMIND_MIN_INTERVAL - age)
+    except Exception:
+        pass
+    return True, 0
+
+def _api_mark():
+    open(OVERMIND_LAST_API, "w").write(str(__import__("time").time()))
+
 #!/usr/bin/env python3
 """
 Overmind-Client: State lesen -> Teacher (mock|file|api later) -> Aktionen vorschlagen.
@@ -30,6 +48,15 @@ def _secret(name):
     return None
 
 def api_teacher(state):
+    ok, wait = _api_allowed()
+    if not ok:
+        return {
+            "teacher": "throttle",
+            "goal": "wait",
+            "actions": [{"id": "1", "cmd_type": "status", "why": "API throttle %ss" % wait}],
+            "notes": "skipped API, wait %ss" % wait,
+        }
+
     """Grok/xAI wenn Key da, sonst None. Antwort muss JSON-Plan sein."""
     key = _secret("XAI_API_KEY") or _secret("GROK_API_KEY") or _secret("xai_api_key")
     if not key:
@@ -76,6 +103,7 @@ def api_teacher(state):
                 content = content[4:].strip()
         plan = json.loads(content)
         plan["teacher"] = "grok_api"
+        _api_mark()
         # nur erlaubte cmd_types
         allow = set(state.get("allowed_actions") or [])
         acts = []
