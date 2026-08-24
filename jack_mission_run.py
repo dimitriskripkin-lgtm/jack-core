@@ -32,7 +32,12 @@ def main():
     if result_path.is_file():
         res = json.loads(result_path.read_text())
         oks = [x.get("ok") for x in res.get("results") or []]
+        # DONE_LINE
         print("DONE_ALL", all(oks) if oks else False, "N", len(oks))
+        fails = [x.get("id") for x in res.get("results") or [] if not x.get("ok")]
+        if fails:
+            print("FAIL_IDS", fails)
+
     return r.returncode
 
 if __name__ == "__main__":
