@@ -711,7 +711,7 @@ def handle(text):
     if text.strip() in ("/skills", "/skill"):
         try:
             import sqlite3, os
-            db = os.path.expanduser("\~/jack/jack_skills.db")
+            db = "/data/data/com.termux/files/home/jack/jack_skills.db"
             c = sqlite3.connect(db)
             rows = c.execute(
                 "SELECT name, state, successes, executions FROM skills ORDER BY state, name"
