@@ -28,7 +28,19 @@ def main():
     print("DEVICES", dev)
     lines = [ln for ln in dev.splitlines() if IP in ln]
     ok = any(ln.split()[1] == "device" for ln in lines if len(ln.split()) >= 2)
-    print("RESULT", "OK" if ok else "FAIL")
+    # BLOCK P1: Zähler + unauthorized
+    count_path = "/data/data/com.termux/files/home/jack/.adb_heal_count"
+    try:
+        n = int(open(count_path).read().strip() or "0")
+    except Exception:
+        n = 0
+    n += 1
+    open(count_path, "w").write(str(n))
+    if "unauthorized" in (dev or "").lower() or "unauthorized" in (c or "").lower():
+        print("UNAUTHORIZED_POPUP")
+        print("RESULT FAIL unauthorized")
+        return 3
+    print("RESULT", "OK" if ok else "FAIL", "count", n)
     return 0 if ok else 2
 
 if __name__ == "__main__":
