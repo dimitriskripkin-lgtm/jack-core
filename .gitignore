@@ -81,3 +81,17 @@ jack_outcomes.jsonl
 jack_screen_states.db
 cashflow101_original.apk
 modding/
+
+# Runtime / Heartbeats
+.heartbeat_*
+*.heartbeat
+
+# Screenshots & Lern-Artefakte
+xiaomi_shot*
+learned_*.txt
+jack_learned_rules.json
+
+# Backups
+*.bak
+*.bak_*
+*\~

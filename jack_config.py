@@ -5,7 +5,7 @@ except Exception:
     _jlog = None
 
 DEFAULT = {
-    'NETWORK': {'ssh_port': '8022', 'rescue_port': '8023', 'keepalive_interval': '20', 'xiaomi_ip': '10.58.220.131', 'xiaomi_port': '43199'},
+    'NETWORK': {'ssh_port': '8022', 'rescue_port': '8023', 'keepalive_interval': '20', 'xiaomi_ip': '10.229.239.131', 'xiaomi_port': '43199'},
     'STORAGE': {'db_path': '/data/data/com.termux/files/home/jack/jack_errors.db'}
 }
 

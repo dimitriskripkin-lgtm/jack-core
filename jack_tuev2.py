@@ -215,7 +215,7 @@ try:
     import configparser
     cfg=configparser.ConfigParser(); cfg.read(os.path.join(H,'config.ini'))
     checks=[
-        ('NETWORK','xiaomi_ip','10.58.220.131'),
+        ('NETWORK','xiaomi_ip','10.229.239.131'),
         ('AUTONOMIE','level','4'),
         ('GITHUB','branch','master'),
     ]

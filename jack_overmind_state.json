@@ -4,7 +4,7 @@
   "git_tip": "e5c3adb docs: JACK_MISSION_v1 template for Cloud/Gemini roadmaps",
   "ssh_xiaomi": true,
   "adb_device": true,
-  "adb_raw": "List of devices attached\n10.58.220.131:5555\tdevice",
+  "adb_raw": "List of devices attached\n10.229.239.131:5555\tdevice",
   "sv": "run: /data/data/com.termux/files/usr/var/service/jack_autolearn: (pid 14129) 5664s\nrun: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 11260) 62124s\nrun: /data/data/com.termux/files/usr/var/service/jack_focus_monitor: (pid 10698) 81925s\nrun: /data/data/com.termux/files/usr/var/service/jack_publisher: (pid 24986) 48529s; run: log: (pid 24985) 48529s\nrun: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 28769) 178s\nrun: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 14700) 847s",
   "heartbeats_age_s": {
     "jack_telegram": 4.11951208114624,

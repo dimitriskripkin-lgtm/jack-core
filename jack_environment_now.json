@@ -3,7 +3,7 @@
   "commit_hinweis": "master >= 315eaf3",
   "hardware": {
     "host": "Honor Magic8 Pro — Gehirn, Termux, runit, Telegram",
-    "worker": "Xiaomi 11T Pro (vili) — Root, SSH xiaomi-jack:8022, Ollama, ADB 10.58.220.131:5555"
+    "worker": "Xiaomi 11T Pro (vili) — Root, SSH xiaomi-jack:8022, Ollama, ADB 10.229.239.131:5555"
   },
   "dienste": [
     "jack_telegram",

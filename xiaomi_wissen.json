@@ -865,7 +865,7 @@
     "xiaomi.joyose"
   ],
   "cmd_namespaces": [
-    "'[10.58.220.131]:8022'",
+    "'[10.229.239.131]:8022'",
     "(ED25519)",
     "Currently",
     "DockObserver",
