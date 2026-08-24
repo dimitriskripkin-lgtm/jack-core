@@ -12,7 +12,7 @@ STATE=os.path.join(H,".waechter_state")
 EDB=os.path.join(H,"jack_errors.db")
 SEC=os.path.expanduser("~/.jack_secrets")
 DIENSTE=["jack_cortex","jack_telegram","jack_waechter"]  # ollama entfernt (Qwen 21.08. - Hitze-Problem)
-HEARTBEAT=300
+HEARTBEAT=120
 
 def _sec(k):
     try:
