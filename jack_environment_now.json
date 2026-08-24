@@ -13,7 +13,7 @@
     "jack_publisher",
     "jack_focus_monitor"
   ],
-  "ui_pipeline": "jack_exec.handle_ui_intent + tap_text; Telegram /tap /forsche /kill /skills; Voice und talk_to_gemini vor LLM gegated",
+  "ui_pipeline": "jack_exec.handle_ui_intent + tap_text; Telegram /tap /forsche /skills; Stop per kill-cmd; Voice+talk vor LLM gegated",
   "sicherheit": [
     "Operator-Whitelist vor execute_actions",
     "Autolearn SSH nur xiaomi-jack",

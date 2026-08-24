@@ -370,30 +370,46 @@ def _load_env_now():
         return None
 
 def talk_to_gemini(*args, **kwargs):
-    """UI_GATE_TALK: Intent vor Chat."""
+    """UI_GATE_TALK: Intent auf ROH-Text; Umgebung nur fuer LLM."""
     text = ""
     if args:
         text = args[0] if isinstance(args[0], str) else ""
     if not text:
         text = kwargs.get("text") or kwargs.get("msg") or kwargs.get("prompt") or kwargs.get("message") or ""
+    raw = str(text or "")
     try:
         import jack_exec
-        try:
-            _env = _load_env_now()
-            if _env and text:
-                text = (
-                    "[UMGEBUNG] "
-                    + str(_env.get("ui_pipeline", ""))[:140]
-                    + " | ADB-Heal jack_adb_heal | xiaomi-jack | kein Monkey-Standard.\n\n"
-                    + str(text)
-                )
-        except Exception:
-            pass
-        # ENV_NOW_APPLY_Q
-        ui = jack_exec.handle_ui_intent(str(text))
+        ui = jack_exec.handle_ui_intent(raw)
         if ui:
             return ui
     except Exception:
         pass
+    # ENV nur an die Denk-Pipeline, nicht an UI-Gate
+    llm_text = raw
+    try:
+        _env = _load_env_now()
+        if _env and raw:
+            llm_text = (
+                "[UMGEBUNG] "
+                + str(_env.get("ui_pipeline", "")).replace("/kill", "kill-cmd")[:140]
+                + " | ADB-Heal | xiaomi-jack | kein Monkey-Standard.
+
+"
+                + raw
+            )
+    except Exception:
+        pass
+    if llm_text != raw:
+        # args anpassen wenn positional
+        if args and isinstance(args[0], str):
+            args = (llm_text,) + tuple(args[1:])
+        else:
+            kwargs = dict(kwargs)
+            for k in ("text", "msg", "prompt", "message"):
+                if k in kwargs:
+                    kwargs[k] = llm_text
+                    break
+            else:
+                args = (llm_text,)
     return _talk_to_gemini_impl(*args, **kwargs)
 
