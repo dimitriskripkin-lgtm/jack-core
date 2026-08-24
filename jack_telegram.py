@@ -702,6 +702,25 @@ def handle(text):
         except Exception as e:
             return "Mission Fehler: " + str(e)[:300]
 
+    if text.strip() in ("/mission next", "/mnext"):
+        try:
+            import subprocess
+            r = subprocess.run(
+                ["python3", "/data/data/com.termux/files/home/jack/jack_mission_queue.py", "next"],
+                capture_output=True, text=True, timeout=30,
+            )
+            out = ((r.stdout or "") + (r.stderr or "")).strip()
+            if r.returncode == 0 and "ACTIVE" in out:
+                r2 = subprocess.run(
+                    ["python3", "/data/data/com.termux/files/home/jack/jack_mission_run.py"],
+                    capture_output=True, text=True, timeout=180,
+                )
+                out2 = ((r2.stdout or "") + (r2.stderr or "")).strip()[:1200]
+                return "QUEUE→ACTIVE\n" + out + "\n---\n" + out2
+            return "QUEUE:\n" + out
+        except Exception as e:
+            return "Queue Fehler: " + str(e)[:200]
+
     if text.strip() in ("/overmind", "/om"):
         try:
             import subprocess
