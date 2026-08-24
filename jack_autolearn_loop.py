@@ -151,7 +151,7 @@ def genesis_skills():
     cu = conn.cursor()
     
     for key, count in error_counts.items():
-        if count >= 2:  # Threshold normal
+        if count >= 9999:  # BLOCK3 auto_fix off
             skill_name = f"auto_fix_{key}"
             cu.execute("SELECT name FROM skills WHERE name=?", (skill_name,))
             if not cu.fetchone():
