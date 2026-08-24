@@ -95,7 +95,7 @@ def run(cmd, timeout=120):
 
 def handle_ui_intent(text):
     """Sprache/Text -> UI. Kurz, timeout-hart, kein Hänger."""
-    import os, re, urllib.parse, subprocess
+    import os, re, re, urllib.parse, subprocess
     raw = (text or "").strip()
     if not raw:
         return None
@@ -120,7 +120,8 @@ def handle_ui_intent(text):
             return 1, str(e)[:200]
 
     # Kill
-    if any(w in low for w in ("stopp", "stop", "kill", "abbruch", "hör auf", "hoer auf")):
+    # Stop nur als Wort, nicht in "startest"
+    if re.search(r"(?:^|\s)(?:stopp|stop|kill|abbrechen)(?:\s|$)|/kill", low):
         kill = "/data/data/com.termux/files/home/jack/.jack_ui_kill"
         flag = "/data/data/com.termux/files/home/jack/.jack_ui_run"
         open(kill, "w").write("1")
