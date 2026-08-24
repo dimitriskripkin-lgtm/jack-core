@@ -180,7 +180,7 @@ def _adb_heal_if_needed():
         )
         if ok:
             return
-        heal = os.path.expanduser("\~/jack/jack_adb_heal.py")
+        heal = "/data/data/com.termux/files/home/jack/jack_adb_heal.py"
         if not os.path.isfile(heal):
             return
         subprocess.run(["python3", heal], capture_output=True, text=True, timeout=60)
@@ -265,6 +265,7 @@ def main():
                 jack_log.log_decision("QUEUE-SKIPPED", res.get("reason", name))
         
         import jack_heartbeat; jack_heartbeat.beat("jack_waechter")
+        _adb_heal_if_needed()
         _heartbeat_sv_check()
         import jack_heartbeat; jack_heartbeat.beat('jack_waechter')
         time.sleep(HEARTBEAT)
