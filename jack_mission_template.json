@@ -1,0 +1,36 @@
+{
+  "schema": "JACK_MISSION_v1",
+  "id": "roadmap_phase_NEXT",
+  "title": "Naechste Roadmap-Phase (Vorlage)",
+  "goal": "Hier ein Satz was erreicht werden soll",
+  "priority": 3,
+  "allowed_actions": [
+    "status",
+    "ssh_check",
+    "adb_heal",
+    "sv_status",
+    "skills_list"
+  ],
+  "forbidden": [
+    "core_patch",
+    "rm_rf",
+    "read_secrets",
+    "beliebige_shell"
+  ],
+  "teacher": "file",
+  "steps": [
+    {
+      "id": "1",
+      "cmd_type": "status",
+      "why": "Ist-Zustand vor Phase"
+    },
+    {
+      "id": "2",
+      "cmd_type": "sv_status",
+      "why": "Dienste stabil?"
+    }
+  ],
+  "done_when": "alle steps ok=true und goal erfuellt",
+  "notes_for_cloud": "Nur cmd_type aus allowed_actions. Keine Core-Patches in steps. Grosse Code-Aenderungen = Session mit Grok + Termux-Block, nicht Overmind-Action.",
+  "created": "2026-08-24T08:44"
+}
