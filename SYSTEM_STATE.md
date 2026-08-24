@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-24 14:07
+# JACK SYSTEM STATE — 2026-08-24 14:20
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: DOWN
 
 ## Resources
-- RAM verfuegbar: 3761MB
+- RAM verfuegbar: 3775MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 2744
+- Memory-Eintraege: 2749
 - Offene Fehler: 0
 
 ## Config
@@ -24,11 +24,11 @@
 - autolearn: AN
 
 ## Letzte Log-Eintraege
-2026-08-24 14:05:39 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
-2026-08-24 14:05:39 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
-2026-08-24 14:05:59 | INFO    | jack.legacy_wrapper  | PUBLISHER-PUSH | OK
-2026-08-24 14:06:00 | INFO    | jack.legacy_wrapper  | PUBLISHER-FEHLER | To https://github.com/dimitriskripkin-lgtm/jack-context.git
- ! [remote rejected]   main -> main (can
+2026-08-24 14:18:15 | INFO    | jack.legacy_wrapper  | SELF-AUDIT | SYSTEM_STATE.md generiert
+2026-08-24 14:18:15 | INFO    | jack.legacy_wrapper  | SCHEDULER | Power-Time aktiv - schwere Jobs erlaubt
+2026-08-24 14:18:47 | INFO    | jack.legacy_wrapper  | EXPLORE | Xiaomi: CPU=unbekannt RAM=unbekannt Akku=unbekannt Temp=unbekanntC
+2026-08-24 14:18:47 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
+2026-08-24 14:18:47 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Keine offenen Fehler
 
 
-*Generiert: 2026-08-24 14:07*
+*Generiert: 2026-08-24 14:20*

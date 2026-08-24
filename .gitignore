@@ -95,3 +95,4 @@ jack_learned_rules.json
 *.bak
 *.bak_*
 *\~
+.focus_state

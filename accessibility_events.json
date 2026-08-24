@@ -4293,5 +4293,145 @@
     "type": "window_change",
     "package": "com.termux/com.termux.app.TermuxActivity",
     "timestamp": 1787573325.1114135
+  },
+  {
+    "type": "window_change",
+    "package": "com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher",
+    "timestamp": 1787573336.0104797
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787573341.4860458
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573397.1405797
+  },
+  {
+    "type": "window_change",
+    "package": "com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher",
+    "timestamp": 1787573408.1739562
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573419.3256738
+  },
+  {
+    "type": "window_change",
+    "package": "com.anthropic.claude/com.anthropic.claude.mainactivity.MainActivity",
+    "timestamp": 1787573452.5245976
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573480.434373
+  },
+  {
+    "type": "window_change",
+    "package": "ai.x.grok/ai.x.grok.main.GrokActivity",
+    "timestamp": 1787573491.348282
+  },
+  {
+    "type": "window_change",
+    "package": "com.google.android.documentsui/com.android.documentsui.picker.PickActivity",
+    "timestamp": 1787573497.3075008
+  },
+  {
+    "type": "window_change",
+    "package": "ai.x.grok/ai.x.grok.main.GrokActivity",
+    "timestamp": 1787573516.5252016
+  },
+  {
+    "type": "window_change",
+    "package": "com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher",
+    "timestamp": 1787573659.0977693
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573664.5807455
+  },
+  {
+    "type": "window_change",
+    "package": "ai.x.grok/ai.x.grok.main.GrokActivity",
+    "timestamp": 1787573675.9805472
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573681.4367847
+  },
+  {
+    "type": "window_change",
+    "package": "ai.x.grok/ai.x.grok.main.GrokActivity",
+    "timestamp": 1787573697.9555247
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573731.048862
+  },
+  {
+    "type": "window_change",
+    "package": "ai.x.grok/ai.x.grok.main.GrokActivity",
+    "timestamp": 1787573752.6508367
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573912.7741265
+  },
+  {
+    "type": "window_change",
+    "package": "ai.x.grok/ai.x.grok.main.GrokActivity",
+    "timestamp": 1787573924.114231
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787573951.6692667
+  },
+  {
+    "type": "window_change",
+    "package": "ai.x.grok/ai.x.grok.main.GrokActivity",
+    "timestamp": 1787573967.5127857
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787574000.543612
+  },
+  {
+    "type": "window_change",
+    "package": "ai.x.grok/ai.x.grok.main.GrokActivity",
+    "timestamp": 1787574016.8531284
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787574033.5084612
+  },
+  {
+    "type": "window_change",
+    "package": "ai.x.grok/ai.x.grok.main.GrokActivity",
+    "timestamp": 1787574055.383359
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787574088.7297745
+  },
+  {
+    "type": "window_change",
+    "package": "ai.x.grok/ai.x.grok.main.GrokActivity",
+    "timestamp": 1787574099.6581588
+  },
+  {
+    "type": "window_change",
+    "package": "com.termux/com.termux.app.TermuxActivity",
+    "timestamp": 1787574122.6583986
   }
 ]
