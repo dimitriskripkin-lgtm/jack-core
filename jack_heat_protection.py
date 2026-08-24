@@ -116,6 +116,11 @@ def check_heat(level="normal"):
             subprocess.run(["pkill", "-9", "-f", "llama-server"], capture_output=True)
             subprocess.run(["pkill", "-9", "-f", "ollama"], capture_output=True)
             return False
+    elif level == "overmind":
+        # API-Teacher nur wenn Honor unter BLOCK-Schwelle
+        if temp > HONOR_TEMP_BLOCK:
+            print(f"HEAT-PROTECT: Overmind-API skip (CPU {temp:.1f}°C > {HONOR_TEMP_BLOCK}°C)")
+            return False
     return True
 
 def emergency_shutdown():
