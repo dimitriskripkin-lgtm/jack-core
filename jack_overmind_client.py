@@ -150,10 +150,15 @@ def execute_plan(plan):
                 r["out"] = ((p.stdout or "") + (p.stderr or "")).strip()[:800]
                 r["ok"] = "run:" in r["out"] or "down:" in r["out"]
             elif ctype == "status":
+                import jack_overmind_state as _s
+                _, st = _s.collect()
                 r["out"] = json.dumps({
-                    "ssh": a.get("why"),
-                    "hint": "ok",
-                }, ensure_ascii=False)
+                    "ssh_xiaomi": st.get("ssh_xiaomi"),
+                    "adb_device": st.get("adb_device"),
+                    "git_tip": st.get("git_tip"),
+                    "heartbeats_age_s": st.get("heartbeats_age_s"),
+                    "why": a.get("why"),
+                }, ensure_ascii=False)[:900]
                 r["ok"] = True
             else:
                 r["out"] = "skip_unknown_type"
