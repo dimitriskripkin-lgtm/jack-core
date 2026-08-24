@@ -122,7 +122,7 @@ def api_teacher(state):
         allow = set(state.get("allowed_actions") or [])
         acts = []
         for a in plan.get("actions") or []:
-            if a.get("cmd_type") in allow or a.get("cmd_type") in ("ssh_check", "adb_heal", "status", "sv_status"):
+            if a.get("cmd_type") in allow or a.get("cmd_type") in ("ssh_check", "adb_heal", "status", "sv_status", "skills_list"):
                 acts.append(a)
         plan["actions"] = acts[:5]
         return plan
@@ -191,6 +191,17 @@ def execute_plan(plan):
                 )
                 r["out"] = ((p.stdout or "") + (p.stderr or "")).strip()[:800]
                 r["ok"] = "run:" in r["out"] or "down:" in r["out"]
+            elif ctype == "skills_list":
+                import sqlite3
+                db = "/data/data/com.termux/files/home/jack/jack_skills.db"
+                c = sqlite3.connect(db)
+                rows = c.execute(
+                    "SELECT name, state, successes, executions FROM skills ORDER BY state, name LIMIT 30"
+                ).fetchall()
+                c.close()
+                lines = ["%s|%s|%s/%s" % r for r in rows]
+                r["out"] = "\n".join(lines)[:900] if lines else "empty"
+                r["ok"] = True
             elif ctype == "status":
                 import jack_overmind_state as _s
                 _, st = _s.collect()
