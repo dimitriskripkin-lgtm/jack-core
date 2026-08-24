@@ -48,6 +48,20 @@ def _secret(name):
     return None
 
 def api_teacher(state):
+    
+    # HEAT_SKIP_OVERMIND
+    try:
+        import jack_heat_protection as _hp
+        if not _hp.check_heat("overmind"):
+            return {
+                "teacher": "heat",
+                "goal": "cool",
+                "actions": [{"id": "1", "cmd_type": "status", "why": "heat skip API"}],
+                "notes": "Honor zu warm, kein API-Call",
+            }
+    except Exception:
+        pass
+
     ok, wait = _api_allowed()
     if not ok:
         return {
