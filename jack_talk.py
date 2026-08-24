@@ -362,11 +362,9 @@ def build_final_prompt(user_query, persona_text, id_ctx, mem_ctx, hist_ctx, live
 
 
 def _load_env_now():
-    # ENV_NOW_INJECT
     try:
         import json
-        p = "/data/data/com.termux/files/home/jack/jack_environment_now.json"
-        with open(p) as f:
+        with open("/data/data/com.termux/files/home/jack/jack_environment_now.json") as f:
             return json.load(f)
     except Exception:
         return None
@@ -380,27 +378,22 @@ def talk_to_gemini(*args, **kwargs):
         text = kwargs.get("text") or kwargs.get("msg") or kwargs.get("prompt") or kwargs.get("message") or ""
     try:
         import jack_exec
-        
-    # ENV_NOW_APPLY_Q
-    try:
-        _env = _load_env_now()
-        if _env and text:
-            _sum = (
-                "[UMGEBUNG] " + str(_env.get("ui_pipeline", ""))[:120]
-                + " | Heal: jack_adb_heal | SSH xiaomi-jack | ADB 10.58.220.131:5555 | "
-                + "Kein Monkey-Standard. Handlung: " + str(_env.get("handlungsraum", {}))[:160]
-            )
-            text = _sum + "\n\n" + str(text)
-    except Exception:
-        pass
-    ui = jack_exec.handle_ui_intent(str(text))
+        try:
+            _env = _load_env_now()
+            if _env and text:
+                text = (
+                    "[UMGEBUNG] "
+                    + str(_env.get("ui_pipeline", ""))[:140]
+                    + " | ADB-Heal jack_adb_heal | xiaomi-jack | kein Monkey-Standard.\n\n"
+                    + str(text)
+                )
+        except Exception:
+            pass
+        # ENV_NOW_APPLY_Q
+        ui = jack_exec.handle_ui_intent(str(text))
         if ui:
             return ui
     except Exception:
         pass
-    env=_load_env_now()
-        if env:
-            # ENV_NOW_APPLY
-            pass  # prompt enrichment in impl
-        return _talk_to_gemini_impl(*args, **kwargs)
+    return _talk_to_gemini_impl(*args, **kwargs)
 
