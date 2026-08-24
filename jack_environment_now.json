@@ -1,39 +1,16 @@
 {
-  "stand": "2026-08-24 08:32",
-  "commit_hinweis": "master >= 315eaf3",
-  "hardware": {
-    "host": "Honor Magic8 Pro — Gehirn, Termux, runit, Telegram",
-    "worker": "Xiaomi 11T Pro (vili) — Root, SSH xiaomi-jack:8022, Ollama, ADB 10.229.239.131:5555"
-  },
-  "dienste": [
-    "jack_telegram",
-    "jack_cortex",
-    "jack_waechter",
-    "jack_autolearn",
-    "jack_publisher",
-    "jack_focus_monitor"
-  ],
-  "ui_pipeline": "jack_exec.handle_ui_intent + tap_text; Telegram /tap /forsche /skills; Stop per kill-cmd; Voice+talk vor LLM gegated",
-  "sicherheit": [
-    "Operator-Whitelist vor execute_actions",
-    "Autolearn SSH nur xiaomi-jack",
-    "Sandbox nur \\~/jack_werkstatt",
-    "Kein Ollama auf Honor"
-  ],
-  "heal": "python3 \\~/jack/jack_adb_heal.py — SSH ok dann ADB-TCP 5555, Erfolg nur status device",
-  "skills": "Muell auto_fix/explore entfernt; /skills listet DB",
-  "handlungsraum": {
-    "darf": [
-      "Status, Sensoren, SSH xiaomi-jack, UI via handle_ui_intent, Skills VERIFIED, Werkstatt"
-    ],
-    "nicht_ohne_freigabe": [
-      "Core-Dateien jack_telegram/jack_exec patchen",
-      "beliebige Shell",
-      "Secrets lesen"
-    ]
-  },
-  "regel": "Keine Monkey-App-Starts als Primaerweg. Keine veralteten Vorschlaege die Whitelist/Intent-Gate ignorieren.",
-  "git_tip": "08e1677",
-  "overmind": "grok_api + throttle 180s; actions status/ssh_check/adb_heal/sv_status",
-  "waechter_heartbeat_s": 120
+  "ts": "2026-08-24T14:50:39",
+  "git_tip": "f61015e fix(mission): fail-closed + DB-Log stabil (DONE_ALL ohne Scope-Bug)",
+  "ssh_xiaomi": "OK",
+  "worker": "Xiaomi 11T Pro — SSH xiaomi-jack:8022, Ollama, ADB 10.229.239.131",
+  "host": "Honor Magic8 Pro — Shizuku, runit, Overmind",
+  "blocks_done": [
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "B6-teil",
+    "B7-teil"
+  ]
 }
