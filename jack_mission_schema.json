@@ -1,0 +1,30 @@
+{
+  "schema": "JACK_MISSION_v1",
+  "fields": {
+    "id": "kurze id",
+    "title": "was soll passieren",
+    "goal": "ein Satz",
+    "priority": "1-5",
+    "allowed_actions": [
+      "status",
+      "ssh_check",
+      "adb_heal",
+      "sv_status",
+      "skills_list"
+    ],
+    "forbidden": [
+      "core_patch",
+      "rm_rf",
+      "read_secrets"
+    ],
+    "steps": [
+      {
+        "id": "1",
+        "cmd_type": "...",
+        "why": "..."
+      }
+    ],
+    "done_when": "Beschreibung wann fertig",
+    "teacher": "file|grok_api|mock"
+  }
+}

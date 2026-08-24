@@ -1,0 +1,44 @@
+{
+  "schema": "JACK_MISSION_v1",
+  "id": "test_health_20260824",
+  "title": "Kurzer Health-Lauf",
+  "goal": "SSH, ADB, Dienste und Skills-Liste einmal hart pruefen",
+  "priority": 2,
+  "allowed_actions": [
+    "status",
+    "ssh_check",
+    "adb_heal",
+    "sv_status",
+    "skills_list"
+  ],
+  "forbidden": [
+    "core_patch",
+    "rm_rf",
+    "read_secrets"
+  ],
+  "teacher": "file",
+  "steps": [
+    {
+      "id": "1",
+      "cmd_type": "status",
+      "why": "Lagebild"
+    },
+    {
+      "id": "2",
+      "cmd_type": "ssh_check",
+      "why": "Xiaomi Link"
+    },
+    {
+      "id": "3",
+      "cmd_type": "sv_status",
+      "why": "runit"
+    },
+    {
+      "id": "4",
+      "cmd_type": "skills_list",
+      "why": "DB sauber?"
+    }
+  ],
+  "done_when": "alle steps ok=true",
+  "created": "2026-08-24T08:40"
+}

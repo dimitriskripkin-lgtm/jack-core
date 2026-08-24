@@ -1,0 +1,56 @@
+{
+  "ts": "2026-08-24T08:40:36",
+  "plan": {
+    "teacher": "file",
+    "goal": "SSH, ADB, Dienste und Skills-Liste einmal hart pruefen",
+    "actions": [
+      {
+        "id": "1",
+        "cmd_type": "status",
+        "why": "Lagebild"
+      },
+      {
+        "id": "2",
+        "cmd_type": "ssh_check",
+        "why": "Xiaomi Link"
+      },
+      {
+        "id": "3",
+        "cmd_type": "sv_status",
+        "why": "runit"
+      },
+      {
+        "id": "4",
+        "cmd_type": "skills_list",
+        "why": "DB sauber?"
+      }
+    ],
+    "notes": "mission:test_health_20260824"
+  },
+  "results": [
+    {
+      "id": "1",
+      "cmd_type": "status",
+      "ok": true,
+      "out": "{\"ssh_xiaomi\": true, \"adb_device\": true, \"git_tip\": \"faaf82b feat(overmind): skills_list action\", \"heartbeats_age_s\": {\"jack_telegram\": 1.6594550609588623, \"jack_cortex\": 23.815266370773315, \"jack_waechter\": 77.14900875091553, \"jack_autolearn\": 55.21174907684326, \"jack_publisher\": 47.93853974342346}, \"why\": \"Lagebild\"}"
+    },
+    {
+      "id": "2",
+      "cmd_type": "ssh_check",
+      "ok": true,
+      "out": "SSH_OK\n"
+    },
+    {
+      "id": "3",
+      "cmd_type": "sv_status",
+      "ok": true,
+      "out": "run: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 21161) 3387s\nrun: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 11260) 61843s\nrun: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 14700) 566s\nrun: /data/data/com.termux/files/usr/var/service/jack_autolearn: (pid 14129) 5383s\nrun: /data/data/com.termux/files/usr/var/service/jack_publisher: (pid 24986) 48248s; run: log: (pid 24985) 48248s"
+    },
+    {
+      "id": "4",
+      "cmd_type": "skills_list",
+      "ok": true,
+      "out": "Einstellungen WLAN Skill|PROMOTED|0/0\nEcho Skill Test|VERIFIED|3/3\nSystem Health Check v3|VERIFIED|3/3\nakku_status|VERIFIED|3/3\napi_budget_check|VERIFIED|3/3\nauto_fix_FEHLER__name__detect_futile_skills__is_n|VERIFIED|1/1\nauto_fix_HEALTH_FAIL__termux_location___Command__|VERIFIED|1/1\nauto_fix_HEALTH_FAIL__termux_sms_list___Command__|VERIFIED|1/1\nauto_fix_fail__jack_cortex__unable_to_change_to_s|VERIFIED|1/1\nauto_fix_fail__ollama__unable_to_change_to_servic|VERIFIED|1/1\ncleanup_bak_files|VERIFIED|5/5\ndaily_system_health_check|VERIFIED|3/3\nfehler_zusammenfassung|VERIFIED|3/3\ngeraet_info|VERIFIED|3/3\nmemory_statistik|VERIFIED|3/3\nollama_tunnel_check|VERIFIED|1/1\nplay_sido_youtube_loop|VERIFIED|0/3\nrouter_test_skill|VERIFIED|3/3\nsensoren_liste|VERIFIED|3/3\nskill_schmied_bak_cleanup_v2|VERIFIED|3/3\nstandort|VERIFIED|3/3\ntest_skill|VERIFIED|3/3\ntuev3_test|VERIFIED|4/4\nwifi_status|VERIFIED|3/3"
+    }
+  ]
+}
