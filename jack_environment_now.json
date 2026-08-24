@@ -1,5 +1,5 @@
 {
-  "stand": "2026-08-24 06:46",
+  "stand": "2026-08-24 08:32",
   "commit_hinweis": "master >= 315eaf3",
   "hardware": {
     "host": "Honor Magic8 Pro — Gehirn, Termux, runit, Telegram",
@@ -32,5 +32,8 @@
       "Secrets lesen"
     ]
   },
-  "regel": "Keine Monkey-App-Starts als Primaerweg. Keine veralteten Vorschlaege die Whitelist/Intent-Gate ignorieren."
+  "regel": "Keine Monkey-App-Starts als Primaerweg. Keine veralteten Vorschlaege die Whitelist/Intent-Gate ignorieren.",
+  "git_tip": "08e1677",
+  "overmind": "grok_api + throttle 180s; actions status/ssh_check/adb_heal/sv_status",
+  "waechter_heartbeat_s": 120
 }
