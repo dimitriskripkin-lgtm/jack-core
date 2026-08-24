@@ -384,23 +384,15 @@ def talk_to_gemini(*args, **kwargs):
             return ui
     except Exception:
         pass
-    # ENV nur an die Denk-Pipeline, nicht an UI-Gate
     llm_text = raw
     try:
         _env = _load_env_now()
         if _env and raw:
-            llm_text = (
-                "[UMGEBUNG] "
-                + str(_env.get("ui_pipeline", "")).replace("/kill", "kill-cmd")[:140]
-                + " | ADB-Heal | xiaomi-jack | kein Monkey-Standard.
-
-"
-                + raw
-            )
+            pipe = str(_env.get("ui_pipeline", "")).replace("/kill", "kill-cmd")[:140]
+            llm_text = "[UMGEBUNG] " + pipe + " | ADB-Heal | xiaomi-jack | kein Monkey-Standard.\n\n" + raw
     except Exception:
         pass
     if llm_text != raw:
-        # args anpassen wenn positional
         if args and isinstance(args[0], str):
             args = (llm_text,) + tuple(args[1:])
         else:
