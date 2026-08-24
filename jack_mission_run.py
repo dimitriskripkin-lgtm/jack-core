@@ -40,6 +40,21 @@ def main():
         oks = [x.get("ok") for x in res.get("results") or []]
         # DONE_LINE
         print("DONE_ALL", all(oks) if oks else False, "N", len(oks))
+        # BLOCK4: Mission-Ergebnis in DB
+        try:
+            import sqlite3, time
+            con = sqlite3.connect(str(H / "jack_missions.db"))
+            con.execute(
+                "INSERT INTO missions (aufgabe, typ, status, prioritaet, erstellt, beendet, ergebnis, versuche) VALUES (?,?,?,?,?,?,?,?)",
+                (str(m.get("goal") or m.get("title") or m.get("id")), "overmind",
+                 "done" if oks and all(oks) else "fail", 5,
+                 int(time.time()), int(time.time()),
+                 str(fails)[:200] if fails else "ok", 1)
+            )
+            con.commit(); con.close()
+        except Exception as e:
+            print("DB_LOG_FAIL", e)
+
         fails = [x.get("id") for x in res.get("results") or [] if not x.get("ok")]
         if fails:
             print("FAIL_IDS", fails)
