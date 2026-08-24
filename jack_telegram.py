@@ -688,6 +688,19 @@ def handle(text):
                 lines.append(k.split('.')[-1]+': '+str(v.get('clickable',0))+' Buttons')
             return chr(10).join(lines)
         except: return 'Noch keine App-Map. /explore zuerst.'
+
+    if text.strip() in ("/overmind", "/om"):
+        try:
+            import subprocess
+            r = subprocess.run(
+                ["python3", "/data/data/com.termux/files/home/jack/jack_overmind_client.py"],
+                capture_output=True, text=True, timeout=120,
+            )
+            out = ((r.stdout or "") + (r.stderr or "")).strip()[:1500]
+            return "OVERMIND:\n" + out
+        except Exception as e:
+            return "Overmind Fehler: " + str(e)[:300]
+
     if text.strip()=='/skills':
         import jack_skill_lib as _sk
         skills=_sk.list_all()
@@ -726,18 +739,6 @@ def handle(text):
         return
 
 
-    if text.strip() in ("/overmind", "/om"):
-        try:
-            import subprocess
-            r = subprocess.run(
-                ["python3", "/data/data/com.termux/files/home/jack/jack_overmind_client.py"],
-                capture_output=True, text=True, timeout=120,
-            )
-            out = ((r.stdout or "") + (r.stderr or "")).strip()[:1500]
-            send(chat_id, "OVERMIND:\n" + out)
-        except Exception as e:
-            send(chat_id, "Overmind Fehler: " + str(e)[:300])
-        return
 
     if text.strip().startswith('/tap'):
         q = text.strip()[4:].strip()
