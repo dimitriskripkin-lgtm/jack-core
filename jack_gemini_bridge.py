@@ -197,10 +197,10 @@ def ask_gemini(question, status=None):
             return _ollama_fallback(question)
 
 def update_identity(new_facts):
-    path = "/data/data/com.termux/files/home/jack/jack_identity.json"
+    path = os.path.expanduser("~/jack/jack_identity.json")
     try:
         with open(path) as f: identity = json.load(f)
-    except: identity = {}
+    except Exception: identity = {}
     identity.update(new_facts)
     identity["last_updated"] = datetime.now().isoformat()
     _tmp=path+".tmp"

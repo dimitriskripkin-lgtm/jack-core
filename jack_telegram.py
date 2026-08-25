@@ -563,6 +563,29 @@ def handle_callback(callback_data, callback_id):
         if cmd=="ram":
             lines=[l.strip() for l in open("/proc/meminfo") if "MemAvailable" in l or "MemTotal" in l]
             return "RAM:"+chr(10)+chr(10).join(lines)
+    if callback_data=="selfsee_go":
+        try:
+            import signal as _sig; _sig.alarm(0)
+        except Exception:
+            pass
+        answer_callback(callback_id,"Laeuft...")
+        def _go():
+            try:
+                import jack_selfsee as _ss
+                send(_ss.deep())
+            except Exception as e:
+                send("Selfsee-Fehler: "+str(e)[:160])
+        import threading as _th
+        _th.Thread(target=_go, daemon=True).start()
+        return
+    if callback_data=="selfsee_no":
+        try:
+            import os
+            _p="/data/data/com.termux/files/home/jack/.selfsee_pending"
+            if os.path.isfile(_p): os.remove(_p)
+        except Exception:
+            pass
+        return "Ok, beendet. Kein Fix."
     return f"Unbekannter Button: {callback_data}"
 
 def get_updates(offset=0):
@@ -570,7 +593,7 @@ def get_updates(offset=0):
     try:
         with urllib.request.urlopen(url, timeout=5) as res:
             return json.loads(res.read())['result']
-    except: return []
+    except Exception: return []
 
 def oracle_sign(cmd, uuid, ts):
     try:
@@ -579,7 +602,7 @@ def oracle_sign(cmd, uuid, ts):
         msg = f"{uuid}:{cmd}:{ts}".encode()
         import hmac as _h, hashlib as _hs
         return _h.new(secret.encode(), msg, _hs.sha256).hexdigest()
-    except: return ""
+    except Exception: return ""
 
 def handle(text):
     import jack_exec  # FIX-UNBOUND (Qwen 22.08.): Import oben, sonst UnboundLocalError
@@ -687,7 +710,7 @@ def handle(text):
             for k,v in list(d.items())[:15]:
                 lines.append(k.split('.')[-1]+': '+str(v.get('clickable',0))+' Buttons')
             return chr(10).join(lines)
-        except: return 'Noch keine App-Map. /explore zuerst.'
+        except Exception: return 'Noch keine App-Map. /explore zuerst.'
 
 
     if text.strip() in ("/mission", "/missions"):
@@ -759,7 +782,7 @@ def handle(text):
 
     # --- UI: tap / forsche / kill (Hauptleitung jack_exec) ---
 
-    if text.strip() in ("/skills", "/skill"):
+    if False and text.strip() in ("/skills", "/skill"):  # dup, erster Block bleibt
         try:
             import sqlite3, os
             db = "/data/data/com.termux/files/home/jack/jack_skills.db"
@@ -771,9 +794,9 @@ def handle(text):
             lines = ["SKILLS (%d):" % len(rows)]
             for name, state, suc, ex in rows[:40]:
                 lines.append("%s | %s | ok=%s/%s" % (name, state, suc, ex))
-            send(chat_id, "\n".join(lines) if rows else "Keine Skills in DB")
+            send("\n".join(lines) if rows else "Keine Skills in DB")
         except Exception as e:
-            send(chat_id, "skills Fehler: " + str(e)[:200])
+            send("skills Fehler: " + str(e)[:200])
         return
 
 
@@ -781,14 +804,14 @@ def handle(text):
     if text.strip().startswith('/tap'):
         q = text.strip()[4:].strip()
         if not q:
-            send(chat_id, "Nutzung: /tap Chrome\\nOder: /tap Einstellungen")
+            send("Nutzung: /tap Chrome\\nOder: /tap Einstellungen")
             return
         try:
             import jack_exec
             out = jack_exec.tap_text(q)
-            send(chat_id, "TAP: " + str(out)[:1500])
+            send("TAP: " + str(out)[:1500])
         except Exception as e:
-            send(chat_id, "TAP Fehler: " + str(e)[:300])
+            send("TAP Fehler: " + str(e)[:300])
         return
 
     if text.strip().startswith('/forsche'):
@@ -817,7 +840,7 @@ def handle(text):
                 "Stoppen: /kill\\n\\n" + str(out)[:800],
             )
         except Exception as e:
-            send(chat_id, "Forsche Fehler: " + str(e)[:300])
+            send("Forsche Fehler: " + str(e)[:300])
         return
 
     if text.strip() in ("/kill", "/stop"):
@@ -833,9 +856,9 @@ def handle(text):
                 "pkill -f run_guarded_settings; pkill -f jack_ui_; pkill -f ui_agent.cortex",
                 shell=True, capture_output=True,
             )
-            send(chat_id, "KILL: UI/Forschung gestoppt (.jack_ui_kill gesetzt).")
+            send("KILL: UI/Forschung gestoppt (.jack_ui_kill gesetzt).")
         except Exception as e:
-            send(chat_id, "KILL Fehler: " + str(e)[:300])
+            send("KILL Fehler: " + str(e)[:300])
         return
 
 
@@ -1245,6 +1268,17 @@ def handle(text):
         return 'Unbekannter Befehl: ' + _rt.split()[0] + ' - /menu zeigt alle Befehle.'
 
 
+    try:  # JACK_TUNE_CHATGATE
+        import jack_chat_router as _cr
+        _lane=_cr.classify(text)
+        if _lane in ("FACT","EXPLAIN","DIAG"):
+            _r=_cr.dispatch(text, send_keyboard)
+            if _r is False:
+                return None
+            if _r:
+                return _r
+    except Exception:
+        pass
     # Deep-Navigation VOR App-Handler (Qwen 21.08.)
     try:
         import jack_intent_lookup as _il
@@ -1268,9 +1302,21 @@ def handle(text):
             raise TimeoutError("LLM-Timeout nach 15s")
         
         signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(15)
-        
-        resp = _jt.talk_to_gemini(text)
+        import jack_chat_router as _cr
+        resp=_cr.dispatch(text, send_keyboard)
+        if resp is False:
+            return None
+        if resp is None:
+            resp = _jt.talk_to_gemini(text)  # JACK_TUNE_ISTPLAIN
+            try:
+                import jack_chat_router as _cr2
+                if resp:
+                    resp=_cr2.apply_lane(resp, text)
+            except Exception:
+                pass
+            if resp and "Ausfuehren oder beenden" in resp:
+                send_keyboard(resp, [[("🟢 Ausführen","selfsee_go"),("🔴 Abbrechen","selfsee_no")]])
+                resp=None
         signal.alarm(0)
         
         if not resp:
@@ -1316,13 +1362,13 @@ def handle(text):
 def _offset_lesen():
     try:
         return int(open(os.path.expanduser('~/.jack_tg_offset')).read().strip())
-    except:
+    except Exception:
         return 0
 
 def _offset_schreiben(wert):
     try:
         open(os.path.expanduser('~/.jack_tg_offset'), 'w').write(str(wert))
-    except:
+    except Exception:
         pass
 
 def _einzelinstanz():
