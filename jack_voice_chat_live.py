@@ -40,7 +40,7 @@ def record(seconds):
     time.sleep(1)
 
 def convert():
-    subprocess.run(["ffmpeg", "-y", "-i", M4A, "-ar", "16000", "-ac", "1",
+    subprocess.run(["ffmpeg", "-y", "-hide_banner", "-i", M4A, "-af", "highpass=f=200,lowpass=f=3400,afftdn=nr=12:nf=-25", "-ar", "16000", "-ac", "1",  # JACK_TUNE_NC
                     "-f", "s16le", PCM], capture_output=True)
 
 def play_blocking():

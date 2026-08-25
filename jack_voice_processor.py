@@ -20,7 +20,7 @@ def process_voice_message(ogg_path):
     wav_path = ogg_path.replace(".ogg", ".wav")
     resp_wav = ogg_path.replace(".ogg", "_resp.wav")
     try:
-        subprocess.run(["ffmpeg","-y","-i",ogg_path,"-ar","16000","-ac","1","-c:a","pcm_s16le",wav_path], check=True, capture_output=True)
+        wav_path=__import__("jack_nc").denoise(ogg_path, wav_path)  # JACK_TUNE_NC
     except Exception as e:
         return None, "", f"ffmpeg-Fehler: {e}"
     # P8 (Qwen 22.08.): Whisper auf Xiaomi wenn Honor heiss, Fallback lokal

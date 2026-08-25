@@ -78,6 +78,7 @@ def promote_candidate_skills():
     return count
 
 def genesis_skills():
+    return 0  # JACK_TUNE_GENESIS
     """Erstellt echte Fix-Skills aus mehreren Log-Quellen."""
     import re
     import glob
@@ -330,8 +331,18 @@ def main():
             log("FEHLER: Zyklus abgebrochen")
             break
         import jack_heartbeat; jack_heartbeat.beat("jack_autolearn")
-        log(f"PAUSE: {PAUSE_SECONDS}s")
-        time.sleep(PAUSE_SECONDS)
+        _ps=PAUSE_SECONDS
+        try:
+            import json as _j, sqlite3 as _sq
+            _t=_j.load(open("/data/data/com.termux/files/home/jack/jack_tune.json"))
+            _c=_sq.connect(DB_SKILLS)
+            _n=_c.execute("SELECT COUNT(*) FROM skills WHERE state=?",("CANDIDATE",)).fetchone()[0]
+            _c.close()
+            _ps=int(_t.get("autolearn_idle_s",600) if _n==0 else _t.get("autolearn_busy_s",300))
+        except Exception:
+            _ps=PAUSE_SECONDS
+        log(f"PAUSE: {_ps}s")
+        time.sleep(_ps)  # JACK_TUNE_PAUSE
         cycle_num += 1
 
 if __name__ == "__main__":

@@ -36,6 +36,6 @@ def main():
                     print("  Dump-Fehler: " + str(e)[:80])
             letzter = f
             open(STATE, "w").write(f)
-        time.sleep(3)
+        time.sleep(15)  # JACK_TUNE_FOCUS
 if __name__ == "__main__":
     main()

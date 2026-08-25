@@ -25,7 +25,14 @@ class JACKLiveVoiceBridge:
             cmd = f"termux-microphone-record -f {RECORD_FILE} -l {duration} -r 16000 -c 1"
             subprocess.run(cmd, shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             time.sleep(duration + 0.2)
-            return os.path.exists(RECORD_FILE) and os.path.getsize(RECORD_FILE) > 1000
+            if os.path.exists(RECORD_FILE) and os.path.getsize(RECORD_FILE) > 1000:
+                try:
+                    import jack_nc
+                    jack_nc.denoise(RECORD_FILE, RECORD_FILE + ".nc.wav")  # JACK_TUNE_NC
+                except Exception:
+                    pass
+                return True
+            return False
         except Exception:
             return False
 

@@ -145,9 +145,9 @@ def handle_ui_intent(text):
         return "KILL: UI/Forschung gestoppt."
 
     # Forschen / Suchen
-    if any(w in low for w in ("forsch", "recherch", "google", "such nach", "suche nach", "such dir", "interessiert")):
+    if any(w in low for w in ("forsch", "recherch", "google", "suche im web", "im internet")):
         topic = raw
-        for sep in ("suche nach", "such nach", "forsch nach", "recherchiere", "forsche", "google"):
+        for sep in ("suche im web", "forsch nach", "recherchiere", "forsche", "google"):
             if sep in low:
                 topic = raw[low.find(sep) + len(sep):].strip(" .,!")
                 break

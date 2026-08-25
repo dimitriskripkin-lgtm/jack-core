@@ -1,0 +1,6 @@
+{
+  "focus_sleep_s": 15,
+  "genesis_skip": true,
+  "autolearn_idle_s": 600,
+  "autolearn_busy_s": 300
+}

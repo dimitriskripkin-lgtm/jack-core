@@ -177,7 +177,12 @@ def _status_als_text():
             for i, r in enumerate(letzte):
                 z.append('  ' + str(i+1) + '. ' + (r[0] or '')[:120])
     except Exception: pass
-    z.append('REGELN: Keine Statusliste. Keine Wiederholung. Wenn nichts Neues ist, rede ueber das Thema statt ueber Systemwerte.')
+    try:
+        _hp="/data/data/com.termux/files/home/jack/jack_health_now.json"
+        if os.path.isfile(_hp): z.append("IST-HEALTH: "+open(_hp,encoding="utf-8").read()[:800])
+    except Exception:
+        pass  # JACK_TUNE_HEALTHINJ
+    z.append('REGELN: Temp/RAM/Akku NUR wenn Dima danach fragt. Bei Ist-Zustand/Status: Tune, Dienste, Marks, SSH, Git aus IST-HEALTH. Kurz. Kein Gelaber. Kein Autonomie-Level. Kein BEFEHL-Platzhalter.')
     return chr(10).join(z)
 
 
@@ -202,6 +207,12 @@ def _talk_to_gemini_impl(prompt):
                 _id=_j.dumps(_j.load(open(os.path.expanduser('~/jack/jack_identity.json'))),ensure_ascii=False)[:500]
             except Exception: pass
             system=_persona+chr(10)+chr(10)
+            try:
+                _hp="/data/data/com.termux/files/home/jack/jack_health_now.json"
+                system+=("Du bist JACK, Dimas Kumpel auf Augenhoehe. Warm, direkt, nie von oben. Smalltalk ist erwuenscht. Nicht belehren, nicht abwerten, nicht wie ein Ticket-System. Keine Listen. Keine Architektur und keine Sensoren ungefragt. Wenn du nichts weisst, sag es locker.")+chr(10)
+                system+="VERBOT: Temp/RAM/Akku nicht erwaehnen ausser gefragt. Ist-Zustand=Health JSON kurz. Kein Autonomie-Level. Kein 70b-Kern. Kein BEFEHL-Platzhalter."+chr(10)
+            except Exception:
+                pass  # JACK_TUNE_HEALTHINJ
             if _id: system+="DIMA-PROFIL:"+chr(10)+_id+chr(10)+chr(10)
             if _mem: system+="ERINNERUNGEN:"+chr(10)+_mem+chr(10)
             return _gq.ask_groq(system, prompt)
@@ -217,7 +228,17 @@ def _talk_to_gemini_impl(prompt):
         import jack_context_compress as _jcc
         mem_ctx = _jcc.compress(prompt, mem_ctx)
     except Exception: pass
-    _live = _status_als_text()
+    _q=(prompt or "").lower()
+    if any(w in _q for w in ("zustand","status","architektur","tune","health")):
+        try:
+            _live="IST-HEALTH:\n"+open("/data/data/com.termux/files/home/jack/jack_health_now.json",encoding="utf-8").read()[:1500]
+        except Exception:
+            _live=_status_als_text()
+    else:
+        try:
+            _live="Du bist JACK, Dimas Kumpel auf Augenhoehe. Warm, direkt, nie von oben. Smalltalk ist erwuenscht. Nicht belehren, nicht abwerten, nicht wie ein Ticket-System. Keine Listen. Keine Architektur und keine Sensoren ungefragt. Wenn du nichts weisst, sag es locker."
+        except Exception:
+            _live="NIE Temp/RAM nennen ausser gefragt."
     try:
         import json as _json
         if not getattr(talk_to_gemini, '_id_cache', None):
@@ -246,11 +267,12 @@ def _talk_to_gemini_impl(prompt):
     context = (
         f"JETZT: {_now}.\n"
         +(_persona+chr(10) if _persona else "")
+        +"LANE: Erste Zeile genau [[LANE:FACT]] oder [[LANE:DIAG]] oder [[LANE:EXPLAIN]] oder [[LANE:TALK]]. FACT=Ist-Zustand. DIAG=Code/System-Analyse. EXPLAIN=Overmind/Deadman. TALK=Gespraech. Keine Tools erfinden. Kein SSH. Kein Chrome.\n\n"
         +"SYSTEMDATEN aus Erinnerungen nicht als aktuell verkaufen - live pruefen wenn noetig.\n\n"
         f"WAS DU UEBER IHN WEISST:\n{id_ctx}\n\n"
         f"ERINNERUNGEN:\n{mem_ctx}\n\n"
         f"VERLAUF:\n{hist_ctx}\n\n"
-        + ("LIVE-SYSTEMSTATUS (gerade gemessen, NUTZE DIESE DATEN in deiner Antwort):" + chr(10) + _live + chr(10) if _live else "") +
+        + ("HINWEIS:" + chr(10) + _live + chr(10) if _live else "") +
         f"\nDIMA: {prompt}"
     )
     # Intent VOR Gemini - Ergebnis fliesst in die Antwort ein
@@ -369,7 +391,28 @@ def _load_env_now():
     except Exception:
         return None
 
+def ist_zustand():
+    import json, subprocess
+    subprocess.run(["python3","/data/data/com.termux/files/home/jack/jack_health.py"],capture_output=True,timeout=20)
+    h=json.load(open("/data/data/com.termux/files/home/jack/jack_health_now.json",encoding="utf-8"))
+    t=h.get("tune") or {}
+    m=h.get("marks") or {}
+    hb=h.get("heartbeats") or {}
+    a=["Ist-Zustand:"]
+    a.append("SSH Xiaomi: "+str(h.get("ssh_xiaomi")))
+    a.append("Focus "+str(t.get("focus_sleep_s"))+"s, Genesis "+str(t.get("genesis_skip"))+", Idle "+str(t.get("autolearn_idle_s"))+"s")
+    a.append("Marks: "+", ".join((k+":ja" if v else k+":nein") for k,v in m.items()))
+    a.append("Beats: "+", ".join(k+" "+str(v)+"s" for k,v in hb.items()))
+    a.append("Git-Push: tot. Placeholder BEFEHL: verboten.")
+    return chr(10).join(a)  # JACK_TUNE_ISTPLAIN
 def talk_to_gemini(*args, **kwargs):
+    _p=args[0] if args else (kwargs.get("prompt") or "")
+    try:
+        import jack_chat_router as _cr
+        _d=_cr.dispatch(_p)
+        if _d: return _d
+    except Exception:
+        pass  # JACK_TUNE_ROUTER
     """UI_GATE_TALK: Intent auf ROH-Text; Umgebung nur fuer LLM."""
     text = ""
     if args:
@@ -386,10 +429,15 @@ def talk_to_gemini(*args, **kwargs):
         pass
     llm_text = raw
     try:
+        import jack_chat_router as _cr
+        llm_text=_cr.apply_lane(llm_text, raw)
+    except Exception:
+        pass
+    try:
         _env = _load_env_now()
         if _env and raw:
             pipe = str(_env.get("ui_pipeline", "")).replace("/kill", "kill-cmd")[:140]
-            llm_text = "[UMGEBUNG] " + pipe + " | ADB-Heal | xiaomi-jack | kein Monkey-Standard.\n\n" + raw
+            llm_text = raw  # JACK_TUNE_NOADB
     except Exception:
         pass
     if llm_text != raw:

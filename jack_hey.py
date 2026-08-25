@@ -118,6 +118,14 @@ def aufnehmen(sekunden=10):
         return False
     return True
 
+def denoise(src):
+    dst=src[:-4]+".nc.wav" if src.endswith(".m4a") else src+".nc.wav"
+    r=subprocess.run(["ffmpeg","-y","-hide_banner","-i",src,"-af","highpass=f=200,lowpass=f=3400,afftdn=nr=12:nf=-25","-ar","16000","-ac","1",dst],capture_output=True,text=True,timeout=20)
+    if r.returncode==0 and os.path.isfile(dst) and os.path.getsize(dst)>1000:
+        log_phase("Noise-Cancel OK "+str(os.path.getsize(dst)))
+        return dst  # JACK_TUNE_NC
+    log_phase("Noise-Cancel skip raw")
+    return src
 async def main():
     log_phase("=== JACK HEY START ===")
     
@@ -125,8 +133,9 @@ async def main():
         log_phase("Keine verwertbare Aufnahme. Abbruch.")
         return
     
+    rec=denoise(REC)
     log_phase("Starte Voice-Router...")
-    result = await vr.route_voice(REC)
+    result = await vr.route_voice(rec)  # JACK_TUNE_NC
     
     if result["success"]:
         if result["stack"] == "A":

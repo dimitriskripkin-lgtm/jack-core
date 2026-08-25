@@ -36,7 +36,9 @@ def listen(seconds=5, lang="de"):
         return ""
 
     conv = subprocess.run(
-        ["ffmpeg", "-y", "-i", TMP_RAW, TMP_FIXED],
+        ["ffmpeg","-y","-hide_banner","-i",TMP_RAW,
+         "-af","highpass=f=200,lowpass=f=3400,afftdn=nr=12:nf=-25",
+         "-ar","16000","-ac","1",TMP_FIXED],  # JACK_TUNE_NC
         capture_output=True, timeout=15
     )
     if conv.returncode != 0 or not os.path.exists(TMP_FIXED):
