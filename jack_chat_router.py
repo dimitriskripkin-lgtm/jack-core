@@ -20,6 +20,79 @@ def classify(text):
     if expl: return "EXPLAIN"
     if diag: return "DIAG"
     return "TALK"
+
+def talk_local(text):
+    t=norm(text)
+    raw=(text or "").strip()
+    low=raw.lower()
+    if low.startswith("merk dir") or low.startswith("merke dir"):
+        body=raw.split(":",1)[-1] if ":" in raw else raw.split("dir",1)[-1]
+        body=body.strip(" .")
+        name,wert= (body.split("=",1)+["ja"])[:2] if "=" in body else (body,"ja")
+        name=name.strip()[:48]; wert=wert.strip()[:80]
+        if name:
+            try:
+                import jack_graph as _g
+                _g.put_node("fakt", name, wert, "chat")
+                return "Steht: "+name+"="+wert
+            except Exception as e:
+                return "Graph-Schreibfehler: "+str(e)[:80]
+    # JACK_TUNE_MERK
+    # JACK_TUNE_EDGE
+    if (not low.startswith(("was ","wie ","wer ","wo ","warum ","wieso "))) and low.startswith("mein ") and " ist " in low:
+        rest=raw[4:].strip()
+        i=rest.lower().find(" ist ")
+        if i>0:
+            name=rest[:i].strip()[:48]; wert=rest[i+5:].strip(" .")[:80]
+            if name and wert:
+                try:
+                    import jack_graph as _g
+                    nid=_g.put_node("fakt", name, wert, "chat")
+                    did=_g.put_node("person", "Dima", "owner", "chat")
+                    _g.put_edge(did, "hat", nid, "chat")
+                    return "Steht: "+name+"="+wert
+                except Exception as e:
+                    return "Graph-Schreibfehler: "+str(e)[:80]
+    if t.startswith("was_ist") or t.startswith("was ist") or "was ist mein" in (text or "").lower():
+        try:
+            import jack_graph as _g
+            r=(_g.recall(text) or "")
+            facts=[ln[5:] for ln in r.splitlines() if ln.startswith("fakt ")]
+            toks=[w for w in (text or "").lower().replace("ä","ae").split() if len(w)>3 and w not in ("was","ist","mein","eine","einen","bitte")]
+            pick=None
+            for f in facts:
+                fl=f.lower()
+                if any(w in fl for w in toks):
+                    pick=f; break
+            if pick is None and len(facts)==1:
+                pick=facts[0]
+            if pick:
+                return pick.replace("="," = ",1)
+        except Exception:
+            pass
+    # JACK_TUNE_WASIST
+    if any(x in t for x in ("du bist jack","wer bist du","wer bist du eigentlich")):
+        return "JACK. Dimas System auf Honor, Xiaomi als Arm. Kein Assistent."
+    if len(raw.split())<=12 and (("hund" in t) or ("rex" in t)):
+        try:
+            import jack_graph as _g
+            r=(_g.recall(text) or "")
+            if "Hund=ja" in r: return "Ja."
+            if "Hund=nein" in r or "hund=nein" in r.lower(): return "Nein. Kein Hund."
+        except Exception:
+            pass
+        return "Nein. Kein Hund."  # JACK_TUNE_HUNDGRAPH
+    # JACK_TUNE_TLNARROW: kein Pflicht-Gegenfrage-Satz
+    return None
+_LAST=""
+def talk_scrub(s):
+    raw=str(s or "").strip()
+    t=norm(raw)
+    if t.startswith(("na dima","na klar","na ","ach dima","alles klar bei","hey dima")):
+        rest=raw.replace("!",".").split(".",1)
+        if len(rest)>1 and len(rest[1].strip())>12:
+            return rest[1].strip()
+    return raw
 def dispatch(text, send_keyboard=None):
     lane=classify(text)
     if lane=="FACT":
@@ -42,6 +115,8 @@ def dispatch(text, send_keyboard=None):
             send_keyboard(body, [[("🟢 Ausführen","selfsee_go"),("🔴 Abbrechen","selfsee_no")]])
             return False
         return body
+    loc=talk_local(text)
+    if loc: return loc
     return None
 def lane_from(text):
     t=(text or "").lstrip()
@@ -63,7 +138,9 @@ def fact_report():
     t=h.get("tune") or {}
     m=h.get("marks") or {}
     hb=h.get("heartbeats") or {}
-    a=["Ist-Zustand:","SSH Xiaomi: "+str(h.get("ssh_xiaomi")),"Focus "+str(t.get("focus_sleep_s"))+"s, Genesis "+str(t.get("genesis_skip"))+", Idle "+str(t.get("autolearn_idle_s"))+"s","Marks: "+", ".join((k+":ja" if v else k+":nein") for k,v in m.items()),"Beats: "+", ".join(k+" "+str(v)+"s" for k,v in hb.items()),"Git-Push: tot."]
+    _pub=open(J+"/jack_publish.py",encoding="utf-8",errors="ignore").read()
+    _g="live" if "git push origin main" in _pub else "tot"
+    a=["Ist-Zustand:","SSH Xiaomi: "+str(h.get("ssh_xiaomi")),"Focus "+str(t.get("focus_sleep_s"))+"s, Genesis "+str(t.get("genesis_skip"))+", Idle "+str(t.get("autolearn_idle_s"))+"s","Marks: "+", ".join((k+":ja" if v else k+":nein") for k,v in m.items()),"Beats: "+", ".join(k+" "+str(v)+"s" for k,v in hb.items()),"Git-Push: "+_g+"."]  # JACK_TUNE_GITDYN
     return chr(10).join(a)
 def dispatch_lane(lane, text):
     if lane=="FACT":
@@ -77,8 +154,22 @@ def dispatch_lane(lane, text):
 def explain_overmind():
     import jack_selfsee as ss
     return ss.explain("overmind") or "Overmind-Result ist jack_overmind_result.json. Deadman nach 3h."
+
+def strip_lane_tags(s):
+    """JACK_TUNE_LANESTRIP: [[LANE:...]] nie an User."""
+    if not s: return s
+    import re
+    s=re.sub(r"^\[\[?LANE:[A-Z]+\]\]?\s*", "", str(s))
+    s=re.sub(r"\[\[?LANE:[A-Z]+\]\]?\s*", "", s)
+    return s.strip()
+
 def apply_lane(llm_text, user_text):
-    lane=lane_from(llm_text)
+    # JACK_TUNE_LANEUSER
+    lane=classify(user_text)
+    if lane=="TALK":
+        lane=None
+    if False:
+        lane=lane_from(llm_text)
     if not lane:
         t=norm(user_text)
         lastp=J+"/.chat_lane"
@@ -93,4 +184,4 @@ def apply_lane(llm_text, user_text):
     else:
         try: os.remove(J+"/.chat_lane")
         except Exception: pass
-    return strip_lane(llm_text or "")
+    return talk_scrub(strip_lane(llm_text or ""))
