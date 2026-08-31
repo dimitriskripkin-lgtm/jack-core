@@ -249,7 +249,9 @@ def _talk_to_gemini_impl(prompt):
         mem_ctx = _jcc.compress(prompt, mem_ctx)
     except Exception: pass
     _q=(prompt or "").lower()
-    if any(w in prompt.lower() for w in ("zustand","status","architektur","tune","health")):
+    _user_satz = (prompt.split("<user_query>")[-1].split("</user_query>")[0]
+        if "<user_query>" in prompt else prompt[-200:]).lower()
+    if any(w in _user_satz for w in ("zustand","status","architektur","tune","health")):
         try:
             _live="IST-HEALTH:\n"+open("/data/data/com.termux/files/home/jack/jack_health_now.json",encoding="utf-8").read()[:1500]
         except Exception:
