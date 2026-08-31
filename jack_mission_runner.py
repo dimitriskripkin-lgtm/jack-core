@@ -70,6 +70,8 @@ def _run_fix_shadow(m, fp, content, bak):
     if os.path.exists(APPROVALS):
         try: approvals = json.load(open(APPROVALS))
         except: approvals = []
+    # Deduplizieren + veraltete staged-Dateien entfernen
+    approvals = [a for a in approvals if a.get("id") != approval["id"] and os.path.exists(a.get("staged",""))]
     approvals.append(approval)
     json.dump(approvals, open(APPROVALS,"w"), indent=2, ensure_ascii=False)
 

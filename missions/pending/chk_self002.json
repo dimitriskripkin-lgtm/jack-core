@@ -1,0 +1,1 @@
+{"id": "chk_self002", "typ": "check", "act": "mtime_fresh", "file": "~/jack/jack_diag_snapshot.json", "max_age_s": 86400, "expect": "PASS", "cat": "health"}

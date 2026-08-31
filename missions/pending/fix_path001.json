@@ -1,0 +1,1 @@
+{"id": "fix_path001", "typ": "fix", "act": "sed_replace", "staged": true, "file": "~/jack/jack_graph.py", "old": "DB=\"/data/data/com.termux/files/home/jack/jack_graph.db\"", "new": "DB=os.path.join(os.path.expanduser(\"~\"),\"jack\",\"jack_graph.db\")"}

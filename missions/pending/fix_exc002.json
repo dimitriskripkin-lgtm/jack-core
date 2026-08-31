@@ -1,0 +1,1 @@
+{"id": "fix_exc002", "typ": "fix", "act": "sed_replace", "staged": true, "file": "~/jack/jack_heartbeat.py", "old": "    except:", "new": "    except Exception:", "verify_act": "grep_count", "verify_pattern": "    except:", "verify_expect_max": 0, "cat": "quality"}

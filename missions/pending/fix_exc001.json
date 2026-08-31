@@ -1,0 +1,1 @@
+{"id": "fix_exc001", "typ": "fix", "act": "sed_replace", "staged": true, "file": "~/jack/jack_graph.py", "old": "    except:", "new": "    except Exception:", "verify_act": "grep_count", "verify_pattern": "    except:", "verify_expect_max": 0, "cat": "quality"}
