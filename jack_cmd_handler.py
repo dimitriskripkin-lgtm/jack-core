@@ -41,4 +41,46 @@ def handle(rt: str, text: str, send) -> str:
             fail=len(glob.glob(p+'/fail/*.json'))
             return f'Missions: {pend} pending | {done} done | {fail} fail'
         except Exception as e: return 'Missions-Fehler: '+str(e)[:80]
+
+    if rt.startswith('/approve_') or rt.startswith('/reject_'):
+        try:
+            import json, os, shutil
+            J = "/data/data/com.termux/files/home/jack"
+            APPROVALS = os.path.join(J, "pending_approvals.json")
+            if not os.path.exists(APPROVALS):
+                return "Keine ausstehenden Freigaben."
+            approvals = json.load(open(APPROVALS))
+            mission_id = rt.split("_",1)[1]
+            match = [a for a in approvals if a.get("id") == mission_id]
+            if not match:
+                return f"Kein Fix mit ID {mission_id} gefunden."
+            approval = match[0]
+            staged = approval.get("staged","")
+            live = approval.get("file","")
+            if rt.startswith('/approve_'):
+                if not os.path.exists(staged):
+                    return f"Staged-Datei fehlt: {staged}"
+                shutil.copy2(staged, live)
+                os.remove(staged)
+                approval["status"] = "approved"
+                approvals = [a for a in approvals if a.get("id") != mission_id]
+                json.dump(approvals, open(APPROVALS,"w"), indent=2)
+                # Mission done markieren
+                DONE = os.path.join(J, "missions", "done", mission_id + ".json")
+                FAIL_SRC = os.path.join(J, "missions", "fail", mission_id + ".json")
+                PEND_SRC = os.path.join(J, "missions", "pending", mission_id + ".json")
+                for src in [FAIL_SRC, PEND_SRC]:
+                    if os.path.exists(src):
+                        shutil.move(src, DONE)
+                return f"✅ Fix angewendet: {os.path.basename(live)}"
+            else:  # reject
+                if os.path.exists(staged):
+                    os.remove(staged)
+                approval["status"] = "rejected"
+                approvals = [a for a in approvals if a.get("id") != mission_id]
+                json.dump(approvals, open(APPROVALS,"w"), indent=2)
+                return f"❌ Fix abgelehnt: {os.path.basename(live)}"
+        except Exception as e:
+            return f"Approve-Fehler: {str(e)[:100]}"
+
     return None

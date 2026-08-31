@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-MODULE_VERSION = 1
+MODULE_VERSION = 2  # bumped by shadow
 """Heartbeat: Dienste melden Lebenszeichen. Waechter prueft mtime statt nur sv status."""
 import os, time
 

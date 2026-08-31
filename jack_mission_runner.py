@@ -17,6 +17,75 @@ def sh(cmd,t=8):
         return 1,str(e)
 def load(path):
     return json.load(open(path,encoding="utf-8"))
+
+def _run_fix_shadow(m, fp, content, bak):
+    """Fix in shadow/ anwenden, 3x verifizieren, dann wartet_freigabe."""
+    import os, shutil, subprocess, json, time
+    J = "/data/data/com.termux/files/home/jack"
+    SHADOW = os.path.join(J, "shadow")
+    APPROVALS = os.path.join(J, "pending_approvals.json")
+    os.makedirs(SHADOW, exist_ok=True)
+
+    fname = os.path.basename(fp)
+    staged = os.path.join(SHADOW, fname + ".staged")
+    shutil.copy2(fp, staged)
+
+    old = m.get("old",""); new = m.get("new","")
+    staged_content = open(staged, errors="ignore").read()
+    if old not in staged_content:
+        return False, "shadow: old nicht gefunden: " + old[:40]
+
+    staged_content = staged_content.replace(old, new, 1)
+    open(staged, "w").write(staged_content)
+
+    # 3x verifizieren
+    for attempt in range(3):
+        if fp.endswith(".py"):
+            rc, out = sh(["python3", "-m", "py_compile", staged], t=10)
+            if rc != 0:
+                os.remove(staged)
+                return False, f"shadow py_compile FAIL attempt {attempt+1}: " + out[:60]
+        verify_act = m.get("verify_act")
+        if verify_act:
+            vm = {"act": verify_act,
+                  "file": "~/" + os.path.relpath(staged, os.path.expanduser("~")),
+                  "pattern": m.get("verify_pattern",""),
+                  "expect_max": m.get("verify_expect_max", 0)}
+            vm["file"] = staged
+            vok, vinfo, _ = run_act(vm)
+            if not vok:
+                os.remove(staged)
+                return False, f"shadow verify FAIL attempt {attempt+1}: " + vinfo
+
+    # Alle 3 grün — Freigabe ausstehend
+    approval = {
+        "id": m.get("id","?"),
+        "file": fp,
+        "staged": staged,
+        "what": str(old[:50]) + " -> " + str(new[:30]),
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "status": "wartet_freigabe"
+    }
+    approvals = []
+    if os.path.exists(APPROVALS):
+        try: approvals = json.load(open(APPROVALS))
+        except: approvals = []
+    approvals.append(approval)
+    json.dump(approvals, open(APPROVALS,"w"), indent=2, ensure_ascii=False)
+
+    # Telegram-Notify
+    try:
+        import jack_notify as _jn
+        _jn.notify(
+            f"🔧 Fix bereit: {fname}\n"
+            f"Was: {old[:40]} -> {new[:30]}\n"
+            f"3x verifiziert ✓\n"
+            f"/approve_{m.get('id','?')} | /reject_{m.get('id','?')}"
+        )
+    except Exception: pass
+
+    return True, f"shadow: wartet_freigabe — {fname}.staged"
+
 def run_act(m):
     act=m.get("act")
     if act not in ALLOWED:
@@ -34,8 +103,16 @@ def run_act(m):
         if not old:
             return False,"fix: old fehlt",""
         content=open(fp,errors="ignore").read()
+
+        # Shadow-Modus wenn staged=True
+        if m.get("staged") or m.get("shadow"):
+            ok2, info2 = _run_fix_shadow(m, fp, content, bak=None)
+            return ok2, info2, ""
+
         if old not in content:
             return False,"fix: old nicht gefunden: "+old[:40],""
+
+
         bak=fp+".fix.bak"
         shutil.copy2(fp,bak)
         try:

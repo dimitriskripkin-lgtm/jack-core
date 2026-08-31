@@ -1,0 +1,10 @@
+{
+  "id": "stage001",
+  "act": "sed_replace",
+  "ts": "2026-08-31 13:55:35",
+  "ok": true,
+  "note": "fix OK 1x: #!/usr/bin/env python3\nMODULE_ -> #!/usr/bin/env pytho",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}
