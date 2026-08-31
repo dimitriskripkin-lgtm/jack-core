@@ -1,0 +1,1 @@
+{"id": "fix001", "typ": "fix", "act": "sed_replace", "file": "~/jack/jack_voice_handler.py", "old": "J=\"/data/data/com.termux/files/home/jack\"", "new": "J=os.path.expanduser(\"~/jack\")", "verify_act": "grep_count", "verify_pattern": "/data/data/com.termux/files/home/jack", "verify_expect_max": 0, "cat": "fix_test"}

@@ -186,13 +186,62 @@ def _fehlschlag(mid, versuche_bisher, grund):
     setze_status(mid, "offen", str(grund)[:300])
     return "offen"
 
+
+def _run_fix(m):
+    """FIX-Mission: Backup+Patch+py_compile+Verify. Rollback bei Fehler."""
+    import os, shutil
+    act = m.get("act","")
+    raw_file = m.get("file","")
+    fpath = os.path.expanduser(raw_file)
+    JACK = os.path.expanduser("~/jack")
+    if not fpath.startswith(JACK):
+        return False, "Pfad-Tabu: nur ~/jack/ erlaubt"
+    if not os.path.exists(fpath):
+        return False, "Datei nicht gefunden: " + fpath
+    bak = fpath + ".fix.bak"
+    shutil.copy2(fpath, bak)
+    try:
+        content = open(fpath, errors="ignore").read()
+        if act in ("sed_replace","py_replace"):
+            old = m.get("old",""); new = m.get("new","")
+            if not old: os.remove(bak); return False, "old fehlt"
+            if old not in content: os.remove(bak); return False, "old nicht gefunden: "+old[:40]
+            count = content.count(old)
+            content = content.replace(old, new, 1 if act=="py_replace" else count)
+            open(fpath,"w").write(content)
+            info = act+" OK "+str(count)+"x: "+old[:30]
+        else:
+            os.remove(bak); return False, "Unbekannter Fix-Act: "+act
+        if fpath.endswith(".py"):
+            import subprocess
+            r = subprocess.run(["python3","-m","py_compile",fpath],
+                capture_output=True, text=True, timeout=10)
+            if r.returncode != 0:
+                shutil.copy2(bak,fpath); os.remove(bak)
+                return False, "py_compile FAIL Rollback: "+r.stderr[:80]
+        verify_act = m.get("verify_act")
+        if verify_act:
+            vm = {"act":verify_act,"file":raw_file,
+                  "pattern":m.get("verify_pattern",""),
+                  "expect_max":m.get("verify_expect_max",0),"expect":"PASS"}
+            ok2,vinfo = _run_check(vm)
+            if not ok2:
+                shutil.copy2(bak,fpath); os.remove(bak)
+                return False, "Verify FAIL Rollback: "+vinfo
+            info += " | verify="+vinfo
+        os.remove(bak); return True, info
+    except Exception as e:
+        try: shutil.copy2(bak,fpath); os.remove(bak)
+        except Exception: pass
+        return False, "Exception Rollback: "+str(e)[:80]
+
 def dispatch_once():
     """Arbeitet GENAU EINE offene Mission ab. Gibt dict zurueck oder None."""
     m = naechste()
     if not m:
         return None
     mid = m["id"]
-    typ = m["typ"]
+    typ = m.get("typ") or ("check" if m.get("act") in {"grep_count","line_count","file_exists","line_check","mtime_fresh","no_secret"} else None)
     aufgabe = m["aufgabe"]
     vers = m["versuche"]
     if typ == "code":
@@ -233,6 +282,19 @@ def dispatch_once():
             return {"id": mid, "typ": typ, "status": "wartet_freigabe", "text": str(fn)}
         except Exception as e:
             st = _fehlschlag(mid, vers, "Coderfehler: " + str(e)[:150])
+            return {"id": mid, "typ": typ, "status": st, "text": str(e)[:200]}
+
+    if typ == "fix":
+        try:
+            ok, info = _run_fix(dict(m))
+            if ok:
+                setze_status(mid, "fertig", info)
+                return {"id": mid, "typ": typ, "status": "fertig", "text": info}
+            else:
+                st = _fehlschlag(mid, vers, info)
+                return {"id": mid, "typ": typ, "status": st, "text": info}
+        except Exception as e:
+            st = _fehlschlag(mid, vers, str(e)[:150])
             return {"id": mid, "typ": typ, "status": st, "text": str(e)[:200]}
 
     setze_status(mid, "fehler", "Unbekannter Typ: " + str(typ))

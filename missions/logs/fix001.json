@@ -1,0 +1,10 @@
+{
+  "id": "fix001",
+  "act": "sed_replace",
+  "ts": "2026-08-31 13:01:40",
+  "ok": false,
+  "note": "act nicht erlaubt: sed_replace",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}
