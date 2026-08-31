@@ -200,13 +200,17 @@ def _status_als_text():
 
 
 def _talk_to_gemini_impl(prompt):
+    try:
+        _persona_cached = open(os.path.expanduser('~/jack/jack_persona.md'),encoding='utf-8').read().strip()
+    except Exception:
+        _persona_cached = ''
     # Persoenliche Gespraeche -> Groq (besser Persona-Treue)
     # System-Calls, Vision, Reasoning -> Gemini
     _personal = ["wer bin ich","wer bist du","was denkst","erzaehl","erklaer mir","wie geht","was magst","was haeltst","kumpel","zusammen","gefuehl","meinung","freund","ueber mich","über mich","ueber dich","über dich","ueber uns","wer bist","ich bin","selbst","charakter","person"]
     if any(w in prompt.lower() for w in _personal):
         try:
             import jack_groq_bridge as _gq
-            _persona=open(os.path.expanduser('~/jack/jack_persona.md'),encoding='utf-8').read()
+            _persona = _persona_cached
             _mem=""
             try:
                 import jack_vecdb as _jv; import jack_memory as _jm
@@ -284,7 +288,7 @@ def _talk_to_gemini_impl(prompt):
         import jack_state as _js; _sh = _js.get_context_for_gemini()['hint']; _js.save_state()
     except Exception: _sh = ''
     try:
-        _persona=open(os.path.expanduser('~/jack/jack_persona.md'),encoding='utf-8').read().strip()
+        _persona = _persona_cached
     except Exception: _persona=''
     # P1 Error-to-Rule: Gelernte Regeln an Persona anhaengen (Qwen 21.08. final)
     try:
