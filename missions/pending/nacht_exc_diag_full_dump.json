@@ -1,0 +1,1 @@
+{"id": "nacht_exc_diag_full_dump", "typ": "check", "act": "grep_count", "file": "~/jack/diag_full_dump.py", "pattern": "    except:", "expect_max": 0, "expect": "PASS", "cat": "quality_nacht"}

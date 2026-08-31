@@ -1,0 +1,1 @@
+{"id": "nacht_graph_ok", "typ": "check", "act": "file_exists", "file": "~/jack/jack_graph.db", "expect": "PASS", "cat": "health"}

@@ -1,0 +1,1 @@
+{"id": "nacht_config_ok", "typ": "check", "act": "file_exists", "file": "~/jack/config.ini", "expect": "PASS", "cat": "health"}

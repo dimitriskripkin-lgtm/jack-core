@@ -1,0 +1,1 @@
+{"id": "nacht_mv_jack_yt_hybrid", "typ": "check", "act": "grep_count", "file": "~/jack/jack_yt_hybrid.py", "pattern": "MODULE_VERSION", "expect_min": 1, "expect": "PASS", "cat": "version_nacht"}

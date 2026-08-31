@@ -1,0 +1,1 @@
+{"id": "nacht_exc_jack_overmind_state", "typ": "check", "act": "grep_count", "file": "~/jack/jack_overmind_state.py", "pattern": "    except:", "expect_max": 0, "expect": "PASS", "cat": "quality_nacht"}

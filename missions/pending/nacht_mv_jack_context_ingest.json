@@ -1,0 +1,1 @@
+{"id": "nacht_mv_jack_context_ingest", "typ": "check", "act": "grep_count", "file": "~/jack/jack_context_ingest.py", "pattern": "MODULE_VERSION", "expect_min": 1, "expect": "PASS", "cat": "version_nacht"}

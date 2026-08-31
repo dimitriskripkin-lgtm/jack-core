@@ -1,0 +1,1 @@
+{"id": "nacht_exc_jack_live_bridge", "typ": "check", "act": "grep_count", "file": "~/jack/jack_live_bridge.py", "pattern": "    except:", "expect_max": 0, "expect": "PASS", "cat": "quality_nacht"}
