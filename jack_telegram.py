@@ -16,8 +16,7 @@ try:
 except ImportError:
     live_bridge=None
 
-def build_write_keyboard(filename):
-    return {"inline_keyboard":[[{"text":"🟢 Bestätigen","callback_data":f"confirm_write:{filename}"},{"text":"🔴 Abbrechen","callback_data":f"cancel_write:{filename}"}]]}
+from jack_keyboards import build_write_keyboard, menu_hauptseite as _kb_menu, menu_kategorie as _kb_kat
 
 sys.path.append(os.path.expanduser('~/jack'))
 import jack_claude
@@ -187,39 +186,10 @@ MENU["befehle"] = {
         ("/kill","Stop","/kill")
     ]
 }
-# END_MENU_EXTRA_ALL_COMMANDS_QWEN
+def menu_hauptseite(): return _kb_menu(MENU)
 
 
-def menu_hauptseite():
-    """Sendet Hauptmenue mit Kategorie-Buttons."""
-    buttons = [[(_v["label"], "menu:"+_k)] for _k, _v in MENU.items()]
-    return buttons
-
-# MENU_HAUPTSEITE_EXTRA_QWEN
-_old_menu_hauptseite_qwen = menu_hauptseite
-def menu_hauptseite():
-    kb = _old_menu_hauptseite_qwen()
-    try:
-        if "menu:befehle" not in str(kb):
-            kb.append([("🔧 Alle Befehle", "menu:befehle")])
-    except Exception:
-        pass
-    return kb
-# END_MENU_HAUPTSEITE_EXTRA_QWEN
-
-
-def menu_kategorie(key):
-    """Text fuer eine Kategorie."""
-    if key not in MENU: return "Unbekannte Kategorie"
-    kat = MENU[key]
-    zeilen = [kat["label"], ""]
-    for befehl, beschreibung, beispiel in kat["befehle"]:
-        zeilen.append(f"• {befehl}")
-        zeilen.append(f"  {beschreibung}")
-        zeilen.append(f"  Beispiel: {beispiel}")
-        zeilen.append("")
-    zeilen.append("← /menu fuer Hauptmenue")
-    return chr(10).join(zeilen)
+def menu_kategorie(key): return _kb_kat(key, MENU)
 
 TOKEN, CHAT_ID = load_secrets()
 API = f"https://api.telegram.org/bot{TOKEN}"
@@ -1291,6 +1261,86 @@ def handle(text):
     except Exception:
         pass
     import jack_intent_apps
+    try:
+        import jack_ui_nav as _nav
+        _hit,_act,_ok,_msg=_nav.try_nav_intent(text)
+        if _hit:
+            send(("NAV OK: " if _ok else "NAV FAIL: ")+str(_act)+" | "+str(_msg))
+            return None
+    except Exception:
+        pass
+    try:  # JACK_TUNE_MAPSYT_H
+        import re as _re
+        import jack_ui_type as _ut
+        _t=text
+        _mm=_re.search(r"(?:navigiere (?:zu|nach)|maps|karte|zeig(?:e)? (?:mir )?(?:den weg|die route) (?:zu|nach)|route nach)\s+(.+)", _t, _re.I)
+        if _mm and len(_t)<140:
+            _ok,_msg=_ut.maps_open(_mm.group(1).strip())
+            send(("MAPS OK: " if _ok else "MAPS FAIL: ")+str(_msg)[:180])
+            return None
+        _my=_re.search(r"(?:youtube|yt)\s+(.+)", _t, _re.I)
+        if (not _my) and _re.search(r"(?:spiel(?:e)?|zeig(?:e)?)\s+.+\s+(?:auf|bei)\s+youtube", _t, _re.I):
+            _my=_re.search(r"(?:spiel(?:e)?|zeig(?:e)?)\s+(.+?)\s+(?:auf|bei)\s+youtube", _t, _re.I)
+        if _my and len(_t)<140:
+            _q=_my.group(1).strip()
+            _ok,_msg=_ut.youtube_play(_q)
+            send(("YT OK: " if _ok else "YT FAIL: ")+str(_msg)[:180])
+            return None
+    except Exception:
+        pass
+    try:  # JACK_TUNE_SPOTIFY_SUR
+        import re as _re
+        if _re.search(r"\b(überrasche mich|surprise|irgendwas abspielen|zufall\w* (song|track|musik))\b", text, _re.I):
+            import jack_ui_type as _ut
+            _ok,_msg=_ut.spotify_surprise()
+            send(("SPOTIFY OK: " if _ok else "SPOTIFY FAIL: ")+str(_msg)[:180])
+            return None
+    except Exception:
+        pass
+    try:  # JACK_TUNE_MAPS_YT_H
+        import re as _re
+        _m=_re.search(r"(?:navigiere(?: zu)?|maps|route nach|zeig(?: mir)? (?:den )?weg (?:nach|zu))\s+(.+)", text, _re.I)
+        if _m and len(text)<120:
+            import jack_ui_type as _ut
+            _ok,_msg=_ut.maps_nav(_m.group(1).strip())
+            send(("MAPS OK: " if _ok else "MAPS FAIL: ")+str(_msg)[:160])
+            return None
+        _m=_re.search(r"(?:youtube|yt|zeig(?: mir)? (?:auf )?youtube)\s+(.+)", text, _re.I)
+        if _m and len(text)<120:
+            import jack_ui_type as _ut
+            _ok,_msg=_ut.youtube_search(_m.group(1).strip())
+            send(("YT OK: " if _ok else "YT FAIL: ")+str(_msg)[:160])
+            return None
+    except Exception:
+        pass
+    try:  # JACK_TUNE_SPOTIFY_H
+        import re as _re
+        _m=_re.search(r"(?:spiel|play)\s+(.+)", text, _re.I)
+        if _m and len(text)<100:
+            _q=_m.group(1).strip()
+            for _cut in (" auf dem xiaomi", " auf xiaomi", " bitte", " bei spotify"):
+                if _q.lower().endswith(_cut.strip()):
+                    _q=_q[:len(_q)-len(_cut)].strip()
+            import jack_ui_type as _ut
+            _ok,_msg=_ut.spotify_play(_q)
+            send(("SPOTIFY OK: " if _ok else "SPOTIFY FAIL: ")+str(_msg)[:180])
+            return None
+    except Exception:
+        pass
+    try:  # JACK_TUNE_CHROME_SEARCH
+        import re as _re
+        _m=_re.search(r"(?:suche|search|google)\s+(?:in\s+chrome\s+)?(?:nach\s+)?(.+)", text, _re.I)
+        if _m and len(text)<120:
+            _q=_m.group(1).strip()
+            for _cut in (" auf dem xiaomi", " auf xiaomi", " bitte"):
+                if _q.lower().endswith(_cut.strip()):
+                    _q=_q[:len(_q)-len(_cut)].strip()
+            import jack_ui_type as _ut
+            _ok,_msg=_ut.chrome_search(_q)
+            send(("CHROME OK: " if _ok else "CHROME FAIL: ")+str(_msg)[:180])
+            return None
+    except Exception:
+        pass
     if jack_intent_apps.try_app_launch(text, PENDING_EXEC, send_keyboard):
         return None
     # LLM Call mit Timeout und EXEC-Parser
@@ -1311,7 +1361,7 @@ def handle(text):
             try:
                 import jack_chat_router as _cr2
                 if resp:
-                    resp=_cr2.apply_lane(resp, text)
+                    resp=_cr2.strip_lane_tags(_cr2.apply_lane(resp, text))  # JACK_TUNE_LANESTRIP
             except Exception:
                 pass
             if resp and "Ausfuehren oder beenden" in resp:
