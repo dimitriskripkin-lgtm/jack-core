@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-31 14:38
+# JACK SYSTEM STATE — 2026-08-31 14:50
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: DOWN
 
 ## Resources
-- RAM verfuegbar: 2360MB
+- RAM verfuegbar: 2385MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 6652
+- Memory-Eintraege: 6658
 - Offene Fehler: 15
 
 ## Config
@@ -29,11 +29,11 @@
 - [jack_cortex] [Cortex] SSH-Timeout (#1)
 
 ## Letzte Log-Eintraege
-2026-08-31 14:36:11 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Ollama-Fehler: [Errno 104] Connection reset by peer
-2026-08-31 14:36:11 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | #3471: Ollama kann nicht fixen
-2026-08-31 14:36:11 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Fertig: 0 fixed, 0 skipped, 0 eskaliert
-2026-08-31 14:36:11 | INFO    | jack.legacy_wrapper  | HB_OLLAMA_DOWN | <urlopen error [Errno 111] Connection refused>
-2026-08-31 14:36:33 | INFO    | jack.legacy_wrapper  | PUBLISHER-PUSH | OK
+2026-08-31 14:48:23 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Ollama-Fehler: [Errno 104] Connection reset by peer
+2026-08-31 14:48:23 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | #3471: Ollama kann nicht fixen
+2026-08-31 14:48:23 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Fertig: 0 fixed, 0 skipped, 0 eskaliert
+2026-08-31 14:48:23 | INFO    | jack.legacy_wrapper  | HB_OLLAMA_DOWN | <urlopen error [Errno 111] Connection refused>
+2026-08-31 14:48:37 | INFO    | jack.legacy_wrapper  | PUBLISHER-PUSH | OK
 
 
-*Generiert: 2026-08-31 14:38*
+*Generiert: 2026-08-31 14:50*

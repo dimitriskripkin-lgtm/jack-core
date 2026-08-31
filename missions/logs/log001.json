@@ -1,0 +1,10 @@
+{
+  "id": "log001",
+  "act": "sed_replace",
+  "ts": "2026-08-31 14:42:04",
+  "ok": true,
+  "note": "shadow: wartet_freigabe — jack_cortex.py.staged",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

@@ -1,0 +1,1 @@
+{"id": "log001", "typ": "fix", "act": "sed_replace", "staged": true, "file": "~/jack/jack_cortex.py", "old": "    print('[Cortex-Status] ' + str(msg))", "new": "    try: import jack_log; jack_log.log_decision('CORTEX-STATUS', str(msg)[:100])\n    except Exception: pass", "cat": "logger"}

@@ -1,0 +1,10 @@
+{
+  "id": "log003",
+  "act": "sed_replace",
+  "ts": "2026-08-31 14:42:05",
+  "ok": true,
+  "note": "shadow: wartet_freigabe — jack_gemini_bridge.py.staged",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

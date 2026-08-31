@@ -324,6 +324,9 @@ def main():
                 jack_log.log_decision("QUEUE-SKIPPED", res.get("reason", name))
         
         import jack_heartbeat; jack_heartbeat.beat("jack_waechter")
+        try:
+            import jack_mission_gen as _jmg; _jmg.run()
+        except Exception: pass
         _adb_heal_if_needed()
         _heartbeat_sv_check()
         import jack_heartbeat; jack_heartbeat.beat('jack_waechter')

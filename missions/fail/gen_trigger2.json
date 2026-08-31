@@ -1,0 +1,1 @@
+{"id": "gen_trigger2", "typ": "check", "act": "grep_count", "file": "~/jack/jack_oracle.py", "pattern": "    except:", "expect_max": 0, "expect": "PASS", "cat": "test"}

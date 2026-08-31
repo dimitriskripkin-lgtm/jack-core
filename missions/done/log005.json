@@ -1,0 +1,1 @@
+{"id": "log005", "typ": "fix", "act": "sed_replace", "staged": true, "file": "~/jack/jack_cortex.py", "old": "import logging\n", "new": "", "verify_act": "grep_count", "verify_pattern": "import logging", "verify_expect_max": 0, "cat": "logger"}

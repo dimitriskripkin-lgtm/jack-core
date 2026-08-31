@@ -107,7 +107,8 @@ def auto_save_to_memory(cmd, result, source='dima_chat'):
 
 def run_voice_loop():
     import jack_voice, jack_voice_el
-    print('JACK: Online.')
+    try: import jack_log; jack_log.log_decision('JACK-ONLINE', 'Dienst gestartet')
+    except Exception: pass
     jack_voice_el.speak("Online.")
     while True:
         try:

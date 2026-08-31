@@ -1,0 +1,1 @@
+{"id": "log003", "typ": "fix", "act": "sed_replace", "staged": true, "file": "~/jack/jack_gemini_bridge.py", "old": "    print(\"[JACK \u2192 Gemini 2.5 Flash] Anfrage laeuft...\")", "new": "    try: import jack_log; jack_log.log_decision(\"GEMINI-REQ\", \"Anfrage l\u00e4uft\")\n    except Exception: pass", "cat": "logger"}

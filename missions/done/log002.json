@@ -1,0 +1,1 @@
+{"id": "log002", "typ": "fix", "act": "sed_replace", "staged": true, "file": "~/jack/jack_talk.py", "old": "    print('JACK: Online.')", "new": "    try: import jack_log; jack_log.log_decision('JACK-ONLINE', 'Dienst gestartet')\n    except Exception: pass", "cat": "logger"}

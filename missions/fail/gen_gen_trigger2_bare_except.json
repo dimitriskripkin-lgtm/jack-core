@@ -1,0 +1,1 @@
+{"typ": "fix", "act": "sed_replace", "staged": true, "file": "~/jack/jack_oracle.py", "old": "    except:", "new": "    except Exception:", "verify_act": "grep_count", "verify_pattern": "    except:", "verify_expect_max": 0, "cat": "quality_autofix", "id": "gen_gen_trigger2_bare_except"}

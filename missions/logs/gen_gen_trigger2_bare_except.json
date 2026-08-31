@@ -1,0 +1,10 @@
+{
+  "id": "gen_gen_trigger2_bare_except",
+  "act": "sed_replace",
+  "ts": "2026-08-31 14:48:01",
+  "ok": false,
+  "note": "shadow verify FAIL attempt 1: grep_count: 1 Treffer (max 0)",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}
