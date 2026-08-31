@@ -25,6 +25,25 @@ def is_alive(dienst, max_age=600):
     a = age(dienst)
     return a is not None and a < max_age
 
+
+def is_remote_alive(host, port, timeout=5):
+    """Live TCP-Probe — kein Ping, funktioniert auf Android."""
+    import socket
+    try:
+        socket.create_connection((host, port), timeout=timeout).close()
+        return True
+    except Exception:
+        return False
+
+def is_xiaomi_alive():
+    """SSH-Port-Probe auf Xiaomi — Wahrheit statt Datei-mtime."""
+    import configparser, os
+    cfg = configparser.ConfigParser()
+    cfg.read(os.path.expanduser('~/jack/config.ini'))
+    host = cfg.get('xiaomi', 'ip', fallback='10.229.239.131')
+    port = int(cfg.get('xiaomi', 'ssh_port', fallback='8022'))
+    return is_remote_alive(host, port)
+
 if __name__ == "__main__":
     import sys
     for d in ("jack_cortex", "jack_telegram", "jack_autolearn", "jack_waechter"):

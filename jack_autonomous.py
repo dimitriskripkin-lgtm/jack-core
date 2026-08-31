@@ -135,7 +135,7 @@ def _maybe_self_improve():
 
 
 def _heartbeat_sv_check():
-    """HEARTBEAT_SV_CHECK: tote Dienste per is_alive -> sv restart."""
+    """HEARTBEAT_SV_CHECK: tote Dienste per is_alive -> sv restart. + Xiaomi+Ollama Live-Probe."""
     try:
         import jack_heartbeat
         import subprocess
@@ -149,15 +149,39 @@ def _heartbeat_sv_check():
             try:
                 if not jack_heartbeat.is_alive(name, max_age=max_age):
                     age = jack_heartbeat.age(name)
-                    subprocess.run(
-                        ["sv", "restart", name],
-                        capture_output=True, timeout=30,
-                    )
+                    subprocess.run(["sv", "restart", name], capture_output=True, timeout=30)
                     try:
                         import jack_log
                         jack_log.log_decision("HB_RESTART", name, "age=%s" % age)
                     except Exception:
                         pass
+            except Exception:
+                pass
+        # Xiaomi SSH Live-Probe
+        try:
+            xi_ok = jack_heartbeat.is_xiaomi_alive()
+            if not xi_ok:
+                try:
+                    import jack_log
+                    jack_log.log_decision("HB_XIAOMI_DOWN", "SSH-Port nicht erreichbar")
+                    notify("Xiaomi nicht erreichbar (HB-Probe). SSH-Check fehlgeschlagen.")
+                except Exception:
+                    pass
+        except Exception:
+            pass
+        # Ollama HTTP Live-Probe
+        try:
+            import urllib.request as _ur
+            import configparser as _cp, os as _os
+            cfg = _cp.ConfigParser()
+            cfg.read(_os.path.expanduser('~/jack/config.ini'))
+            ohost = cfg.get('xiaomi', 'ip', fallback='10.229.239.131')
+            _ur.urlopen(f'http://{ohost}:11434/api/tags', timeout=5)
+        except Exception as _oe:
+            try:
+                import jack_log
+                jack_log.log_decision("HB_OLLAMA_DOWN", str(_oe)[:80])
+                notify(f"Ollama auf Xiaomi nicht erreichbar: {str(_oe)[:60]}")
             except Exception:
                 pass
     except Exception:

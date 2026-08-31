@@ -23,6 +23,17 @@ def put_node(typ,name,wert="",src="seed"):
     c.execute("INSERT INTO nodes(id,typ,name,wert,src,ts) VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET wert=excluded.wert,src=excluded.src,ts=excluded.ts",
               (i,typ,name,str(wert)[:200],src,t))
     c.commit(); c.close(); return i
+
+SUSPICIOUS = [
+    "sektor", "sector", "zone-", "node-", "id-0x", "ref-",
+    "koordinat", "cluster", "grid", "segment-", "block-7",
+    "halluzin", "fehler-", "error-node", "unknown-"
+]
+
+def _is_suspicious(text):
+    low = (text or "").lower()
+    return any(s in low for s in SUSPICIOUS)
+
 def put_edge(a,rel,b,src="seed"):
     if rel not in RELS: return
     c=con(); t=time.time()
