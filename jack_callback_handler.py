@@ -103,30 +103,20 @@ def handle(callback_data, callback_id):
     if callback_data.startswith("approve:"):
         fix_id = callback_data[8:]
         try:
-            fixes = json.load(open(os.path.expanduser("~/jack/jack_fixes.json")))
-            fix = fixes.get(fix_id)
-            if not fix:
-                return f"Fix nicht gefunden: {fix_id}"
-            import subprocess
-            r = subprocess.run(["python3", fix["pfad"]],
-                capture_output=True, text=True, timeout=0)
-            output = (r.stdout + r.stderr).strip()[:400]
-            jack_log.log_decision("APPROVE-FIX-BUTTON", f"{fix_id}: {output[:80]}")
-            return f"Fix ausgefuehrt:\n{output}"
+            from jack_cmd_handler import handle as _ch
+            result = _ch(f"/approve_{fix_id}", "", None)
+            jack_log.log_decision("APPROVE-FIX-BUTTON", f"{fix_id}: {str(result)[:80]}")
+            return result or f"✅ Fix {fix_id} angewendet"
         except Exception as _e:
-            return f"Fehler: {str(_e)[:200]}"
+            return f"Approve-Fehler: {str(_e)[:200]}"
 
     if callback_data.startswith("reject:"):
         fix_id = callback_data[7:]
         try:
-            neg = {}
-            neg_path = os.path.expanduser("~/jack/negative_patterns.json")
-            try: neg = json.load(open(neg_path))
-            except Exception: pass
-            neg[fix_id] = {"rejected": True, "count": neg.get(fix_id, {}).get("count", 0) + 1}
-            json.dump(neg, open(neg_path, "w"), indent=2)
+            from jack_cmd_handler import handle as _ch
+            result = _ch(f"/reject_{fix_id}", "", None)
             jack_log.log_decision("REJECT-FIX-BUTTON", f"{fix_id} abgelehnt")
-            return f"Verstanden. Merke mir: {fix_id} ist unerwuenscht."
+            return result or f"❌ Fix {fix_id} abgelehnt"
         except Exception as _e:
             return f"Fehler: {str(_e)[:200]}"
 

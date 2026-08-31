@@ -73,16 +73,17 @@ def _run_fix_shadow(m, fp, content, bak):
     approvals.append(approval)
     json.dump(approvals, open(APPROVALS,"w"), indent=2, ensure_ascii=False)
 
-    # Telegram-Notify
+    # Telegram-Notify mit Buttons
     try:
-        import jack_notify as _jn
-        _jn.notify(
-            f"🔧 Fix bereit: {fname}\n"
-            f"Was: {old[:40]} -> {new[:30]}\n"
-            f"3x verifiziert ✓\n"
-            f"/approve_{m.get('id','?')} | /reject_{m.get('id','?')}"
-        )
-    except Exception: pass
+        import jack_keyboards as _jk, jack_telegram as _jt
+        kb = _jk.build_approval_keyboard(m.get("id","?"), fname, old[:40]+" -> "+new[:30])
+        msg = f"🔧 Fix bereit: {fname}\nWas: {old[:40]}\n→ {new[:30]}\n3x verifiziert ✓"
+        _jt.send_with_keyboard(msg, kb)
+    except Exception as _ne:
+        try:
+            import jack_notify as _jn
+            _jn.notify(f"🔧 Fix bereit: {fname} | /approve_{m.get('id','?')} | /reject_{m.get('id','?')}")
+        except Exception: pass
 
     return True, f"shadow: wartet_freigabe — {fname}.staged"
 

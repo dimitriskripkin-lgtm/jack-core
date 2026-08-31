@@ -271,6 +271,18 @@ def send_webapp(text, url, button_text="Ergebnisse anzeigen"):
     except Exception as _e:
         import jack_log; jack_log.log_decision("WEBAPP-FEHLER", str(_e)[:100])
 
+
+def send_with_keyboard(text, keyboard):
+    """Nachricht mit Inline-Keyboard senden."""
+    import json as _j
+    data = _j.dumps({"chat_id": CHAT_ID, "text": text, "reply_markup": keyboard}).encode()
+    try:
+        req = urllib.request.Request(API + "/sendMessage", data=data,
+            headers={"Content-Type": "application/json"})
+        urllib.request.urlopen(req, timeout=10)
+    except Exception as _e:
+        import jack_log; jack_log.log_decision("KEYBOARD-SEND-FEHLER", str(_e)[:100])
+
 def answer_callback(callback_id, text="OK"):
     """Bestaetigt Callback-Query damit Telegram Ladeanimation entfernt."""
     data = json.dumps({"callback_query_id": callback_id, "text": text}).encode()

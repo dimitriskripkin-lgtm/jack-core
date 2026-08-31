@@ -26,3 +26,9 @@ def menu_kategorie(key, MENU):
                    f"  Beispiel: {beispiel}", ""]
     zeilen.append("← /menu fuer Hauptmenue")
     return chr(10).join(zeilen)
+
+def build_approval_keyboard(mission_id, fname, what):
+    return {"inline_keyboard":[[
+        {"text":"✅ Freigabe","callback_data":f"approve:{mission_id}"},
+        {"text":"❌ Ablehnen","callback_data":f"reject:{mission_id}"}
+    ]]}
