@@ -16,7 +16,8 @@ try:
 except ImportError:
     live_bridge=None
 
-from jack_keyboards import build_write_keyboard, menu_hauptseite as _kb_menu, menu_kategorie as _kb_kat
+from jack_keyboards import build_write_keyboard
+import jack_cmd_handler as _jch, menu_hauptseite as _kb_menu, menu_kategorie as _kb_kat
 
 sys.path.append(os.path.expanduser('~/jack'))
 import jack_claude
@@ -931,17 +932,10 @@ def handle(text):
             rows=con.execute('SELECT module,error_msg,timestamp FROM errors WHERE resolved=0 ORDER BY timestamp DESC LIMIT 5').fetchall(); con.close()
             return 'Keine offenen Fehler.' if not rows else chr(10).join(f'[{r[2][:16]}] {r[0]}: {r[1][:60]}' for r in rows)
         except Exception as _e: return 'Errors-Fehler: '+str(_e)[:80]
-    if _rt in ('/akku','/sensor'):
-        try: import jack_sensors as _js; return _js.get_battery()+' | '+_js.get_motion()
-        except Exception as _e: return 'Akku-Fehler: '+str(_e)[:80]
-    if _rt == '/log':
-        try: import jack_log as _jl; return 'JACKs Logbuch:'+chr(10)+_jl.recent(15)
-        except Exception as _e: return 'Log-Fehler: '+str(_e)[:80]
-    if _rt == '/level':
-        try:
-            import jack_intent as _ji; lvl=_ji.get_level()
-            return f'Autonomie-Level: {lvl}/4'
-        except Exception as _e: return 'Level-Fehler: '+str(_e)[:80]
+    _cmd_r = _jch.handle(_rt, text, send)
+    if _cmd_r is not None: return _cmd_r
+
+
     if _rt == '/vision' or _rt.startswith('/vision '):
         _frage = _rt[8:].strip() or None
         send('Vision: Screenshot vom Xiaomi laeuft...')
