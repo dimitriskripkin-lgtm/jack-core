@@ -1,0 +1,80 @@
+{
+  "ts": "2026-08-25 14:15:20",
+  "stage": "messen-abstrahieren-vereinfachen-beweisen",
+  "queue": {
+    "pending": 0,
+    "fail": 0
+  },
+  "proofs": [
+    "ghost-cleanup",
+    "write-selftest",
+    "expect-fail",
+    "allowed-13",
+    "sv-service-field",
+    "dedup",
+    "chrome",
+    "classify-4",
+    "fact",
+    "diag",
+    "explain",
+    "contract",
+    "compile-core",
+    "voice-dispatch",
+    "persona-schicht",
+    "persona-temp-akku",
+    "sv-7-real",
+    "hb-mtime",
+    "level-config-not-file",
+    "seal-chrome-fact",
+    "missions-heartbeat",
+    "once-hb",
+    "contract-missions-rules",
+    "113-contract2",
+    "jack_seal-9checks",
+    "seal-10",
+    "talk-classify-in-seal",
+    "contract-telegram-order",
+    "hb_ok-dual-path"
+  ],
+  "acts": [
+    "fact",
+    "diag",
+    "no_chrome_src",
+    "ui_none",
+    "classify_is",
+    "compile_ok",
+    "explain_ok",
+    "sv_ok",
+    "mtime_fresh",
+    "json_valid",
+    "no_secret",
+    "grep_count",
+    "line_check"
+  ],
+  "files": {
+    "contract": "/data/data/com.termux/files/home/jack/jack_contract.md",
+    "persona": "/data/data/com.termux/files/home/jack/jack_persona.md",
+    "runner": "/data/data/com.termux/files/home/jack/jack_mission_runner.py"
+  },
+  "next": [
+    "Telegram-Live-Satz nur als Mission wenn 3x stabil",
+    "GitHub-Missions-Hahn nur nach Dima",
+    "Keine Needle an jack_telegram.py",
+    "hb_ok Act wenn Heartbeat-Dateien messbar"
+  ],
+  "autonomie_note": "level in config.ini AUTONOMIE; file .autonomie_level secondary; product not removed",
+  "counts": {
+    "done": 113,
+    "fail": 0,
+    "archive": 15
+  },
+  "seal": "python3 /data/data/com.termux/files/home/jack/jack_seal.py",
+  "seal_checks": 11,
+  "seal_cmd": "python3 /data/data/com.termux/files/home/jack/jack_seal.py",
+  "remaining": [
+    "Telegram 3 Live-Saetze manuell (Dima)",
+    "GitHub Hahn nur nach Dima",
+    "Level-System vereinheitlichen nur nach Entscheid",
+    "hb_ok Act optional"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "p1_no_localhost_ollama",
+  "act": "grep_count",
+  "ts": "2026-08-31 05:19:01",
+  "ok": true,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "FAIL",
+  "raw_ok": false
+}

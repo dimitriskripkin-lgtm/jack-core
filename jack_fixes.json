@@ -1,1 +1,37 @@
-{}
+{
+  "fix_cortex_ssh_timeout_20260826_114653": {
+    "fix_id": "fix_cortex_ssh_timeout_20260826_114653",
+    "pfad": "/data/data/com.termux/files/home/jack_werkstatt/fix_cortex_ssh_timeout_20260826_114653.py",
+    "beschreibung": "Xiaomi SSH wiederholt nicht erreichbar. WiFi-Recovery-Timeout erhoehen.",
+    "modul": "jack_cortex",
+    "n": 14
+  },
+  "fix_cortex_ssh_timeout_20260827_114830": {
+    "fix_id": "fix_cortex_ssh_timeout_20260827_114830",
+    "pfad": "/data/data/com.termux/files/home/jack_werkstatt/fix_cortex_ssh_timeout_20260827_114830.py",
+    "beschreibung": "Xiaomi SSH wiederholt nicht erreichbar. WiFi-Recovery-Timeout erhoehen.",
+    "modul": "jack_cortex",
+    "n": 15
+  },
+  "fix_cortex_ssh_timeout_20260828_114839": {
+    "fix_id": "fix_cortex_ssh_timeout_20260828_114839",
+    "pfad": "/data/data/com.termux/files/home/jack_werkstatt/fix_cortex_ssh_timeout_20260828_114839.py",
+    "beschreibung": "Xiaomi SSH wiederholt nicht erreichbar. WiFi-Recovery-Timeout erhoehen.",
+    "modul": "jack_cortex",
+    "n": 15
+  },
+  "fix_cortex_ssh_timeout_20260829_115134": {
+    "fix_id": "fix_cortex_ssh_timeout_20260829_115134",
+    "pfad": "/data/data/com.termux/files/home/jack_werkstatt/fix_cortex_ssh_timeout_20260829_115134.py",
+    "beschreibung": "Xiaomi SSH wiederholt nicht erreichbar. WiFi-Recovery-Timeout erhoehen.",
+    "modul": "jack_cortex",
+    "n": 15
+  },
+  "fix_cortex_ssh_timeout_20260830_115349": {
+    "fix_id": "fix_cortex_ssh_timeout_20260830_115349",
+    "pfad": "/data/data/com.termux/files/home/jack_werkstatt/fix_cortex_ssh_timeout_20260830_115349.py",
+    "beschreibung": "Xiaomi SSH wiederholt nicht erreichbar. WiFi-Recovery-Timeout erhoehen.",
+    "modul": "jack_cortex",
+    "n": 15
+  }
+}

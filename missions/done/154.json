@@ -1,0 +1,1 @@
+{"id": "154", "act": "grep_count", "file": "/data/data/com.termux/files/home/jack/jack_autonomous.py", "pattern": "[\"ssh\", \"xiaomi-jack\"", "expect_max": 0, "expect": "PASS"}

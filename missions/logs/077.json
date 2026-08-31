@@ -1,0 +1,10 @@
+{
+  "id": "077",
+  "act": "no_secret",
+  "ts": "2026-08-31 05:39:06",
+  "ok": true,
+  "note": "no_secret: Treffer ['except Exception', 'try:']",
+  "out": "",
+  "expect": "FAIL",
+  "raw_ok": false
+}

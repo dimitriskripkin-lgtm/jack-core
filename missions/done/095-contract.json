@@ -1,0 +1,1 @@
+{"id": "095-contract", "act": "line_check", "file": "/data/data/com.termux/files/home/jack/jack_contract.md", "must_contain": "Device is the truth", "must_not_contain": "BEFEHL ausfuehren ist erlaubt", "expect": "PASS"}

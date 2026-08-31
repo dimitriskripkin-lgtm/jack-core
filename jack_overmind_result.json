@@ -1,56 +1,23 @@
 {
-  "ts": "2026-08-24T08:45:17",
+  "ts": "2026-08-27T15:41:25",
   "plan": {
-    "teacher": "file",
-    "goal": "SSH, ADB, Dienste und Skills-Liste einmal hart pruefen",
+    "teacher": "grok_api",
+    "goal": "Verify JACK module health after git sync with mixed heartbeat ages",
     "actions": [
       {
         "id": "1",
         "cmd_type": "status",
-        "why": "Lagebild"
-      },
-      {
-        "id": "2",
-        "cmd_type": "ssh_check",
-        "why": "Xiaomi Link"
-      },
-      {
-        "id": "3",
-        "cmd_type": "sv_status",
-        "why": "runit"
-      },
-      {
-        "id": "4",
-        "cmd_type": "skills_list",
-        "why": "DB sauber?"
+        "why": "ssh_xiaomi and adb_device true but waechter/autolearn heartbeats exceed 100s"
       }
     ],
-    "notes": "mission:test_health_20260824"
+    "notes": "git_tip indicates Honor live modules synced; telegram/cortex fresh"
   },
   "results": [
     {
       "id": "1",
       "cmd_type": "status",
       "ok": true,
-      "out": "{\"ssh_xiaomi\": true, \"adb_device\": true, \"git_tip\": \"e5c3adb docs: JACK_MISSION_v1 template for Cloud/Gemini roadmaps\", \"heartbeats_age_s\": {\"jack_telegram\": 4.11951208114624, \"jack_cortex\": 1.9567551612854004, \"jack_waechter\": 114.80566310882568, \"jack_autolearn\": 96.18887233734131, \"jack_publisher\": 147.11238431930542}, \"why\": \"Lagebild\"}"
-    },
-    {
-      "id": "2",
-      "cmd_type": "ssh_check",
-      "ok": true,
-      "out": "SSH_OK\n"
-    },
-    {
-      "id": "3",
-      "cmd_type": "sv_status",
-      "ok": true,
-      "out": "run: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 28769) 178s\nrun: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 11260) 62124s\nrun: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 14700) 847s\nrun: /data/data/com.termux/files/usr/var/service/jack_autolearn: (pid 14129) 5664s\nrun: /data/data/com.termux/files/usr/var/service/jack_publisher: (pid 24986) 48529s; run: log: (pid 24985) 48529s"
-    },
-    {
-      "id": "4",
-      "cmd_type": "skills_list",
-      "ok": true,
-      "out": "Einstellungen WLAN Skill|PROMOTED|0/0\nEcho Skill Test|VERIFIED|3/3\nSystem Health Check v3|VERIFIED|3/3\nakku_status|VERIFIED|3/3\napi_budget_check|VERIFIED|3/3\nauto_fix_FEHLER__name__detect_futile_skills__is_n|VERIFIED|1/1\nauto_fix_HEALTH_FAIL__termux_location___Command__|VERIFIED|1/1\nauto_fix_HEALTH_FAIL__termux_sms_list___Command__|VERIFIED|1/1\nauto_fix_fail__jack_cortex__unable_to_change_to_s|VERIFIED|1/1\nauto_fix_fail__ollama__unable_to_change_to_servic|VERIFIED|1/1\ncleanup_bak_files|VERIFIED|5/5\ndaily_system_health_check|VERIFIED|3/3\nfehler_zusammenfassung|VERIFIED|3/3\ngeraet_info|VERIFIED|3/3\nmemory_statistik|VERIFIED|3/3\nollama_tunnel_check|VERIFIED|1/1\nplay_sido_youtube_loop|VERIFIED|0/3\nrouter_test_skill|VERIFIED|3/3\nsensoren_liste|VERIFIED|3/3\nskill_schmied_bak_cleanup_v2|VERIFIED|3/3\nstandort|VERIFIED|3/3\ntest_skill|VERIFIED|3/3\ntuev3_test|VERIFIED|4/4\nwifi_status|VERIFIED|3/3"
+      "out": "{\"ssh_xiaomi\": true, \"adb_device\": true, \"git_tip\": \"c2a4fd9 Sync: alle aktiven Module die live auf Honor laufen aber im Repo fehlten\", \"heartbeats_age_s\": {\"jack_telegram\": 2.0217270851135254, \"jack_cortex\": 51.08616328239441, \"jack_waechter\": 5.398228406906128, \"jack_autolearn\": 206.05155849456787, \"jack_publisher\": 120.3937680721283}, \"why\": \"ssh_xiaomi and adb_device true but waechter/autolearn heartbeats exceed 100s\"}"
     }
   ]
 }

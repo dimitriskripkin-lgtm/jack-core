@@ -1,0 +1,1 @@
+{"id": "q008", "act": "line_count", "file": "~/jack/jack_telegram.py", "expect_max": 800, "expect": "PASS", "cat": "quality"}

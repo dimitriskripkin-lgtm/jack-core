@@ -1,0 +1,10 @@
+{
+  "id": "q007",
+  "act": "line_count",
+  "ts": "2026-08-31 06:53:23",
+  "ok": false,
+  "note": "act nicht erlaubt: line_count",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

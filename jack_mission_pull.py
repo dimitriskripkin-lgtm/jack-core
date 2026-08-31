@@ -13,12 +13,12 @@ def run(cmd):
 def pull():
     if not os.path.isdir(REPO):
         print("FEHLER: Repo fehlt:", REPO)
-        sys.exit(1)
+        return 1
     rc, out = run(["git", "-C", REPO, "pull", "--ff-only", "origin", "main"])
     print("git pull:", out.strip()[:200])
     if rc != 0:
         print("PULL FEHLER")
-        sys.exit(1)
+        return 1
     files = sorted(glob.glob(os.path.join(REPO, "pending", "*.json")))
     if not files:
         print("Keine neuen Missionen")
@@ -41,3 +41,5 @@ def pull():
 
 if __name__ == "__main__":
     pull()
+
+# JACK_TUNE_R02

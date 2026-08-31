@@ -1,0 +1,9 @@
+{
+  "id": "095",
+  "act": "compile_ok",
+  "ts": "2026-08-25 08:14:40",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS"
+}

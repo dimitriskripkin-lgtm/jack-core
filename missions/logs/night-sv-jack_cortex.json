@@ -1,0 +1,10 @@
+{
+  "id": "night-sv-jack_cortex",
+  "act": "sv_ok",
+  "ts": "2026-08-26 14:15:56",
+  "ok": true,
+  "note": "sv jack_cortex",
+  "out": "run: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 20095) 27369s\n",
+  "expect": "PASS",
+  "raw_ok": true
+}

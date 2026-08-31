@@ -1,0 +1,10 @@
+{
+  "id": "bug_b_free_edge",
+  "act": "line_check",
+  "ts": "2026-08-31 05:03:36",
+  "ok": false,
+  "note": "line_check: fehlt: put_edge",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

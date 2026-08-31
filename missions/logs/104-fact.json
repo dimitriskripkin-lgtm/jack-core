@@ -1,0 +1,10 @@
+{
+  "id": "104-fact",
+  "act": "fact",
+  "ts": "2026-08-25 12:59:50",
+  "ok": true,
+  "note": "fact",
+  "out": "Ist-Zustand:\nSSH Xiaomi: OK\nFocus 15s, Genesis True, Idle 600s\nMarks: jack_hey.py:ja, jack_voice.py:ja, jack_publish.py:ja, jack_autolearn_loop.py:ja\nBeats: jack_autolearn 353.8s, jack_publisher 163.1s, jack_waechter 113.4s, jack_cortex 40.5s, jack_telegram 1.0s\nGit-Push: tot.",
+  "expect": "PASS",
+  "raw_ok": true
+}

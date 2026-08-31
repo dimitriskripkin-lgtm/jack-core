@@ -87,7 +87,7 @@ def push():  # JACK_TUNE_CRIT002
     import subprocess, os
     OUT = os.path.expanduser("~/jack-context")
     r = subprocess.run(
-        "true",
+        "git add -A && git commit -m \'auto-context\' && git push origin main",
         shell=True, capture_output=True, text=True, cwd=OUT, timeout=30
     )
     if r.returncode == 0:

@@ -1,19 +1,19 @@
 {
-  "ts": "2026-08-24T08:45:17",
+  "ts": "2026-08-27T15:41:49",
   "host": "honor",
-  "git_tip": "e5c3adb docs: JACK_MISSION_v1 template for Cloud/Gemini roadmaps",
+  "git_tip": "c2a4fd9 Sync: alle aktiven Module die live auf Honor laufen aber im Repo fehlten",
   "ssh_xiaomi": true,
   "adb_device": true,
   "adb_raw": "List of devices attached\n10.229.239.131:5555\tdevice",
-  "sv": "run: /data/data/com.termux/files/usr/var/service/jack_autolearn: (pid 14129) 5664s\nrun: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 11260) 62124s\nrun: /data/data/com.termux/files/usr/var/service/jack_focus_monitor: (pid 10698) 81925s\nrun: /data/data/com.termux/files/usr/var/service/jack_publisher: (pid 24986) 48529s; run: log: (pid 24985) 48529s\nrun: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 28769) 178s\nrun: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 14700) 847s",
+  "sv": "run: /data/data/com.termux/files/usr/var/service/jack_autolearn: (pid 17276) 90306s\nrun: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 14123) 49527s\nrun: /data/data/com.termux/files/usr/var/service/jack_focus_monitor: (pid 19956) 51171s\nrun: /data/data/com.termux/files/usr/var/service/jack_missions: (pid 26609) 79546s\nrun: /data/data/com.termux/files/usr/var/service/jack_publisher: (pid 2745) 87533s; run: log: (pid 16522) 270222s\nrun: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 13188) 10954s\nrun: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 17007) 13693s",
   "heartbeats_age_s": {
-    "jack_telegram": 4.11951208114624,
-    "jack_cortex": 1.9567551612854004,
-    "jack_waechter": 114.80566310882568,
-    "jack_autolearn": 96.18887233734131,
-    "jack_publisher": 147.11238431930542
+    "jack_telegram": 2.0217270851135254,
+    "jack_cortex": 51.08616328239441,
+    "jack_waechter": 5.398228406906128,
+    "jack_autolearn": 206.05155849456787,
+    "jack_publisher": 120.3937680721283
   },
-  "ui_pipeline": "jack_exec.handle_ui_intent + tap_text; Telegram /tap /forsche /skills; Stop per kill-cmd; Voice+talk vor LLM gegated",
+  "ui_pipeline": "",
   "allowed_actions": [
     "status",
     "adb_heal",
@@ -28,5 +28,5 @@
     "rm_rf",
     "read_secrets"
   ],
-  "last_errors_hint": "Mon Aug 24 08:20:00 CEST 2026: Ollama auf Honor disabled - skip\nMon Aug 24 08:30:00 CEST 2026: Cortex laeuft bereits\nMon Aug 24 08:30:00 CEST 2026: Ollama auf Honor disabled - skip\nMon Aug 24 08:40:00 CEST 2026: Cortex laeuft bereits\nMon Aug 24 08:40:00 CEST 2026: Ollama auf Honor disabled - skip\n"
+  "last_errors_hint": "Thu Aug 27 15:20:00 CEST 2026: Ollama auf Honor disabled - skip\nThu Aug 27 15:30:00 CEST 2026: Cortex laeuft bereits\nThu Aug 27 15:30:00 CEST 2026: Ollama auf Honor disabled - skip\nThu Aug 27 15:40:00 CEST 2026: Cortex laeuft bereits\nThu Aug 27 15:40:00 CEST 2026: Ollama auf Honor disabled - skip\n"
 }

@@ -1,0 +1,61 @@
+{
+  "handshake_version": "JACK-v11-26082026-1803",
+  "stand": "2026-08-26T18:03:00+02:00",
+  "host": "Honor Magic8 Pro",
+  "worker": "Xiaomi 11T Pro",
+  "ssh_alias": "xiaomi-jack",
+  "ssh_port": 8022,
+  "ssh_ip_last_ok": "10.229.239.131",
+  "xiaomi_model": "2107113SG",
+  "ssh_now": "DOWN",
+  "waechter": "jack_autonomous.py",
+  "ollama_honor": false,
+  "git_push": "live",
+  "ist_zustand_bypass_llm": true,
+  "tune": {
+    "focus_sleep_s": 15,
+    "genesis_skip": true,
+    "autolearn_idle_s": 600,
+    "autolearn_busy_s": 300
+  },
+  "dash": {
+    "path": "/data/data/com.termux/files/home/.shortcuts/tasks/jack_dash",
+    "format": "up + beat",
+    "note": "0s war Beat nicht Uptime"
+  },
+  "talk": {
+    "groq_only_talk": true,
+    "contract": "jack_talk_contract.py",
+    "last_scan": "2/13 breaches max 3 PASS 211"
+  },
+  "graph": {
+    "db": "jack_graph.db",
+    "seed": [
+      "Dima=owner",
+      "Hund=nein",
+      "Honor=gehirn",
+      "Xiaomi=muskel"
+    ],
+    "identity_still_in_talk": true
+  },
+  "missions": {
+    "runner": "jack_mission_runner.py",
+    "fail": 0,
+    "last_pass": [
+      "211",
+      "221"
+    ],
+    "shadow_dir": "/data/data/com.termux/files/home/jack/shadow",
+    "rule": "kein Live-Rewrite"
+  },
+  "open": [
+    "identity kappen",
+    "SSH IP",
+    "Dash SSH 8s",
+    "shadow 222",
+    "Graph-Kanten",
+    "Overmind hang",
+    "persona swap"
+  ],
+  "naechster_schnitt": "Identity aus TALK, dann shadow/222, Xiaomi erst bei SSH OK"
+}

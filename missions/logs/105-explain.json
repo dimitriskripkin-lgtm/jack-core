@@ -1,0 +1,10 @@
+{
+  "id": "105-explain",
+  "act": "explain_ok",
+  "ts": "2026-08-25 13:01:05",
+  "ok": true,
+  "note": "explain",
+  "out": "Overmind-Result ist die Datei jack_overmind_result.json. Deadman alarmiert, wenn sie aelter als 3 Stunden ist. Das ist nicht Cortex-Uptime. Gerade: 0.3h alt.",
+  "expect": "PASS",
+  "raw_ok": true
+}

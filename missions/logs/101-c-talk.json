@@ -1,0 +1,10 @@
+{
+  "id": "101-c-talk",
+  "act": "classify_is",
+  "ts": "2026-08-25 12:55:19",
+  "ok": true,
+  "note": "got=TALK want=TALK",
+  "out": "TALK",
+  "expect": "TALK",
+  "raw_ok": true
+}

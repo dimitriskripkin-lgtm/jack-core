@@ -1,0 +1,44 @@
+[
+  {
+    "id": "008",
+    "act": "classify_is",
+    "text": "Ist Zustand?",
+    "expect": "FACT"
+  },
+  {
+    "id": "009",
+    "act": "classify_is",
+    "text": "analysiere deinen eigenen Code",
+    "expect": "DIAG"
+  },
+  {
+    "id": "010",
+    "act": "classify_is",
+    "text": "Was bedeutet overmind result",
+    "expect": "EXPLAIN"
+  },
+  {
+    "id": "011",
+    "act": "classify_is",
+    "text": "Hast du Lust auf Smalltalk",
+    "expect": "TALK"
+  },
+  {
+    "id": "012",
+    "act": "fact"
+  },
+  {
+    "id": "013",
+    "act": "diag",
+    "text": "Schau mal ob in deinem Bot noch Murks steckt"
+  },
+  {
+    "id": "014",
+    "act": "ui_none",
+    "text": "Frag mich irgendwas was dich interessiert"
+  },
+  {
+    "id": "015",
+    "act": "no_chrome_src"
+  }
+]

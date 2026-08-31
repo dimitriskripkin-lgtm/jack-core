@@ -1,0 +1,10 @@
+{
+  "id": "bug_e_persona_doppel",
+  "act": "grep_count",
+  "ts": "2026-08-31 05:03:37",
+  "ok": false,
+  "note": "grep_count: 3 Treffer (max 1)",
+  "out": "3",
+  "expect": "PASS",
+  "raw_ok": false
+}

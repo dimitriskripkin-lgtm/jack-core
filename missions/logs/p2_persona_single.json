@@ -1,0 +1,10 @@
+{
+  "id": "p2_persona_single",
+  "act": "grep_count",
+  "ts": "2026-08-31 05:19:07",
+  "ok": false,
+  "note": "grep_count: 3 Treffer (max 1)",
+  "out": "3",
+  "expect": "PASS",
+  "raw_ok": false
+}

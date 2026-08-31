@@ -1,0 +1,10 @@
+{
+  "id": "q005",
+  "act": "grep_count",
+  "ts": "2026-08-31 06:53:19",
+  "ok": false,
+  "note": "grep_count: Datei fehlt /data/data/com.termux/files/home/jack/jack_autolearn.py",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

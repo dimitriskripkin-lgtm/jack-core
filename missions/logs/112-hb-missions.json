@@ -1,0 +1,10 @@
+{
+  "id": "112-hb-missions",
+  "act": "mtime_fresh",
+  "ts": "2026-08-25 13:51:01",
+  "ok": true,
+  "note": "mtime_fresh: 17s alt limit 120s",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

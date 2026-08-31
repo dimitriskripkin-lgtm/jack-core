@@ -1,0 +1,10 @@
+{
+  "id": "a001",
+  "act": "grep_count",
+  "ts": "2026-08-31 06:53:12",
+  "ok": false,
+  "note": "grep_count: 9 Treffer (max 0)",
+  "out": "9",
+  "expect": "PASS",
+  "raw_ok": false
+}

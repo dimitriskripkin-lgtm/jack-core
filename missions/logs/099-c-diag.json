@@ -1,0 +1,10 @@
+{
+  "id": "099-c-diag",
+  "act": "classify_is",
+  "ts": "2026-08-25 12:55:19",
+  "ok": true,
+  "note": "got=DIAG want=DIAG",
+  "out": "DIAG",
+  "expect": "DIAG",
+  "raw_ok": true
+}

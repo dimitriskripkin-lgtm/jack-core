@@ -1,0 +1,10 @@
+{
+  "id": "114-hb-jack_missions",
+  "act": "hb_ok",
+  "ts": "2026-08-25 14:09:44",
+  "ok": false,
+  "note": "act nicht erlaubt: hb_ok",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

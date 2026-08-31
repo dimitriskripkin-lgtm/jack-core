@@ -1,0 +1,115 @@
+{
+  "tag": "spotify_search",
+  "ts": "20260826_101730",
+  "xml": "/data/data/com.termux/files/home/jack/ui_learn/20260826_101730_spotify_search.xml",
+  "cands": [
+    {
+      "score": 8,
+      "cx": 540,
+      "cy": 150,
+      "cd": "",
+      "tx": "test",
+      "rid": "",
+      "cls": "EditText"
+    },
+    {
+      "score": 3,
+      "cx": 540,
+      "cy": 1093,
+      "cd": "",
+      "tx": "",
+      "rid": "com.spotify.music:id/search_root",
+      "cls": "ViewGroup"
+    },
+    {
+      "score": 3,
+      "cx": 540,
+      "cy": 1267,
+      "cd": "",
+      "tx": "",
+      "rid": "com.spotify.music:id/search_content_elements",
+      "cls": "FrameLayout"
+    },
+    {
+      "score": 3,
+      "cx": 540,
+      "cy": 1267,
+      "cd": "",
+      "tx": "",
+      "rid": "com.spotify.music:id/search_content_recyclerview",
+      "cls": "RecyclerView"
+    },
+    {
+      "score": 3,
+      "cx": 540,
+      "cy": 2162,
+      "cd": "Suchen, Tab 2 von 3",
+      "tx": "",
+      "rid": "",
+      "cls": "View"
+    },
+    {
+      "score": 2,
+      "cx": 540,
+      "cy": 150,
+      "cd": "",
+      "tx": "test",
+      "rid": "",
+      "cls": "TextView"
+    },
+    {
+      "score": 2,
+      "cx": 1042,
+      "cy": 282,
+      "cd": "",
+      "tx": "Podcasts",
+      "rid": "",
+      "cls": "TextView"
+    },
+    {
+      "score": 2,
+      "cx": 829,
+      "cy": 282,
+      "cd": "",
+      "tx": "Künstler*innen",
+      "rid": "",
+      "cls": "TextView"
+    },
+    {
+      "score": 2,
+      "cx": 617,
+      "cy": 282,
+      "cd": "",
+      "tx": "Alben",
+      "rid": "",
+      "cls": "TextView"
+    },
+    {
+      "score": 2,
+      "cx": 448,
+      "cy": 282,
+      "cd": "",
+      "tx": "Playlists",
+      "rid": "",
+      "cls": "TextView"
+    },
+    {
+      "score": 2,
+      "cx": 273,
+      "cy": 282,
+      "cd": "",
+      "tx": "Videos",
+      "rid": "",
+      "cls": "TextView"
+    },
+    {
+      "score": 2,
+      "cx": 111,
+      "cy": 282,
+      "cd": "",
+      "tx": "Songs",
+      "rid": "",
+      "cls": "TextView"
+    }
+  ]
+}

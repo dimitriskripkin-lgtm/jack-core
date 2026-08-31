@@ -1,0 +1,1 @@
+{"id": "113-contract2", "act": "line_check", "file": "/data/data/com.termux/files/home/jack/jack_contract.md", "must_contain": "SKIP-DEDUP", "must_not_contain": "git push jack-core ist Pflicht", "expect": "PASS"}

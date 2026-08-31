@@ -1,0 +1,21 @@
+{
+  "updated": "2026-08-25",
+  "acts": [
+    "fact",
+    "diag",
+    "no_chrome_src",
+    "ui_none",
+    "classify_is",
+    "compile_ok",
+    "explain_ok",
+    "sv_ok",
+    "mtime_fresh",
+    "json_valid",
+    "no_secret",
+    "grep_count",
+    "line_check",
+    "hb_ok"
+  ],
+  "seal": "python3 /data/data/com.termux/files/home/jack/jack_seal.py",
+  "rule": "Neue Faehigkeit=Act+Mission. Seal nach jeder Aenderung."
+}

@@ -1,0 +1,147 @@
+PKGS
+package:/data/app/~~GX1o0cafo8HTsgw1obYQhQ==/com.hp.printercontrol-mPLw8H6oH3RGWSBjvmjxCw==/base.apk=com.hp.printercontrol
+package:/data/app/~~n8qegSli_vUecC5hBRp_Ng==/com.mi.android.globalminusscreen-xVgQAW7Xs_7fm6b_P2jx4w==/base.apk=com.mi.android.globalminusscreen
+package:/data/app/~~EWpNPu-xONJsy_GhyTklgQ==/com.wallet.crypto.trustapp-wz50aRiqqTDf-9bzoK34EQ==/base.apk=com.wallet.crypto.trustapp
+package:/data/app/~~VTbCc2LjwqlEFcXYBv5pIg==/dpahyq.hteok-6IxXs8zry0IizAs3Dof0iA==/base.apk=dpahyq.hteok
+package:/data/app/~~ImIYv0Z3JgRtmhmVQb281A==/com.xing.android-3Zp8KuGXE9X0CVvRh67bdA==/base.apk=com.xing.android
+package:/data/app/~~s-Ib7Bi6QKzUW5cOryx1Og==/de.traderepublic.app-ChrVnzXpx277VpCrRAUEQg==/base.apk=de.traderepublic.app
+package:/data/app/~~bgwu28-sZQKEWx4CqWSjjw==/com.google.android.apps.bard-yTMcH_ZyQcTZBqEqEgtG8g==/base.apk=com.google.android.apps.bard
+package:/data/app/~~PiBjdW1NtC7rZ--tQNpy5w==/com.soundboks.SOUNDBOKS-oQGGbbE81KM_-ngwt7cYkg==/base.apk=com.soundboks.SOUNDBOKS
+package:/data/app/~~DK0OmExXN3ake2FaK0DLyA==/com.google.android.apps.docs-DbBJc_C9CVGQN-sZ7NeBoA==/base.apk=com.google.android.apps.docs
+package:/data/app/~~fLPJ3ViGFxtJI4O1gMfrHg==/com.termux.nix-9TtT2rHKBqCXTUPBxktcug==/base.apk=com.termux.nix
+package:/data/app/~~nYLDp1QOJE-1TrA7sbEUVQ==/com.miui.notes-r19HjGAqsBNPCSdsP8wCdA==/base.apk=com.miui.notes
+package:/data/app/~~xrgSUBZnONDsHkMabk3J2Q==/com.teslamotors.tesla-bz1eRBriCltuKDDVwB2U3w==/base.apk=com.teslamotors.tesla
+package:/data/app/~~KrFnUwqYotv8oXfE5OicoQ==/com.google.ar.core-ywvasVkNZ559xHYjBapfiQ==/base.apk=com.google.ar.core
+package:/data/app/~~jWP9cRhoUeKohKuIjs1iXg==/org.videolan.vlc-Sr8RMMPBoWE0IoNxlWxo2A==/base.apk=org.videolan.vlc
+package:/data/app/~~GbIqNI45p3nWyntLZhDOtQ==/com.spotify.music-7ZviIKq50W0Ooy8-o29QMA==/base.apk=com.spotify.music
+package:/data/app/~~Oh0KRGRc5ZrHVZbGs578NQ==/com.playstation.iwyk-vBJAu9dGSGKBN8KpWKkbAw==/base.apk=com.playstation.iwyk
+package:/data/app/~~CV_YoCJGXqgRYmHEK50qxQ==/com.yopeso.lieferando-DIzU6GBtwwEPuAHYqR7XdA==/base.apk=com.yopeso.lieferando
+package:/data/app/~~gKEFfTLX2TBMDJ3cckn3Rg==/com.miui.fm-srdG-R8lyzOp3c6MxhjUBg==/base.apk=com.miui.fm
+package:/data/app/~~1oyxhOVHu_rnn9Pejzf0WA==/com.tvcast.firetv-1n0wkDshCAye0-D1XLtDdw==/base.apk=com.tvcast.firetv
+package:/data/app/~~K-njy0V32H6Bhm3sSvfWWg==/com.camsam.plus-YMeiPALxY75hm91RDQnLuQ==/base.apk=com.camsam.plus
+package:/data/app/~~MLqGYGdvSLJMO13gG_s5NQ==/com.google.android.apps.wallpaper-eeq9FyHqF-Te1BTzGuVcXA==/base.apk=com.google.android.apps.wallpaper
+package:/data/app/~~PvN3wwLQSXXfrtUrHdXF_g==/com.playstation.frantics-vwVKYCgeoHJIRBipOX9Q0g==/base.apk=com.playstation.frantics
+package:/data/app/~~NOsn7WffGjmZ_JdfdG90DQ==/de.avm.android.myfritz2-0Z_G2zJZCkWwZ5_7fBZYfQ==/base.apk=de.avm.android.myfritz2
+package:/data/app/~~OlMEBfHP6stxE5qanpcTsg==/com.wuliang.xapkinstaller-bfTJ6pELqIH6lP310_A84g==/base.apk=com.wuliang.xapkinstaller
+package:/data/app/~~t9N-YIixpcewY0R5XUnI3g==/com.miui.mediaeditor-Gt4Q0xGNnLT753q4AlKsFw==/base.apk=com.miui.mediaeditor
+package:/data/app/~~W2m_MXyiHQBEFeNyuyaFnw==/moe.shizuku.privileged.api-4Q067yFlWVNC2aUgajcq1w==/base.apk=moe.shizuku.privileged.api
+package:/data/app/~~SlpW7P2ar0GALMsr8WmbBg==/com.google.android.apps.adm-IoNXEsKcKlCb4AWEqhuTVw==/base.apk=com.google.android.apps.adm
+package:/data/app/~~iKjCp4JKPDwX_yUsbDzICA==/com.miui.android.fashiongallery-ook1Y_c7CurAWKZU3ulFpg==/base.apk=com.miui.android.fashiongallery
+package:/data/app/~~66S-C10MvPrV23k2FyIaJw==/com.microsoft.office.excel-v5OZtme3coLGshaVbCncIw==/base.apk=com.microsoft.office.excel
+package:/data/app/~~Npm6S8I-Z6jy9NhOg1mW1A==/com.ebay.kleinanzeigen-Za5pUmR7qtDc77hn9pbt0Q==/base.apk=com.ebay.kleinanzeigen
+package:/data/app/~~f4XDbmYt0qMela_lNDSiQQ==/com.google.android.apps.translate-got3HawetFZERvS1m57J7Q==/base.apk=com.google.android.apps.translate
+package:/data/app/~~fsxWU1iLZ5CPVJGbkGxcYg==/myfiles.filemanager.fileexplorer.cleaner-Wl6LpFRMj8zetvjn0jTUjQ==/base.apk=myfiles.filemanager.fileexplorer.cleaner
+package:/data/app/~~7wcdCvsfTH9xzPFaXAWHAA==/com.google.android.apps.podcasts-OivElpScmpft1h1yKAvk_w==/base.apk=com.google.android.apps.podcasts
+package:/data/app/~~rAGSdgKxfWyIkXdDiUzdEw==/com.nelko.printer--sodmiWw-T8O48xGInUwZg==/base.apk=com.nelko.printer
+package:/data/app/~~geg89TWvd-q7VgnJQofpmQ==/fr.brickoft.soundiiz-LPqF4U_9mtuTznseCxqb1Q==/base.apk=fr.brickoft.soundiiz
+package:/data/app/~~numirB1IYaIgoeJ9v5GiYQ==/com.google.android.safetycore-W-JT9ytHuxY3vT-q2IlEaA==/base.apk=com.google.android.safetycore
+package:/data/app/~~TSRvJ9YbFi9BrAkCaT6gzw==/com.rockstargames.gtasa-6YSPD_lOGBqVoFiw85Mf8g==/base.apk=com.rockstargames.gtasa
+package:/data/app/~~VBxukXoTOTSiJkJulfIiJw==/com.amazon.appmanager-YvpKiZ_mN14KlQWOV5ok0w==/base.apk=com.amazon.appmanager
+package:/data/app/~~tFmCpm3AaElc79jayrc3tA==/com.android.soundrecorder-pLproZhoxp5g8tbEPTHmGw==/base.apk=com.android.soundrecorder
+package:/data/app/~~Oq1qct7XXcumqXpk8tBsgQ==/net.metaquotes.metatrader5-yZa1mHiaWKQQSpmHsOLT3Q==/base.apk=net.metaquotes.metatrader5
+package:/data/app/~~rxVZK4zvGm_DLW5MAEjfDg==/app.revanced.android.youtube-d3sgpxbZKXg9p4dZsi1lAw==/base.apk=app.revanced.android.youtube
+package:/data/app/~~ccMzhldwfohrknjdddCWAA==/org.fdroid.fdroid-cM0ux4yPv9gGwvpOW3CpnA==/base.apk=org.fdroid.fdroid
+package:/data/app/~~qAZh0nbH4jXS4tp-G8CkrQ==/com.xiaomi.calendar-0VgFlyUE7-MB5EObOjLEmA==/base.apk=com.xiaomi.calendar
+package:/data/app/~~oC0bB9yM9R2B8smG8AxG5Q==/com.teamsmart.videomanager.tv-CO2iQ8L9VKx21ozR495dQw==/base.apk=com.teamsmart.videomanager.tv
+package:/data/app/~~k7JtpEmCypbFyXOPfwRACw==/ccc71.at.free-oPiZ_NHL7PlKVCHsXWUCpg==/base.apk=ccc71.at.free
+package:/data/app/~~8en1HtWwWqevlL6JX85ecA==/de.fiduciagad.banking.vr-X4deUudGVgo2p9euaYTM0Q==/base.apk=de.fiduciagad.banking.vr
+package:/data/app/~~3GFAfFy5Sktxu_8mdSZZRA==/com.deepseek.chat-UXn0mgHHHBSpfj4-YsOgpQ==/base.apk=com.deepseek.chat
+package:/data/app/~~lZaOafjMpLmQ_h5RCkdt6Q==/com.google.android.play.games-mNJTdJnXE3Yi45SL_uMrAQ==/base.apk=com.google.android.play.games
+package:/data/app/~~3vux_WDyRPA2xwdVcwr_wQ==/com.sidhbalitech.ninexplayer-yhM4YHyWvbA-1yD70J9uiw==/base.apk=com.sidhbalitech.ninexplayer
+package:/data/app/~~uo_-quzMJFg57QzC17cwvA==/app.revanced.android.gms-FVxPyqfZmErpUDbH2rSgAg==/base.apk=app.revanced.android.gms
+package:/data/app/~~k7sGbMEJYS-8RRMnoNNZWA==/com.termux.widget-udsTgDjnglbnQ9g04kzEXw==/base.apk=com.termux.widget
+package:/data/app/~~93rXjH_yHRDzx_8exkK9GQ==/com.esaba.downloader-eIn_G0ZQ6wBAHKnMzKgi5w==/base.apk=com.esaba.downloader
+package:/data/app/~~xzBPeAiwk96iU0L_O-brGw==/com.google.ar.lens-_4lfcCVZ8p931jiO5dDkEA==/base.apk=com.google.ar.lens
+package:/data/app/~~OfIX7z_jyfesuPkbMyElNA==/com.anthropic.claude-CxEtkSWh9xUkyf3fOJ4StQ==/base.apk=com.anthropic.claude
+package:/data/app/~~p2KqgFkZpoMIorIyFKoU7g==/com.authenticator.authservice2-0oxQ1zIXirnEdK1FvKp_cg==/base.apk=com.authenticator.authservice2
+package:/data/app/~~jgrT-RXc-U248RtWtAgo8g==/com.google.android.apps.photos-XSVth0OcxBU0Z4gVsqFSLA==/base.apk=com.google.android.apps.photos
+package:/data/app/~~DDgikn8-HzEDUFpGrJTldA==/com.microsoft.appmanager-EfonPolih-Q5frzPZQi9JQ==/base.apk=com.microsoft.appmanager
+package:/data/app/~~zw_fMmLWaKMMTLY7e_wLRg==/com.miui.calculator--YUv7ZAFODD5shK9aaiqIQ==/base.apk=com.miui.calculator
+package:/data/app/~~K_gVpAe8AbORc7vkPksEhw==/com.google.android.keep-DV-yEGpZAX1NcKUNpBDqAg==/base.apk=com.google.android.keep
+package:/data/app/~~WUgvagDvGoTe1wTJA1BU_A==/com.termux.gui-pQlg6s9Wy3eRQPc5ehIX-Q==/base.apk=com.termux.gui
+package:/data/app/~~zMVoLTGoYXMAMZKAi7x80Q==/com.google.android.apps.authenticator2-pesEuFqmLJ-ZVdBJJKCAsQ==/base.apk=com.google.android.apps.authenticator2
+package:/data/app/~~KK3Sbz2Zp0clkCEe-YEQmA==/org.chromium.webapk.aecdc5a41c4953521_v2-8YXMWg0mJClr43FrHFtnMQ==/base.apk=org.chromium.webapk.aecdc5a41c4953521_v2
+package:/data/app/~~KwX-4irCW8-Vx6OIo45uqw==/com.google.android.verifier-eT-tgGHZzJliO9fIT4WgdQ==/base.apk=com.google.android.verifier
+package:/data/app/~~L13djA0kxYre54X2wL5_5A==/com.toralabs.apkextractor-1bOqC4j4scZ4BK27JganGw==/base.apk=com.toralabs.apkextractor
+package:/data/app/~~85fG5K97NgigkAB5GyoIQA==/musicplayer.musicapps.music.mp3player-vtWyH0PW4wpnwLnjEtWjiw==/base.apk=musicplayer.musicapps.music.mp3player
+package:/data/app/~~ab2fPiPz-j7RtFs0Q8sY5g==/org.chromium.webapk.a451e94af493e475f_v2-jtbW1jofgv7weOWff78i9g==/base.apk=org.chromium.webapk.a451e94af493e475f_v2
+package:/data/app/~~ochDTdkmBFIAEG2XO2yEjw==/com.termux.boot-9nTi4lpi5G6jrlcDSUz6nQ==/base.apk=com.termux.boot
+package:/data/app/~~e4B6LkVqgO4tIbMfK4JNFg==/app.revanced.android.photos-qj6HXTBc3Xf9Q35QGlPdHQ==/base.apk=app.revanced.android.photos
+package:/data/app/~~-N422Jgq6A_pZpdR7zkwLg==/com.termux-mtT3cFqdVHpKvm8DS_Xokg==/base.apk=com.termux
+package:/data/app/~~TECOxPcuODQg-zIN5nHuWw==/com.netflix.mediaclient-CaUFxQK5rH3OTDwGNL23AQ==/base.apk=com.netflix.mediaclient
+package:/data/app/~~Un49sAq-fMq01758tJBPmg==/app.rvx.android.youtube-tKIRzLCuVsCR6bESnGLd9w==/base.apk=app.rvx.android.youtube
+package:/data/app/~~0XxC7G3_eh-OcBG5V9Ar1w==/com.azure.authenticator-kU9JMQ9MadaY0AVrZR-Nsg==/base.apk=com.azure.authenticator
+package:/data/app/~~S2zL5flipYEaX0VuGU4NdA==/cn.rbc.termuc-2ciS-N5ooqap5w015AzS_A==/base.apk=cn.rbc.termuc
+package:/data/app/~~vXdMZNFdYOyfU6CSGfgOsw==/com.apkinstaller.ApkInstaller-IZ743NR0--r4e-s9uPwiaw==/base.apk=com.apkinstaller.ApkInstaller
+package:/data/app/~~UvzBnQRfMi8wEVn0jpIc3Q==/com.facebook.katana-vtR5dxV6AWN9c5GayM1FRA==/base.apk=com.facebook.katana
+package:/data/app/~~oRMFoycoz4iHx_mit310iw==/com.hp.android.printservice-nifAhg2xsbTtt3ChP8AyPg==/base.apk=com.hp.android.printservice
+package:/data/app/~~dD0kbC0e7iOzr4YiK6en2g==/io.trezor.suite-2YCNSHoClmgrumArJ4V4Vw==/base.apk=io.trezor.suite
+package:/data/app/~~ao_k5AJEA9pvBtH-9C82kQ==/com.voltasit.obdeleven-J8ufI1IARW3G3zSUo_5mQQ==/base.apk=com.voltasit.obdeleven
+package:/data/app/~~y4Nwk35KE_OrdiIPcnIdUA==/xyz.aethersx2.android-sC35dqsvIbb7zXAxBl6QDw==/base.apk=xyz.aethersx2.android
+package:/data/app/~~wCGqst4rsABGqNZX5XCC5w==/translate.speech.text.translation.voicetranslator-ZZOmf94FzXdRgBeXJRqfnQ==/base.apk=translate.speech.text.translation.voicetranslator
+package:/data/app/~~d1gVELG-Lz9i3aME6mAoFQ==/com.huawei.hwid-Dzuf8G7BHYwR4eARSECwdA==/base.apk=com.huawei.hwid
+package:/data/app/~~Ee3iu8JxBHwXrmpGWCTVfg==/org.telegram.messenger-4TlbQBLmCatLhB_5Soeppw==/base.apk=org.telegram.messenger
+package:/data/app/~~XP4EttVoRk82PisR2nBf8A==/com.miui.huanji-QDZiGxdJmFouGrWfchZaIw==/base.apk=com.miui.huanji
+package:/data/app/~~wshX64BbJPGSp0eBH0W8lQ==/io.metamask-6Z4IbqVQ_0mETnj6v9qa4g==/base.apk=io.metamask
+package:/data/app/~~60yzBdmmMh6Ft3DQkbUuDw==/com.facemoji.lite.xiaomi-SDP8WGbYknq7PHtLlChMEQ==/base.apk=com.facemoji.lite.xiaomi
+package:/data/app/~~osBdNRQIrE5nDdvN8F8mxQ==/org.ddosolitary.okcagent-ox7Nk0omrh92IpI1Yo2GgQ==/base.apk=org.ddosolitary.okcagent
+package:/data/app/~~XK3rVAfbRSni_h9vnZN79g==/com.xiaomi.midrop-flZXQR6DtKdEJwnx8Dok_Q==/base.apk=com.xiaomi.midrop
+package:/data/app/~~fNcTZHpvLrz_dQ845gh8Qw==/com.openai.chatgpt-SLeDulcy_h4lxUElc5xZ9Q==/base.apk=com.openai.chatgpt
+package:/data/app/wps_lite/base.apk=cn.wps.xiaomi.abroad.lite
+package:/data/app/~~fmx5kLw8OssCqtZ_SsIWgg==/org.mozilla.firefox-PC9GwHN8jNH4Bn1j9DQziA==/base.apk=org.mozilla.firefox
+package:/data/app/~~oh4uCWg1-ZDLSWPH545JTQ==/com.microsoft.skydrive-4w1owhFilDXV_VxWv-5L4Q==/base.apk=com.microsoft.skydrive
+package:/data/app/~~H308-2HMUyPZ4AFQYKxB1A==/com.google.android.apps.walletnfcrel-d7fSCqN9O2OEqhl79hssxQ==/base.apk=com.google.android.apps.walletnfcrel
+package:/data/app/~~9okt61_V2axHIiIup9Cp3A==/com.whatsapp-gdMMy1w8AXXvQ-LKC_-ZYQ==/base.apk=com.whatsapp
+package:/data/app/~~McmdyOsVTPlJm7sBGQWuZA==/com.termux.styling-xQFgAS7MZ8bpd8eI1kVUqw==/base.apk=com.termux.styling
+package:/data/app/~~mw0CB_yL7OsQEZPtuxKH5Q==/de.hek.serviceapp-2VOwchfNpTCTpv7Fl4SLHQ==/base.apk=de.hek.serviceapp
+package:/data/app/~~Qx92m7hjnCZaIE1AOr_YxQ==/de.fiduciagad.securego.vr-p6TBBI6ruRKRMpQMauGpZg==/base.apk=de.fiduciagad.securego.vr
+package:/data/app/~~Q4ypT6qrhsh-lqOsmXi3Tw==/de.barmenia.meinebarmenia-FN0Haf-YsWGtp1YwXRuZGQ==/base.apk=de.barmenia.meinebarmenia
+package:/data/app/~~Ra92uarF2BpFUNFFytd5Qg==/com.playstation.knowledge--Fv_0Rxc-YTX-vmyFAP2iA==/base.apk=com.playstation.knowledge
+package:/data/app/~~jUbaQG9Vyidi1Ki5rM1rhg==/com.google.android.apps.magazines-IM3snSWQ51PR4hPLS-zOpA==/base.apk=com.google.android.apps.magazines
+package:/data/app/~~LvOK3clP-W65iPNRx61luw==/com.ebay.mobile-Z-f_SUnLcaJwchd_A6Zp_Q==/base.apk=com.ebay.mobile
+package:/data/app/MiuiScanner/base.apk=com.xiaomi.scanner
+package:/data/app/~~HLvEI7Vyqd3ueDPT67diRg==/com.termux.window-hYGki44dLknqwKhG96veDA==/base.apk=com.termux.window
+package:/data/app/~~QMHy_ixwOKYWnAN8xaq20A==/com.google.android.apps.tachyon-isk7ispyxSHNBvuvVsBddA==/base.apk=com.google.android.apps.tachyon
+package:/data/app/~~chlsFPIA4PoQrlIy7YFcmw==/com.boostvision.player.iptv-RmePWTOa-HWnJ6HW1htYKg==/base.apk=com.boostvision.player.iptv
+package:/data/app/~~p53M14EJodpF0qSccbDDAA==/com.soundcloud.android-NcKdDWCTVA-X-nyhPHJkoQ==/base.apk=com.soundcloud.android
+package:/data/app/~~fEDfnrxIRolTJQohVpS6Pg==/com.termux.api-9QIv_Z2bNUFkEahEcZM1pQ==/base.apk=com.termux.api
+package:/data/app/~~oiiRjUhglyNoLR3x3jFBJQ==/com.zhiliaoapp.musically-yeyW3dK5Bu-CZ_3k-XsRYQ==/base.apk=com.zhiliaoapp.musically
+package:/data/app/~~ozDRIBM20-HbCGRGyrY1AA==/com.mi.global.mimover-EZzFQJwu9-0PwwTwUjiGbg==/base.apk=com.mi.global.mimover
+package:/data/app/~~Cde3mFrC7NL3wgB9ei3MCg==/ru.iptvremote.android.iptv.pro-hLfPsKBQh429mjVGPdh45g==/base.apk=ru.iptvremote.android.iptv.pro
+package:/data/app/~~EsRL6CyjL-7SI2osCJLO0w==/ai.x.grok-6oHban1DFi3Nd_ZBaT1I7g==/base.apk=ai.x.grok
+package:/data/app/~~hNVhP2CPgC9a3P04uXlhoA==/com.miui.compass-REsgFlYti4hREI9QUnDQLQ==/base.apk=com.miui.compass
+package:/data/app/~~AFoLe_Jn_OSvlQgAqd4VNg==/com.miui.weather2-Pe1Sv-m85R43ldpfbqEquA==/base.apk=com.miui.weather2
+package:/data/app/~~upfOR-qF-uyFM1kEuMPMgQ==/com.google.android.apps.nbu.files-ZnYAxx6Pb4T02RWhoUtaVA==/base.apk=com.google.android.apps.nbu.files
+package:/data/app/~~mVx4jfdA9ftQiqpgGO7hMg==/com.winlator-b1_5c_BFWKLLaimqKittXA==/base.apk=com.winlator
+package:/data/app/~~N8Mb-oTWAKAP74XRliWQiA==/com.alphainventor.filemanager-CE_pP5ChEVFs2djXu5ru9w==/base.apk=com.alphainventor.filemanager
+package:/data/app/~~07A1XXoA36K_Jtwbeozo2g==/com.revanced.net.revancedmanager-aMogpifimTPzSSo_9vsihg==/base.apk=com.revanced.net.revancedmanager
+package:/data/app/~~nXfMwqu-Zlwv39rke-1aBg==/de.agondev.easyfiretools-oHSIg7f276bWop25g2ZD0A==/base.apk=de.agondev.easyfiretools
+package:/data/app/~~q8L_yxU-VaUBtSHjQ09DXw==/com.authenticator-_nP1x-TjeqZ7jdVHSdedFQ==/base.apk=com.authenticator
+package:/data/app/~~xBafMFpp-RL2Ad0oVQp3gw==/com.fawazapp.blackhole-QRV_KwtDJngxUxNupeHX3w==/base.apk=com.fawazapp.blackhole
+package:/data/app/~~R1_4IlYpPGc9IHHFLhSbtQ==/tribixbite.cleverkeys-YA21S5trvqPKfRw9meKSIQ==/base.apk=tribixbite.cleverkeys
+package:/data/app/~~WiQCSaitVH1ZXl3PF3F6Ow==/com.moonshot.kimichat-61ZkWSUDC0ugbY1UYPePbQ==/base.apk=com.moonshot.kimichat
+package:/data/app/~~19KQyUrePVssi0rAlQ8PWQ==/com.mojang.minecraftpe-wfcwIZOEBAB_RIlQ90ugMA==/base.apk=com.mojang.minecraftpe
+package:/data/app/~~eAqbqZ8tD3U0UHfvFGqQ-A==/com.BlackSaltGames.DREDGE-cT0eUH0zIT7dt2aB5me_Uw==/base.apk=com.BlackSaltGames.DREDGE
+package:/data/app/XMRemoteController/base.apk=com.duokan.phone.remotecontroller
+package:/data/app/~~nc6zx320yDSkPq9_ZvxnYg==/live.shorttv.apps-m9HDG3AuNtAn00RHnN6t7Q==/base.apk=live.shorttv.apps
+package:/data/app/~~01TLcj_39PoBG_qvYiX9ww==/com.yahoo.mobile.client.android.mail-rT5-cjQsRXUj_4DAfbjt4w==/base.apk=com.yahoo.mobile.client.android.mail
+package:/data/app/~~v9qzVu7vkRQUijM668S7tw==/com.yablio.sendfilestotv-fvNKE-3KsKCddvtWwvYCdg==/base.apk=com.yablio.sendfilestotv
+package:/data/app/~~4hOTV1tCRrMqI8HTfE83vw==/eu.sisik.hackendebug-gD0WOS2yG0woFDhSrKpFww==/base.apk=eu.sisik.hackendebug
+package:/data/app/~~xfBJb4lbkvVmqFb4hk-PmA==/air.com.P2G.GS101-zbzfE1-hUMy9BGdQwbPWpg==/base.apk=air.com.P2G.GS101
+package:/data/app/~~GcPiHvicLcLM9wQRomlgsw==/com.google.android.contactkeys-mxe--4w8e9s9PBWHspZLhA==/base.apk=com.google.android.contactkeys
+VERS
+com.whatsapp     versionName=2.26.32.83
+org.telegram.messenger     versionName=12.10.1
+com.spotify.music     versionName=9.1.76.2055
+com.android.chrome     versionName=151.0.7922.173
+com.google.android.apps.maps     versionName=26.34.04.965633971
+RUN
+u0_a127       2934   927 8344308  93204 do_epoll_wait       0 S org.telegram.messenger
+u0_a222       7510   927 32401300 114028 do_epoll_wait      0 S com.android.chrome
+u0_a222      19931   927 5728508  27568 do_sys_poll         0 S com.android.chrome_zygote
+u0_i0        19946 19931 318575864 97264 do_epoll_wait      0 S com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
+u0_a222      19981   927 31931824 59656 do_epoll_wait       0 S com.android.chrome:privileged_process0
+u0_i1        20598 19931 318607344 65988 do_epoll_wait      0 S com.android.chrome:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:1
+FG
+    topResumedActivity=ActivityRecord{e6d6726 u0 com.android.chrome/com.google.android.apps.chrome.Main} t423}
+  mFocusedApp=ActivityRecord{e6d6726 u0 com.android.chrome/com.google.android.apps.chrome.Main} t423}

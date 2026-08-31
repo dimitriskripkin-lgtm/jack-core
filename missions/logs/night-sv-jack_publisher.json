@@ -1,0 +1,10 @@
+{
+  "id": "night-sv-jack_publisher",
+  "act": "sv_ok",
+  "ts": "2026-08-26 14:15:56",
+  "ok": true,
+  "note": "sv jack_publisher",
+  "out": "run: /data/data/com.termux/files/usr/var/service/jack_publisher: (pid 20003) 157614s; run: log: (pid 16522) 178669s\n",
+  "expect": "PASS",
+  "raw_ok": true
+}

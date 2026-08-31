@@ -1,0 +1,10 @@
+{
+  "id": "071",
+  "act": "no_secret",
+  "ts": "2026-08-31 05:39:06",
+  "ok": false,
+  "note": "no_secret: sauber",
+  "out": "",
+  "expect": "FAIL",
+  "raw_ok": true
+}

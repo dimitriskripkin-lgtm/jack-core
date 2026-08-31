@@ -1,0 +1,9 @@
+{
+  "id": "090",
+  "act": "line_check",
+  "ts": "2026-08-25 08:08:14",
+  "ok": true,
+  "note": "line_check: ok",
+  "out": "",
+  "expect": "PASS"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "076",
+  "act": "mtime_fresh",
+  "ts": "2026-08-25 12:43:15",
+  "ok": true,
+  "note": "mtime_fresh: 0s alt limit 10800s",
+  "out": "",
+  "expect": "PASS"
+}

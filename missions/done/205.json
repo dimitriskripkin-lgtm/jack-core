@@ -1,0 +1,1 @@
+{"id": "205", "act": "json_valid", "file": "/data/data/com.termux/files/home/jack/jack_health_now.json", "required_fields": ["ts"], "expect": "PASS"}

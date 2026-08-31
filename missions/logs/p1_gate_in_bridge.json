@@ -1,0 +1,10 @@
+{
+  "id": "p1_gate_in_bridge",
+  "act": "line_check",
+  "ts": "2026-08-31 05:18:58",
+  "ok": false,
+  "note": "line_check: fehlt: jack_ollama_gate",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

@@ -1,0 +1,1 @@
+{"id": "a001", "act": "grep_count", "file": "~/jack/jack_talk.py", "pattern": "JACK_HOME", "expect_min": 1, "expect": "PASS", "cat": "arch"}

@@ -1,0 +1,1 @@
+{"id": "106", "act": "line_check", "expect": "PASS", "file": "/data/data/com.termux/files/home/jack/jack_ui_type.py", "must_contain": "_spotify_score_tap"}

@@ -1,0 +1,10 @@
+{
+  "id": "156",
+  "act": "line_check",
+  "ts": "2026-08-27 22:19:29",
+  "ok": false,
+  "note": "line_check: fehlt: socket",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

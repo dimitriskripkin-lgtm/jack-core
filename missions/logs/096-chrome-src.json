@@ -1,0 +1,10 @@
+{
+  "id": "096-chrome-src",
+  "act": "no_chrome_src",
+  "ts": "2026-08-25 12:53:33",
+  "ok": true,
+  "note": "chrome-src clean",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

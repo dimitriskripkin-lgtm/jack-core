@@ -1,0 +1,10 @@
+{
+  "id": "221",
+  "act": "shadow_report",
+  "ts": "2026-08-26 18:02:25",
+  "ok": true,
+  "note": "shadow_report /data/data/com.termux/files/home/jack/shadow/report_221.json",
+  "out": "/data/data/com.termux/files/home/jack/shadow/report_221.json",
+  "expect": "PASS",
+  "raw_ok": true
+}

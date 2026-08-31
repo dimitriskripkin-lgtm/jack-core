@@ -1,0 +1,10 @@
+{
+  "id": "p2_talk_contract",
+  "act": "talk_contract",
+  "ts": "2026-08-31 05:19:09",
+  "ok": false,
+  "note": "talk_contract breaches 4/40 max 3",
+  "out": "4",
+  "expect": "PASS",
+  "raw_ok": false
+}

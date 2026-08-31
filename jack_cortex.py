@@ -42,12 +42,14 @@ def log_error(msg):
             except Exception as _le: _jlog and _jlog.fehler("cortex","unbenannt",_le)
 def _ssh_ok(ip):
     try:
-        r = subprocess.run(
-            ["ssh", "xiaomi-jack", "true"],
-            capture_output=True, timeout=6)
-        return r.returncode == 0
+        cmd=["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8"]
+        if ip: cmd += ["-o","HostName="+str(ip)]
+        cmd += ["xiaomi-jack","true"]
+        r=subprocess.run(cmd,capture_output=True,timeout=12)
+        return r.returncode==0
     except Exception:
         return False
+    # JACK_TUNE_R01IP
 def find_xiaomi():
     cache_file = os.path.expanduser("~/jack/.last_xiaomi_ip")
     known = jack_config.get_param('NETWORK', 'xiaomi_ip')
@@ -62,7 +64,7 @@ def find_xiaomi():
         except Exception as _le:
             _jlog and _jlog.fehler("cortex","unbenannt",_le)
     try:
-        arp=subprocess.run(["ip","neigh"],capture_output=True,text=True,timeout=5).stdout
+        arp=subprocess.run(["ip","neigh"],capture_output=True,text=True,timeout=12).stdout
         kand=[l.split()[0] for l in arp.splitlines() if l.strip() and "." in l.split()[0]]
     except Exception:
         kand=[]
@@ -113,19 +115,19 @@ def notify_xiaomi_state(connected):
     try:
         msg = 'Xiaomi ist seit 15 Minuten wieder erreichbar.' if connected else 'Xiaomi ist seit 15 Minuten weg.'
         import urllib.request
-        sec = open(_o.path.expanduser('~/.jack_secrets')).read()
+        sec = open(os.path.expanduser('~/.jack_secrets')).read()
         tok = [l.split('=',1)[1].strip().strip('"') for l in sec.split(chr(10)) if 'TELEGRAM_BOT_TOKEN' in l][0]
         cid = [l.split('=',1)[1].strip().strip('"') for l in sec.split(chr(10)) if 'TELEGRAM_CHAT_ID' in l][0]
         data = _j.dumps({'chat_id':cid,'text':msg}).encode()
         urllib.request.urlopen(urllib.request.Request(
             'https://api.telegram.org/bot'+tok+'/sendMessage', data=data,
-            headers={'Content-Type':'application/json'}), timeout=5)
+            headers={'Content-Type':'application/json'}), timeout=12)
     except Exception as e:
         log_status('[Cortex] Notify-Fehler: ' + str(e)[:80])
 def check_and_heal():
     global SSH_FAIL_COUNT, SSH_ERR_COUNT, XIAOMI_IP
     quick = subprocess.run(
-        ["ssh", "xiaomi-jack", "true"],
+        ["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","true"],
         capture_output=True, timeout=6)
     if quick.returncode != 0:
         XIAOMI_IP = find_xiaomi()
@@ -137,7 +139,7 @@ def check_and_heal():
             log_status(f"[Cortex] Versuche WiFi-Recovery auf Xiaomi (Fail #{SSH_FAIL_COUNT})")
             try:
                 recovery = subprocess.run(
-                    ["ssh", "xiaomi-jack", "su -c 'svc wifi disable; sleep 3; svc wifi enable"],
+                    ["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack", "su -c 'svc wifi disable; sleep 3; svc wifi enable"],
                     capture_output=True, text=True, timeout=25
                 )
                 if recovery.returncode == 0:
@@ -157,8 +159,8 @@ def check_and_heal():
     # SSH Test
     try:
         ssh_test = subprocess.run(
-            ["ssh", "xiaomi-jack", "su -c 'whoami'"],
-            capture_output=True, text=True, timeout=5
+            ["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack", "su -c 'whoami'"],
+            capture_output=True, text=True, timeout=12
         )
         if ssh_test.returncode != 0:
             SSH_ERR_COUNT += 1
@@ -218,7 +220,7 @@ def main():
         # Xiaomi-Check (still, kein Error-Log)
         try:
             import subprocess
-            r = subprocess.run(["ssh", "xiaomi-jack", "true"], capture_output=True, timeout=5)
+            r = subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","true"], capture_output=True, timeout=5)
             if r.returncode != 0:
                 time.sleep(60)  # Still pausieren, kein Error
                 continue
@@ -233,7 +235,7 @@ def main():
             _oracle_tick = 0
             try:
                 import sys as _sys
-                _sys.path.insert(0, os.path.expanduser("~/jack"))
+                sys.path.insert(0, os.path.expanduser("~/jack"))
                 import jack_oracle as _jo
                 _jo.cycle()
             except Exception as _e:
@@ -243,3 +245,5 @@ def main():
         pass  # Auto-Explore deaktiviert
 if __name__ == "__main__":
     main()
+
+# JACK_TUNE_R01

@@ -2,12 +2,13 @@
 import json, os, shutil, sys, time, traceback, subprocess
 sys.path.insert(0, "/data/data/com.termux/files/home/jack")
 J="/data/data/com.termux/files/home/jack"
+V="/data/data/com.termux/files/usr/var/service"
 P=J+"/missions/pending"
 D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=t)
@@ -59,10 +60,31 @@ def run_act(m):
         ok=("overmind" in out.lower()) and ("3" in out)
         return ok,"explain",out[:300]
     if act=="sv_ok":
-        name=m.get("svc") or "jack_telegram"
+        name=m.get("service") or m.get("svc") or m.get("name") or "jack_telegram"
         rc,o=sh(["sv","status", "/data/data/com.termux/files/usr/var/service/"+name],t=8)
         ok=("run:" in o) and ("down:" not in o[:20])
         return ok,"sv "+name,o[:200]
+
+    if act=="hb_ok":
+        import os, time
+        name=m.get("service") or m.get("svc") or "jack_telegram"
+        if not name.startswith("jack_"):
+            name="jack_"+name
+        cands=[
+            "/data/data/com.termux/files/home/.heartbeat_"+name,
+            "/data/data/com.termux/files/home/jack/.heartbeat_"+name,
+        ]
+        fp=None
+        for c in cands:
+            if os.path.isfile(c):
+                fp=c; break
+        maxage=int(m.get("max_age_s",600))
+        if not fp:
+            return False,"hb_ok: fehlt "+",".join(cands),""
+        age=int(time.time()-os.path.getmtime(fp))
+        ok=age<=maxage
+        return ok,"hb_ok "+name+" "+str(age)+"s",str(age)
+
     if act=="mtime_fresh":
         import os,time
         fp=m.get("file","").replace("~",os.environ.get("HOME","/data/data/com.termux/files/home"))
@@ -124,10 +146,38 @@ def run_act(m):
         if must_not_contain and must_not_contain in text:
             return False,"line_check: verboten da: "+must_not_contain[:60],""
         return True,"line_check: ok",""
+    if act=="talk_contract":
+        import jack_talk_contract as tc
+        rs=tc.rows(40)
+        bad=[r for r in rs if tc.score(r.get("j",""))]
+        mx=int(m.get("max_breaches",0))
+        ok=len(bad)<=mx
+        return ok,"talk_contract breaches "+str(len(bad))+"/"+str(len(rs))+" max "+str(mx),str(len(bad))
+    if act=="shadow_report":
+        import json as _j, os as _o, time as _t, subprocess as _sp
+        dest=_o.path.join(J,"shadow", _o.path.basename(str(m.get("file") or "report.json")))
+        if not dest.endswith((".json",".md")): return False,"shadow: bad name",""
+        sv=_sp.run(["sv","status",V+"/jack_telegram"],capture_output=True,text=True,timeout=5)
+        rec={"ts":_t.strftime("%Y-%m-%d %H:%M:%S"),"host":"HONOR","ssh_note":"not probed here","sv_telegram":(sv.stdout or "")[:80],"next":"propose only in shadow","rule":"no live rewrite"}
+        _o.makedirs(_o.path.dirname(dest),exist_ok=True)
+        open(dest,"w",encoding="utf-8").write(_j.dumps(rec,ensure_ascii=False,indent=2))
+        md=dest.rsplit(".",1)[0]+".md"
+        open(md,"w",encoding="utf-8").write("# shadow 220\nNur NebenDatei. Kein Live-Write.\n"+rec["ts"]+"\n")
+        return True,"shadow_report "+dest,dest
     return False,"unbekannt",""
+
 def one(path):
+    _hb()
     m=load(path)
     mid=str(m.get("id") or os.path.basename(path))
+    # dedup: schon erledigt -> pending entfernen, nicht nochmal
+    for _d in (D,F):
+        _p=os.path.join(_d, os.path.basename(path))
+        _p2=os.path.join(_d, mid+".json")
+        if os.path.isfile(_p) or os.path.isfile(_p2):
+            try: os.remove(path)
+            except Exception: pass
+            return {"id":mid,"act":m.get("act"),"ok":True,"note":"SKIP-DEDUP already in "+_d,"out":"","expect":m.get("expect","PASS")}
 
 
     rec={"id":mid,"act":m.get("act"),"ts":time.strftime("%Y-%m-%d %H:%M:%S"),"ok":False,"note":"","out":"","expect":m.get("expect","PASS")}
@@ -137,12 +187,24 @@ def one(path):
     except Exception as e:
         rec["note"]="EXC "+type(e).__name__+" "+str(e)[:160]
         rec["out"]=traceback.format_exc()[-400:]
+    want=(m.get("expect") or "PASS").upper()
+    rec["expect"]=want
+    raw=bool(rec.get("ok"))
+    rec["raw_ok"]=raw
+    if str(rec.get("note","")).startswith("EXC"):
+        rec["ok"]=False
+    elif want=="FAIL":
+        rec["ok"]=not raw
+    else:
+        rec["ok"]=raw
     os.makedirs(L,exist_ok=True)
     json.dump(rec,open(L+"/"+mid+".json","w",encoding="utf-8"),ensure_ascii=False,indent=2)
     dest=D if rec["ok"] else F
     os.makedirs(dest,exist_ok=True)
     shutil.move(path,os.path.join(dest,os.path.basename(path)))
     return rec
+
+
 def pending_files():
     return sorted(n for n in os.listdir(P) if n.endswith(".json"))
 def run_queue(maxn=20):
@@ -157,13 +219,25 @@ def run_queue(maxn=20):
         print(("PASS" if rec["ok"] else "FAIL"), rec["id"], rec["act"], rec["note"])
         print((rec["out"] or "")[:300]); print("---")
         n+=1
-        if not rec["ok"] and rec.get("expect","PASS").upper() == "PASS":
+        if not rec["ok"]:
             rc=1; break
     return rc
+def _hb():
+    try:
+        open("/data/data/com.termux/files/home/jack/.heartbeat_jack_missions","w").write(str(time.time()))
+    except Exception:
+        pass
 def loop(poll=30, maxn=200):
     while True:
+        _hb()
         if os.path.isfile(STOP):
             print("STOP-FILE"); return 0
+        try:
+            import jack_mission_pull as _jp
+            _jp.pull()
+        except Exception as _e:
+            print("PULL-SKIP",type(_e).__name__)
+        # JACK_TUNE_R02HOOK
         if pending_files():
             rc=run_queue(maxn=maxn)
             if rc!=0: return rc

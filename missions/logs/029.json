@@ -1,0 +1,8 @@
+{
+  "id": "029",
+  "act": "diag",
+  "ts": "2026-08-25 06:27:13",
+  "ok": true,
+  "note": "diag",
+  "out": "ESSENZ\nSSH OK | Overmind 1.6h | Git tot\nCODE:\n- Keine der bekannten Code-Fallen mehr im Scan.\nVORSCHLAG: recheck -- Nur messen."
+}

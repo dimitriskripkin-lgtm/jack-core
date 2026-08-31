@@ -1,0 +1,10 @@
+{
+  "id": "seal-c-diag",
+  "act": "classify_is",
+  "ts": "2026-08-27 15:55:50",
+  "ok": true,
+  "note": "got=DIAG want=DIAG",
+  "out": "DIAG",
+  "expect": "DIAG",
+  "raw_ok": true
+}

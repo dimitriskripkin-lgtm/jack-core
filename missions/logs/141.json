@@ -1,0 +1,10 @@
+{
+  "id": "141",
+  "act": "classify_is",
+  "ts": "2026-08-26 15:13:34",
+  "ok": true,
+  "note": "got=FACT want=FACT",
+  "out": "FACT",
+  "expect": "FACT",
+  "raw_ok": true
+}

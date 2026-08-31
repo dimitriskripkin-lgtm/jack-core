@@ -1,0 +1,8 @@
+{
+  "id": "021",
+  "act": "sv_ok",
+  "ts": "2026-08-25 06:27:12",
+  "ok": true,
+  "note": "sv jack_missions",
+  "out": "run: /data/data/com.termux/files/usr/var/service/jack_missions: (pid 19841) 432s\n"
+}

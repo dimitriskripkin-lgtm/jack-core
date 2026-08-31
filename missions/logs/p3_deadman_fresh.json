@@ -1,0 +1,10 @@
+{
+  "id": "p3_deadman_fresh",
+  "act": "mtime_fresh",
+  "ts": "2026-08-31 05:19:11",
+  "ok": false,
+  "note": "mtime_fresh: 308242s alt limit 10800s",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

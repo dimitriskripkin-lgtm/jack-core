@@ -1,0 +1,1 @@
+{"id": "153", "act": "line_check", "file": "/data/data/com.termux/files/home/jack/jack_cortex.py", "must_contain": "JACK_TUNE_R01IP", "must_not_contain": "[\"ssh\", \"xiaomi-jack\"", "expect": "PASS"}

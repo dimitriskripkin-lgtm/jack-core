@@ -1,0 +1,10 @@
+{
+  "id": "night-sv-jack_waechter",
+  "act": "sv_ok",
+  "ts": "2026-08-26 14:15:56",
+  "ok": true,
+  "note": "sv jack_waechter",
+  "out": "run: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 27919) 165362s\n",
+  "expect": "PASS",
+  "raw_ok": true
+}

@@ -1,0 +1,1 @@
+{"id": "119", "act": "no_secret", "expect": "PASS", "file": "/data/data/com.termux/files/home/jack/jack_telegram.py", "patterns": ["AIza", "sk-"]}

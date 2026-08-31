@@ -1,0 +1,10 @@
+{
+  "id": "bug_a_health_trigger",
+  "act": "grep_count",
+  "ts": "2026-08-31 05:03:34",
+  "ok": false,
+  "note": "grep_count: 0 Treffer (max 0)",
+  "out": "0",
+  "expect": "FAIL",
+  "raw_ok": true
+}

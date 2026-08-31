@@ -1,0 +1,10 @@
+{
+  "id": "111-seal-fact",
+  "act": "fact",
+  "ts": "2026-08-25 13:45:29",
+  "ok": true,
+  "note": "fact",
+  "out": "Ist-Zustand:\nSSH Xiaomi: OK\nFocus 15s, Genesis True, Idle 600s\nMarks: jack_hey.py:ja, jack_voice.py:ja, jack_publish.py:ja, jack_autolearn_loop.py:ja\nBeats: jack_autolearn 93.0s, jack_publisher 20.4s, jack_waechter 78.3s, jack_cortex 16.2s, jack_telegram 1.0s\nGit-Push: tot.",
+  "expect": "PASS",
+  "raw_ok": true
+}

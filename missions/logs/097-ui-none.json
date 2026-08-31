@@ -1,0 +1,10 @@
+{
+  "id": "097-ui-none",
+  "act": "ui_none",
+  "ts": "2026-08-25 12:53:33",
+  "ok": true,
+  "note": "ui_none",
+  "out": "None",
+  "expect": "PASS",
+  "raw_ok": true
+}

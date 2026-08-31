@@ -1,0 +1,25 @@
+{
+  "ts": "2026-08-27 22:19:36",
+  "sv": "run: /data/data/com.termux/files/usr/var/service/jack_autolearn: (pid 17276) 114173s\nrun: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 14123) 73394s\nrun: /data/data/com.termux/files/usr/var/service/jack_focus_monitor: (pid 29678) 21694s\nrun: /data/data/com.termux/files/usr/var/service/jack_missions: (pid 21792) 1s\nrun: /data/data/com.termux/files/usr/var/service/jack_publisher: (pid 2745) 111400s; run: log: (pid 16522) 294089s\nrun: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 13188) 34821s\nrun: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 17007) 37560s",
+  "ssh_xiaomi": "OK",
+  "heartbeats": {
+    "jack_missions": 0.2,
+    "jack_autolearn": 41.3,
+    "jack_publisher": 81.0,
+    "jack_waechter": 41.6,
+    "jack_cortex": 28.6,
+    "jack_telegram": 2.7
+  },
+  "tune": {
+    "focus_sleep_s": 15,
+    "genesis_skip": true,
+    "autolearn_idle_s": 600,
+    "autolearn_busy_s": 300
+  },
+  "marks": {
+    "jack_hey.py": true,
+    "jack_voice.py": true,
+    "jack_publish.py": true,
+    "jack_autolearn_loop.py": true
+  }
+}

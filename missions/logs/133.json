@@ -1,0 +1,10 @@
+{
+  "id": "133",
+  "act": "no_secret",
+  "ts": "2026-08-26 14:13:04",
+  "ok": true,
+  "note": "no_secret: sauber",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

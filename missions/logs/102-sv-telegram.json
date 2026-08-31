@@ -1,0 +1,10 @@
+{
+  "id": "102-sv-telegram",
+  "act": "sv_ok",
+  "ts": "2026-08-25 12:56:26",
+  "ok": true,
+  "note": "sv jack_telegram",
+  "out": "run: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 18579) 25319s\n",
+  "expect": "PASS",
+  "raw_ok": true
+}

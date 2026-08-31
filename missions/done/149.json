@@ -1,0 +1,1 @@
+{"id": "149", "act": "line_check", "file": "/data/data/com.termux/files/home/jack/jack_autonomous.py", "must_contain": "BatchMode=yes", "must_not_contain": "JACK_TUNE_R01X", "expect": "PASS"}

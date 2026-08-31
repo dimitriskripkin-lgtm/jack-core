@@ -1,27 +1,12 @@
 {
-  "teacher": "file",
-  "goal": "SSH, ADB, Dienste und Skills-Liste einmal hart pruefen",
+  "teacher": "grok_api",
+  "goal": "Verify JACK module health after git sync with mixed heartbeat ages",
   "actions": [
     {
       "id": "1",
       "cmd_type": "status",
-      "why": "Lagebild"
-    },
-    {
-      "id": "2",
-      "cmd_type": "ssh_check",
-      "why": "Xiaomi Link"
-    },
-    {
-      "id": "3",
-      "cmd_type": "sv_status",
-      "why": "runit"
-    },
-    {
-      "id": "4",
-      "cmd_type": "skills_list",
-      "why": "DB sauber?"
+      "why": "ssh_xiaomi and adb_device true but waechter/autolearn heartbeats exceed 100s"
     }
   ],
-  "notes": "mission:test_health_20260824"
+  "notes": "git_tip indicates Honor live modules synced; telegram/cortex fresh"
 }

@@ -1,4 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/python3
+try:
+    from jack_dm_gate import allow as _dm3h_allow  # JACK_TUNE_DM3H
+except Exception:
+    def _dm3h_allow(min_s=10800):
+        return True
 """Dead-Man: wenn Overmind/Waechter zu lange still → Telegram-Hinweis."""
 import os, time, subprocess
 from pathlib import Path
@@ -15,7 +20,7 @@ def notify(msg):
     try:
         subprocess.run(
             ["python3", "-c",
-             f"import jack_telegram; jack_telegram.send({msg!r})"],
+             f"import jack_telegram; jack_telegram.send({msg!r}) if _dm3h_allow() else None"],
             cwd=str(H), timeout=15, capture_output=True,
         )
     except Exception:
@@ -33,7 +38,7 @@ def main():
         if a > MAX_AGE_H:
             stale.append(f"{name}:{a:.1f}h")
     if stale:
-        msg = "DEADMAN: still >%sh → %s" % (MAX_AGE_H, ", ".join(stale))
+        msg = "Hinweis: Überwachung meldet alte Dateien (> %sh): %s. Kein Absturz — nur frische Messung fehlt." % (MAX_AGE_H, ", ".join(stale))
         print(msg)
         notify(msg)
         return 1

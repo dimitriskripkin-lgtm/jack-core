@@ -1,0 +1,1 @@
+{"id": "v001", "act": "grep_count", "file": "~/jack/jack_cortex.py", "pattern": "MODULE_VERSION", "expect_min": 1, "expect": "PASS", "cat": "version"}

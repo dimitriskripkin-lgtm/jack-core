@@ -1,0 +1,10 @@
+{
+  "id": "p1_sv_cortex",
+  "act": "sv_ok",
+  "ts": "2026-08-31 05:19:04",
+  "ok": true,
+  "note": "sv jack_cortex",
+  "out": "run: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 13707) 3743s\n",
+  "expect": "PASS",
+  "raw_ok": true
+}

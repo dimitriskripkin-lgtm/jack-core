@@ -1,0 +1,1 @@
+{"id": "114-hb-telegram", "act": "hb_ok", "service": "jack_telegram", "max_age_s": 600, "expect": "PASS"}

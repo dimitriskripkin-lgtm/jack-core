@@ -1,0 +1,10 @@
+{
+  "id": "night-fact",
+  "act": "fact",
+  "ts": "2026-08-26 14:15:55",
+  "ok": true,
+  "note": "fact",
+  "out": "Ist-Zustand:\nSSH Xiaomi: OK\nFocus 15s, Genesis True, Idle 600s\nMarks: jack_hey.py:ja, jack_voice.py:ja, jack_publish.py:ja, jack_autolearn_loop.py:ja\nBeats: jack_missions 0.3s, jack_autolearn 316.5s, jack_publisher 136.8s, jack_waechter 3.7s, jack_cortex 35.6s, jack_telegram 0.2s\nGit-Push: tot.",
+  "expect": "PASS",
+  "raw_ok": true
+}

@@ -1,0 +1,1 @@
+{"id": "h001", "act": "file_exists", "file": "~/jack/jack_manifest.json", "expect": "PASS", "cat": "health"}

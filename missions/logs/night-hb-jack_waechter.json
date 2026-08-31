@@ -1,0 +1,10 @@
+{
+  "id": "night-hb-jack_waechter",
+  "act": "hb_ok",
+  "ts": "2026-08-26 14:15:56",
+  "ok": true,
+  "note": "hb_ok jack_waechter 3s",
+  "out": "3",
+  "expect": "PASS",
+  "raw_ok": true
+}

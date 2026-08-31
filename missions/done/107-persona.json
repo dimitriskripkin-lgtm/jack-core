@@ -1,0 +1,1 @@
+{"id": "107-persona", "act": "line_check", "file": "/data/data/com.termux/files/home/jack/jack_persona.md", "must_contain": "VERBOTEN: Nachtschicht", "must_not_contain": "Autonomie-Level 70", "expect": "PASS"}

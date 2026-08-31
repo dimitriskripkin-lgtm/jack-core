@@ -1,0 +1,10 @@
+{
+  "id": "p3_publisher_skip",
+  "act": "line_check",
+  "ts": "2026-08-31 05:19:11",
+  "ok": true,
+  "note": "line_check: ok",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

@@ -1,0 +1,1 @@
+{"id":"056","act":"no_secret","file":"~/jack/jack_config.py","patterns":["AIza","sk-","Bearer ","api_key =","token ="],"expect":"PASS"}

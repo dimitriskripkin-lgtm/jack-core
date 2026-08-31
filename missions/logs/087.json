@@ -1,0 +1,9 @@
+{
+  "id": "087",
+  "act": "grep_count",
+  "ts": "2026-08-25 08:09:25",
+  "ok": true,
+  "note": "grep_count: 0 Treffer (max 0)",
+  "out": "0",
+  "expect": "PASS"
+}

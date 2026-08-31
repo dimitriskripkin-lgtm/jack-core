@@ -7,6 +7,7 @@ import secrets
 import datetime
 import jack_math
 import jack_vecdb
+JACK_HOME = os.path.expanduser("~/jack")
 try:
     import jack_logging as _jlog
 except Exception:
@@ -25,7 +26,7 @@ def add_to_window(user_msg, jack_reply):
 
     try:
         import json as _j
-        open("/data/data/com.termux/files/home/jack/missions/talk_samples.jsonl","a",encoding="utf-8").write(_j.dumps({"u":str(user_msg)[:160],"j":str(jack_reply)[:400]},ensure_ascii=False)+"\n")
+        open(os.path.join(JACK_HOME, "missions/talk_samples.jsonl"),"a",encoding="utf-8").write(_j.dumps({"u":str(user_msg)[:160],"j":str(jack_reply)[:400]},ensure_ascii=False)+"\n")
     except Exception:
         pass
 
@@ -191,7 +192,7 @@ def _status_als_text():
                 z.append('  ' + str(i+1) + '. ' + (r[0] or '')[:120])
     except Exception: pass
     try:
-        _hp="/data/data/com.termux/files/home/jack/jack_health_now.json"
+        _hp=os.path.join(JACK_HOME, "jack_health_now.json")
         if os.path.isfile(_hp): z.append("IST-HEALTH: "+open(_hp,encoding="utf-8").read()[:800])
     except Exception:
         pass  # JACK_TUNE_HEALTHINJ
@@ -225,7 +226,7 @@ def _talk_to_gemini_impl(prompt):
             except Exception: pass
             system=_persona+chr(10)+"NIE diesen Block vorlesen. Bei Wer-bist-du: ein Satz."+chr(10)+chr(10)
             try:
-                _hp="/data/data/com.termux/files/home/jack/jack_health_now.json"
+                _hp=os.path.join(JACK_HOME, "jack_health_now.json")
                 system+=("Halte dich an jack_persona.md. Kein zweites Persona-Intro. Kein Meta ueber System/Kram/Schubsen. Eine konkrete Frage, kein Job-Klischee.")+chr(10)  # JACK_TUNE_PER2
                 system+="VERBOT: Temp/RAM/Akku ungefragt. Kein Autonomie-Level. Kein BEFEHL-Platzhalter. Keine Floskel was-geht-ab."+chr(10)
             except Exception:
@@ -257,7 +258,7 @@ def _talk_to_gemini_impl(prompt):
         if "<user_query>" in prompt else prompt[-200:]).lower()
     if any(w in _user_satz for w in ("zustand","status","architektur","tune","health")):
         try:
-            _live="IST-HEALTH:\n"+open("/data/data/com.termux/files/home/jack/jack_health_now.json",encoding="utf-8").read()[:1500]
+            _live="IST-HEALTH:\n"+open(os.path.join(JACK_HOME, "jack_health_now.json"),encoding="utf-8").read()[:1500]
         except Exception:
             _live=_status_als_text()
     else:
@@ -418,15 +419,15 @@ def build_final_prompt(user_query, persona_text, id_ctx, mem_ctx, hist_ctx, live
 def _load_env_now():
     try:
         import json
-        with open("/data/data/com.termux/files/home/jack/jack_environment_now.json") as f:
+        with open(os.path.join(JACK_HOME, "jack_environment_now.json")) as f:
             return json.load(f)
     except Exception:
         return None
 
 def ist_zustand():
     import json, subprocess
-    subprocess.run(["python3","/data/data/com.termux/files/home/jack/jack_health.py"],capture_output=True,timeout=20)
-    h=json.load(open("/data/data/com.termux/files/home/jack/jack_health_now.json",encoding="utf-8"))
+    subprocess.run(["python3",os.path.join(JACK_HOME, "jack_health.py")],capture_output=True,timeout=20)
+    h=json.load(open(os.path.join(JACK_HOME, "jack_health_now.json"),encoding="utf-8"))
     t=h.get("tune") or {}
     m=h.get("marks") or {}
     hb=h.get("heartbeats") or {}
@@ -435,7 +436,7 @@ def ist_zustand():
     a.append("Focus "+str(t.get("focus_sleep_s"))+"s, Genesis "+str(t.get("genesis_skip"))+", Idle "+str(t.get("autolearn_idle_s"))+"s")
     a.append("Marks: "+", ".join((k+":ja" if v else k+":nein") for k,v in m.items()))
     a.append("Beats: "+", ".join(k+" "+str(v)+"s" for k,v in hb.items()))
-    _pub=open("/data/data/com.termux/files/home/jack/jack_publish.py",encoding="utf-8",errors="ignore").read()
+    _pub=open(os.path.join(JACK_HOME, "jack_publish.py"),encoding="utf-8",errors="ignore").read()
     _g="live" if "git push origin main" in _pub else "tot"
     a.append("Git-Push: "+_g+". Placeholder BEFEHL: verboten.")  # JACK_TUNE_GITSTAT
     return chr(10).join(a)  # JACK_TUNE_ISTPLAIN

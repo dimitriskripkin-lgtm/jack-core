@@ -1,0 +1,10 @@
+{
+  "id": "ollama_gate_no_tilde",
+  "act": "no_secret",
+  "ts": "2026-08-31 05:03:39",
+  "ok": true,
+  "note": "no_secret: sauber",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

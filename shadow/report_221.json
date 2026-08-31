@@ -1,0 +1,8 @@
+{
+  "ts": "2026-08-26 18:02:25",
+  "host": "HONOR",
+  "ssh_note": "not probed here",
+  "sv_telegram": "run: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 20056) 4689",
+  "next": "propose only in shadow",
+  "rule": "no live rewrite"
+}

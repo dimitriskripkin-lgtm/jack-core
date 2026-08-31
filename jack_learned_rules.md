@@ -1,5 +1,8 @@
 # GELERNTE REGELN (automatisch aus Fehlern)
 
-Stand: 25.08.2026 08:13
+Stand: 31.08.2026 06:52
 
-Keine offenen Fehler - keine Regeln gelernt.
+## [15x] jack_cortex/CORTEX_ERR
+Fehler: [Cortex] SSH-Timeout (#1)
+**REGEL: SSH-Befehle NUR mit Timeout und via su -c. Kein /tmp nutzen.**
+

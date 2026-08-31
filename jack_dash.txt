@@ -1,0 +1,8 @@
+JACK DASH 18:12
+SSH OK
+jack_telegram run 2s
+jack_cortex run 3s
+jack_waechter run 92s
+jack_autolearn run 226s
+jack_publisher run 90s
+jack_missions run 9s

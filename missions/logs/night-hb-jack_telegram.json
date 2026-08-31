@@ -1,0 +1,10 @@
+{
+  "id": "night-hb-jack_telegram",
+  "act": "hb_ok",
+  "ts": "2026-08-26 14:15:56",
+  "ok": true,
+  "note": "hb_ok jack_telegram 0s",
+  "out": "0",
+  "expect": "PASS",
+  "raw_ok": true
+}

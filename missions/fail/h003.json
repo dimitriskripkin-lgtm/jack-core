@@ -1,0 +1,1 @@
+{"id": "h003", "act": "grep_count", "file": "~/jack/jack_ollama_gate.py", "pattern": "jack_ollama_gate", "expect_min": 1, "expect": "PASS", "cat": "health"}

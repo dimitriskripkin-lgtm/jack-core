@@ -1,0 +1,10 @@
+{
+  "id": "211",
+  "act": "talk_contract",
+  "ts": "2026-08-26 17:49:45",
+  "ok": true,
+  "note": "talk_contract breaches 2/13 max 3",
+  "out": "2",
+  "expect": "PASS",
+  "raw_ok": true
+}

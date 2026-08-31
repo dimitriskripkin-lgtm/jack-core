@@ -1,0 +1,1 @@
+{"id":"053","act":"json_valid","file":"~/jack/jack_health_now.json","required_fields":["ts","sv","ssh_xiaomi"],"expect":"PASS"}

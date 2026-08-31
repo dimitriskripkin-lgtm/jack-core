@@ -1,0 +1,10 @@
+{
+  "id": "114-hb-jack_telegram",
+  "act": "hb_ok",
+  "ts": "2026-08-25 14:10:31",
+  "ok": false,
+  "note": "hb_ok: fehlt /data/data/com.termux/files/home/.heartbeat_jack_telegram",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

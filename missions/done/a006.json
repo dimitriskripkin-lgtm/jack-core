@@ -1,0 +1,1 @@
+{"id": "a006", "act": "grep_count", "file": "~/jack/jack_exec.py", "pattern": "groq", "expect_max": 0, "expect": "PASS", "cat": "arch"}

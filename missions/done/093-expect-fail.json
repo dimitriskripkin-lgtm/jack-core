@@ -1,0 +1,1 @@
+{"id": "093-expect-fail", "act": "grep_count", "file": "/data/data/com.termux/files/home/jack/jack_mission_runner.py", "pattern": "def one", "expect_max": 0, "expect": "FAIL"}

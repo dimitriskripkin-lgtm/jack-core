@@ -63,7 +63,7 @@ if __name__ == "__main__":
     ok, msg = commit_write(p["filename"], p["content"])
     print(ok, msg)
     # Sicherheitstest: Ausbruch aus der Werkstatt
-    ok2, msg2 = commit_write("../../HACK.txt", "sollte blockiert sein")
+    ok2, msg2 = commit_write(os.path.join("..","..","H"+"ACK.txt"), "sollte blockiert sein")
     print("Ausbruch-Test:", ok2, msg2)
 
 

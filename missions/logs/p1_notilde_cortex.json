@@ -1,0 +1,10 @@
+{
+  "id": "p1_notilde_cortex",
+  "act": "grep_count",
+  "ts": "2026-08-31 05:19:02",
+  "ok": false,
+  "note": "grep_count: 4 Treffer (max 0)",
+  "out": "4",
+  "expect": "PASS",
+  "raw_ok": false
+}

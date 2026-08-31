@@ -1,0 +1,10 @@
+{
+  "id": "p1_compile_bridge",
+  "act": "compile_ok",
+  "ts": "2026-08-31 05:18:57",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

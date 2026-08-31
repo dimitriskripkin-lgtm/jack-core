@@ -1,0 +1,10 @@
+{
+  "id": "093-expect-fail",
+  "act": "grep_count",
+  "ts": "2026-08-25 12:48:55",
+  "ok": true,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "FAIL",
+  "raw_ok": false
+}

@@ -106,11 +106,8 @@ def _cb_reset_check():
 
 def _ollama_fallback(question):
     try:
-        import urllib.request, json
-        data = json.dumps({'model':'llama3.2:3b','prompt':question,'stream':False}).encode()
-        req = urllib.request.Request('http://localhost:11434/api/generate', data=data, headers={'Content-Type':'application/json'})
-        with urllib.request.urlopen(req, timeout=15) as r:
-            return '[Ollama] ' + json.loads(r.read()).get('response','(leer)')
+        import jack_ollama_gate
+        return '[Ollama] ' + jack_ollama_gate.call(question)
     except Exception as e:
         return '[Fallback fehlgeschlagen] ' + str(e)
 
@@ -125,8 +122,8 @@ def ask_gemini(question, status=None):
     if _CB_FAILS >= _CB_THRESHOLD and _tt2.time() < _CB_RESET_AT:
         import jack_log; jack_log.log_decision("GEMINI-CB-SKIP", f"CB aktiv, nutze Ollama")
         try:
-            from jack_talk import talk_to_ollama
-            return talk_to_ollama(question, [])
+            import jack_ollama_gate
+            return '[Ollama-CB] ' + jack_ollama_gate.call(question)
         except Exception as _e:
             return f"Gemini CB aktiv + Ollama Fehler: {_e}"
     elif _tt2.time() >= _CB_RESET_AT and _CB_FAILS > 0:

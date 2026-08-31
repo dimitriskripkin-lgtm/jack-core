@@ -1,0 +1,1 @@
+{"id": "night-hb-jack_publisher", "act": "hb_ok", "service": "jack_publisher", "max_age_s": 900, "expect": "PASS"}

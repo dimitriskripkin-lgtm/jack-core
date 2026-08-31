@@ -1,0 +1,1 @@
+{"id": "094-compile-core", "act": "compile_ok", "files": ["jack_mission_runner.py", "jack_chat_router.py", "jack_talk.py", "jack_telegram.py", "jack_exec.py", "jack_write.py", "jack_selfsee.py"], "expect": "PASS"}

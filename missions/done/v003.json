@@ -1,0 +1,1 @@
+{"id": "v003", "act": "grep_count", "file": "~/jack/jack_telegram.py", "pattern": "MODULE_VERSION", "expect_min": 1, "expect": "PASS", "cat": "version"}

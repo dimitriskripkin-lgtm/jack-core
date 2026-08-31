@@ -43,7 +43,7 @@ def _xi():
         import jack_config as _jc
         ip = _jc.get_param('NETWORK','xiaomi_ip')
         # FIX (Qwen 22.08.): Nutze SSH-Config Alias statt manueller Optionen
-        return subprocess.run(["ssh","xiaomi-jack","true"],
+        return subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","true"],
           capture_output=True,timeout=12).returncode==0
     except Exception: return False
 
@@ -228,7 +228,7 @@ def main():
             # NIGHT-FIX (Qwen 23.08.): Xiaomi-Online-Check VOR SSH-Call
             # Wenn Xiaomi offline → skippen, kein Error, kein Fallback
             try:
-                _r = subprocess.run(["ssh", "xiaomi-jack", "true"], capture_output=True, timeout=5)
+                _r = subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","true"], capture_output=True, timeout=12)
                 if _r.returncode != 0:
                     print("Shadow-Fixer übersprungen (Xiaomi offline)")
                     return
@@ -239,7 +239,7 @@ def main():
             if _hp.worker_target() == "xiaomi":
                 try:
                     result = subprocess.run(
-                        ["ssh", "xiaomi-jack", "cd ~/jack && python3 jack_autofixer_shadow.py"],
+                        ["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack", "cd ~/jack && python3 jack_autofixer_shadow.py"],
                         capture_output=True, text=True, timeout=120
                     )
                     if result.returncode == 0:
@@ -508,3 +508,5 @@ if __name__=="__main__":
     start_consolidated()
     import sys
     print(json.dumps(cycle(dry=True),indent=2,ensure_ascii=False) if (len(sys.argv)>1 and sys.argv[1]=="dry") else main())
+
+# JACK_TUNE_R01

@@ -82,6 +82,23 @@ def talk_local(text):
         except Exception:
             pass
         return "Nein. Kein Hund."  # JACK_TUNE_HUNDGRAPH
+    # JACK_TUNE_EDGE_FREE: freie Aussage ohne Prefix
+    import re as _re
+    _free = _re.match(
+        r'^(ich habe|ich hab|ich bin|ich mag|ich liebe|meine? .+ ist|meine? .+ heisst|meine? .+ heißt)\b',
+        low)
+    if _free and len(raw.split()) >= 3:
+        try:
+            import jack_graph as _g
+            _ents = raw.strip(" .").split(None, 4)
+            _name = " ".join(_ents[2:4]).strip()[:48] if len(_ents) >= 3 else raw[len(_free.group()):].strip()[:48]
+            _wert = " ".join(_ents[4:]).strip()[:80] if len(_ents) >= 5 else "ja"
+            if _name:
+                nid = _g.put_node("fakt", _name, _wert, "chat")
+                did = _g.put_node("person", "Dima", "owner", "chat")
+                _g.put_edge(did, "hat", nid, "chat")
+        except Exception:
+            pass
     # JACK_TUNE_TLNARROW: kein Pflicht-Gegenfrage-Satz
     return None
 _LAST=""

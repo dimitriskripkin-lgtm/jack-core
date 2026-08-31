@@ -1,0 +1,10 @@
+{
+  "id": "seal-c-talk",
+  "act": "classify_is",
+  "ts": "2026-08-27 15:55:50",
+  "ok": true,
+  "note": "got=TALK want=TALK",
+  "out": "TALK",
+  "expect": "TALK",
+  "raw_ok": true
+}

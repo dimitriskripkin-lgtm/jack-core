@@ -1,0 +1,1 @@
+{"id": "v006", "act": "grep_count", "file": "~/jack/jack_waechter.py", "pattern": "MODULE_VERSION", "expect_min": 1, "expect": "PASS", "cat": "version"}

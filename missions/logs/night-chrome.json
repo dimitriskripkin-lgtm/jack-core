@@ -1,0 +1,10 @@
+{
+  "id": "night-chrome",
+  "act": "no_chrome_src",
+  "ts": "2026-08-26 14:15:55",
+  "ok": true,
+  "note": "chrome-src clean",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}
