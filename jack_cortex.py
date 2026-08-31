@@ -3,6 +3,7 @@ MODULE_VERSION = 2
 import os
 log_dir = os.path.expanduser("~/jack/logs")
 os.makedirs(log_dir, exist_ok=True)
+import logging
 logging.basicConfig(
     filename=os.path.join(log_dir, 'jack_cortex.log'),
     level=logging.INFO,

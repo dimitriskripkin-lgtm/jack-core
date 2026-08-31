@@ -1,0 +1,134 @@
+{
+  "ts": "2026-08-31T14:57:36",
+  "score": 100,
+  "ok": 14,
+  "total": 14,
+  "modules": {
+    "jack_graph": {
+      "name": "jack_graph",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": "recall(Dima): OK",
+      "ok": true,
+      "error": ""
+    },
+    "jack_heartbeat": {
+      "name": "jack_heartbeat",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": "is_xiaomi_alive(): OK",
+      "ok": true,
+      "error": ""
+    },
+    "jack_cortex": {
+      "name": "jack_cortex",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": null,
+      "ok": true,
+      "error": ""
+    },
+    "jack_gemini_bridge": {
+      "name": "jack_gemini_bridge",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": null,
+      "ok": true,
+      "error": ""
+    },
+    "jack_autonomous": {
+      "name": "jack_autonomous",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": null,
+      "ok": true,
+      "error": ""
+    },
+    "jack_missions": {
+      "name": "jack_missions",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": null,
+      "ok": true,
+      "error": ""
+    },
+    "jack_mission_runner": {
+      "name": "jack_mission_runner",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": null,
+      "ok": true,
+      "error": ""
+    },
+    "jack_mission_gen": {
+      "name": "jack_mission_gen",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": "run() callable: OK",
+      "ok": true,
+      "error": ""
+    },
+    "jack_oracle": {
+      "name": "jack_oracle",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": "is_safe(): OK",
+      "ok": true,
+      "error": ""
+    },
+    "jack_keyboards": {
+      "name": "jack_keyboards",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": null,
+      "ok": true,
+      "error": ""
+    },
+    "jack_cmd_handler": {
+      "name": "jack_cmd_handler",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": null,
+      "ok": true,
+      "error": ""
+    },
+    "jack_selftest": {
+      "name": "jack_selftest",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": "module loadable: OK",
+      "ok": true,
+      "error": ""
+    },
+    "jack_talk": {
+      "name": "jack_talk",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": null,
+      "ok": true,
+      "error": ""
+    },
+    "jack_log": {
+      "name": "jack_log",
+      "syntax": true,
+      "import": true,
+      "diag": null,
+      "critical": null,
+      "ok": true,
+      "error": ""
+    }
+  }
+}

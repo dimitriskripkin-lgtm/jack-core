@@ -108,6 +108,7 @@ snap = {
     "score": score,
     "nodes": results
 }
-json.dump(snap, open(os.path.join(JACK,"jack_diag_snapshot.json"),"w"), indent=2)
-print("Snapshot: ~/jack/jack_diag_snapshot.json")
-sys.exit(0 if score==100 else 1)
+if __name__ == "__main__":
+    json.dump(snap, open(os.path.join(JACK,"jack_diag_snapshot.json"),"w"), indent=2)
+    print("Snapshot: ~/jack/jack_diag_snapshot.json")
+    sys.exit(0 if score==100 else 1)

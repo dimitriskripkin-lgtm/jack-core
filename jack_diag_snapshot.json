@@ -1,26 +1,26 @@
 {
-  "ts": "2026-08-31T14:51:34",
-  "score": 85,
+  "ts": "2026-08-31T14:55:51",
+  "score": 100,
   "nodes": {
     "services": {
       "ok": true,
       "info": "6/6 laufen",
-      "ms": 29
+      "ms": 28
     },
     "xiaomi_ssh": {
       "ok": true,
       "info": "SSH-Port erreichbar",
-      "ms": 19
+      "ms": 10
     },
     "ollama": {
       "ok": true,
       "info": "Binary OK, Gate bereit (off by design)",
-      "ms": 150
+      "ms": 144
     },
     "graph": {
       "ok": true,
       "info": "8 Eintr\u00e4ge",
-      "ms": 9
+      "ms": 2
     },
     "heartbeats": {
       "ok": true,
@@ -28,8 +28,8 @@
       "ms": 0
     },
     "missions": {
-      "ok": false,
-      "info": "pending=0 done=340 fail=2",
+      "ok": true,
+      "info": "pending=0 done=340 fail=0",
       "ms": 1
     },
     "config": {
