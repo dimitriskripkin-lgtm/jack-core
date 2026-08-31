@@ -49,7 +49,7 @@ def fetch_cmd():
 
 def last_uuid():
     try: return open(SEEN).read().strip()
-    except: return ""
+    except Exception: return ""
 
 def save_uuid(uid): open(SEEN,"w").write(uid)
 
@@ -138,7 +138,7 @@ def push_result(uuid,cmd,result,status):
           "ts":time.strftime("%Y-%m-%d %H:%M:%S")}
     stack_path=os.path.join(LOCAL,"jack_results_stack.json")
     try: stack=json.load(open(stack_path))
-    except: stack=[]
+    except Exception: stack=[]
     stack.insert(0,data)
     stack=stack[:5]
     json.dump(stack,open(stack_path,"w"),ensure_ascii=False,indent=2)
