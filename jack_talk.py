@@ -1,4 +1,7 @@
 import os
+MODULE_VERSION = 1
+MODULE_VERSION = 1
+MODULE_VERSION = 1
 import sys
 import json
 import urllib.request

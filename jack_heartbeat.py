@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """Heartbeat: Dienste melden Lebenszeichen. Waechter prueft mtime statt nur sv status."""
 import os, time
 

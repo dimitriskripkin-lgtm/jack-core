@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 # JACK_TUNE_VOICEH
 import os, json, urllib.request, subprocess, threading
 J="/data/data/com.termux/files/home/jack"

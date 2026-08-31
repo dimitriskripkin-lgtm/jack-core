@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """JACK Oracle - bidirektionaler Kanal zwischen Claude und JACK via GitHub."""
 import os, json, subprocess, time, urllib.request, hmac, hashlib, datetime
 try:

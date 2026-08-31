@@ -8,7 +8,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=t)
@@ -21,6 +21,46 @@ def run_act(m):
     act=m.get("act")
     if act not in ALLOWED:
         return False,"act nicht erlaubt: "+str(act),""
+
+    if act in ("sed_replace","py_replace"):
+        import os, shutil, subprocess
+        HOME=os.environ.get("HOME","/data/data/com.termux/files/home")
+        fp=m.get("file","").replace("~",HOME)
+        if not fp.startswith(J):
+            return False,"fix: Pfad-Tabu",""
+        if not os.path.exists(fp):
+            return False,"fix: Datei fehlt "+fp,""
+        old=m.get("old",""); new=m.get("new","")
+        if not old:
+            return False,"fix: old fehlt",""
+        content=open(fp,errors="ignore").read()
+        if old not in content:
+            return False,"fix: old nicht gefunden: "+old[:40],""
+        bak=fp+".fix.bak"
+        shutil.copy2(fp,bak)
+        try:
+            count=content.count(old)
+            content=content.replace(old,new,1)
+            open(fp,"w").write(content)
+            if fp.endswith(".py"):
+                rc,out=sh(["python3","-m","py_compile",fp],t=10)
+                if rc!=0:
+                    shutil.copy2(bak,fp); os.remove(bak)
+                    return False,"fix: py_compile FAIL Rollback: "+out[:60],""
+            verify_act=m.get("verify_act")
+            if verify_act:
+                vm={"act":verify_act,"file":m.get("file",""),"pattern":m.get("verify_pattern",""),"expect_max":m.get("verify_expect_max",0)}
+                vok,vinfo,_=run_act(vm)
+                if not vok:
+                    shutil.copy2(bak,fp); os.remove(bak)
+                    return False,"fix: verify FAIL Rollback: "+vinfo,""
+            os.remove(bak)
+            return True,"fix OK "+str(count)+"x: "+old[:30]+" -> "+new[:20],""
+        except Exception as e:
+            try: shutil.copy2(bak,fp); os.remove(bak)
+            except: pass
+            return False,"fix Exception Rollback: "+str(e)[:80],""
+
     if act=="fact":
         import jack_chat_router as c
         out=c.fact_report() if hasattr(c,"fact_report") else __import__("jack_talk").ist_zustand()

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 import os, json, subprocess, sqlite3, urllib.request
 from datetime import datetime
 

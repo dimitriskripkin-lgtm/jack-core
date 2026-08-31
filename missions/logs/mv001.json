@@ -1,0 +1,10 @@
+{
+  "id": "mv001",
+  "act": "sed_replace",
+  "ts": "2026-08-31 13:45:28",
+  "ok": true,
+  "note": "fix OK 1x: import os -> import os\nMODULE_VER",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

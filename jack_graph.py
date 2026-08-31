@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 import os,re,sqlite3,time,sys
 DB="/data/data/com.termux/files/home/jack/jack_graph.db"
 TYPS=("person","geraet","fakt","skill","chat")

@@ -1,0 +1,10 @@
+{
+  "id": "mv002",
+  "act": "sed_replace",
+  "ts": "2026-08-31 13:45:28",
+  "ok": true,
+  "note": "fix OK 1x: #!/usr/bin/env python3 -> #!/usr/bin/env pytho",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

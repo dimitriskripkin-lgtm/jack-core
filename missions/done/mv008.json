@@ -1,0 +1,1 @@
+{"id": "mv008", "typ": "fix", "act": "sed_replace", "file": "~/jack/jack_callback_handler.py", "old": "# JACK_TUNE_CBH", "new": "# JACK_TUNE_CBH\nMODULE_VERSION = 1", "verify_act": "grep_count", "verify_pattern": "MODULE_VERSION", "verify_expect_max": 999, "cat": "version"}

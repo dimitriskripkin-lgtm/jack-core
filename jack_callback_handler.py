@@ -1,4 +1,5 @@
 # JACK_TUNE_CBH
+MODULE_VERSION = 1
 def handle(callback_data, callback_id):
     import jack_telegram as tg
     """Verarbeitet Inline-Button-Klicks."""

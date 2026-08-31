@@ -1,0 +1,1 @@
+{"id": "mv005", "typ": "fix", "act": "sed_replace", "file": "~/jack/jack_heartbeat.py", "old": "#!/usr/bin/env python3", "new": "#!/usr/bin/env python3\nMODULE_VERSION = 1", "verify_act": "grep_count", "verify_pattern": "MODULE_VERSION", "verify_expect_max": 999, "cat": "version"}

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 import logging
 import os
 log_dir = os.path.expanduser("~/jack/logs")

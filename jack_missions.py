@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """JACK Missionen: asynchrone Aufgabenliste in SQLite.
 Dima wirft Aufgaben rein, JACK arbeitet sie ab, Ergebnis wartet.
 Sicherheit: Code-Missionen enden IMMER bei wartet_freigabe,
@@ -187,6 +188,47 @@ def _fehlschlag(mid, versuche_bisher, grund):
     return "offen"
 
 
+
+def _run_check(m):
+    import os, re, time
+    act = m.get("act","")
+    fpath = os.path.expanduser(m.get("file",""))
+    if act == "file_exists":
+        ok = os.path.exists(fpath)
+        expect = m.get("expect","PASS")
+        return (ok and expect=="PASS") or (not ok and expect=="FAIL"), f"exists={ok}"
+    if not os.path.exists(fpath):
+        return False, f"nicht gefunden: {fpath}"
+    content = open(fpath, errors="ignore").read()
+    if act == "grep_count":
+        pattern = m.get("pattern","")
+        count = len(re.findall(re.escape(pattern), content))
+        max_v = m.get("expect_max", None); min_v = m.get("expect_min", None)
+        passed = (count <= max_v) if max_v is not None else (count >= min_v) if min_v is not None else count==0
+        if m.get("expect","PASS") == "FAIL": passed = not passed
+        return passed, f"count={count} pattern={pattern[:30]}"
+    if act == "line_count":
+        count = len(content.splitlines()); max_v = m.get("expect_max", 9999)
+        passed = count <= max_v
+        if m.get("expect","PASS") == "FAIL": passed = not passed
+        return passed, f"lines={count}"
+    if act == "line_check":
+        pattern = m.get("pattern",""); found = pattern in content
+        expect = m.get("expect","PASS")
+        return (found and expect=="PASS") or (not found and expect=="FAIL"), f"{'found' if found else 'missing'}"
+    if act == "mtime_fresh":
+        age = time.time() - os.path.getmtime(fpath); max_age = m.get("max_age_s", 86400)
+        passed = age <= max_age
+        if m.get("expect","PASS") == "FAIL": passed = not passed
+        return passed, f"age={int(age)}s"
+    if act == "no_secret":
+        patterns = m.get("patterns", [m.get("pattern","")])
+        hits = [p for p in patterns if p and p in content]
+        passed = len(hits) == 0
+        if m.get("expect","FAIL") == "FAIL": passed = not passed
+        return passed, f"hits={hits[:2]}"
+    return False, f"Unbekannter act: {act}"
+
 def _run_fix(m):
     """FIX-Mission: Backup+Patch+py_compile+Verify. Rollback bei Fehler."""
     import os, shutil
@@ -242,7 +284,7 @@ def dispatch_once():
         return None
     mid = m["id"]
     typ = m.get("typ") or ("check" if m.get("act") in {"grep_count","line_count","file_exists","line_check","mtime_fresh","no_secret"} else None)
-    aufgabe = m["aufgabe"]
+    aufgabe = m.get("aufgabe", "")
     vers = m["versuche"]
     if typ == "code":
         frei_ok, frei_info = ressourcen_ok()

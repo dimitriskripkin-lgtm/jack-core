@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """JACK Waechter-Daemon: Dienste-Heilung + Hintergrund-Loops.
 Threads: Autolearn(2h), Publisher(3min), Missionen(5min), Scout(taeglich), Monitor(2min).
 Self-Improve 1x taeglich ausserhalb 16-22 Uhr. Erster Lauf = Baseline ohne Meldung."""

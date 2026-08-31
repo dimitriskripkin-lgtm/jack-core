@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 import os, sys, json, time, urllib.request, urllib.parse, subprocess
 _PERSONA_PATH=os.path.expanduser("~/jack/jack_persona.md")
 try:
