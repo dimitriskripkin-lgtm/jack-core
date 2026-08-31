@@ -1,0 +1,10 @@
+{
+  "id": "chk_self002",
+  "act": "mtime_fresh",
+  "ts": "2026-08-31 14:31:34",
+  "ok": true,
+  "note": "mtime_fresh: 102s alt limit 86400s",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

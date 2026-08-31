@@ -1,0 +1,10 @@
+{
+  "id": "chk_tg001",
+  "act": "line_count",
+  "ts": "2026-08-31 14:31:34",
+  "ok": true,
+  "note": "line_count 1294 min=None max=1650 n=None",
+  "out": "1294",
+  "expect": "PASS",
+  "raw_ok": true
+}

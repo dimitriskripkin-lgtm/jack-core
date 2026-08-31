@@ -244,14 +244,18 @@ def run_act(m):
         import os
         fp=m.get("file","").replace("~",os.environ.get("HOME","/data/data/com.termux/files/home"))
         pattern=m.get("pattern","")
-        expect_max=int(m.get("expect_max",0))
+        expect_max=m.get("expect_max",None)
+        expect_min=m.get("expect_min",None)
         if not os.path.exists(fp):
             return False,"grep_count: Datei fehlt "+fp,""
         with open(fp,errors="ignore") as gf:
             lines=[l for l in gf.readlines() if pattern in l]
         count=len(lines)
-        ok=count<=expect_max
-        return ok,"grep_count: "+str(count)+" Treffer (max "+str(expect_max)+")",str(count)
+        if expect_min is not None:
+            ok=count>=int(expect_min)
+            return ok,f"grep_count: {count} Treffer (min {expect_min})",str(count)
+        ok=count<=int(expect_max if expect_max is not None else 0)
+        return ok,"grep_count: "+str(count)+" Treffer (max "+str(expect_max if expect_max is not None else 0)+")",str(count)
     if act=="line_check":
         import os
         fp=m.get("file","").replace("~",os.environ.get("HOME","/data/data/com.termux/files/home"))

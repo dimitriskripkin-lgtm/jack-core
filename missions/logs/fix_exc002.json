@@ -1,0 +1,10 @@
+{
+  "id": "fix_exc002",
+  "act": "sed_replace",
+  "ts": "2026-08-31 14:31:36",
+  "ok": false,
+  "note": "shadow: old nicht gefunden:     except:",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

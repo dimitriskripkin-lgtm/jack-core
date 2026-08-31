@@ -1,0 +1,10 @@
+{
+  "id": "fix_path001",
+  "act": "sed_replace",
+  "ts": "2026-08-31 14:31:38",
+  "ok": true,
+  "note": "shadow: wartet_freigabe — jack_graph.py.staged",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

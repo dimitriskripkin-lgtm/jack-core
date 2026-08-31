@@ -1,0 +1,10 @@
+{
+  "id": "chk_self001",
+  "act": "file_exists",
+  "ts": "2026-08-31 14:31:34",
+  "ok": true,
+  "note": "file_exists /data/data/com.termux/files/home/jack/jack_selftest.py yes",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

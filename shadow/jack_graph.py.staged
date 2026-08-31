@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 MODULE_VERSION = 2
 import os,re,sqlite3,time,sys
-DB="/data/data/com.termux/files/home/jack/jack_graph.db"
+DB=os.path.join(os.path.expanduser("~"),"jack","jack_graph.db")
 TYPS=("person","geraet","fakt","skill","chat")
 RELS=("hat","widerspricht","betrifft","folgt_aus")
 def norm(s):

@@ -1,0 +1,10 @@
+{
+  "id": "chk_run001",
+  "act": "grep_count",
+  "ts": "2026-08-31 14:31:34",
+  "ok": true,
+  "note": "grep_count: 2 Treffer (max 2)",
+  "out": "2",
+  "expect": "PASS",
+  "raw_ok": true
+}
