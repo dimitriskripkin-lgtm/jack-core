@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-08-30 14:58
+# JACK SYSTEM STATE — 2026-08-31 12:48
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: DOWN
 
 ## Resources
-- RAM verfuegbar: 2800MB
+- RAM verfuegbar: 2754MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 6156
+- Memory-Eintraege: 6598
 - Offene Fehler: 15
 
 ## Config
@@ -29,11 +29,11 @@
 - [jack_cortex] [Cortex] SSH-Timeout (#1)
 
 ## Letzte Log-Eintraege
-2026-08-30 14:55:24 | INFO    | jack.legacy_wrapper  | PUBLISHER-PUSH | OK
-2026-08-30 14:56:16 | INFO    | jack.legacy_wrapper  | EXPLORE | Xiaomi: CPU=unbekannt RAM=unbekannt Akku=unbekannt Temp=unbekanntC
-2026-08-30 14:56:26 | WARNING | jack.cortex          | unbenannt: UnboundLocalError: cannot access local variable 'subprocess' where it is not associated with a value
-2026-08-30 14:56:27 | INFO    | jack.legacy_wrapper  | HB_RESTART | jack_cortex | age=150147.08055901527
-2026-08-30 14:58:28 | INFO    | jack.legacy_wrapper  | PUBLISHER-PUSH | OK
+2026-08-31 12:46:17 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Ollama-Fehler: [Errno 104] Connection reset by peer
+2026-08-31 12:46:17 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | #3471: Ollama kann nicht fixen
+2026-08-31 12:46:17 | INFO    | jack.legacy_wrapper  | SHADOW-FIXER | Fertig: 0 fixed, 0 skipped, 0 eskaliert
+2026-08-31 12:46:17 | INFO    | jack.legacy_wrapper  | HB_OLLAMA_DOWN | <urlopen error [Errno 111] Connection refused>
+2026-08-31 12:47:56 | INFO    | jack.legacy_wrapper  | PUBLISHER-PUSH | OK
 
 
-*Generiert: 2026-08-30 14:58*
+*Generiert: 2026-08-31 12:48*

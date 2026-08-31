@@ -1,9 +1,9 @@
 {
   "id": "r002",
   "act": "file_exists",
-  "ts": "2026-08-31 06:53:31",
+  "ts": "2026-08-31 07:59:52",
   "ok": false,
-  "note": "act nicht erlaubt: file_exists",
+  "note": "file_exists /data/data/com.termux/files/home/jack/jack_callback_handler.py no",
   "out": "",
   "expect": "PASS",
   "raw_ok": false

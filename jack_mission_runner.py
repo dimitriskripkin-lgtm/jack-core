@@ -8,7 +8,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=t)
@@ -164,6 +164,23 @@ def run_act(m):
         md=dest.rsplit(".",1)[0]+".md"
         open(md,"w",encoding="utf-8").write("# shadow 220\nNur NebenDatei. Kein Live-Write.\n"+rec["ts"]+"\n")
         return True,"shadow_report "+dest,dest
+    if act=="file_exists":
+        import os
+        fp=m.get("file","").replace(chr(126),os.environ.get("HOME","/data/data/com.termux/files/home"))
+        ok=os.path.isfile(fp)
+        return ok,"file_exists "+fp+" "+("yes" if ok else "no"),""
+    if act=="line_count":
+        import os
+        fp=m.get("file","").replace(chr(126),os.environ.get("HOME","/data/data/com.termux/files/home"))
+        if not os.path.exists(fp):
+            return False,"line_count: Datei fehlt "+fp,""
+        n=sum(1 for _ in open(fp,errors="ignore"))
+        mn=m.get("expect_min"); mx=m.get("expect_max"); ex=m.get("expect_n")
+        ok=True
+        if mn is not None: ok=ok and n>=int(mn)
+        if mx is not None: ok=ok and n<=int(mx)
+        if ex is not None: ok=ok and n==int(ex)
+        return ok,"line_count "+str(n)+" min="+str(mn)+" max="+str(mx)+" n="+str(ex),str(n)
     return False,"unbekannt",""
 
 def one(path):
@@ -233,11 +250,13 @@ def loop(poll=30, maxn=200):
         if os.path.isfile(STOP):
             print("STOP-FILE"); return 0
         try:
-            import jack_mission_pull as _jp
-            _jp.pull()
+            import importlib as _il, jack_mission_pull as _jp
+            _il.reload(_jp)
+            print(_jp.pull())
+            print(_jp.push_status())
         except Exception as _e:
             print("PULL-SKIP",type(_e).__name__)
-        # JACK_TUNE_R02HOOK
+        # JACK_TUNE_BRIDGEHOOK
         if pending_files():
             rc=run_queue(maxn=maxn)
             if rc!=0: return rc

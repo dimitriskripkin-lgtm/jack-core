@@ -134,6 +134,32 @@ def _maybe_self_improve():
         except Exception: pass
 
 
+
+OLLAMA_HEAT_STOP=50.0
+OLLAMA_HEAT_STAMP=os.path.join(H,".ollama_heat_down")
+def _xiaomi_temp_c():
+    try:
+        r=subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","cat /sys/class/thermal/thermal_zone0/temp"],capture_output=True,text=True,timeout=12)
+        raw=int((r.stdout or "0").strip().split()[-1])
+        return raw/1000.0 if raw>200 else float(raw)
+    except Exception:
+        return 0.0
+def _heat_ollama_guard():
+    # JACK_TUNE_OLHEAT
+    tc=_xiaomi_temp_c()
+    if tc<=0: return
+    try:
+        import jack_log; jack_log.log_decision("OLHEAT","xiaomi=%.1fC"%tc)
+    except Exception:
+        pass
+    if tc<OLLAMA_HEAT_STOP: return
+    subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","export SVDIR=/data/data/com.termux/files/usr/var/service; sv down ollama"],capture_output=True,timeout=15)
+    now=time.time(); last=0.0
+    try: last=float(open(OLLAMA_HEAT_STAMP).read())
+    except Exception: pass
+    open(OLLAMA_HEAT_STAMP,"w").write(str(now))
+    if now-last>10800:
+        notify("XIAOMI %.1fC — Ollama down (OLHEAT)."%tc)
 def _heartbeat_sv_check():
     """HEARTBEAT_SV_CHECK: tote Dienste per is_alive -> sv restart. + Xiaomi+Ollama Live-Probe."""
     try:
@@ -177,11 +203,19 @@ def _heartbeat_sv_check():
             cfg.read(_os.path.expanduser('~/jack/config.ini'))
             ohost = cfg.get('xiaomi', 'ip', fallback='10.229.239.131')
             _ur.urlopen(f'http://{ohost}:11434/api/tags', timeout=5)
+            _heat_ollama_guard()
         except Exception as _oe:
             try:
                 import jack_log
                 jack_log.log_decision("HB_OLLAMA_DOWN", str(_oe)[:80])
-                notify(f"Ollama auf Xiaomi nicht erreichbar: {str(_oe)[:60]}")
+                _st="/data/data/com.termux/files/home/jack/.ollama_hb_down"
+                _now=__import__("time").time(); _last=0.0
+                try: _last=float(open(_st).read())
+                except Exception: pass
+                if _now-_last>10800:
+                    open(_st,"w").write(str(_now))
+                    notify(f"Ollama auf Xiaomi nicht erreichbar: {str(_oe)[:60]}")
+                # JACK_TUNE_OLHB3H
             except Exception:
                 pass
     except Exception:

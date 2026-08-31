@@ -1,9 +1,9 @@
 {
   "id": "h001",
   "act": "file_exists",
-  "ts": "2026-08-31 06:53:14",
+  "ts": "2026-08-31 07:59:45",
   "ok": false,
-  "note": "act nicht erlaubt: file_exists",
+  "note": "file_exists /data/data/com.termux/files/home/jack/jack_manifest.json no",
   "out": "",
   "expect": "PASS",
   "raw_ok": false

@@ -1,45 +1,41 @@
 #!/usr/bin/env python3
-"""Pull pending missions from jack-missions repo into local queue."""
-import os, subprocess, shutil, glob, sys
-
-REPO = os.path.expanduser("~/jack-missions")
-LOCAL_PENDING = os.path.expanduser("~/jack/missions/pending")
-MAX_PULL = 10
-
-def run(cmd):
-    r = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
-    return r.returncode, r.stdout + r.stderr
-
+# JACK_TUNE_BRIDGE
+import os,json,shutil,subprocess,time
+H="/data/data/com.termux/files/home"
+J=H+"/jack/missions"
+R=H+"/jack-missions"
+MAX=10
+OK=set("shadow_report talk_contract fact diag no_chrome_src ui_none classify_is compile_ok explain_ok sv_ok mtime_fresh json_valid no_secret grep_count line_check hb_ok".split())
+def git(a,t=30):
+    return subprocess.run(["git","-C",R]+a,capture_output=True,text=True,timeout=t)
+def cnt(k):
+    p=J+"/"+k
+    return 0 if not os.path.isdir(p) else sum(x.endswith(".json") for x in os.listdir(p))
+def halt():
+    if os.path.isfile(J+"/STOP"): return "STOP"
+    if cnt("fail"): return "FAIL"
+    return ""
 def pull():
-    if not os.path.isdir(REPO):
-        print("FEHLER: Repo fehlt:", REPO)
-        return 1
-    rc, out = run(["git", "-C", REPO, "pull", "--ff-only", "origin", "main"])
-    print("git pull:", out.strip()[:200])
-    if rc != 0:
-        print("PULL FEHLER")
-        return 1
-    files = sorted(glob.glob(os.path.join(REPO, "pending", "*.json")))
-    if not files:
-        print("Keine neuen Missionen")
-        return
-    copied = 0
-    for f in files:
-        name = os.path.basename(f)
-        dest = os.path.join(LOCAL_PENDING, name)
-        log_path = os.path.join(os.path.expanduser("~/jack/missions/logs"), name)
-        if os.path.exists(dest):
-            print("Bereits lokal:", name)
-            continue
-        if os.path.exists(log_path):
-            print("Bereits abgearbeitet:", name)
-            continue
-        shutil.copy2(f, dest)
-        print("Kopiert:", name)
-        copied += 1
-    print(f"Pull fertig: {copied} neue Mission(en)")
-
-if __name__ == "__main__":
-    pull()
-
-# JACK_TUNE_R02
+    w=halt()
+    if w: return "HALT "+w
+    git(["pull","--ff-only","origin","main"])
+    src=R+"/pending"
+    if not os.path.isdir(src): return "NO_SRC"
+    n=0
+    for name in sorted(os.listdir(src)):
+        if n>=MAX: break
+        if not name.endswith(".json"): continue
+        if any(os.path.exists(x) for x in (J+"/pending/"+name,J+"/logs/"+name,J+"/done/"+name,J+"/fail/"+name,J+"/archive/"+name+".fail")): continue
+        try: d=json.load(open(src+"/"+name,encoding="utf-8"))
+        except Exception: continue
+        if str(d.get("act") or "") not in OK: continue
+        shutil.copy2(src+"/"+name,J+"/pending/"+name); n+=1
+    return "PULLED "+str(n)
+def push_status():
+    st={"ts":time.strftime("%Y-%m-%dT%H:%M:%S"),"pending":cnt("pending"),"done":cnt("done"),"fail":cnt("fail")}
+    os.makedirs(R+"/status",exist_ok=True)
+    open(R+"/status/honor.json","w").write(json.dumps(st))
+    git(["add","status/honor.json"])
+    if git(["diff","--cached","--quiet"]).returncode==0: return "SKIP"
+    git(["commit","-m","status: "+st["ts"]])
+    return "PUSH "+str(git(["push","origin","main"],t=40).returncode)

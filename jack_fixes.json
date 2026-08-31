@@ -33,5 +33,12 @@
     "beschreibung": "Xiaomi SSH wiederholt nicht erreichbar. WiFi-Recovery-Timeout erhoehen.",
     "modul": "jack_cortex",
     "n": 15
+  },
+  "fix_cortex_ssh_timeout_20260831_115517": {
+    "fix_id": "fix_cortex_ssh_timeout_20260831_115517",
+    "pfad": "/data/data/com.termux/files/home/jack_werkstatt/fix_cortex_ssh_timeout_20260831_115517.py",
+    "beschreibung": "Xiaomi SSH wiederholt nicht erreichbar. WiFi-Recovery-Timeout erhoehen.",
+    "modul": "jack_cortex",
+    "n": 15
   }
 }

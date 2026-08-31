@@ -1,10 +1,10 @@
 {
   "id": "h002",
   "act": "file_exists",
-  "ts": "2026-08-31 06:53:16",
-  "ok": false,
-  "note": "act nicht erlaubt: file_exists",
+  "ts": "2026-08-31 07:59:47",
+  "ok": true,
+  "note": "file_exists /data/data/com.termux/files/home/jack/jack_selftest.py yes",
   "out": "",
   "expect": "PASS",
-  "raw_ok": false
+  "raw_ok": true
 }
