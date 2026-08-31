@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""jack_ollama_gate.py — Ollama on-demand: warm -> use -> cool down."""
+import subprocess, time, threading, os, logging
+
+JACK      = "/data/data/com.termux/files/home/jack"
+SVC       = "/data/data/com.termux/files/usr/var/service/ollama"
+OLLAMA    = "http://10.229.239.131:11434"
+TEMP_MAX  = 52.0
+IDLE_STOP = 90
+log       = logging.getLogger("ollama_gate")
+_timer    = None
+_lock     = threading.Lock()
+
+def _ssh(cmd, timeout=10):
+    r = subprocess.run(
+        ["ssh", "-o", "BatchMode=yes", "-o", f"ConnectTimeout={timeout}",
+         "xiaomi-jack", cmd],
+        capture_output=True, text=True, timeout=timeout + 2
+    )
+    return r.stdout.strip()
+
+def get_temp() -> float:
+    try:
+        raw = _ssh("cat /sys/class/thermal/thermal_zone*/temp 2>/dev/null | sort -rn | head -1")
+        return round(int(raw.strip()) / 1000, 1)
+    except Exception as e:
+        log.warning(f"Temp-Read fehlgeschlagen: {e}")
+        return 0.0
+
+def temp_ok() -> bool:
+    t = get_temp()
+    log.info(f"Xiaomi Temp: {t}C (Limit {TEMP_MAX}C)")
+    return t < TEMP_MAX
+
+def _ollama_ready(retries=12) -> bool:
+    try:
+        import requests
+        for _ in range(retries):
+            try:
+                r = requests.get(f"{OLLAMA}/api/tags", timeout=3)
+                if r.status_code == 200:
+                    return True
+            except Exception:
+                pass
+            time.sleep(1)
+    except ImportError:
+        time.sleep(6)
+        return True
+    return False
+
+def start() -> bool:
+    if not temp_ok():
+        log.warning("Ollama-Start abgelehnt: Xiaomi zu heiss")
+        return False
+    _ssh(f"sv up {SVC}")
+    ok = _ollama_ready()
+    log.info("Ollama bereit" if ok else "Ollama nicht bereit nach Start")
+    return ok
+
+def _schedule_stop():
+    global _timer
+    if _timer:
+        _timer.cancel()
+    def _do_stop():
+        _ssh(f"sv down {SVC}")
+        t = get_temp()
+        log.info(f"Ollama gestoppt. Xiaomi Temp danach: {t}C")
+    _timer = threading.Timer(IDLE_STOP, _do_stop)
+    _timer.daemon = True
+    _timer.start()
+
+def call(prompt: str, model: str = "llama3.2:3b") -> str:
+    import requests as req
+    with _lock:
+        if not start():
+            return "[Ollama offline: zu heiss oder SSH-Fehler]"
+        try:
+            r = req.post(f"{OLLAMA}/api/generate",
+                json={"model": model, "prompt": prompt, "stream": False},
+                timeout=60)
+            result = r.json().get("response", "")
+        except Exception as e:
+            result = f"[Ollama-Fehler: {e}]"
+        _schedule_stop()
+        return result
+
+if __name__ == "__main__":
+    print(f"Xiaomi Temp: {get_temp()}C")
+    print(f"temp_ok: {temp_ok()}")
