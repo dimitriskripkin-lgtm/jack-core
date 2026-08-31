@@ -17,7 +17,8 @@ except ImportError:
     live_bridge=None
 
 from jack_keyboards import build_write_keyboard
-import jack_cmd_handler as _jch, menu_hauptseite as _kb_menu, menu_kategorie as _kb_kat
+import jack_cmd_handler as _jch
+from jack_keyboards import menu_hauptseite as _kb_menu, menu_kategorie as _kb_kat
 
 sys.path.append(os.path.expanduser('~/jack'))
 import jack_claude
