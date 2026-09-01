@@ -119,6 +119,16 @@ def _load_persona():
     except Exception: return "Du kennst Dima gut - Details aus jack_identity.json."
 
 def ask_gemini(question, status=None):
+    try:
+        import jack_circuit_breaker as _cb
+        if _cb.is_open():
+            from jack_log import get_logger
+            get_logger("jack_gemini_bridge").warn("Circuit Breaker offen — Ollama-Fallback")
+            try:
+            import jack_circuit_breaker as _cb; _cb.record_fail()
+        except Exception: pass
+        return _ollama_fallback(question)
+    except Exception: pass
     # Context Cache einbinden wenn verfügbar
     _cache_name = None
     try:

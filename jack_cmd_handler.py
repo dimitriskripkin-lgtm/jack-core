@@ -132,4 +132,29 @@ def handle(rt: str, text: str, send) -> str:
         except Exception as e:
             return f"Fehler reject_all: {e}"
 
+
+    if cmd == "/status":
+        import subprocess, time, json
+        lines = ["📊 *JACK Status*\n"]
+        try:
+            import jack_selftest as _js
+            r=_js.run_all()
+            lines.append(f"Score: {r.get('score','?')}%")
+        except Exception: lines.append("Score: ?")
+        try:
+            import jack_circuit_breaker as _cb
+            s=_cb.status()
+            lines.append(f"Circuit Breaker: {s.get('state','?')} (Fails: {s.get('fails',0)})")
+        except Exception: pass
+        try:
+            pend=len(os.listdir(os.path.join(J,"missions","pending")))
+            fail=len(os.listdir(os.path.join(J,"missions","fail")))
+            lines.append(f"Missions: pending={pend} fail={fail}")
+        except Exception: pass
+        try:
+            import jack_thermal_guard as _tg
+            lines.append(f"Akku: {_tg.get_battery()}%  Temp: {_tg.get_temp():.1f}°C")
+        except Exception: pass
+        return "\n".join(lines)
+
     return None

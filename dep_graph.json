@@ -108,14 +108,7 @@
     "jack_logging",
     "jack_log"
   ],
-  "jack_gemini_bridge": [
-    "jack_ollama_gate",
-    "jack_gemini_cache",
-    "jack_logging",
-    "jack_log",
-    "jack_config",
-    "jack_budget"
-  ],
+  "jack_gemini_bridge": [],
   "jack_autonomous": [
     "jack_mission_prioritizer",
     "jack_publish",
@@ -655,7 +648,10 @@
   "jack_apk_lab": [],
   "jack_activity_logger": [],
   "jack_ui_session": [],
-  "jack_circuit_breaker": [],
+  "jack_circuit_breaker": [
+    "jack_telegram",
+    "jack_log"
+  ],
   "jack_graph": [
     "jack_log"
   ],
