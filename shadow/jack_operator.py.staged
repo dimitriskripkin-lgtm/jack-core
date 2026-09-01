@@ -1,0 +1,239 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+from jack_approval import confirm_action
+try:
+    import jack_logging as _jlog
+except Exception:
+    _jlog = None
+import os, json, subprocess
+
+# OPERATOR_WHITELIST — nur diagnostische/reparatur-sichere Kommandos
+_OPERATOR_ALLOW_PREFIX = (
+    "sv status", "sv restart jack_", "free", "uptime", "df ",
+    "termux-battery", "cat /proc/", "echo ", "python3 -c ",
+    "ssh xiaomi-jack true", "ssh xiaomi-jack uptime",
+    "ssh xiaomi-jack \"su -c 'cat ",  # eng
+)
+_OPERATOR_DENY = (
+    "rm -rf", "mkfs", "dd if=", "drop table", "> /dev/",
+    "reboot", "shutdown", "chmod -R", "jack_secrets", "id_jack",
+    "curl ", "wget ", "pip install", "npm ",
+)
+
+def _operator_action_allowed(action: str):
+    a = (action or "").strip()
+    low = a.lower()
+    for d in _OPERATOR_DENY:
+        if d in low:
+            return False, "DENY:" + d
+    for pfx in _OPERATOR_ALLOW_PREFIX:
+        if low.startswith(pfx.lower()) or low.startswith(pfx.lower().strip()):
+            return True, "OK"
+    # sv restart nur jack_* 
+    if low.startswith("sv restart "):
+        rest = a.split(None, 2)
+        if len(rest) >= 3 and rest[2].startswith("jack_"):
+            return True, "OK"
+        return False, "sv restart nur jack_*"
+    return False, "nicht auf Operator-Whitelist"
+
+
+
+JACK_HOME = "/data/data/com.termux/files/home"
+
+class JackOperator:
+    def __init__(self):
+        self.cortex_cmd = "python ~/jack_cortex.py"
+    
+    def get_report(self):
+        """Holt aktuellen Report von cortex."""
+        result = subprocess.run(f"{self.cortex_cmd} report", shell=True, capture_output=True, text=True)
+        try:
+            return json.loads(result.stdout)
+        except Exception:
+            return None
+    
+    def diagnose(self, report):
+        """Analysiert Report — gibt Diagnose & empfohlene Aktionen zurück."""
+        diagnosis = {
+            "timestamp": report.get("timestamp"),
+            "status": "OK",
+            "issues": [],
+            "recommended_actions": [],
+            "severity": "INFO"
+        }
+        
+        if report["errors_found"] == 0:
+            diagnosis["status"] = "✓ SAUBER"
+            diagnosis["message"] = "Alle Systeme laufen normal."
+            return diagnosis
+        
+        # Critical Issues
+        if report["critical"]:
+            diagnosis["severity"] = "CRITICAL"
+            diagnosis["status"] = "⚠ KRITISCH"
+        else:
+            diagnosis["severity"] = "WARNING"
+            diagnosis["status"] = "⚠ FEHLER"
+        
+        # Analysiere Fehler
+        for logfile, info in report.get("logs", {}).items():
+            fname = os.path.basename(logfile)
+            for err in info.get("errors", []):
+                text = err.get("text", "")
+                
+                # Pattern-Matching für bekannte Fehler
+                if "ssh" in text.lower() or "kex" in text.lower() or "reset" in text.lower():
+                    diagnosis["issues"].append(f"SSH: Xiaomi nicht erreichbar ({fname})")
+                    diagnosis["recommended_actions"].append("sv restart jack_cortex")
+                
+                elif "connection" in text.lower() and "lost" in text.lower():
+                    diagnosis["issues"].append(f"SSH: Verbindung verloren ({fname})")
+                    diagnosis["recommended_actions"].append("sv restart jack_cortex")
+                
+                elif "memory" in text.lower() and "error" in text.lower():
+                    diagnosis["issues"].append(f"MEMORY: Fehler erkannt ({fname})")
+                    diagnosis["recommended_actions"].append("sqlite3 ~/jack/jack_errors.db 'SELECT COUNT(*) FROM errors WHERE resolved=0;'")
+                
+                elif "timeout" in text.lower():
+                    diagnosis["issues"].append(f"TIMEOUT: {fname}")
+                    diagnosis["recommended_actions"].append("System langsam — Prozesse checken: ps aux")
+                
+                else:
+                    diagnosis["issues"].append(f"{fname}: {text[:60]}")
+        
+        return diagnosis
+    
+    def propose_action(self, diagnosis):
+        """Präsentiert Diagnose und fragt nach Bestätigung."""
+        print("\n" + "="*70)
+        print(f"[JACK OPERATOR] {diagnosis['timestamp']}")
+        print("="*70)
+        print(f"\n📊 STATUS: {diagnosis['status']}")
+        print(f"🔴 SEVERITY: {diagnosis['severity']}")
+        
+        if diagnosis.get("message"):
+            print(f"\n✓ {diagnosis['message']}")
+            print("\n" + "="*70 + "\n")
+            return None
+        
+        print(f"\n⚠ ISSUES ({len(diagnosis['issues'])}):")
+        for issue in diagnosis["issues"]:
+            print(f"  • {issue}")
+        
+        if not diagnosis["recommended_actions"]:
+            print("\n✓ Keine automatischen Aktionen nötig.")
+            print("="*70 + "\n")
+            return None
+        
+        print(f"\n📝 EMPFOHLENE AKTIONEN ({len(diagnosis['recommended_actions'])}):")
+        for i, action in enumerate(diagnosis["recommended_actions"], 1):
+            print(f"  {i}. {action}")
+        
+        print("\n" + "="*70)
+        print("Soll ich diese Aktionen ausführen?")
+        approved = confirm_action(f"{len(diagnosis['recommended_actions'])} Aktion(en) ausfuehren"); response = "ja" if approved else "nein"
+        
+        if response == "show":
+            print("\n[FULL REPORT]")
+            print(json.dumps(diagnosis, indent=2))
+            approved2 = confirm_action("Aktionen nach Full-Report ausfuehren"); response = "ja" if approved2 else "nein"
+        
+        if response in ["ja", "y", "yes"]:
+            return diagnosis["recommended_actions"]
+        else:
+            print("[OPERATOR] Abgebrochen.")
+            return None
+    
+    def execute_actions(self, actions):
+        """Führt die genehmigten Aktionen aus."""
+        print(f"\n[OPERATOR] Führe {len(actions)} Aktionen aus ...\n")
+        results = []
+        
+        for i, action in enumerate(actions, 1):
+            print(f"[{i}/{len(actions)}] $ {action}")
+            ok_wl, wl_msg = _operator_action_allowed(action)
+            if not ok_wl:
+                print(f"  ✗ BLOCKED ({wl_msg})")
+                results.append({"action": action, "success": False, "error": "WHITELIST " + wl_msg})
+                continue
+            try:
+                result = subprocess.run(action, shell=True, capture_output=True, text=True, timeout=15)
+                output = result.stdout.strip() + result.stderr.strip()
+                success = result.returncode == 0
+                
+                if success:
+                    print("  ✓ OK")
+                else:
+                    print(f"  ✗ Error (code {result.returncode})")
+                
+                if output:
+                    print(f"  > {output[:100]}")
+                
+                results.append({
+                    "action": action,
+                    "returncode": result.returncode,
+                    "output": output,
+                    "success": success
+                })
+            except subprocess.TimeoutExpired:
+                print("  ✗ TIMEOUT")
+                results.append({"action": action, "success": False, "error": "TIMEOUT"})
+            except Exception as e:
+                print(f"  ✗ {e}")
+                results.append({"action": action, "success": False, "error": str(e)})
+        
+        return results
+    
+    def report_results(self, results):
+        """Berichtet Ausführungs-Resultat."""
+        success_count = sum(1 for r in results if r["success"])
+        print(f"\n{'='*70}")
+        print(f"[OPERATOR] Resultat: {success_count}/{len(results)} erfolgreich")
+        print("="*70)
+        
+        for r in results:
+            status = "✓" if r["success"] else "✗"
+            print(f"{status} {r['action'][:60]}")
+        
+        print()
+    
+    def run_once(self):
+        """Einmalige Diagnose & Ausführung."""
+        print("[OPERATOR] Scanning ...\n")
+        report = self.get_report()
+        
+        if not report:
+            print("[ERROR] Report konnte nicht gelesen werden.")
+            return
+        
+        diagnosis = self.diagnose(report)
+        actions = self.propose_action(diagnosis)
+        
+        if actions:
+            results = self.execute_actions(actions)
+            self.report_results(results)
+            
+            # Neuen Report nach Aktionen
+            print("[OPERATOR] Neuer Report nach Aktionen ...\n")
+            new_report = self.get_report()
+            new_diagnosis = self.diagnose(new_report)
+            print(f"📊 NEUER STATUS: {new_diagnosis['status']}\n")
+
+if __name__ == "__main__":
+    import argparse
+    ap = argparse.ArgumentParser(description="JACK Operator — Autonomer Debugger mit Bestätigung")
+    ap.add_argument("mode", nargs="?", default="run", choices=["run", "report", "diagnose"])
+    args = ap.parse_args()
+    
+    op = JackOperator()
+    
+    if args.mode == "run":
+        op.run_once()
+    elif args.mode == "report":
+        report = op.get_report()
+        print(json.dumps(report, indent=2))
+    elif args.mode == "diagnose":
+        report = op.get_report()
+        diagnosis = op.diagnose(report)
+        print(json.dumps(diagnosis, indent=2))

@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""Harter System-State fuer Teacher/Overmind — kein Gelaber."""
+import json, os, subprocess, time
+from datetime import datetime
+
+H = "/data/data/com.termux/files/home/jack"
+IP = "10.229.239.131"
+
+def sh(cmd, timeout=8):
+    try:
+        r = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
+        return (r.stdout or "") + (r.stderr or "")
+    except Exception as e:
+        return str(e)
+
+def collect():
+    adb = sh("adb devices")
+    adb_ok = any(IP in ln and "device" in ln.split() for ln in adb.splitlines())
+    ssh = sh("ssh -o BatchMode=yes -o ConnectTimeout=5 xiaomi-jack echo SSH_OK")
+    sv = sh("sv status /data/data/com.termux/files/usr/var/service/jack_* 2>/dev/null | head -20")
+    try:
+        import jack_heartbeat as hb
+        hearts = {d: hb.age(d) for d in ("jack_telegram", "jack_cortex", "jack_waechter", "jack_autolearn", "jack_publisher")}
+    except Exception:
+        hearts = {}
+    tip = sh("cd %s && git log -1 --oneline 2>/dev/null" % H).strip()
+    env = {}
+    try:
+        env = json.load(open(H + "/jack_environment_now.json"))
+    except Exception:
+        pass
+    state = {
+        "ts": datetime.now().isoformat(timespec="seconds"),
+        "host": "honor",
+        "git_tip": tip,
+        "ssh_xiaomi": "SSH_OK" in ssh,
+        "adb_device": adb_ok,
+        "adb_raw": adb.strip()[:300],
+        "sv": sv.strip()[:800],
+        "heartbeats_age_s": hearts,
+        "ui_pipeline": (env.get("ui_pipeline") or "")[:200],
+        "allowed_actions": [
+            "status", "adb_heal", "sv_status", "ssh_check",
+            "tap_text", "forsche", "skills_list",
+        ],
+        "forbidden": ["core_patch_without_approval", "rm_rf", "read_secrets"],
+        "last_errors_hint": sh("tail -5 %s/startup.log 2>/dev/null" % H)[:400],
+    }
+    path = H + "/jack_overmind_state.json"
+    open(path, "w").write(json.dumps(state, indent=2, ensure_ascii=False))
+    return path, state
+
+if __name__ == "__main__":
+    path, st = collect()
+    print("WROTE", path)
+    print(json.dumps({k: st[k] for k in ("ts", "git_tip", "ssh_xiaomi", "adb_device")}, ensure_ascii=False))

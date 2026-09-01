@@ -2,6 +2,8 @@
 MODULE_VERSION = 2  # bumped by shadow
 """Heartbeat: Dienste melden Lebenszeichen. Waechter prueft mtime statt nur sv status."""
 import os, time
+from jack_log import get_logger
+log = get_logger("jack_heartbeat")
 
 H = os.path.expanduser("~/jack")
 
@@ -23,6 +25,8 @@ def age(dienst):
         return None
 
 def is_alive(dienst, max_age=600):
+    """Prüft, ob ein Dienst innerhalb der maximalen Altersschwelle erreichbar ist.
+Gibt True zurück, wenn der Dienst jünger als `max_age` Sekunden ist, sonst False."""
     a = age(dienst)
     return a is not None and a < max_age
 

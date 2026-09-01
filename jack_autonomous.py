@@ -334,6 +334,12 @@ def main():
             import jack_code_analyzer as _jca; _jca.run()
         except Exception: pass
         try:
+            import jack_semantic_analyzer as _jsa; _jsa.run()
+        except Exception: pass
+        try:
+            import jack_autodoc as _jad2; _jad2.run()
+        except Exception: pass
+        try:
             import jack_mission_prioritizer as _jmp; _jmp.run()
         except Exception: pass
         try:

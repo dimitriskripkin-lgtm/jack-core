@@ -1,0 +1,1 @@
+{"id": "chg_compile_jack_install", "typ": "check", "act": "compile_ok", "file": "~/jack/jack_install.py", "cat": "changelog"}

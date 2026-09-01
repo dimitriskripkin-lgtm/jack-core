@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 MODULE_VERSION = 2
 import os,re,sqlite3,time,sys
+from jack_log import get_logger
+log = get_logger("jack_graph")
 DB=os.path.join(os.path.expanduser("~"),"jack","jack_graph.db")
 TYPS=("person","geraet","fakt","skill","chat")
 RELS=("hat","widerspricht","betrifft","folgt_aus")
@@ -11,6 +13,7 @@ def norm(s):
 def nid(typ,name):
     return typ+":"+norm(name)
 def con():
+    """Erstellt eine WAL-fähige SQLite-Datenbank-Verbindung und initialisiert die Tabellen 'nodes' und 'edges', falls diese noch nicht existieren."""
     c=sqlite3.connect(DB,timeout=5)
     c.execute("PRAGMA journal_mode=WAL")
     c.execute("CREATE TABLE IF NOT EXISTS nodes(id TEXT PRIMARY KEY,typ TEXT,name TEXT,wert TEXT,src TEXT,ts REAL)")

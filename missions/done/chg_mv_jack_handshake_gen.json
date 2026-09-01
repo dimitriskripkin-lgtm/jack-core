@@ -1,0 +1,1 @@
+{"id": "chg_mv_jack_handshake_gen", "typ": "check", "act": "grep_count", "file": "~/jack/jack_handshake_gen.py", "pattern": "MODULE_VERSION", "expect_min": 1, "expect": "PASS", "cat": "changelog"}

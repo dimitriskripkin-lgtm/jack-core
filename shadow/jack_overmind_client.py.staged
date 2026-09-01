@@ -1,0 +1,258 @@
+
+OVERMIND_MIN_INTERVAL = 180  # Sekunden zwischen API-Teacher-Calls
+OVERMIND_LAST_API = "/data/data/com.termux/files/home/jack/.overmind_last_api"
+
+def _api_allowed():
+    import time, os
+    try:
+        if os.path.isfile(OVERMIND_LAST_API):
+            age = time.time() - os.path.getmtime(OVERMIND_LAST_API)
+            if age < OVERMIND_MIN_INTERVAL:
+                return False, int(OVERMIND_MIN_INTERVAL - age)
+    except Exception:
+        pass
+    return True, 0
+
+def _api_mark():
+    open(OVERMIND_LAST_API, "w").write(str(__import__("time").time()))
+
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""
+Overmind-Client: State lesen -> Teacher (mock|file|api later) -> Aktionen vorschlagen.
+Ausfuehrung nur ueber erlaubte Hooks, kein blinder Shell.
+"""
+import json, os, subprocess, sys
+
+
+H = "/data/data/com.termux/files/home/jack"
+
+# === BLOCK 2 HARDENING ===
+ALLOWED_ACTIONS = {
+    "status", "ssh_check", "adb_heal", "sv_status", "skills_list",
+}
+FORBIDDEN_ACTIONS = {
+    "core_patch_without_approval", "rm_rf", "read_secrets",
+    "shell", "raw_shell", "eval", "exec",
+}
+
+STATE = H + "/jack_overmind_state.json"
+PLAN = H + "/jack_overmind_plan.json"
+RESULT = H + "/jack_overmind_result.json"
+
+def load_state():
+    import jack_overmind_state as s
+    path, st = s.collect()
+    return st
+
+
+
+def _secret(name):
+    try:
+        for line in open("/data/data/com.termux/files/home/.jack_secrets"):
+            if name in line:
+                import re
+                m = re.search(r'["\']([^"\']+)["\']', line)
+                if m:
+                    return m.group(1)
+    except Exception:
+        pass
+    return None
+
+def api_teacher(state):
+    
+    # HEAT_SKIP_OVERMIND
+    try:
+        import jack_heat_protection as _hp
+        if not _hp.check_heat("overmind"):
+            return {
+                "teacher": "heat",
+                "goal": "cool",
+                "actions": [{"id": "1", "cmd_type": "status", "why": "heat skip API"}],
+                "notes": "Honor zu warm, kein API-Call",
+            }
+    except Exception:
+        pass
+
+    ok, wait = _api_allowed()
+    if not ok:
+        return {
+            "teacher": "throttle",
+            "goal": "wait",
+            "actions": [{"id": "1", "cmd_type": "status", "why": "API throttle %ss" % wait}],
+            "notes": "skipped API, wait %ss" % wait,
+        }
+
+    """Grok/xAI wenn Key da, sonst None. Antwort muss JSON-Plan sein."""
+    key = _secret("XAI_API_KEY") or _secret("GROK_API_KEY") or _secret("xai_api_key")
+    if not key:
+        return None
+    import json, urllib.request
+    system = (
+        "Du bist JACK-Overmind-Teacher. Antworte NUR mit JSON: "
+        '{"teacher":"grok","goal":"...","actions":[{"id":"1","cmd_type":"ssh_check|adb_heal|status","why":"..."}],"notes":"..."} '
+        "Nur cmd_type aus allowed_actions. Kein Markdown."
+    )
+    user = json.dumps({
+        "ssh_xiaomi": state.get("ssh_xiaomi"),
+        "adb_device": state.get("adb_device"),
+        "git_tip": state.get("git_tip"),
+        "allowed_actions": state.get("allowed_actions"),
+        "heartbeats_age_s": state.get("heartbeats_age_s"),
+    }, ensure_ascii=False)
+    body = {
+        "model": "grok-4.6",
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "temperature": 0.2,
+    }
+    req = urllib.request.Request(
+        "https://api.x.ai/v1/chat/completions",
+        data=json.dumps(body).encode(),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + key,
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read().decode())
+        content = data["choices"][0]["message"]["content"]
+        # JSON extrahieren
+        content = content.strip()
+        if content.startswith("```"):
+            content = content.strip("`")
+            if content.startswith("json"):
+                content = content[4:].strip()
+        plan = json.loads(content)
+        plan["teacher"] = "grok_api"
+        _api_mark()
+        # nur erlaubte cmd_types
+        # HARD Whitelist + Forbidden (BLOCK 2)
+        acts = []
+        for a in plan.get("actions") or []:
+            ctype = a.get("cmd_type")
+            if ctype in FORBIDDEN_ACTIONS:
+                continue
+            if ctype in ALLOWED_ACTIONS:
+                acts.append(a)
+        plan["actions"] = acts[:5]
+        return plan
+    except Exception as e:
+        return {"teacher": "api_error", "goal": "fallback", "actions": [], "notes": str(e)[:200]}
+
+
+def file_teacher(state):
+    """Plan aus jack_overmind_plan_in.json — von Grok/Dima gelegt."""
+    path = H + "/jack_overmind_plan_in.json"
+    if not os.path.isfile(path):
+        return None
+    try:
+        plan = json.load(open(path))
+        plan["teacher"] = plan.get("teacher") or "file"
+        return plan
+    except Exception as e:
+        return {"teacher": "file_error", "goal": "none", "actions": [], "notes": str(e)[:200]}
+
+def mock_teacher(state):
+
+    """Ersetzt spaeter API. Liefert Maschinenplan."""
+    actions = []
+    if not state.get("ssh_xiaomi"):
+        actions.append({"id": "ssh_check", "cmd_type": "ssh_check", "why": "Xiaomi SSH tot"})
+    if not state.get("adb_device") and state.get("ssh_xiaomi"):
+        actions.append({"id": "adb_heal", "cmd_type": "adb_heal", "why": "ADB nicht device"})
+    if not actions:
+        actions.append({"id": "status", "cmd_type": "status", "why": "Alles grundgruenn — Status reporten"})
+    return {
+        "teacher": "mock",
+        "goal": "stabilize_link",
+        "actions": actions[:5],
+        "notes": "Mock-Plan. Spaeter Grok/xAI API.",
+    }
+
+def execute_plan(plan):
+    results = []
+    for a in plan.get("actions") or []:
+        ctype = a.get("cmd_type")
+        r = {"id": a.get("id"), "cmd_type": ctype, "ok": False, "out": ""}
+        # HARD gate
+        if ctype in FORBIDDEN_ACTIONS:
+            r["out"] = "FORBIDDEN"
+            results.append(r)
+            continue
+        if ctype not in ALLOWED_ACTIONS:
+            r["out"] = "NOT_ALLOWED"
+            results.append(r)
+            continue
+        try:
+            if ctype == "adb_heal":
+                p = subprocess.run(
+                    ["python3", H + "/jack_adb_heal.py"],
+                    capture_output=True, text=True, timeout=90,
+                )
+                r["out"] = ((p.stdout or "") + (p.stderr or ""))[:500]
+                r["ok"] = p.returncode == 0 and "RESULT OK" in r["out"]
+            elif ctype == "ssh_check":
+                p = subprocess.run(
+                    ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=6", "xiaomi-jack", "echo", "SSH_OK"],
+                    capture_output=True, text=True, timeout=10,
+                )
+                r["out"] = ((p.stdout or "") + (p.stderr or ""))[:200]
+                r["ok"] = "SSH_OK" in r["out"]
+            elif ctype == "sv_status":
+                p = subprocess.run(
+                    "sv status /data/data/com.termux/files/usr/var/service/jack_telegram "
+                    "/data/data/com.termux/files/usr/var/service/jack_cortex "
+                    "/data/data/com.termux/files/usr/var/service/jack_waechter "
+                    "/data/data/com.termux/files/usr/var/service/jack_autolearn "
+                    "/data/data/com.termux/files/usr/var/service/jack_publisher "
+                    "2>/dev/null | head -20",
+                    shell=True, capture_output=True, text=True, timeout=15,
+                )
+                r["out"] = ((p.stdout or "") + (p.stderr or "")).strip()[:800]
+                r["ok"] = "run:" in r["out"] or "down:" in r["out"]
+            elif ctype == "skills_list":
+                import sqlite3
+                db = "/data/data/com.termux/files/home/jack/jack_skills.db"
+                c = sqlite3.connect(db)
+                rows = c.execute(
+                    "SELECT name, state, successes, executions FROM skills ORDER BY state, name LIMIT 30"
+                ).fetchall()
+                c.close()
+                lines = ["%s|%s|%s/%s" % r for r in rows]
+                r["out"] = "\n".join(lines)[:900] if lines else "empty"
+                r["ok"] = True
+            elif ctype == "status":
+                import jack_overmind_state as _s
+                _, st = _s.collect()
+                r["out"] = json.dumps({
+                    "ssh_xiaomi": st.get("ssh_xiaomi"),
+                    "adb_device": st.get("adb_device"),
+                    "git_tip": st.get("git_tip"),
+                    "heartbeats_age_s": st.get("heartbeats_age_s"),
+                    "why": a.get("why"),
+                }, ensure_ascii=False)[:900]
+                r["ok"] = True
+            else:
+                r["out"] = "skip_unknown_type"
+        except Exception as e:
+            r["out"] = str(e)[:200]
+        results.append(r)
+    return results
+
+def main():
+    state = load_state()
+    plan = file_teacher(state) or api_teacher(state) or mock_teacher(state)
+    open(PLAN, "w").write(json.dumps(plan, indent=2, ensure_ascii=False))
+    results = execute_plan(plan)
+    out = {"ts": state.get("ts"), "plan": plan, "results": results}
+    open(RESULT, "w").write(json.dumps(out, indent=2, ensure_ascii=False))
+    print(json.dumps(out, indent=2, ensure_ascii=False)[:1200])
+    return 0 if all(x.get("ok") for x in results) else 1
+
+if __name__ == "__main__":
+    sys.exit(main())
