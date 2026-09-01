@@ -193,7 +193,19 @@ def ask_gemini(question, status=None):
     import time as _t
     for _a in range(3):
         try:
-            with urllib.request.urlopen(req, timeout=15) as res:
+            try:
+                _resctx = urllib.request.urlopen(req, timeout=15)
+            except Exception as _he:
+                if getattr(_he,"code",None)==401:
+                    try:
+                        import jack_telegram as tg
+                        _m="Gemini 401 API-Key abgelaufen"
+                        if hasattr(tg,"send"): tg.send(_m)
+                        elif hasattr(tg,"send_message"): tg.send_message(_m)
+                    except Exception:
+                        pass
+                raise
+            with _resctx as res:
                 result = json.loads(res.read())
                 _cb_success()
                 try:

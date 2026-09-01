@@ -12,7 +12,7 @@ STOP=J+"/missions/STOP"
 ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace"])
 def sh(cmd,t=8):
     try:
-        r=subprocess.run(cmd,capture_output=True,text=True,timeout=t)
+        r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
         return r.returncode,(r.stdout or "")+(r.stderr or "")
     except Exception as e:
         return 1,str(e)
@@ -352,6 +352,13 @@ def one(path):
     dest=D if rec["ok"] else F
     os.makedirs(dest,exist_ok=True)
     shutil.move(path,os.path.join(dest,os.path.basename(path)))
+    if str(dest).rstrip("/").endswith("fail"):
+        try:
+            import jack_deadletter as _dl
+            _dl.bump(os.path.splitext(os.path.basename(path))[0], os.path.join(dest,os.path.basename(path)))
+        except Exception:
+            pass
+
     return rec
 
 

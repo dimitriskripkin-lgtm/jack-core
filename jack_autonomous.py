@@ -174,7 +174,13 @@ def _heartbeat_sv_check():
         ]
         for name, max_age in dienste:
             try:
-                if not jack_heartbeat.is_alive(name, max_age=max_age):
+                _alive = jack_heartbeat.is_alive(name, max_age=max_age)
+                try:
+                    import jack_hb_alarm as _hba
+                    _hba.record(name, _alive)
+                except Exception:
+                    pass
+                if not _alive:
                     age = jack_heartbeat.age(name)
                     subprocess.run(["sv", "restart", name], capture_output=True, timeout=30)
                     try:
@@ -187,6 +193,11 @@ def _heartbeat_sv_check():
         # Xiaomi SSH Live-Probe
         try:
             xi_ok = jack_heartbeat.is_xiaomi_alive()
+            try:
+                import jack_hb_alarm as _hba
+                _hba.record("xiaomi", xi_ok)
+            except Exception:
+                pass
             if not xi_ok:
                 try:
                     import jack_log
@@ -356,6 +367,10 @@ def main():
         except Exception: pass
         _adb_heal_if_needed()
         _heartbeat_sv_check()
+        try:
+            import jack_score_avg as _jsa; _jsa.tick()
+        except Exception:
+            pass
         import jack_heartbeat; jack_heartbeat.beat('jack_waechter')
         try:
             import jack_graceful

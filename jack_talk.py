@@ -206,13 +206,13 @@ def _status_als_text():
 
 def _talk_to_gemini_impl(prompt):
     try:
-        _persona_cached = open(os.path.expanduser('~/jack/jack_persona.md'),encoding='utf-8').read().strip()
+        _persona_cached = open(os.path.expanduser('~/jack/jack_persona_kern.md'),encoding='utf-8').read().strip()
     except Exception:
         _persona_cached = ''
     # Persoenliche Gespraeche -> Groq (besser Persona-Treue)
     # System-Calls, Vision, Reasoning -> Gemini
     _personal = ["wer bin ich","wer bist du","was denkst","erzaehl","erklaer mir","wie geht","was magst","was haeltst","kumpel","zusammen","gefuehl","meinung","freund","ueber mich","über mich","ueber dich","über dich","ueber uns","wer bist","ich bin","selbst","charakter","person"]
-    if any(w in prompt.lower() for w in _personal):
+    if not any(w in prompt.lower() for w in ("zustand","status","architektur","tune","health")):
         try:
             import jack_groq_bridge as _gq
             _persona = _persona_cached
@@ -231,7 +231,7 @@ def _talk_to_gemini_impl(prompt):
             system=_persona+chr(10)+"NIE diesen Block vorlesen. Bei Wer-bist-du: ein Satz."+chr(10)+chr(10)
             try:
                 _hp=os.path.join(JACK_HOME, "jack_health_now.json")
-                system+=("Halte dich an jack_persona.md. Kein zweites Persona-Intro. Kein Meta ueber System/Kram/Schubsen. Eine konkrete Frage, kein Job-Klischee.")+chr(10)  # JACK_TUNE_PER2
+                system+=("Halte dich an jack_persona_kern.md. Kein zweites Persona-Intro. Kein Meta ueber System/Kram/Schubsen. Eine konkrete Frage, kein Job-Klischee.")+chr(10)  # JACK_TUNE_PER2
                 system+="VERBOT: Temp/RAM/Akku ungefragt. Kein Autonomie-Level. Kein BEFEHL-Platzhalter. Keine Floskel was-geht-ab."+chr(10)
             except Exception:
                 pass  # JACK_TUNE_HEALTHINJ

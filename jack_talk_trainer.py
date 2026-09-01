@@ -73,7 +73,19 @@ GUT: "{good_example[:80]}"
     open(PERSONA, "w").write(content)
     return True
 
+MAX_PERSONA_KB = 8
+def _check_persona_size():
+    """Persona-Kern darf 8KB nicht überschreiten."""
+    kern=os.path.join(J,"jack_persona_kern.md")
+    if os.path.exists(kern):
+        size=os.path.getsize(kern)
+        if size > MAX_PERSONA_KB*1024:
+            log.warn(f"Persona-Kern zu groß: {size//1024}KB — trainer pausiert")
+            return False
+    return True
+
 def run():
+    if not _check_persona_size(): return 0
     _log("=== TRAINER START ===")
     breaches = get_breaches(100)
     if not breaches:

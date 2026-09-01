@@ -125,3 +125,14 @@ def prune_old_logs(max_days: int = 7):
             if removed > 0:
                 _write("jack_log", Level.INFO, f"Prune: {removed} Zeilen älter als {max_days}d entfernt aus {os.path.basename(logfile)}")
         except Exception: pass
+
+
+# JACK_CORR_WRAP
+try:
+    import jack_corr as _jcorr
+    _log_decision_raw = log_decision
+    def log_decision(*a, **k):
+        if a: a=(_jcorr.tag(str(a[0])),)+a[1:]
+        return _log_decision_raw(*a, **k)
+except Exception:
+    pass

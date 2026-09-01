@@ -17,6 +17,8 @@ def load_key():
 def ask_groq(system_prompt, user_msg, timeout=20):
     key=load_key()
     if not key: return "[Groq] Kein API-Key"
+    if len(system_prompt or "")>4000: system_prompt=(system_prompt[:4000]+"\n[gekuerzt]")
+    if len(user_msg or "")>1500: user_msg=user_msg[:1500]
     payload=json.dumps({"model":MODEL,"messages":[{"role":"system","content":system_prompt},{"role":"user","content":user_msg}],"max_tokens":1024,"temperature":0.55}).encode()
     req=urllib.request.Request(API_URL,data=payload,headers={"Content-Type":"application/json","Authorization":"Bearer "+key,"User-Agent":UA})
     try:

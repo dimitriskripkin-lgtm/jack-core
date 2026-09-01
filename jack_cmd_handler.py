@@ -5,6 +5,7 @@ import os, sys
 sys.path.insert(0, "/data/data/com.termux/files/home/jack")
 
 def handle(rt: str, text: str, send) -> str:
+    cmd = (rt.split() or [''])[0] if isinstance(rt,str) else rt
     if rt in ('/akku','/sensor'):
         try:
             import jack_sensors as _js
@@ -139,7 +140,13 @@ def handle(rt: str, text: str, send) -> str:
         try:
             import jack_selftest as _js
             r=_js.run_all()
-            lines.append(f"Score: {r.get('score','?')}%")
+            sc=r.get("score") if isinstance(r,dict) else None
+            if not sc:
+                try:
+                    sc=__import__("json").load(open(J+"/jack_diag_snapshot.json",encoding="utf-8")).get("score")
+                except Exception:
+                    sc="?"
+            lines.append(f"Score: {sc}%")
         except Exception: lines.append("Score: ?")
         try:
             import jack_circuit_breaker as _cb

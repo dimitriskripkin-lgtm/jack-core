@@ -1,3 +1,4 @@
+MODULE_VERSION = 1
 #!/usr/bin/env python3
 import json, datetime
 J="/data/data/com.termux/files/home/jack"
@@ -38,6 +39,14 @@ def check_and_count(kind="text"):
     if d.get(kind,0)>=LIMITS.get(kind,40):
         return False, "Tageslimit "+kind
     d[kind]=d.get(kind,0)+1
+    if kind=="text" and d[kind]==max(1,int(LIMITS.get(kind,40)*0.8)):
+        try:
+            import jack_telegram as tg
+            msg="Gemini Budget 80 Prozent %s/%s"%(d[kind],LIMITS[kind])
+            if hasattr(tg,"send"): tg.send(msg)
+            elif hasattr(tg,"send_message"): tg.send_message(msg)
+        except Exception:
+            pass
     json.dump(d,open(F,"w"))
     return True, "%s %s/%s"%(kind,d[kind],LIMITS[kind])
 def add_tokens(n):

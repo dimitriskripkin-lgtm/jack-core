@@ -1,0 +1,10 @@
+{
+  "id": "dep_verify_jack_mission_runner_after_jack_deadletter",
+  "act": "compile_ok",
+  "ts": "2026-09-01 13:02:01",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

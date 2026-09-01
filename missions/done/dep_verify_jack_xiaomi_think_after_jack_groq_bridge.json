@@ -1,0 +1,1 @@
+{"id": "dep_verify_jack_xiaomi_think_after_jack_groq_bridge", "typ": "check", "cat": "dep_verify", "act": "compile_ok", "file": "~/jack/jack_xiaomi_think.py", "desc": "Verify jack_xiaomi_think nach \u00c4nderung von jack_groq_bridge", "_prio": 50, "_source": "dep_map"}
