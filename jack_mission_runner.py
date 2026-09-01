@@ -169,6 +169,13 @@ def run_act(m):
         want=(m.get("expect") or "").upper()
         return got==want,"got="+str(got)+" want="+want,got
     if act=="compile_ok":
+        # "file" (singular) hat Vorrang vor "files" (plural)
+        if "file" in m:
+            single = m["file"].replace("~/jack", J).replace("~", os.path.expanduser("~"))
+            if not os.path.exists(single):
+                return False, f"compile FAIL: Datei fehlt: {os.path.basename(single)}", ""
+            rc,o=sh(["python3","-m","py_compile",single],t=12)
+            return (rc==0), "compile "+("OK" if rc==0 else "FAIL: "+o[:60]), ""
         files=m.get("files") or ["jack_talk.py","jack_telegram.py","jack_chat_router.py","jack_selfsee.py","jack_exec.py"]
         bad=[]
         for n in files:
