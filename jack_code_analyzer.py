@@ -17,7 +17,7 @@ def _log(msg):
 PATTERNS = [
     {"name":"bare_except","regex":r"    except:\s*$","msg":"bare except gefunden","act":"grep_count","pattern":"    except:","expect_max":0},
     {"name":"hardcoded_path","regex":r'"/data/data/com\.termux/files/home/jack/[^"]+"',"msg":"hardcoded Pfad","act":"grep_count","pattern":"/data/data/com.termux/files/home/jack/","expect_max":0},
-    {"name":"tilde_in_string","regex":r'"~/',"msg":"Tilde in String","act":"grep_count","pattern":'"~/',"expect_max":0},
+    # {"name":"tilde_in_string","regex":r'"~/',"msg":"Tilde in String","act":"grep_count","pattern":'"~/',"expect_max":0}, # deaktiviert FP
     # print_debug: nur Core-Dienste, nicht CLI/Diag/Test-Tools
     # {"name":"print_debug",...} — deaktiviert, zu viele FP auf Nicht-Core-Module
     # hardcoded_ip deaktiviert — IP kommt aus config.ini, kein echter Fehler

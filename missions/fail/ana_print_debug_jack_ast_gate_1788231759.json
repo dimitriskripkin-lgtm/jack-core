@@ -1,0 +1,1 @@
+{"id": "ana_print_debug_jack_ast_gate_1788231759", "typ": "check", "act": "grep_count", "file": "~/jack/jack_ast_gate.py", "pattern": "    print(", "cat": "analyzer_print_debug", "expect_max": 0, "expect": "PASS", "_prio": 5}

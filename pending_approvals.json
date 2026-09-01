@@ -22,5 +22,45 @@
     "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
     "ts": "2026-09-01T04:18:12",
     "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_sys_mv_diag_full_dump_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/diag_full_dump.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/diag_full_dump.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:04:42",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_sys_mv_diag_snapshot_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/diag_snapshot.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/diag_snapshot.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:04:43",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_sys_mv_jack_adb_heal_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_adb_heal.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_adb_heal.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:04:47",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_sys_mv_jack_agent_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_agent.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_agent.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:04:48",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_sys_mv_jack_android_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_android.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_android.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:04:48",
+    "status": "wartet_freigabe"
   }
 ]

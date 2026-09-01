@@ -1,0 +1,10 @@
+{
+  "id": "sys_exists_jack_persona_md",
+  "act": "file_exists",
+  "ts": "2026-09-01 05:03:05",
+  "ok": true,
+  "note": "file_exists /data/data/com.termux/files/home/jack/jack_persona.md yes",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

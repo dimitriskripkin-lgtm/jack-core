@@ -1,0 +1,167 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""Vollstaendiger Live-Dump des JACK-Projekts."""
+import os, subprocess as sp, sqlite3, json, glob
+from datetime import datetime
+
+OUT = "/sdcard/Download/jack_full_dump_" + datetime.now().strftime("%Y%m%d_%H%M") + ".txt"
+os.makedirs(os.path.dirname(OUT), exist_ok=True)
+lines = []
+total_size = 0
+MAX_SIZE = 28 * 1024 * 1024  # 28 MB Limit
+
+def add(title, content):
+    global total_size
+    if total_size > MAX_SIZE:
+        lines.append(f"[ABBRUCH: {MAX_SIZE//1024//1024} MB Limit erreicht]")
+        return
+    section = chr(10) + "=" * 70 + chr(10) + title + chr(10) + "=" * 70 + chr(10) + str(content)
+    total_size += len(section.encode('utf-8', errors='ignore'))
+    lines.append(section)
+
+def run(cmd, timeout=15):
+    try:
+        r = sp.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
+        return (r.stdout or "") + (r.stderr or "")
+    except Exception as e:
+        return "FEHLER: " + str(e)
+
+def read_file(path, max_lines=500):
+    try:
+        with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.readlines()[:max_lines]
+        return "".join(content)
+    except Exception as e:
+        return f"LESEFEHLER: {e}"
+
+# 1. System-Uebersicht
+add("SNAPSHOT-ZEITPUNKT", datetime.now().isoformat())
+add("UPTIME + LOAD", run("uptime"))
+add("RAM", run("free -h"))
+add("DISK", run("df -h /data /sdcard 2>/dev/null"))
+add("TEMPERATUR (Celsius)", run("cat /sys/class/thermal/thermal_zone*/temp 2>/dev/null | awk '{print $1/1000}' | sort -n | tail -5"))
+add("PROZESSE", run("ps aux | grep -E 'jack_|ollama|mosquitto|sshd|crond|python3' | grep -v grep"))
+add("RUNIT STATUS", run("sv status /data/data/com.termux/files/usr/var/service/* 2>/dev/null"))
+add("CRONTAB", run("crontab -l"))
+add("STOP-DATEIEN", run("ls -la ~/.jack_* 2>&1"))
+add("GIT STATUS", run("cd ~/jack && git log --oneline -10 && echo '---' && git status --short && echo '---' && git remote -v"))
+
+# 2. Alle Python-Dateien
+add("PYTHON-DATEIEN UEBERSICHT", run("ls -lhS ~/jack/*.py 2>/dev/null | head -50"))
+add("PYTHON-DATEIEN ANZAHL", run("ls ~/jack/*.py 2>/dev/null | wc -l"))
+
+for pyfile in sorted(glob.glob(os.path.expanduser("~/jack/*.py"))):
+    name = os.path.basename(pyfile)
+    size = os.path.getsize(pyfile)
+    if size < 50000:  # Nur Dateien unter 50 KB
+        add(f"PY: {name} ({size} bytes)", read_file(pyfile, max_lines=800))
+    else:
+        add(f"PY: {name} ({size} bytes) - ZU GROSS, nur Kopf", read_file(pyfile, max_lines=50))
+
+# 3. Shell-Skripte
+for shfile in sorted(glob.glob(os.path.expanduser("~/jack/*.sh"))):
+    name = os.path.basename(shfile)
+    add(f"SH: {name}", read_file(shfile, max_lines=200))
+
+# 4. Run-Skripte der Dienste
+add("DIENSTE-VERZEICHNIS", run("ls -la /data/data/com.termux/files/usr/var/service/"))
+for svc_dir in sorted(glob.glob("/data/data/com.termux/files/usr/var/service/*/")):
+    svc_name = os.path.basename(svc_dir.rstrip('/'))
+    run_file = os.path.join(svc_dir, "run")
+    if os.path.exists(run_file):
+        add(f"RUNIT RUN: {svc_name}", read_file(run_file, max_lines=100))
+    log_dir = os.path.join(svc_dir, "log")
+    if os.path.exists(log_dir):
+        add(f"RUNIT LOG-DIR: {svc_name}", run(f"ls -la {log_dir}"))
+
+# 5. Termux-Boot-Skripte
+add("TERMUX-BOOT VERZEICHNIS", run("ls -la ~/.termux/boot/"))
+for bootfile in sorted(glob.glob(os.path.expanduser("~/.termux/boot/*"))):
+    name = os.path.basename(bootfile)
+    add(f"BOOT: {name}", read_file(bootfile, max_lines=100))
+
+# 6. Config-Dateien
+add("CONFIG.INI (ohne Secrets)", run("grep -v -i 'token\\|secret\\|password' ~/jack/config.ini 2>/dev/null"))
+add("JACK_SECRETS EXISTENZ", run("ls -la ~/.jack_secrets 2>&1"))
+add("JACK_PRIVATE_FILTER", run("cat ~/.jack_private_filter 2>/dev/null || echo 'nicht vorhanden'"))
+
+# 7. JSON-Wissensdateien (nur kleine)
+for jsonfile in ["jack_identity.json", "kortex_profile.json", "jack_persona.json", "next_action.json", "vision_action.json"]:
+    path = os.path.expanduser("~/jack/" + jsonfile)
+    if os.path.exists(path) and os.path.getsize(path) < 100000:
+        add(f"JSON: {jsonfile}", read_file(path, max_lines=300))
+
+# 8. Datenbanken
+add("DATENBANKEN UEBERSICHT", run("ls -lhS ~/jack/*.db 2>/dev/null"))
+for db_path in sorted(glob.glob(os.path.expanduser("~/jack/*.db"))):
+    name = os.path.basename(db_path)
+    size = os.path.getsize(db_path)
+    try:
+        con = sqlite3.connect(db_path)
+        tables = [r[0] for r in con.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").fetchall()]
+        add(f"DB: {name} ({size} bytes) - Tabellen: {', '.join(tables)}", "")
+        for table in tables[:5]:  # Max 5 Tabellen pro DB
+            try:
+                schema = con.execute(f"SELECT sql FROM sqlite_master WHERE name='{table}'").fetchone()
+                count = con.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                sample = con.execute(f"SELECT * FROM {table} LIMIT 3").fetchall()
+                add(f"  TABELLE: {table} ({count} Zeilen)", f"Schema: {schema[0] if schema else 'unbekannt'}{chr(10)}Beispiele:{chr(10)}" + chr(10).join(str(r)[:500] for r in sample))
+            except Exception as e:
+                add(f"  TABELLE: {table} FEHLER", str(e))
+        con.close()
+    except Exception as e:
+        add(f"DB: {name} FEHLER", str(e))
+
+# 9. Logs (letzte 50 Zeilen)
+add("LOGS UEBERSICHT", run("ls -lhS ~/jack/*.log ~/jack/logs/*.log 2>/dev/null | head -20"))
+for logfile in sorted(glob.glob(os.path.expanduser("~/jack/*.log")) + glob.glob(os.path.expanduser("~/jack/logs/*.log"))):
+    name = os.path.basename(logfile)
+    if os.path.getsize(logfile) > 0:
+        add(f"LOG: {name} (letzte 50)", run(f"tail -50 {logfile}"))
+
+# 10. Werkstatt und Archiv
+add("WERKSTATT INHALT", run("ls -la ~/jack_werkstatt/ 2>/dev/null | head -30"))
+add("ARCHIV INHALT", run("ls -la ~/jack_archiv/ 2>/dev/null | head -30"))
+add("BACKUP INHALT", run("ls -la ~/jack_backup/ 2>/dev/null | head -30"))
+add("PATCH_VORSCHLAEGE", run("ls -la ~/jack/patch_vorschlaege/ 2>/dev/null"))
+
+# 11. Faehigkeiten-Registry komplett
+add("FAEHIGKEITEN KOMPLETT", run("cd ~/jack && python3 jack_faehigkeiten.py liste 2>/dev/null"))
+
+# 12. Skills-DB Details
+try:
+    con = sqlite3.connect(os.path.expanduser("~/jack/jack_skills.db"))
+    skills = con.execute("SELECT name, state, executions, successes, description FROM skills ORDER BY state, executions DESC").fetchall()
+    con.close()
+    add("SKILLS DETAILLIERT", chr(10).join(f"{s[1]:12} | {s[0]:40} | exec:{s[2]:3} succ:{s[3]:3} | {s[4][:100]}" for s in skills))
+except Exception as e:
+    add("SKILLS DETAILLIERT FEHLER", str(e))
+
+# 13. Errors letzte 50
+try:
+    con = sqlite3.connect(os.path.expanduser("~/jack/jack_errors.db"))
+    errors = con.execute("SELECT id, timestamp, module, error_type, error_msg FROM errors ORDER BY id DESC LIMIT 50").fetchall()
+    con.close()
+    add("ERRORS LETZTE 50", chr(10).join(f"#{e[0]} {e[1]} [{e[2]}] {e[3]}: {e[4][:150]}" for e in errors))
+except Exception as e:
+    add("ERRORS LETZTE 50 FEHLER", str(e))
+
+# 14. Memory-Beispiele
+try:
+    con = sqlite3.connect(os.path.expanduser("~/jack/jack_memory.db"))
+    memories = con.execute("SELECT id, cmd, intent, source FROM memory ORDER BY id DESC LIMIT 20").fetchall()
+    con.close()
+    add("MEMORY LETZTE 20", chr(10).join(f"#{m[0]} [{m[3]}] {m[1][:100]} -> {m[2]}" for m in memories))
+except Exception as e:
+    add("MEMORY LETZTE 20 FEHLER", str(e))
+
+# Final schreiben
+with open(OUT, "w", encoding="utf-8") as f:
+    f.write(chr(10).join(lines))
+
+final_size = os.path.getsize(OUT)
+print(f"DUMP GESCHRIEBEN: {OUT}")
+print(f"Groesse: {final_size / 1024 / 1024:.2f} MB")
+print(f"Sektionen: {len(lines)}")
+if final_size > 30 * 1024 * 1024:
+    print("WARNUNG: Ueber 30 MB!")

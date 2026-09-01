@@ -2,6 +2,8 @@
 MODULE_VERSION = 1
 import os, json, subprocess, sqlite3, urllib.request
 from datetime import datetime
+from jack_log import get_logger
+log = get_logger("jack_gemini_bridge")
 
 _CB_FAILS = 0
 _CB_RESET_AT = 0.0

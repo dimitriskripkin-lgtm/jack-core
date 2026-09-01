@@ -1,0 +1,10 @@
+{
+  "id": "sys_mv_jack_cmd_handler",
+  "act": "grep_count",
+  "ts": "2026-09-01 05:03:57",
+  "ok": true,
+  "note": "grep_count: 1 Treffer (min 1)",
+  "out": "1",
+  "expect": "PASS",
+  "raw_ok": true
+}

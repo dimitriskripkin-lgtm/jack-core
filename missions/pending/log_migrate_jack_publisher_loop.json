@@ -1,0 +1,1 @@
+{"id": "log_migrate_jack_publisher_loop", "typ": "fix", "cat": "logging", "staged": true, "file": "~/jack/jack_publisher_loop.py", "desc": "Logger migrieren: from jack_log import get_logger", "act": "py_replace", "find": "import os", "replace": "import os\nfrom jack_log import get_logger\nlog = get_logger(\"jack_publisher_loop\")", "_prio": 2}

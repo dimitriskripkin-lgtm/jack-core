@@ -1,0 +1,10 @@
+{
+  "id": "chg_mv_jack_code_analyzer",
+  "act": "grep_count",
+  "ts": "2026-09-01 05:03:05",
+  "ok": true,
+  "note": "grep_count: 2 Treffer (min 1)",
+  "out": "2",
+  "expect": "PASS",
+  "raw_ok": true
+}

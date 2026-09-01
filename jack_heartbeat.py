@@ -2,6 +2,8 @@
 MODULE_VERSION = 2  # bumped by shadow
 """Heartbeat: Dienste melden Lebenszeichen. Waechter prueft mtime statt nur sv status."""
 import os, time
+from jack_log import get_logger
+log = get_logger("jack_heartbeat")
 
 H = os.path.expanduser("~/jack")
 

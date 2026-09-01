@@ -1,0 +1,10 @@
+{
+  "id": "ana_hardcoded_ip_jack_config_1788231494",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:58:22",
+  "ok": false,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "PASS",
+  "raw_ok": false
+}

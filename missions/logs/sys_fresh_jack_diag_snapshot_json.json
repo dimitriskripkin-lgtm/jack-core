@@ -1,0 +1,10 @@
+{
+  "id": "sys_fresh_jack_diag_snapshot_json",
+  "act": "mtime_fresh",
+  "ts": "2026-09-01 05:03:05",
+  "ok": true,
+  "note": "mtime_fresh: 25s alt limit 86400s",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

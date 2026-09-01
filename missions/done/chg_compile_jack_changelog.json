@@ -1,0 +1,1 @@
+{"id": "chg_compile_jack_changelog", "typ": "check", "act": "compile_ok", "file": "~/jack/jack_changelog.py", "cat": "changelog", "_prio": 50}

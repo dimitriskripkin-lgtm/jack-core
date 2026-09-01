@@ -1,0 +1,10 @@
+{
+  "id": "chg_compile_jack_mission_prioritizer",
+  "act": "compile_ok",
+  "ts": "2026-09-01 05:03:01",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

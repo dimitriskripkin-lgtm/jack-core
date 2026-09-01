@@ -355,6 +355,8 @@ def main():
 
 
 import threading as _th, time as _tm
+from jack_log import get_logger
+log = get_logger("jack_autonomous")
 
 def _autolearn_loop():
     while True:

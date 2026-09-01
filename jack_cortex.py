@@ -14,6 +14,8 @@ logging.info("JACK CORTEX gestartet")
 import os, time, subprocess, sqlite3, sys
 sys.path.append(os.path.expanduser('~/jack'))
 import jack_config
+from jack_log import get_logger
+log = get_logger("jack_cortex")
 try:
     import jack_logging as _jlog
 except Exception:
