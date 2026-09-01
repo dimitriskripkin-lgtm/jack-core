@@ -19,10 +19,10 @@ def run() -> tuple:
         import jack_config as _jc
         missing, warnings = [], []
         for key in REQUIRED:
-            val = _jc.get(key, fallback=None)
+            val = _jc.get_param(key, fallback=None)
             if not val: missing.append(key)
         for key in OPTIONAL:
-            val = _jc.get(key, fallback=None)
+            val = _jc.get_param(key, fallback=None)
             if not val: warnings.append(key)
         if missing:
             log.warn(f"Config: Pflichtfelder fehlen: {missing}")

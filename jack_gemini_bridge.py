@@ -125,8 +125,8 @@ def ask_gemini(question, status=None):
             from jack_log import get_logger
             get_logger("jack_gemini_bridge").warn("Circuit Breaker offen — Ollama-Fallback")
             try:
-            import jack_circuit_breaker as _cb; _cb.record_fail()
-        except Exception: pass
+                import jack_circuit_breaker as _cb; _cb.record_fail()
+            except Exception: pass
         return _ollama_fallback(question)
     except Exception: pass
     # Context Cache einbinden wenn verfügbar

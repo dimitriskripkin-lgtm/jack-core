@@ -1,4 +1,4 @@
-# JACK SYSTEM STATE — 2026-09-01 12:29
+# JACK SYSTEM STATE — 2026-09-01 12:32
 
 ## Services
 - jack_cortex: UP
@@ -7,9 +7,9 @@
 - ollama: DOWN
 
 ## Resources
-- RAM verfuegbar: 3138MB
+- RAM verfuegbar: 2863MB
 - Aktives Modell: gemini-2.5-flash
-- Memory-Eintraege: 7250
+- Memory-Eintraege: 7251
 - Offene Fehler: 15
 
 ## Config
@@ -31,4 +31,4 @@
 ## Letzte Log-Eintraege
 (unavailable)
 
-*Generiert: 2026-09-01 12:29*
+*Generiert: 2026-09-01 12:32*
