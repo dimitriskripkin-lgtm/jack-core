@@ -1,0 +1,1 @@
+{"id": "sys_sec_jack_seal_night", "typ": "check", "act": "grep_count", "file": "~/jack/jack_seal_night.py", "pattern": "AIza", "expect_max": 0, "expect": "PASS", "cat": "security"}

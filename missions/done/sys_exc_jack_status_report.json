@@ -1,0 +1,1 @@
+{"id": "sys_exc_jack_status_report", "typ": "check", "act": "grep_count", "file": "~/jack/jack_status_report.py", "pattern": "    except:", "expect_max": 0, "expect": "PASS", "cat": "quality"}

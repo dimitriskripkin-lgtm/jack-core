@@ -1,0 +1,10 @@
+{
+  "id": "sys_exc_jack_hey",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:26:18",
+  "ok": true,
+  "note": "grep_count: 0 Treffer (max 0)",
+  "out": "0",
+  "expect": "PASS",
+  "raw_ok": true
+}

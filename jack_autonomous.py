@@ -330,6 +330,9 @@ def main():
         try:
             import jack_talk_trainer as _jtt; _jtt.run()
         except Exception: pass
+        try:
+            import jack_code_analyzer as _jca; _jca.run()
+        except Exception: pass
         _adb_heal_if_needed()
         _heartbeat_sv_check()
         import jack_heartbeat; jack_heartbeat.beat('jack_waechter')

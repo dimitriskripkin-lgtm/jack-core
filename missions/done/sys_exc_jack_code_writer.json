@@ -1,0 +1,1 @@
+{"id": "sys_exc_jack_code_writer", "typ": "check", "act": "grep_count", "file": "~/jack/jack_code_writer.py", "pattern": "    except:", "expect_max": 0, "expect": "PASS", "cat": "quality"}

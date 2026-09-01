@@ -1,0 +1,1 @@
+{"id": "sys_fresh_autolearn_log", "typ": "check", "act": "mtime_fresh", "file": "~/jack/autolearn.log", "max_age_s": 86400, "expect": "PASS", "cat": "health"}

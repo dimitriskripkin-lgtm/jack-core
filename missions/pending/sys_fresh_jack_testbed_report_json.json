@@ -1,0 +1,1 @@
+{"id": "sys_fresh_jack_testbed_report_json", "typ": "check", "act": "mtime_fresh", "file": "~/jack/jack_testbed_report.json", "max_age_s": 86400, "expect": "PASS", "cat": "health"}

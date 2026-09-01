@@ -1,0 +1,1 @@
+{"id": "sys_exc_jack_read_curl", "typ": "check", "act": "grep_count", "file": "~/jack/jack_read_curl.py", "pattern": "    except:", "expect_max": 0, "expect": "PASS", "cat": "quality"}

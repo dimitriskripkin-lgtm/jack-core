@@ -1,0 +1,1 @@
+{"id": "sys_exists_jack_memory_db", "typ": "check", "act": "file_exists", "file": "~/jack/jack_memory.db", "expect": "PASS", "cat": "health"}

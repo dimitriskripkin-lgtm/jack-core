@@ -1,0 +1,1 @@
+{"id": "sys_exc_jack_mcp_server", "typ": "check", "act": "grep_count", "file": "~/jack/jack_mcp_server.py", "pattern": "    except:", "expect_max": 0, "expect": "PASS", "cat": "quality"}

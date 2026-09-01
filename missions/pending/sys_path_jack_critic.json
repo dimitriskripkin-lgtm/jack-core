@@ -1,0 +1,1 @@
+{"id": "sys_path_jack_critic", "typ": "check", "act": "grep_count", "file": "~/jack/jack_critic.py", "pattern": "/data/data/com.termux/files/home/jack/", "expect_max": 0, "expect": "PASS", "cat": "arch"}

@@ -1,0 +1,1 @@
+{"id": "sys_contract_breaches", "typ": "check", "act": "grep_count", "file": "~/jack/missions/talk_samples.jsonl", "pattern": "", "expect_max": 9999, "expect": "PASS", "cat": "talk"}

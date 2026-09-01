@@ -1,0 +1,1 @@
+{"id": "sys_mv_jack_mission_run", "typ": "check", "act": "grep_count", "file": "~/jack/jack_mission_run.py", "pattern": "MODULE_VERSION", "expect_min": 1, "expect": "PASS", "cat": "version"}

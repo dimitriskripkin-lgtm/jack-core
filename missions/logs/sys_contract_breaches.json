@@ -1,0 +1,10 @@
+{
+  "id": "sys_contract_breaches",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:26:18",
+  "ok": true,
+  "note": "grep_count: 166 Treffer (max 9999)",
+  "out": "166",
+  "expect": "PASS",
+  "raw_ok": true
+}

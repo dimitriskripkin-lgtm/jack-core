@@ -1,0 +1,1 @@
+{"id": "sys_mv_jack_intent_lookup", "typ": "check", "act": "grep_count", "file": "~/jack/jack_intent_lookup.py", "pattern": "MODULE_VERSION", "expect_min": 1, "expect": "PASS", "cat": "version"}
