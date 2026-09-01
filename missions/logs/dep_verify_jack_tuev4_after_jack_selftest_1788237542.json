@@ -1,0 +1,10 @@
+{
+  "id": "dep_verify_jack_tuev4_after_jack_selftest_1788237542",
+  "act": "compile_ok",
+  "ts": "2026-09-01 06:40:44",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}
