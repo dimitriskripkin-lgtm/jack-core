@@ -340,6 +340,9 @@ def main():
             import jack_autodoc as _jad2; _jad2.run()
         except Exception: pass
         try:
+            import jack_dep_map as _jdm; _jdm.run()
+        except Exception: pass
+        try:
             import jack_mission_prioritizer as _jmp; _jmp.run()
         except Exception: pass
         try:

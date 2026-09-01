@@ -1918,5 +1918,165 @@
     "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
     "ts": "2026-09-01T05:40:23",
     "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_auto_ingest_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_auto_ingest.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_auto_ingest.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:33",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_autofixer_shadow_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_autofixer_shadow.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_autofixer_shadow.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:34",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_briefing_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_briefing.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_briefing.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:34",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_briefing_cron_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_briefing_cron.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_briefing_cron.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:34",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_budget_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_budget.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_budget.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:35",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_budget_status_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_budget_status.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_budget_status.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:35",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_bug_fixer_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_bug_fixer.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_bug_fixer.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:36",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_bugfix_loop_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_bugfix_loop.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_bugfix_loop.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:36",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_calltest_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_calltest.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_calltest.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:37",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_chains_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_chains.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_chains.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:37",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_claude_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_claude.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_claude.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:39",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_cmd_crawler_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_cmd_crawler.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_cmd_crawler.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:40",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_code_writer_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_code_writer.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_code_writer.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:40",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_coder_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_coder.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_coder.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:40",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_consolidate_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_consolidate.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_consolidate.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:43",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_context_compress_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_context_compress.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_context_compress.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:43",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_context_ingest_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_context_ingest.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_context_ingest.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:44",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_dash_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_dash.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_dash.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:58",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_db_optimizer_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_db_optimizer.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_db_optimizer.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:59",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_db_queue_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_db_queue.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_db_queue.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:59",
+    "status": "wartet_freigabe"
   }
 ]
