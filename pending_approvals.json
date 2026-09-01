@@ -1854,5 +1854,69 @@
     "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
     "ts": "2026-09-01T05:39:51",
     "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_adb_heal_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_adb_heal.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_adb_heal.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:06",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_agent_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_agent.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_agent.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:07",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_android_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_android.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_android.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:07",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_approval_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_approval.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_approval.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:11",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_ast_gate_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_ast_gate.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_ast_gate.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:12",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_audit_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_audit.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_audit.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:12",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_audit_run_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_audit_run.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_audit_run.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:13",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_aufraeumen_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_aufraeumen.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_aufraeumen.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:40:23",
+    "status": "wartet_freigabe"
   }
 ]
