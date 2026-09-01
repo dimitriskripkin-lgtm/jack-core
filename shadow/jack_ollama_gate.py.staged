@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 MODULE_VERSION = 1
+MODULE_VERSION = 1
 """jack_ollama_gate.py — Ollama on-demand: warm -> use -> cool down."""
 import subprocess, time, threading, os, logging
 

@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "id": "gen_mv_check_autolearn_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_autolearn_loop.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_autolearn_loop.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T04:18:11",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_mv_check_chat_router_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_chat_router.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_chat_router.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T04:18:11",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_mv_check_ollama_gate_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_ollama_gate.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_ollama_gate.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T04:18:12",
+    "status": "wartet_freigabe"
+  }
+]

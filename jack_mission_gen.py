@@ -105,6 +105,30 @@ def run():
 
     return generated
 
+def _generate_trainer_mission():
+    """Wenn keine pending-Missions mehr → Trainer-Mission generieren."""
+    import os
+    PEND = os.path.join(os.path.expanduser("~/jack"), "missions", "pending")
+    DONE = os.path.join(os.path.expanduser("~/jack"), "missions", "done")
+    pending_count = len([f for f in os.listdir(PEND) if f.endswith(".json")]) if os.path.exists(PEND) else 0
+    if pending_count > 0:
+        return  # noch was zu tun
+    # Trainer-Mission schreiben
+    mid = f"trainer_{int(__import__('time').time())}"
+    mission = {
+        "id": mid,
+        "typ": "check",
+        "act": "mtime_fresh",
+        "file": "~/jack/trainer.log",
+        "max_age_s": 86400,
+        "expect": "PASS",
+        "cat": "trainer"
+    }
+    path = os.path.join(PEND, f"{mid}.json")
+    import json
+    open(path, "w").write(json.dumps(mission))
+    _log(f"Trainer-Mission generiert: {mid}")
+
 if __name__ == "__main__":
     n = run()
     print(f"jack_mission_gen: {n} Fix-Missions generiert")
