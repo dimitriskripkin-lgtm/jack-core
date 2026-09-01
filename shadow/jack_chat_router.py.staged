@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 MODULE_VERSION = 1
-MODULE_VERSION = 1
 """Eine Leitung: FACT / EXPLAIN / DIAG / TALK. Text und Stimme."""
 import re, os, sys
 sys.path.insert(0, "/data/data/com.termux/files/home/jack")
@@ -183,6 +182,7 @@ def strip_lane_tags(s):
     return s.strip()
 
 def apply_lane(llm_text, user_text):
+    """Klassifiziert den Nutzertext, um die passende Chat-Lane zu ermitteln, und setzt sie auf None, wenn die Lane "TALK" ist."""
     # JACK_TUNE_LANEUSER
     lane=classify(user_text)
     if lane=="TALK":

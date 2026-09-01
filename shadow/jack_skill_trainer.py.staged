@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""Skill-Trainer: fuehrt taeglich bis zu 3 sichere CANDIDATE/TESTING-Skills aus.
+Sicher = Plan enthaelt NUR exec/wait Steps, jedes Kommando passiert die Blockliste.
+Progression: 1 Erfolg -> TESTING, 3 Erfolge -> VERIFIED. UI-Skills bleiben unberuehrt."""
+import os, json, sqlite3, subprocess, datetime, time, sys
+sys.path.insert(0, os.path.expanduser('~/jack'))
+DB = os.path.expanduser('~/jack/jack_skills.db')
+SAFE_STEPS = {'exec', 'wait'}
+BLOCK = ['rm -rf', 'rm -r /', 'mkfs', 'dd if=', '> /dev', 'reboot', 'shutdown',
+         '.ssh', 'id_jack', 'api_key', 'secrets', 'config.ini', 'crontab',
+         'sv down', 'kill -9', 'ghp_', 'AIza', 'git push', 'curl', 'wget']
+
+def _cmd_ok(c):
+    cl = c.lower()
+    return not any(b in cl for b in BLOCK)
+
+def _run_plan(plan):
+    ev = []
+    for st in plan.get('steps', []):
+        t = st.get('type')
+        if t == 'wait':
+            time.sleep(min(float(st.get('sec', st.get('seconds', 1))), 10))
+            ev.append('wait'); continue
+        cmd = st.get('cmd', '')
+        if not _cmd_ok(cmd):
+            return False, 'BLOCKIERT: ' + cmd[:60]
+        r = subprocess.run(cmd, shell=True, capture_output=True, text=True,
+                           timeout=30, cwd=os.path.expanduser('~/jack'))
+        ev.append(r.stdout.strip()[:200])
+        if r.returncode != 0:
+            return False, 'rc=' + str(r.returncode) + ' ' + r.stderr.strip()[:120]
+    return True, ' | '.join(ev)[:300]
+
+def _check(plan, evidence):
+    crits = plan.get('success_criteria') or []
+    if not crits:
+        return True
+    for c in crits:
+        v = str(c.get('value', ''))
+        if c.get('type') == 'contains' and v not in evidence: return False
+        if c.get('type') == 'not_empty' and not evidence.strip(): return False
+    return True
+
+def run(max_skills=3):
+    h = datetime.datetime.now().hour
+    if not (8 <= h < 15):
+        print('Ausserhalb Power-Time, kein Training'); return []
+    con = sqlite3.connect(DB, timeout=5)
+    con.row_factory = sqlite3.Row
+    rows = con.execute("SELECT * FROM skills WHERE state IN ('CANDIDATE','TESTING') ORDER BY executions ASC, id ASC LIMIT 40").fetchall()
+    done = []
+    for r in rows:
+        if len(done) >= max_skills: break
+        try:
+            plan = json.loads(r['plan_json'])
+        except Exception:
+            continue
+        types = {s.get('type') for s in plan.get('steps', [])}
+        if not types or not types.issubset(SAFE_STEPS):
+            continue
+        ok, ev = False, ''
+        try:
+            ok, ev = _run_plan(plan)
+            if ok: ok = _check(plan, ev)
+        except Exception as e:
+            ev = str(e)[:150]
+        succ = r['successes'] + (1 if ok else 0)
+        state = r['state']
+        if ok and succ >= 3: state = 'VERIFIED'
+        elif ok and succ >= 1: state = 'TESTING'
+        con.execute('UPDATE skills SET executions=executions+1, successes=?, state=?, last_ts=? WHERE id=?',
+                    (succ, state, int(time.time()), r['id']))
+        con.commit()
+        done.append((r['name'], 'OK' if ok else 'FAIL', state, ev[:80]))
+        try:
+            import jack_log
+            jack_log.log_decision('SKILL-TRAINER', r['name'] + ' -> ' + ('OK ' if ok else 'FAIL ') + state)
+        except Exception: pass
+    con.close()
+    return done
+
+if __name__ == '__main__':
+    res = run()
+    if not res: print('Keine sicheren Skills faellig')
+    for n, o, s, e in res:
+        print(n, '|', o, '|', s, '|', e)

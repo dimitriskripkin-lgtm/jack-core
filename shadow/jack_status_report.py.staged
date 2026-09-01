@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""JACK Status -> JSON -> GitHub jack-context Repo"""
+import os, json, subprocess, time, glob
+
+J  = os.path.expanduser("~/jack")
+JM = os.path.expanduser("~/jack/missions")
+GH = os.path.expanduser("~/jack-context")
+
+def build_status():
+    done = len(glob.glob(JM+"/done/*.json"))
+    fail = len(glob.glob(JM+"/fail/*.json"))
+    pend = len(glob.glob(JM+"/pending/*.json"))
+    beats = {}
+    for f in glob.glob(J+"/.heartbeat_jack_*"):
+        svc = os.path.basename(f).replace(".heartbeat_","")
+        try:
+            ts  = float(open(f).read().strip())
+            age = int(time.time()-ts)
+            beats[svc] = f"{age}s ago"
+        except Exception: beats[svc] = "?"
+    fails = [os.path.basename(f) for f in
+        glob.glob(JM+"/fail/*.json")][:20]
+    budget = {}
+    try: budget = json.load(open(J+"/.api_budget"))
+    except Exception: pass
+    return {
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "missions": {"done":done,"fail":fail,"pending":pend},
+        "heartbeats": beats,
+        "open_fails": fails,
+        "budget": budget
+    }
+
+def push():
+    status = build_status()
+    out = os.path.join(GH,"jack_live_status.json")
+    json.dump(status, open(out,"w"), indent=2, ensure_ascii=False)
+    subprocess.run(["git","-C",GH,"add","jack_live_status.json"],
+        capture_output=True)
+    subprocess.run(["git","-C",GH,"commit","-m",
+        f"status: {status['ts']}"],capture_output=True)
+    subprocess.run(["git","-C",GH,"push","origin","main"],
+        capture_output=True, timeout=30)
+    print(f"Status gepusht: {status['ts']}")
+    print(json.dumps(status, indent=2, ensure_ascii=False))
+
+if __name__ == "__main__":
+    push()

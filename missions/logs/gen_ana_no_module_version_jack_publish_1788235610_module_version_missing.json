@@ -1,0 +1,10 @@
+{
+  "id": "gen_ana_no_module_version_jack_publish_1788235610_module_version_missing",
+  "act": "sed_replace",
+  "ts": "2026-09-01 06:11:31",
+  "ok": true,
+  "note": "shadow: wartet_freigabe — jack_publish.py.staged",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

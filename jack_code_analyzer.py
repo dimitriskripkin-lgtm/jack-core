@@ -83,6 +83,13 @@ def run():
             and m["file"] in open(os.path.join(PEND, x), errors="ignore").read()
             for x in os.listdir(PEND) if x.endswith(".json")
         ) if os.path.exists(PEND) else False
+        # Auch done/fail/archive prüfen — kein Re-Fire
+        if not already:
+            for sub in ["done","fail","archive"]:
+                sp=os.path.join(J,"missions",sub)
+                if os.path.exists(sp):
+                    if any(x.startswith(m["id"]) for x in os.listdir(sp)):
+                        already=True; break
         if not already:
             path = os.path.join(PEND, f"{m['id']}.json")
             open(path,"w").write(json.dumps(m))

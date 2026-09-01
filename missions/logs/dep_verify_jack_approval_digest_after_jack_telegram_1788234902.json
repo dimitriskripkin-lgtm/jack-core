@@ -1,0 +1,10 @@
+{
+  "id": "dep_verify_jack_approval_digest_after_jack_telegram_1788234902",
+  "act": "compile_ok",
+  "ts": "2026-09-01 05:58:43",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

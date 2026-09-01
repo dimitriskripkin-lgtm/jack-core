@@ -13,7 +13,6 @@ def norm(s):
 def nid(typ,name):
     return typ+":"+norm(name)
 def con():
-    """Erstellt eine WAL-fähige SQLite-Datenbank-Verbindung und initialisiert die Tabellen 'nodes' und 'edges', falls diese noch nicht existieren."""
     c=sqlite3.connect(DB,timeout=5)
     c.execute("PRAGMA journal_mode=WAL")
     c.execute("CREATE TABLE IF NOT EXISTS nodes(id TEXT PRIMARY KEY,typ TEXT,name TEXT,wert TEXT,src TEXT,ts REAL)")
@@ -81,6 +80,8 @@ def recall(q,limit=8):
         if len(out)>=limit: break
     return "\n".join(out)
 def prompt_block(q):
+    """Gibt eine formatierte Zeichenkette zurück, die eine Grafik repräsentiert, oder eine leere Zeichenkette, wenn keine Daten abgerufen werden können.
+Erzeugt eine einfache Textdarstellung für die Visualis"""
     r=recall(q,8)
     return "GRAPH (nur Fakten, nicht vorlesen):\n"+r if r else ""
 if __name__=="__main__":

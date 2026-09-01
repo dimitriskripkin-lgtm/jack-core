@@ -1,0 +1,1 @@
+{"id": "ana_no_module_version_jack_monitor_1788235324", "typ": "check", "act": "grep_count", "file": "~/jack/jack_monitor.py", "pattern": "MODULE_VERSION", "cat": "analyzer_no_module_version", "expect_min": 1, "expect": "PASS", "_prio": 7}

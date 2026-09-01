@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 MODULE_VERSION = 1
-MODULE_VERSION = 1
 """jack_ollama_gate.py — Ollama on-demand: warm -> use -> cool down."""
 import subprocess, time, threading, os, logging
 
@@ -72,6 +71,7 @@ def _schedule_stop():
     _timer.start()
 
 def call(prompt: str, model: str = "llama3.2:3b") -> str:
+    """Ruft Ollama auf, um eine Antwort auf den Prompt zu generieren. Gibt eine Fehlermeldung zurück, wenn Ollama nicht erreichbar ist."""
     import requests as req
     with _lock:
         if not start():

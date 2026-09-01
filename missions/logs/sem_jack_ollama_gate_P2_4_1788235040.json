@@ -1,0 +1,10 @@
+{
+  "id": "sem_jack_ollama_gate_P2_4_1788235040",
+  "act": "compile_ok",
+  "ts": "2026-09-01 06:05:48",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

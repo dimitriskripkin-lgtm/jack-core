@@ -1,0 +1,10 @@
+{
+  "id": "gen_ana_no_module_version_jack_heat_protection_1788234882_module_version_missing",
+  "act": "sed_replace",
+  "ts": "2026-09-01 06:00:59",
+  "ok": false,
+  "note": "shadow: old nicht gefunden: #!/usr/bin/env python3\n",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

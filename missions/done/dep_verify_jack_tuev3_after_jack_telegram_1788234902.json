@@ -1,0 +1,1 @@
+{"id": "dep_verify_jack_tuev3_after_jack_telegram_1788234902", "typ": "check", "cat": "dep_verify", "act": "compile_ok", "file": "~/jack/jack_tuev3.py", "desc": "Verify jack_tuev3 nach \u00c4nderung von jack_telegram", "_prio": 50, "_source": "dep_map"}

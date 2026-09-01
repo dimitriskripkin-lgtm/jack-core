@@ -1,0 +1,10 @@
+{
+  "id": "sys_path_kortex_profile_updater",
+  "act": "grep_count",
+  "ts": "2026-09-01 06:18:58",
+  "ok": false,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "PASS",
+  "raw_ok": false
+}

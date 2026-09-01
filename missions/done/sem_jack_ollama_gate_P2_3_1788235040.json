@@ -1,0 +1,1 @@
+{"id": "sem_jack_ollama_gate_P2_3_1788235040", "typ": "check", "cat": "semantic_style", "file": "~/jack/jack_ollama_gate.py", "act": "compile_ok", "desc": "[P2] L51: Der Import von 'requests' erfolgt innerhalb der Funktion _ol", "fix_hint": "Importiere 'requests' am Anfang des Skripts zusammen mit den anderen Modulen.", "_prio": 50, "_source": "semantic_analyzer"}

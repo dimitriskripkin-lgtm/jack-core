@@ -1,0 +1,10 @@
+{
+  "id": "gen_sys_mv_jack_skill_builder_module_version_missing",
+  "act": "sed_replace",
+  "ts": "2026-09-01 05:54:31",
+  "ok": true,
+  "note": "shadow: wartet_freigabe — jack_skill_builder.py.staged",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

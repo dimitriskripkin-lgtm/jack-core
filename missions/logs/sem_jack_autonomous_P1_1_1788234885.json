@@ -1,0 +1,10 @@
+{
+  "id": "sem_jack_autonomous_P1_1_1788234885",
+  "act": "compile_ok",
+  "ts": "2026-09-01 06:05:37",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}
