@@ -1,0 +1,10 @@
+{
+  "id": "chg_compile_jack_backoff",
+  "act": "compile_ok",
+  "ts": "2026-09-01 13:48:56",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

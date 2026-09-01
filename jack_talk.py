@@ -245,7 +245,8 @@ def _talk_to_gemini_impl(prompt):
             except Exception:
                 pass
             return _scrub_out(_gq.ask_groq(system, prompt))
-        except Exception: pass
+        except Exception:
+            return talk_to_ollama(prompt, [])  # Groq fail → direkt Ollama, nie Gemini für TALK
     import jack_gemini_bridge
     try:
         mv = get_embedding(prompt)
