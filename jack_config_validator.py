@@ -18,22 +18,34 @@ def run() -> tuple:
     try:
         import jack_config as _jc
         missing, warnings = [], []
-        for key in REQUIRED:
-            val = _jc.get_param(key, fallback=None)
-            if not val: missing.append(key)
-        for key in OPTIONAL:
-            val = _jc.get_param(key, fallback=None)
-            if not val: warnings.append(key)
-        if missing:
-            log.warn(f"Config: Pflichtfelder fehlen: {missing}")
-        if warnings:
-            log.info(f"Config: Optionale Felder fehlen: {warnings}")
-        if not missing:
-            log.info("Config: alle Pflichtfelder vorhanden")
+
+        # Sections + Keys prüfen
+        required_keys = {
+            "NETWORK": ["xiaomi_ip","ssh_port"],
+            "GITHUB":  ["token","repo","branch"],
+            "gemini":  ["model"],
+            "OLLAMA":  ["host","port"],
+        }
+        for sec, keys in required_keys.items():
+            for key in keys:
+                try:
+                    val = _jc.get_param(sec, key)
+                    if not val: warnings.append(f"{sec}.{key} leer")
+                except Exception:
+                    missing.append(f"{sec}.{key}")
+
+        # Env-Vars prüfen
+        for env in ["GEMINI_API_KEY","GROQ_API_KEY","TELEGRAM_BOT_TOKEN","TELEGRAM_CHAT_ID"]:
+            if not os.environ.get(env):
+                warnings.append(f"ENV:{env} fehlt")
+
+        if missing: log.warn(f"Config: Pflichtfelder fehlen: {missing}")
+        if warnings: log.info(f"Config: Warnungen: {warnings}")
+        if not missing: log.info("Config: alle Pflichtfelder OK")
         return len(missing)==0, missing, warnings
     except Exception as e:
         log.exception("Config-Validator Fehler", e)
-        return False, ["config.ini nicht ladbar"], []
+        return False, ["config.ini nicht ladbar"], [], []
 
 if __name__ == "__main__":
     ok, missing, warn = run()

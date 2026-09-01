@@ -108,7 +108,15 @@
     "jack_logging",
     "jack_log"
   ],
-  "jack_gemini_bridge": [],
+  "jack_gemini_bridge": [
+    "jack_ollama_gate",
+    "jack_gemini_cache",
+    "jack_logging",
+    "jack_circuit_breaker",
+    "jack_log",
+    "jack_config",
+    "jack_budget"
+  ],
   "jack_autonomous": [
     "jack_mission_prioritizer",
     "jack_publish",
@@ -698,6 +706,10 @@
   "jack_thermal_guard": [
     "jack_log"
   ],
+  "jack_secret_scanner": [
+    "jack_telegram",
+    "jack_log"
+  ],
   "jack_yt_sido": [
     "jack_vision_selector"
   ],
@@ -730,6 +742,10 @@
     "jack_config",
     "jack_log"
   ],
+  "jack_config_validator": [
+    "jack_config",
+    "jack_log"
+  ],
   "jack_yt_hybrid": [],
   "jack_heat_protection": [
     "jack_workers"
@@ -740,9 +756,12 @@
   "jack_status_report": [],
   "jack_cmd_handler": [
     "jack_sensors",
+    "jack_selftest",
     "jack_intent",
+    "jack_circuit_breaker",
     "jack_log",
     "jack_budget",
+    "jack_thermal_guard",
     "jack_health_monitor"
   ],
   "jack_voice_handler": [
