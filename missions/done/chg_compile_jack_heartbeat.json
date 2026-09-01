@@ -1,0 +1,1 @@
+{"id": "chg_compile_jack_heartbeat", "typ": "check", "act": "compile_ok", "file": "~/jack/jack_heartbeat.py", "cat": "changelog", "_prio": 50}

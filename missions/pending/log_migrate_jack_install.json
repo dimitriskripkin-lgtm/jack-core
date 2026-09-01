@@ -1,1 +1,0 @@
-{"id": "log_migrate_jack_install", "typ": "fix", "cat": "logging", "staged": true, "file": "~/jack/jack_install.py", "desc": "Logger migrieren: from jack_log import get_logger", "act": "py_replace", "find": "import os", "replace": "import os\nfrom jack_log import get_logger\nlog = get_logger(\"jack_install\")", "_prio": 2}

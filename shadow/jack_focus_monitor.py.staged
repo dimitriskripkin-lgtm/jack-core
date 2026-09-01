@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""Phase 9 Delta-Layer: Fokus pollen, Dump nur bei Wechsel."""
+import subprocess, time, os, sys
+sys.path.insert(0, os.path.expanduser("~/jack"))
+import jack_screen_mapper as sm
+STATE = os.path.expanduser("~/jack/.focus_state")
+STOP = os.path.expanduser("~/jack/.focus_stop")
+def fokus():
+    r = subprocess.run(["ssh", "xiaomi-jack",
+        "su -c 'dumpsys window | grep mCurrentFocus'"],
+        capture_output=True, text=True, timeout=8)
+    return r.stdout.strip()
+def main():
+    letzter = open(STATE).read().strip() if os.path.exists(STATE) else ""
+    print("FOCUS-MONITOR aktiv. Stop: touch ~/jack/.focus_stop")
+    while True:
+        if os.path.exists(STOP):
+            print("Stop-Datei - Ende."); return
+        f = fokus()
+        if f and f != letzter:
+            # Activity-Logger: Screen-Wechsel automatisch loggen (Qwen 21.08.)
+            try:
+                import jack_activity_logger
+                _old_pkg = letzter.split(" ")[-1].split("/")[0].split("{")[1] if "{" in letzter else "unknown"
+                _new_pkg = f.split(" ")[-1].split("/")[0].split("{")[1] if "{" in f else "unknown"
+                jack_activity_logger.log_event("xiaomi", "screen_change", f"{_old_pkg} -> {_new_pkg}")
+            except Exception:
+                pass
+            low = f.lower()
+            print("WECHSEL: " + f[:80])
+            if "aod" not in low and "keyguard" not in low:
+                try:
+                    h, pkg, act, els = sm.dump_and_parse()
+                    print("  Screen %s/%s | %d El. | %s" % (pkg, act, len(els), h[:8]))
+                except Exception as e:
+                    print("  Dump-Fehler: " + str(e)[:80])
+            letzter = f
+            open(STATE, "w").write(f)
+        time.sleep(15)  # JACK_TUNE_FOCUS
+if __name__ == "__main__":
+    main()

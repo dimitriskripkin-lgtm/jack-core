@@ -1,1 +1,0 @@
-{"id": "log_migrate_jack_self_audit", "typ": "fix", "cat": "logging", "staged": true, "file": "~/jack/jack_self_audit.py", "desc": "Logger migrieren: from jack_log import get_logger", "act": "py_replace", "find": "import os", "replace": "import os\nfrom jack_log import get_logger\nlog = get_logger(\"jack_self_audit\")", "_prio": 2}

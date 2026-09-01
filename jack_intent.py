@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """JACK Intent-Engine: erkennt Aktionswuensche in natuerlicher Sprache.
 Hybrid: Keywords zuerst (instant), Gemini-Semantik als Fallback (praezise).
 Lernt aus Historie welche Aktionen Dima wann will."""

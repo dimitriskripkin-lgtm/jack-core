@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_chains_1788232296",
+  "act": "grep_count",
+  "ts": "2026-09-01 05:12:20",
+  "ok": false,
+  "note": "grep_count: 13 Treffer (max 0)",
+  "out": "13",
+  "expect": "PASS",
+  "raw_ok": false
+}

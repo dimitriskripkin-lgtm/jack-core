@@ -1,0 +1,1 @@
+{"id": "log_migrate_jack_seal_night", "typ": "fix", "cat": "logging", "staged": true, "file": "~/jack/jack_seal_night.py", "desc": "Logger migrieren: from jack_log import get_logger", "act": "py_replace", "find": "import os", "replace": "import os\nfrom jack_log import get_logger\nlog = get_logger(\"jack_seal_night\")", "_prio": 50}

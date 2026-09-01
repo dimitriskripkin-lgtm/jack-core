@@ -1,0 +1,10 @@
+{
+  "id": "log_migrate_jack_radar",
+  "act": "py_replace",
+  "ts": "2026-09-01 05:20:21",
+  "ok": false,
+  "note": "fix: old fehlt",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

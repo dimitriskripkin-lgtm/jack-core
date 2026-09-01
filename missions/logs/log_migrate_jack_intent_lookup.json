@@ -1,0 +1,10 @@
+{
+  "id": "log_migrate_jack_intent_lookup",
+  "act": "py_replace",
+  "ts": "2026-09-01 05:18:48",
+  "ok": false,
+  "note": "fix: old fehlt",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

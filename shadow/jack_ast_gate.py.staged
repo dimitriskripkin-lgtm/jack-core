@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""AST-Gate: strukturelle Code-Pruefung vor Ausfuehrung.
+Nutzen: ok, gruende = check_code(quelltext)"""
+import ast
+BAD_CALLS = {"eval", "exec", "compile", "__import__", "breakpoint"}
+BAD_ATTRS = {"system", "popen", "execv", "execve", "fork", "kill",
+             "chown", "Popen", "check_output", "check_call"}
+BAD_IMPORTS = {"os", "subprocess", "socket", "shutil", "ctypes",
+               "importlib", "pickle", "marshal", "signal", "pty", "sys"}
+def check_code(source):
+    try:
+        tree = ast.parse(source)
+    except SyntaxError as e:
+        return False, ["SyntaxError: %s" % e]
+    probs = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            f = node.func
+            if isinstance(f, ast.Name) and f.id in BAD_CALLS:
+                probs.append("Call:%s Zeile %d" % (f.id, node.lineno))
+            elif isinstance(f, ast.Attribute) and f.attr in BAD_ATTRS:
+                probs.append("Attr-Call:%s Zeile %d" % (f.attr, node.lineno))
+        elif isinstance(node, ast.Import):
+            for a in node.names:
+                root = a.name.split(".")[0]
+                if root in BAD_IMPORTS:
+                    probs.append("Import:%s Zeile %d" % (root, node.lineno))
+        elif isinstance(node, ast.ImportFrom):
+            root = (node.module or "").split(".")[0]
+            if root in BAD_IMPORTS:
+                probs.append("ImportFrom:%s Zeile %d" % (root, node.lineno))
+    return (len(probs) == 0), probs
+if __name__ == "__main__":
+    gut = "x = 1 + 2\nprint(x)"
+    boese = "import os\nos.system('rm -rf /')"
+    getarnt = "e = __import__('builtins').eval\ne('__import__(\"os\").system(\"id\")')"
+    print("GUT:", check_code(gut))
+    print("BOESE:", check_code(boese))
+    print("GETARNT:", check_code(getarnt))

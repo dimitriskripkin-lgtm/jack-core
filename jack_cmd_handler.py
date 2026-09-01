@@ -84,4 +84,52 @@ def handle(rt: str, text: str, send) -> str:
         except Exception as e:
             return f"Approve-Fehler: {str(e)[:100]}"
 
+
+    if cmd == "/approve_all":
+        import json, os, shutil
+        J=os.path.expanduser("~/jack")
+        APPROVALS=os.path.join(J,"pending_approvals.json")
+        try:
+            entries=json.load(open(APPROVALS)) if os.path.exists(APPROVALS) else []
+            if not entries:
+                return "Keine Approvals pending."
+            results=[]
+            for entry in list(entries):
+                eid=entry.get("id","?")
+                src=os.path.join(J,"shadow",os.path.basename(entry.get("file",""))+".staged")
+                dst=entry.get("file","").replace("~/jack",J)
+                if os.path.exists(src):
+                    import shutil as _sh
+                    _sh.copy2(dst, dst+".fix.bak")
+                    _sh.copy2(src, dst)
+                    os.remove(src)
+                    results.append(f"✅ {os.path.basename(dst)}")
+                else:
+                    results.append(f"⚠️ {eid} — staged fehlt")
+            open(APPROVALS,'w').write('[]')
+            # Health-Check
+            try:
+                import jack_health_monitor as _hm
+                _hm.check_after_approve()
+            except Exception: pass
+            return f"✅ {len(entries)} Fixes angewendet:\n" + "\n".join(results[:20])
+        except Exception as e:
+            return f"Fehler approve_all: {e}"
+
+    if cmd == "/reject_all":
+        import json, os
+        J=os.path.expanduser("~/jack")
+        APPROVALS=os.path.join(J,"pending_approvals.json")
+        try:
+            entries=json.load(open(APPROVALS)) if os.path.exists(APPROVALS) else []
+            n=len(entries)
+            # Staged Files löschen
+            for entry in entries:
+                src=os.path.join(J,"shadow",os.path.basename(entry.get("file",""))+".staged")
+                if os.path.exists(src): os.remove(src)
+            open(APPROVALS,'w').write('[]')
+            return f"❌ {n} Fixes abgelehnt."
+        except Exception as e:
+            return f"Fehler reject_all: {e}"
+
     return None

@@ -1,0 +1,10 @@
+{
+  "id": "gen_ana_no_module_version_jack_harvest_lernen_1788233115_module_version_missing",
+  "act": "sed_replace",
+  "ts": "2026-09-01 05:28:44",
+  "ok": true,
+  "note": "shadow: wartet_freigabe — jack_harvest_lernen.py.staged",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

@@ -1,0 +1,10 @@
+{
+  "id": "ana_todo_fixme_jack_code_analyzer_1788231891",
+  "act": "grep_count",
+  "ts": "2026-09-01 05:14:54",
+  "ok": false,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "PASS",
+  "raw_ok": false
+}

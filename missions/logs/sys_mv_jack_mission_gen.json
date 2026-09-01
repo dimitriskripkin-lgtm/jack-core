@@ -1,0 +1,10 @@
+{
+  "id": "sys_mv_jack_mission_gen",
+  "act": "grep_count",
+  "ts": "2026-09-01 05:31:07",
+  "ok": true,
+  "note": "grep_count: 4 Treffer (min 1)",
+  "out": "4",
+  "expect": "PASS",
+  "raw_ok": true
+}

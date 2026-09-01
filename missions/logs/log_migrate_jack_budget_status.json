@@ -1,0 +1,10 @@
+{
+  "id": "log_migrate_jack_budget_status",
+  "act": "py_replace",
+  "ts": "2026-09-01 05:16:49",
+  "ok": false,
+  "note": "fix: old fehlt",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

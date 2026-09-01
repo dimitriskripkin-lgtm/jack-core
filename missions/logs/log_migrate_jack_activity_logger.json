@@ -1,0 +1,10 @@
+{
+  "id": "log_migrate_jack_activity_logger",
+  "act": "py_replace",
+  "ts": "2026-09-01 05:16:14",
+  "ok": false,
+  "note": "fix: old fehlt",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

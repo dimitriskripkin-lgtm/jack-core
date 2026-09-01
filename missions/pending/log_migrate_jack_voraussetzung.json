@@ -1,1 +1,0 @@
-{"id": "log_migrate_jack_voraussetzung", "typ": "fix", "cat": "logging", "staged": true, "file": "~/jack/jack_voraussetzung.py", "desc": "Logger migrieren: from jack_log import get_logger", "act": "py_replace", "find": "import os", "replace": "import os\nfrom jack_log import get_logger\nlog = get_logger(\"jack_voraussetzung\")", "_prio": 2}

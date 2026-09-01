@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+import os,time,json,subprocess
+J="/data/data/com.termux/files/home/jack"
+V="/data/data/com.termux/files/usr/var/service"
+SV=("jack_telegram","jack_cortex","jack_waechter","jack_autolearn","jack_publisher","jack_missions","jack_focus_monitor")
+def sh(cmd,t=6):
+    r=subprocess.run(cmd,capture_output=True,text=True,timeout=t)
+    return ((r.stdout or "")+(r.stderr or "")).strip()
+print("JACK DASH", time.strftime("%H:%M:%S"))
+r=subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=5","xiaomi-jack","echo OK"],capture_output=True,text=True,timeout=8)
+print("SSH", "OK" if r.returncode==0 and "OK" in (r.stdout or "") else "DOWN")
+for n in SV:
+    p=os.path.join(V,n)
+    if not os.path.isdir(p):
+        print(n, "-"); continue
+    s=sh(["sv","status",p],6).split("\n")[0]
+    print(n, "run" if s.startswith("run:") else s[:40])
+hb=os.path.expanduser("/data/data/com.termux/files/home/jack")
+beats=[]
+if os.path.isdir(hb):
+    for f in sorted(os.listdir(hb)):
+        if f.startswith(".heartbeat_"):
+            age=round(time.time()-os.path.getmtime(os.path.join(hb,f)),1)
+            beats.append(f.replace(".heartbeat_","")+":"+str(age)+"s")
+if beats: print("HB", " | ".join(beats[:6]))
+g=os.path.join(J,"jack_graph.db")
+print("GRAPH", "yes" if os.path.isfile(g) else "no")
+s=os.path.join(J,"missions/talk_samples.jsonl")
+print("TALKLOG", sum(1 for _ in open(s,encoding="utf-8",errors="ignore")) if os.path.isfile(s) else 0)
+print("TIPP Widget-Tap = neu messen")

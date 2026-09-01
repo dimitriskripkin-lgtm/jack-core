@@ -1,0 +1,1 @@
+{"id": "log_migrate_jack_navi", "typ": "fix", "cat": "logging", "staged": true, "file": "~/jack/jack_navi.py", "desc": "Logger migrieren: from jack_log import get_logger", "act": "py_replace", "find": "import os", "replace": "import os\nfrom jack_log import get_logger\nlog = get_logger(\"jack_navi\")", "_prio": 50}

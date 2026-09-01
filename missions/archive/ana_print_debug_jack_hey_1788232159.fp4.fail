@@ -1,0 +1,1 @@
+{"id": "ana_print_debug_jack_hey_1788232159", "typ": "check", "act": "grep_count", "file": "~/jack/jack_hey.py", "pattern": "    print(", "cat": "analyzer_print_debug", "expect_max": 0, "expect": "PASS", "_prio": 5}

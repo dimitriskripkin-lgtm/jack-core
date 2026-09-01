@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """Destilliert Fakten ueber Dima aus geernteten Chats.
 Liest jack_harvest.db chats -> Gemini (Text) -> dima_fakten Tabelle.
 PRIVACY: dima_fakten wird NIEMALS vom Publisher gelesen."""

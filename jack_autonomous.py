@@ -248,7 +248,7 @@ def _adb_heal_if_needed():
 
 
 def main():
-    import jack_log; jack_log.log_decision("WAECHTER-START", "Nacht-Ueberwachung mit Queue")
+    log.info("WAECHTER-START: Nacht-Ueberwachung mit Queue")
     import jack_queue
     q = jack_queue.TaskQueue(min_ram_mb=800)
     while True:
@@ -341,6 +341,9 @@ def main():
         except Exception: pass
         try:
             import jack_health_monitor as _jhm; _jhm.run()
+        except Exception: pass
+        try:
+            import jack_approval_digest as _jad; _jad.run()
         except Exception: pass
         _adb_heal_if_needed()
         _heartbeat_sv_check()

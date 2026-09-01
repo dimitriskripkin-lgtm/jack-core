@@ -1,1 +1,0 @@
-{"id": "log_migrate_jack_circuit_breaker", "typ": "fix", "cat": "logging", "staged": true, "file": "~/jack/jack_circuit_breaker.py", "desc": "Logger migrieren: from jack_log import get_logger", "act": "py_replace", "find": "import os", "replace": "import os\nfrom jack_log import get_logger\nlog = get_logger(\"jack_circuit_breaker\")", "_prio": 2}

@@ -97,3 +97,9 @@ if __name__ == "__main__":
     log.error("Fehler Test")
     print("Letzten 4 Zeilen:")
     for l in tail(4): print(" ", l.rstrip())
+
+def log_decision(key: str, value: str = "", extra: str = ""):
+    """Kompatibilitäts-Shim — ersetzt alte jack_log.log_decision() Aufrufe."""
+    msg = f"{key}: {value}"
+    if extra: msg += f" | {extra}"
+    _write("jack_autonomous", Level.INFO, msg)

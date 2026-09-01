@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """JACK Haliza - Halluzinations-Guard vor jedem Code-Patch.
 Duenn gebaut: nutzt jack_approval (Sandbox), py_compile (Syntax),
 jack_gemini_bridge (Semantik). Eigen: nur Rate-Limit + Orchestrierung.

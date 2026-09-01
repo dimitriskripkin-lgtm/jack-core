@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 import json, subprocess, os, sqlite3
 try:
     import jack_logging as _jlog

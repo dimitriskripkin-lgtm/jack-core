@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_db_queue_1788231891",
+  "act": "grep_count",
+  "ts": "2026-09-01 05:06:17",
+  "ok": false,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "PASS",
+  "raw_ok": false
+}

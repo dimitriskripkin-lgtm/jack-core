@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_mission_prioritizer_1788231891",
+  "act": "grep_count",
+  "ts": "2026-09-01 05:13:42",
+  "ok": false,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "PASS",
+  "raw_ok": false
+}

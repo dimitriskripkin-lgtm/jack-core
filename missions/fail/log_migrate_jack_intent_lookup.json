@@ -1,0 +1,1 @@
+{"id": "log_migrate_jack_intent_lookup", "typ": "fix", "cat": "logging", "staged": true, "file": "~/jack/jack_intent_lookup.py", "desc": "Logger migrieren: from jack_log import get_logger", "act": "py_replace", "find": "import os", "replace": "import os\nfrom jack_log import get_logger\nlog = get_logger(\"jack_intent_lookup\")", "_prio": 50}

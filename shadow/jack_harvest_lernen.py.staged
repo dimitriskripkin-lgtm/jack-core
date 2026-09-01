@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+MODULE_VERSION = 1
+"""Destilliert Fakten ueber Dima aus geernteten Chats.
+Liest jack_harvest.db chats -> Gemini (Text) -> dima_fakten Tabelle.
+PRIVACY: dima_fakten wird NIEMALS vom Publisher gelesen."""
+import os, sys, sqlite3, json
+sys.path.insert(0, os.path.expanduser('~/jack'))
+DB = os.path.expanduser('~/jack/jack_harvest.db')
+
+def lernen(max_chats=60):
+    import jack_gemini_bridge as gb
+    con = sqlite3.connect(DB, timeout=5)
+    rows = con.execute(
+        "SELECT quelle, sprecher, text FROM chats ORDER BY id DESC LIMIT ?",
+        (max_chats,)).fetchall()
+    if not rows:
+        con.close(); return 'Keine Chats in der Harvest-DB. Erst /harvest laufen lassen.'
+    material = chr(10).join(f'[{q}/{s}] {t[:300]}' for q, s, t in rows)
+    prompt = ('Hier sind Auszuege aus Dimas Gespraechen mit verschiedenen KIs. '
+              'Extrahiere maximal 10 NEUE konkrete Fakten ueber Dima selbst '
+              '(Interessen, Projekte, Vorlieben, Ziele, Gewohnheiten). '
+              'KEINE Fakten ueber die KIs. Ein Fakt pro Zeile, beginnend mit "- ". '
+              'Nur Fakten die klar aus dem Text hervorgehen, nichts erfinden.'
+              + chr(10) + chr(10) + material[:12000])
+    antwort = gb.ask_gemini(prompt)
+    neu = 0
+    for zeile in antwort.split(chr(10)):
+        z = zeile.strip()
+        if z.startswith('- ') and len(z) > 8:
+            try:
+                con.execute("INSERT INTO dima_fakten(fakt, quelle) VALUES (?, 'harvest')",
+                            (z[2:][:300],))
+                neu += 1
+            except sqlite3.IntegrityError:
+                pass
+    con.commit()
+    gesamt = con.execute("SELECT COUNT(*) FROM dima_fakten").fetchone()[0]
+    con.close()
+    return f'{neu} neue Fakten destilliert ({gesamt} gesamt).' + chr(10) + antwort[:1500]
+
+def zeige_fakten(limit=20):
+    con = sqlite3.connect(DB, timeout=5)
+    rows = con.execute("SELECT fakt, ts FROM dima_fakten ORDER BY id DESC LIMIT ?",(limit,)).fetchall()
+    con.close()
+    if not rows: return 'Noch keine destillierten Fakten.'
+    return chr(10).join(f'- {f}' for f, _ in rows)
+
+if __name__ == '__main__':
+    print(lernen())

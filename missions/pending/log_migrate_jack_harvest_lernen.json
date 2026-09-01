@@ -1,1 +1,0 @@
-{"id": "log_migrate_jack_harvest_lernen", "typ": "fix", "cat": "logging", "staged": true, "file": "~/jack/jack_harvest_lernen.py", "desc": "Logger migrieren: from jack_log import get_logger", "act": "py_replace", "find": "import os", "replace": "import os\nfrom jack_log import get_logger\nlog = get_logger(\"jack_harvest_lernen\")", "_prio": 2}

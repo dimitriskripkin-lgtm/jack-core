@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """JACK RAM-Guard + Prozess-Lock. Verhindert OOM-Kills bei Schwerlast."""
 import os, json, urllib.request
 

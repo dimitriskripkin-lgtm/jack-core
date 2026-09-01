@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+import os
+import sys
+import subprocess
+import json
+import sqlite3
+import datetime
+
+def generate_briefing():
+    now = datetime.datetime.now().strftime("%d.%m.%Y - %H:%M")
+    
+    # 1. RAM Status
+    try:
+        with open("/proc/meminfo", "r") as f:
+            lines = f.readlines()
+        mem_avail = 0
+        for line in lines:
+            if "MemAvailable:" in line:
+                mem_avail = int(line.split()[1]) // 1024
+                break
+        ram_str = f"{mem_avail} MB frei"
+    except Exception:
+        ram_str = "N/A"
+
+    # 2. Rhythm & State
+    rhythm = "N/A"
+    rhythm_file = os.path.expanduser("~/jack/jack_rhythm_state.json")
+    if os.path.exists(rhythm_file):
+        try:
+            with open(rhythm_file, "r") as f:
+                rhythm = json.load(f).get("rhythm_state", "N/A")
+        except Exception:
+            pass
+
+    # 3. DB & Errors
+    open_errors = 0
+    err_db = os.path.expanduser("~/jack/jack_errors.db")
+    if os.path.exists(err_db):
+        try:
+            conn = sqlite3.connect(err_db)
+            c = conn.cursor()
+            c.execute("SELECT COUNT(*) FROM errors WHERE status = 'OPEN'")
+            open_errors = c.fetchone()[0]
+            conn.close()
+        except Exception:
+            pass
+
+    # Briefing Text
+    text = (
+        f"☀️ *GUTEN MORGEN, DIMA!* ☀️\n\n"
+        f"📅 *Datum:* {now}\n"
+        f"🔄 *Rhythmus:* {rhythm}\n"
+        f"🧠 *Master RAM:* {ram_str}\n"
+        f"⚠️ *Offene Fehler:* {open_errors}\n\n"
+        f"JACK v1.0 läuft stabil. Alles startklar für den Tag!"
+    )
+    return text
+
+def send_telegram(text):
+    telegram_script = os.path.expanduser("~/jack/jack_telegram.py")
+    if os.path.exists(telegram_script):
+        try:
+            subprocess.run([sys.executable, telegram_script, text], timeout=15)
+            print("[OK] Telegram Briefing gesendet.")
+            return
+        except Exception as e:
+            print(f"[WARN] Failed sending via script: {e}")
+            
+    print(f"[BRIEFING OUTPUT]:\n{text}")
+
+if __name__ == "__main__":
+    msg = generate_briefing()
+    send_telegram(msg)

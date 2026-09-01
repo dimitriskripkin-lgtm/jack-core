@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """Gedankenkette: warum JACK tut was er tut."""
 import os, sqlite3, datetime
 DB = os.path.expanduser('~/jack/jack_cognition.db')

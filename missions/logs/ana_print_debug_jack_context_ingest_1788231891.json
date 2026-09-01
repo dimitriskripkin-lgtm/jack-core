@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_context_ingest_1788231891",
+  "act": "grep_count",
+  "ts": "2026-09-01 05:06:10",
+  "ok": false,
+  "note": "grep_count: 8 Treffer (max 0)",
+  "out": "8",
+  "expect": "PASS",
+  "raw_ok": false
+}

@@ -1,0 +1,10 @@
+{
+  "id": "log_migrate_jack_xiaomi_web",
+  "act": "py_replace",
+  "ts": "2026-09-01 05:22:38",
+  "ok": false,
+  "note": "fix: old fehlt",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

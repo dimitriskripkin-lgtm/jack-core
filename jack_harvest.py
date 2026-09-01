@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """JACK Chat-Harvester: liest per Vision KI-Chat-Verlaeufe aus Chrome.
 SICHERHEIT: NUR Screenshot + Swipe. NIEMALS Taps. Stop via ~/jack/.harvest_stop.
 Daten -> jack_harvest.db (gitignored, NIE im Publisher)."""

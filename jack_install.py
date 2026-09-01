@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """JACK Install Wrapper - sicheres Installieren mit Live-Monitoring.
 Zeigt Fortschritt, Temperatur, RAM. Stoppt automatisch bei Ueberhitzung."""
 import subprocess, sys, time, os, threading

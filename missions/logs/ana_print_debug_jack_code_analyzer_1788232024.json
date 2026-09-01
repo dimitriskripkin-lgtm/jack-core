@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_code_analyzer_1788232024",
+  "act": "grep_count",
+  "ts": "2026-09-01 05:08:02",
+  "ok": false,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "PASS",
+  "raw_ok": false
+}
