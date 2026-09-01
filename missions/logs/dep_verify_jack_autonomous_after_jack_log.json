@@ -1,0 +1,10 @@
+{
+  "id": "dep_verify_jack_autonomous_after_jack_log",
+  "act": "compile_ok",
+  "ts": "2026-09-01 12:02:15",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

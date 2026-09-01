@@ -1,10 +1,10 @@
 {
   "id": "chg_exc_jack_changelog",
   "act": "grep_count",
-  "ts": "2026-09-01 05:03:02",
-  "ok": false,
-  "note": "grep_count: 1 Treffer (max 0)",
-  "out": "1",
+  "ts": "2026-09-01 12:04:08",
+  "ok": true,
+  "note": "grep_count: 0 Treffer (max 0)",
+  "out": "0",
   "expect": "PASS",
-  "raw_ok": false
+  "raw_ok": true
 }

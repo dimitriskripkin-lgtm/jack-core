@@ -699,6 +699,9 @@
     "jack_queue_gate",
     "jack_log"
   ],
+  "jack_thermal_guard": [
+    "jack_log"
+  ],
   "jack_yt_sido": [
     "jack_vision_selector"
   ],
