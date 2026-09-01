@@ -1,0 +1,10 @@
+{
+  "id": "gen_ana_no_module_version_jack_exec_1788233801_module_version_missing",
+  "act": "sed_replace",
+  "ts": "2026-09-01 05:42:23",
+  "ok": false,
+  "note": "shadow: old nicht gefunden: #!/usr/bin/env python3\n",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

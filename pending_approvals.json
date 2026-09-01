@@ -2078,5 +2078,765 @@
     "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
     "ts": "2026-09-01T05:40:59",
     "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_delta_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_delta.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_delta.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:08",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_episoden_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_episoden.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_episoden.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:10",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_errors_status_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_errors_status.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_errors_status.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:12",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_faehigkeiten_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_faehigkeiten.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_faehigkeiten.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:30",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_focus_monitor_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_focus_monitor.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_focus_monitor.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:30",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_freigabe_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_freigabe.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_freigabe.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:31",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_hey_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_hey.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_hey.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:51",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_improve_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_improve.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_improve.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:52",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_intent_parser_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_intent_parser.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_intent_parser.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:58",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_karte_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_karte.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_karte.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:59",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_karte_loop_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_karte_loop.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_karte_loop.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:42:59",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_diag_full_dump_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/diag_full_dump.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/diag_full_dump.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:43:10",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_diag_snapshot_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/diag_snapshot.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/diag_snapshot.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:43:10",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_adb_heal_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_adb_heal.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_adb_heal.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:43:11",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_agent_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_agent.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_agent.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:43:11",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_android_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_android.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_android.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:43:12",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_approval_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_approval.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_approval.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:43:13",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_ast_gate_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_ast_gate.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_ast_gate.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:43:13",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_audit_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_audit.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_audit.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:43:14",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_audit_run_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_audit_run.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_audit_run.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:43:14",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_aufraeumen_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_aufraeumen.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_aufraeumen.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:43:15",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_auto_ingest_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_auto_ingest.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_auto_ingest.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:08",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_autofixer_shadow_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_autofixer_shadow.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_autofixer_shadow.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:09",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_briefing_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_briefing.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_briefing.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:09",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_briefing_cron_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_briefing_cron.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_briefing_cron.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:10",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_budget_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_budget.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_budget.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:20",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_budget_status_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_budget_status.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_budget_status.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:21",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_bug_fixer_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_bug_fixer.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_bug_fixer.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:21",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_bugfix_loop_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_bugfix_loop.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_bugfix_loop.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:31",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_calltest_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_calltest.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_calltest.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:32",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_chains_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_chains.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_chains.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:32",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_claude_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_claude.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_claude.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:33",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_cmd_crawler_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_cmd_crawler.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_cmd_crawler.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:33",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_code_writer_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_code_writer.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_code_writer.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:34",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_coder_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_coder.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_coder.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:36",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_consolidate_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_consolidate.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_consolidate.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:36",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_context_compress_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_context_compress.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_context_compress.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:37",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_context_ingest_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_context_ingest.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_context_ingest.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:37",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_dash_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_dash.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_dash.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:48",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_db_optimizer_1788234063_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_db_optimizer.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_db_optimizer.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:49",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_learn_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_learn.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_learn.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:49",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_lerner_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_lerner.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_lerner.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:50",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_live_bridge_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_live_bridge.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_live_bridge.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:50",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_live_bridge_1788233932_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_live_bridge.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_live_bridge.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:51",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_log_rotate_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_log_rotate.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_log_rotate.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:51",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_log_rotate_1788233932_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_log_rotate.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_log_rotate.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:52",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_logging_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_logging.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_logging.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:52",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_logging_1788233932_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_logging.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_logging.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:53",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_lokal_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_lokal.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_lokal.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:53",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_lokal_1788233932_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_lokal.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_lokal.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:44:54",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_memory_maintenance_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_memory_maintenance.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_memory_maintenance.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:02",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_memory_stale_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_memory_stale.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_memory_stale.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:05",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_memory_tree_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_memory_tree.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_memory_tree.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:05",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_mission_pull_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_mission_pull.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_mission_pull.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:06",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_mission_run_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_mission_run.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_mission_run.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:08",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_mission_sync_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_mission_sync.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_mission_sync.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:09",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_monitor_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_monitor.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_monitor.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:09",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_nav_learn_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_nav_learn.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_nav_learn.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:10",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_navi_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_navi.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_navi.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:10",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_net_discover_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_net_discover.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_net_discover.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:12",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_operator_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_operator.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_operator.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:14",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_orchestrator_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_orchestrator.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_orchestrator.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:15",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_diag_full_dump_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/diag_full_dump.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/diag_full_dump.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:45:19",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_diag_snapshot_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/diag_snapshot.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/diag_snapshot.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:46:41",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_adb_heal_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_adb_heal.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_adb_heal.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:46:42",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_agent_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_agent.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_agent.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:46:42",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_android_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_android.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_android.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:46:42",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_approval_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_approval.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_approval.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:46:53",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_ast_gate_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_ast_gate.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_ast_gate.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:03",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_audit_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_audit.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_audit.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:04",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_audit_run_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_audit_run.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_audit_run.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:05",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_db_queue_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_db_queue.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_db_queue.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:05",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_delta_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_delta.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_delta.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:06",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_episoden_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_episoden.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_episoden.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:06",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_errors_status_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_errors_status.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_errors_status.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:07",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_faehigkeiten_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_faehigkeiten.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_faehigkeiten.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:07",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_focus_monitor_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_focus_monitor.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_focus_monitor.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:07",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_freigabe_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_freigabe.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_freigabe.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:08",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_hey_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_hey.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_hey.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:08",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_improve_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_improve.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_improve.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:08",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_intent_parser_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_intent_parser.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_intent_parser.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:09",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_karte_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_karte.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_karte.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:09",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_karte_loop_1788234195_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_karte_loop.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_karte_loop.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:10",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_overmind_client_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_overmind_client.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_overmind_client.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:10",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_overmind_state_1788233801_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_overmind_state.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_overmind_state.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:10",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_sys_mv_jack_patch_memory_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_patch_memory.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_patch_memory.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:11",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_sys_mv_jack_patch_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_patch.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_patch.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:21",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_sys_mv_jack_personality_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_personality.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_personality.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:22",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_aufraeumen_1788234327_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_aufraeumen.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_aufraeumen.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:32",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_auto_ingest_1788234327_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_auto_ingest.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_auto_ingest.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:32",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_autofixer_shadow_1788234327_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_autofixer_shadow.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_autofixer_shadow.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:33",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_briefing_1788234327_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_briefing.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_briefing.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:33",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_briefing_cron_1788234327_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_briefing_cron.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_briefing_cron.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:33",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_budget_1788234327_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_budget.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_budget.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:34",
+    "status": "wartet_freigabe"
+  },
+  {
+    "id": "gen_ana_no_module_version_jack_budget_status_1788234327_module_version_missing",
+    "file": "/data/data/com.termux/files/home/jack/jack_budget_status.py",
+    "staged": "/data/data/com.termux/files/home/jack/shadow/jack_budget_status.py.staged",
+    "what": "#!/usr/bin/env python3\n -> #!/usr/bin/env python3\nMODULE_",
+    "ts": "2026-09-01T05:47:34",
+    "status": "wartet_freigabe"
   }
 ]

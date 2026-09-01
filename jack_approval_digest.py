@@ -41,7 +41,7 @@ def send_digest():
     if n == last: return 0
 
     try:
-        import jack_telegram as _jt
+        import jack_telegram as _jt  # lazy — zirkulär, bewusst
 
         # Sammel-Nachricht bauen
         lines = [f"🔧 *{n} Fixes bereit zur Genehmigung*\n"]

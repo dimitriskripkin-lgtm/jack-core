@@ -778,7 +778,7 @@ def handle(text):
     if _rt.startswith('/cc'):
         _frage = text.strip()[3:].strip() or "analysiere jack_exec"
         try:
-            import jack_talk as _jt
+            import jack_talk as _jt  # lazy — zirkulär, bewusst
             return _jt.talk_to_gemini('CC: ' + _frage)
         except Exception as e:
             return 'CC-Fehler: ' + str(e)[:100]
@@ -1088,7 +1088,7 @@ def handle(text):
         return None
     # LLM Call mit Timeout und EXEC-Parser
     try:
-        import jack_talk as _jt
+        import jack_talk as _jt  # lazy — zirkulär, bewusst
         import signal
         
         def timeout_handler(signum, frame):
@@ -1282,7 +1282,7 @@ def main():
                         else:
                             send(reply)
                         try:
-                            import jack_talk as _jt
+                            import jack_talk as _jt  # lazy — zirkulär, bewusst
                             _jt.add_to_window(text, reply)
                         except Exception: pass
         except Exception as e:

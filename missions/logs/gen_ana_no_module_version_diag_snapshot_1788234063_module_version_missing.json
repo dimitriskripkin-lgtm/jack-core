@@ -1,0 +1,10 @@
+{
+  "id": "gen_ana_no_module_version_diag_snapshot_1788234063_module_version_missing",
+  "act": "sed_replace",
+  "ts": "2026-09-01 05:43:10",
+  "ok": true,
+  "note": "shadow: wartet_freigabe — diag_snapshot.py.staged",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}
