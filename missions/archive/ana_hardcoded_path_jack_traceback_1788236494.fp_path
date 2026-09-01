@@ -1,0 +1,1 @@
+{"id": "ana_hardcoded_path_jack_traceback_1788236494", "typ": "check", "act": "grep_count", "file": "~/jack/jack_traceback.py", "pattern": "/data/data/com.termux/files/home/jack/", "cat": "analyzer_hardcoded_path", "expect_max": 0, "expect": "PASS", "_prio": 6}

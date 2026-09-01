@@ -1,0 +1,10 @@
+{
+  "id": "ana_no_module_version_jack_voice_el_1788236361",
+  "act": "grep_count",
+  "ts": "2026-09-01 06:25:55",
+  "ok": false,
+  "note": "grep_count: 0 Treffer (min 1)",
+  "out": "0",
+  "expect": "PASS",
+  "raw_ok": false
+}

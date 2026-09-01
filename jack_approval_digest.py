@@ -58,7 +58,7 @@ def send_digest():
         lines.append(f"❌ Alle ablehnen: `/reject_all`")
 
         msg = "\n".join(lines)
-        _jt.send_message(msg)
+        _jt.send(msg)
         save_sent_count(n)
         log.info(f"Digest gesendet: {n} Fixes")
         return n

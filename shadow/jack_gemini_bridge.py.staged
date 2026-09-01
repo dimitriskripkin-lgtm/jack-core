@@ -119,7 +119,6 @@ def _load_persona():
     except Exception: return "Du kennst Dima gut - Details aus jack_identity.json."
 
 def ask_gemini(question, status=None):
-    """Fragt Gemini mit einer Frage, überspringt den Aufruf bei aktivem Circuit Breaker und nutzt stattdessen Ollama."""
     _persona = _load_persona()
     global _CB_FAILS, _CB_RESET_AT
     import time as _tt2
@@ -198,6 +197,8 @@ def ask_gemini(question, status=None):
             return _ollama_fallback(question)
 
 def update_identity(new_facts):
+    """Aktualisiert die Identitätsdaten von JACK mit neuen Fakten und speichert sie in einer JSON-Datei.
+Setzt außerdem einen Zeitstempel für die letzte Aktualisierung."""
     path = os.path.expanduser("~/jack/jack_identity.json")
     try:
         with open(path) as f: identity = json.load(f)

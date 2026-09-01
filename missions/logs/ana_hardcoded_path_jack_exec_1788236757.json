@@ -1,0 +1,10 @@
+{
+  "id": "ana_hardcoded_path_jack_exec_1788236757",
+  "act": "grep_count",
+  "ts": "2026-09-01 06:26:10",
+  "ok": false,
+  "note": "grep_count: 4 Treffer (max 0)",
+  "out": "4",
+  "expect": "PASS",
+  "raw_ok": false
+}

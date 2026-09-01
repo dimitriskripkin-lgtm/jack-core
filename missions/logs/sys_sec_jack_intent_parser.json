@@ -1,0 +1,10 @@
+{
+  "id": "sys_sec_jack_intent_parser",
+  "act": "grep_count",
+  "ts": "2026-09-01 06:19:14",
+  "ok": true,
+  "note": "grep_count: 0 Treffer (max 0)",
+  "out": "0",
+  "expect": "PASS",
+  "raw_ok": true
+}

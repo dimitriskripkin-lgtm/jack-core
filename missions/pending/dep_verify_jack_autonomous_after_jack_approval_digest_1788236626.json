@@ -1,0 +1,1 @@
+{"id": "dep_verify_jack_autonomous_after_jack_approval_digest_1788236626", "typ": "check", "cat": "dep_verify", "act": "compile_ok", "file": "~/jack/jack_autonomous.py", "desc": "Verify jack_autonomous nach \u00c4nderung von jack_approval_digest", "_prio": 50, "_source": "dep_map"}

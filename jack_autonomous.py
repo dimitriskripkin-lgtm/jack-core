@@ -208,7 +208,7 @@ def _heartbeat_sv_check():
         except Exception as _oe:
             try:
                 import jack_log
-                jack_log.log_decision("HB_OLLAMA_DOWN", str(_oe)[:80])
+                jack_log.log_decision("HB_OLLAMA_OFF", "off by design — Gate bereit")
                 _st="/data/data/com.termux/files/home/jack/.ollama_hb_down"
                 _now=__import__("time").time(); _last=0.0
                 try: _last=float(open(_st).read())
