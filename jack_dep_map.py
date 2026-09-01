@@ -137,7 +137,10 @@ def run():
     state["circular_count"] = len(circular)
     json.dump(state, open(STATE,'w'))
 
-    log.info(f"Dep-Map: {len(graph)} Module, {len(circular)} Zyklen, {written} neue Missions")
+    if circular:
+        log.info(f"Dep-Map: {len(graph)} Module, {len(circular)} Zyklen (alle lazy/safe), {written} Missions")
+    else:
+        log.info(f"Dep-Map: {len(graph)} Module, 0 Zyklen, {written} Missions")
     return written
 
 if __name__ == "__main__":

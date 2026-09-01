@@ -1,6 +1,6 @@
 # GELERNTE REGELN (automatisch aus Fehlern)
 
-Stand: 01.09.2026 12:04
+Stand: 01.09.2026 12:14
 
 ## [15x] jack_cortex/CORTEX_ERR
 Fehler: [Cortex] SSH-Timeout (#1)
