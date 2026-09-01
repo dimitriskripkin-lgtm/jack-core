@@ -103,3 +103,25 @@ def log_decision(key: str, value: str = "", extra: str = ""):
     msg = f"{key}: {value}"
     if extra: msg += f" | {extra}"
     _write("jack_autonomous", Level.INFO, msg)
+
+def prune_old_logs(max_days: int = 7):
+    """Löscht Logzeilen die älter als max_days sind."""
+    import time
+    cutoff = time.time() - (max_days * 86400)
+    for logfile in [MAIN_LOG, MAIN_LOG + ".1"]:
+        if not os.path.exists(logfile): continue
+        try:
+            lines = open(logfile).readlines()
+            kept = []
+            for l in lines:
+                try:
+                    ts_str = l[:19]
+                    import datetime
+                    ts = datetime.datetime.strptime(ts_str, "%Y-%m-%dT%H:%M:%S").timestamp()
+                    if ts >= cutoff: kept.append(l)
+                except Exception: kept.append(l)
+            open(logfile, 'w').writelines(kept)
+            removed = len(lines) - len(kept)
+            if removed > 0:
+                _write("jack_log", Level.INFO, f"Prune: {removed} Zeilen älter als {max_days}d entfernt aus {os.path.basename(logfile)}")
+        except Exception: pass

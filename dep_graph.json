@@ -110,6 +110,7 @@
   ],
   "jack_gemini_bridge": [
     "jack_ollama_gate",
+    "jack_gemini_cache",
     "jack_logging",
     "jack_log",
     "jack_config",
@@ -725,6 +726,10 @@
   "jack_overmind_client": [
     "jack_heat_protection",
     "jack_overmind_state"
+  ],
+  "jack_gemini_cache": [
+    "jack_config",
+    "jack_log"
   ],
   "jack_yt_hybrid": [],
   "jack_heat_protection": [

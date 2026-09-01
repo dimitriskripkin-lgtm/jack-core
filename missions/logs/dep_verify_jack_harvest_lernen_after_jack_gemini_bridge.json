@@ -1,0 +1,10 @@
+{
+  "id": "dep_verify_jack_harvest_lernen_after_jack_gemini_bridge",
+  "act": "compile_ok",
+  "ts": "2026-09-01 11:59:56",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}
