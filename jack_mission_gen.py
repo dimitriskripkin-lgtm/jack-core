@@ -14,14 +14,14 @@ GEN_LOG = os.path.join(J, "missions", "gen.log")
 STRATEGIES = [
     {
         "name": "bare_except",
-        "match": lambda m: m.get("act") == "grep_count" and m.get("pattern") == "    except:" and m.get("expect_max") == 0,
+        "match": lambda m: m.get("act") == "grep_count" and m.get("pattern") == "    except Exception:" and m.get("expect_max") == 0,
         "build": lambda m: {
             "typ": "fix", "act": "sed_replace", "staged": True,
             "file": m["file"],
-            "old": "    except:",
+            "old": "    except Exception:",
             "new": "    except Exception:",
             "verify_act": "grep_count",
-            "verify_pattern": "    except:",
+            "verify_pattern": "    except Exception:",
             "verify_expect_max": 0,
             "cat": "quality_autofix"
         }

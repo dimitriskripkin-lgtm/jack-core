@@ -1,0 +1,10 @@
+{
+  "id": "nacht_graph_ok",
+  "act": "file_exists",
+  "ts": "2026-08-31 18:09:32",
+  "ok": true,
+  "note": "file_exists /data/data/com.termux/files/home/jack/jack_graph.db yes",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

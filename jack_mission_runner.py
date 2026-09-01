@@ -69,7 +69,7 @@ def _run_fix_shadow(m, fp, content, bak):
     approvals = []
     if os.path.exists(APPROVALS):
         try: approvals = json.load(open(APPROVALS))
-        except: approvals = []
+        except Exception: approvals = []
     # Deduplizieren + veraltete staged-Dateien entfernen
     approvals = [a for a in approvals if a.get("id") != approval["id"] and os.path.exists(a.get("staged",""))]
     approvals.append(approval)
@@ -138,7 +138,7 @@ def run_act(m):
             return True,"fix OK "+str(count)+"x: "+old[:30]+" -> "+new[:20],""
         except Exception as e:
             try: shutil.copy2(bak,fp); os.remove(bak)
-            except: pass
+            except Exception: pass
             return False,"fix Exception Rollback: "+str(e)[:80],""
 
     if act=="fact":

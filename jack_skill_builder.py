@@ -193,7 +193,7 @@ def python_luecken(vorhanden):
                 "    try:",
                 "        n = c.execute(\"SELECT COUNT(*) FROM \" + tbl).fetchone()[0]",
                 "        print(db_name + \": \" + str(n) + \" Eintraege\")",
-                "    except: pass",
+                "    except Exception: pass",
                 "    c.close()",
             ]),
             "erwartet": "Anzahl Eintraege pro Gedaechtnis-Datenbank",

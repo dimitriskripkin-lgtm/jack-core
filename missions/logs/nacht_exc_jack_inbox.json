@@ -1,0 +1,10 @@
+{
+  "id": "nacht_exc_jack_inbox",
+  "act": "grep_count",
+  "ts": "2026-08-31 18:09:06",
+  "ok": false,
+  "note": "grep_count: 2 Treffer (max 0)",
+  "out": "2",
+  "expect": "PASS",
+  "raw_ok": false
+}

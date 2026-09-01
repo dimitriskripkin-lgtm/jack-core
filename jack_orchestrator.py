@@ -43,7 +43,7 @@ def check_and_heal_xiaomi():
             if len(parts) >= 7 and parts[0] == "Mem:":
                 try:
                     free_ram = int(parts[6]) # available MB
-                except: pass
+                except Exception: pass
 
     log(f"📊 Xiaomi Verfügbarer RAM: {free_ram} MB")
 

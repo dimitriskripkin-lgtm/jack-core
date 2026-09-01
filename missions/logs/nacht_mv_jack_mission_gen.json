@@ -1,0 +1,10 @@
+{
+  "id": "nacht_mv_jack_mission_gen",
+  "act": "grep_count",
+  "ts": "2026-08-31 18:12:33",
+  "ok": true,
+  "note": "grep_count: 4 Treffer (min 1)",
+  "out": "4",
+  "expect": "PASS",
+  "raw_ok": true
+}

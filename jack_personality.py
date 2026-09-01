@@ -158,7 +158,7 @@ class PersonalityAnalyzer:
             for row in rows:
                 try:
                     ctx = json.loads(row['context']) if row['context'] else {}
-                except:
+                except Exception:
                     ctx = {}
                 # Parse triggers from message
             return triggers

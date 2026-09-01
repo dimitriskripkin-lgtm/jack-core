@@ -136,7 +136,7 @@ def run(limit=5):
         if not jack_heat_protection.check_heat("shadow"):
             print("Shadow-Fixer übersprungen (Hitze)")
             return []
-    except: pass
+    except Exception: pass
 
     # HEAT-PROTECT (Qwen 21.08.): Shadow-Fixer nur bei < 55°C
     try:

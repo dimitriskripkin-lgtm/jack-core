@@ -25,7 +25,7 @@ def finde_dialog_button(xml):
             if any(k in t for k in DIALOG_KEYWORDS):
                 pos=jg._mitte(n.get('bounds',''))
                 if pos: return {'text':t[:40],'x':pos[0],'y':pos[1]}
-    except: pass
+    except Exception: pass
     return None
 import subprocess,os,time,json,sys
 sys.path.insert(0,os.path.expanduser('~/jack'))
@@ -51,7 +51,7 @@ def _get_clickable(xml):
             if pos and pos[1]<2100:
                 els.append({'text':t[:40],'x':pos[0],'y':pos[1]})
         return els
-    except: return []
+    except Exception: return []
 
 def _kill(paket):
     _ssh('am force-stop '+paket,5)
@@ -95,7 +95,7 @@ def explore_deep(paket,max_els=8,depth=2,send_fn=None):
             root2=ET2.fromstring(xml2)
             texts2=[n.get('text','') for n in root2.iter('node') if n.get('text','').strip()][:8]
             els2=_get_clickable(xml2)[:5]
-        except: texts2=[]; els2=[]
+        except Exception: texts2=[]; els2=[]
         nav_map['ebene1'][txt]={'buttons':len(els2),'texte':texts2[:5]}
         if send_fn: send_fn('  '+txt[:25]+' -> '+str(len(els2))+' Btns | '+', '.join(texts2[:3])[:50])
         try:
@@ -109,7 +109,7 @@ def explore_deep(paket,max_els=8,depth=2,send_fn=None):
                 {'type':'ui_text','desc':'Lesen'},
                 {'type':'home','desc':'Home'}
             ]},'Deep-Explore: '+paket+' -> '+txt[:20])
-        except: pass
+        except Exception: pass
         handle_dialogs(send_fn)
         _ssh("su -c 'input keyevent 4'",5)
         time.sleep(0.8)
@@ -119,7 +119,7 @@ def explore_deep(paket,max_els=8,depth=2,send_fn=None):
         known=json.load(open(MAP_FILE)) if os.path.exists(MAP_FILE) else {}
         known[paket]=nav_map
         json.dump(known,open(MAP_FILE,'w'),ensure_ascii=False,indent=2)
-    except: pass
+    except Exception: pass
     if send_fn: send_fn('Fertig: '+paket+' - '+str(len(nav_map['ebene1']))+' Pfade')
     return nav_map
 
@@ -127,7 +127,7 @@ def run_deep_loop(apps=None,max_per_app=6,send_fn=None):
     import jack_explorer as je
     if not apps: apps=je.scan_apps()
     try: known=set(json.load(open(MAP_FILE)).keys()) if os.path.exists(MAP_FILE) else set()
-    except: known=set()
+    except Exception: known=set()
     done=0
     for paket in apps:
         if paket in known: continue

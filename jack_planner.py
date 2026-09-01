@@ -62,7 +62,7 @@ def step_ui_text(p):
     xml=jg.hol_xiaomi_ui()
     import xml.etree.ElementTree as ET
     try: root=ET.fromstring(xml)
-    except: return 'XML-Fehler'
+    except Exception: return 'XML-Fehler'
     words=[n.get('text','') for n in root.iter('node') if n.get('text','').strip()]
     return ' | '.join(words[:20])[:500]
 
@@ -78,7 +78,7 @@ def step_chrome_search(p):
         root=ET.fromstring(xml)
         words=[n.get('text','') for n in root.iter('node') if n.get('text','').strip()]
         return ' | '.join(words[:25])[:600]
-    except: return 'XML-Fehler'
+    except Exception: return 'XML-Fehler'
 
 STEPS={'exec':step_exec,'tap':step_tap,'find_and_tap':step_find_and_tap,
     'open_app':step_open_app,'keyevent':step_keyevent,'wait':step_wait,

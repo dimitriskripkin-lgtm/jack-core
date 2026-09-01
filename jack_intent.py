@@ -26,7 +26,7 @@ def get_level():
     try:
         cfg=configparser.ConfigParser(); cfg.read(os.path.join(H,"config.ini"))
         return cfg.getint("AUTONOMIE","level",fallback=4)
-    except: return 1
+    except Exception: return 1
 
 def set_level(n):
     cfg=configparser.ConfigParser(); cp=os.path.join(H,'config.ini'); cfg.read(cp)

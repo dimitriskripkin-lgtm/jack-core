@@ -7,14 +7,14 @@ def load_state():
     try:
         if os.path.exists(STATE_FILE):
             return json.load(open(STATE_FILE, encoding="utf-8"))
-    except: pass
+    except Exception: pass
     return {"fail_count": 0, "disabled": False, "disabled_at": None}
 
 def save_state(state):
     try:
         with open(STATE_FILE, "w", encoding="utf-8") as f:
             json.dump(state, f, indent=2)
-    except: pass
+    except Exception: pass
 
 def check_allowed():
     state = load_state()

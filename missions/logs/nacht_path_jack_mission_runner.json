@@ -1,0 +1,10 @@
+{
+  "id": "nacht_path_jack_mission_runner",
+  "act": "grep_count",
+  "ts": "2026-08-31 18:15:57",
+  "ok": false,
+  "note": "grep_count: 2 Treffer (max 0)",
+  "out": "2",
+  "expect": "PASS",
+  "raw_ok": false
+}

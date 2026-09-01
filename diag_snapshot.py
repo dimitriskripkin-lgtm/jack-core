@@ -48,7 +48,7 @@ for db_path in sorted(glob.glob(os.path.expanduser("~/jack/*.db"))):
             try:
                 n = con.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
                 rows_per_table[t] = n
-            except: pass
+            except Exception: pass
         con.close()
         add(f"DB: {name} ({size} bytes)", json.dumps(rows_per_table, indent=2))
     except Exception as e:

@@ -1,0 +1,10 @@
+{
+  "id": "nacht_exc_jack_autofixer_shadow",
+  "act": "grep_count",
+  "ts": "2026-08-31 18:08:50",
+  "ok": false,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "PASS",
+  "raw_ok": false
+}

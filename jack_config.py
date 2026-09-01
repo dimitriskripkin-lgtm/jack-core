@@ -14,14 +14,14 @@ path = os.path.expanduser('~/jack/config.ini')
 
 if os.path.exists(path):
     try: config.read(path)
-    except: config.read_dict(DEFAULT)
+    except Exception: config.read_dict(DEFAULT)
 else: config.read_dict(DEFAULT)
 
 def get_param(sec, key, is_int=False):
     try:
         val = config.get(sec, key)
         return int(val) if is_int else val
-    except:
+    except Exception:
         return int(DEFAULT[sec][key]) if is_int else DEFAULT[sec][key]
 
 def get_val(section, key, fallback=None):

@@ -37,7 +37,7 @@ def evaluate(plan, results):
             nums = re.findall(r'\d+', str(evidence))
             if nums:
                 try: ok = int(nums[-1]) > int(value)
-                except: ok = False
+                except Exception: ok = False
             else: ok = False
         elif typ=='not_empty':
             # Prüfe ob nach rc=0\n noch Inhalt kommt

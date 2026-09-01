@@ -1,0 +1,10 @@
+{
+  "id": "nacht_path_jack_telegram",
+  "act": "grep_count",
+  "ts": "2026-08-31 18:16:01",
+  "ok": false,
+  "note": "grep_count: 10 Treffer (max 0)",
+  "out": "10",
+  "expect": "PASS",
+  "raw_ok": false
+}

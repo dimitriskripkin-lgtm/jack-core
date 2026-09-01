@@ -31,7 +31,7 @@ def push_plan(plan,name='Claude-Plan'):
         req=urllib.request.Request(api,headers=hdrs)
         with urllib.request.urlopen(req,timeout=8) as r:
             sha=json.loads(r.read()).get('sha','')
-    except: sha=''
+    except Exception: sha=''
     body=json.dumps({'message':'inbox: '+name,'content':b64,'sha':sha,'branch':'master'}).encode()
     req2=urllib.request.Request(api,data=body,headers=hdrs,method='PUT')
     try:
@@ -54,7 +54,7 @@ def poll_inbox(send_fn=None):
         if ts and ts>0 and ts!=_last_ts:
             _last_ts=ts
             try: open(os.path.expanduser('~/.jack_inbox_ts'),'w').write(str(ts))
-            except: pass
+            except Exception: pass
             plan=d.get('plan')
             if plan and send_fn:
                 import jack_planner,importlib

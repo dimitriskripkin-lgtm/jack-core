@@ -17,12 +17,12 @@ def build_status():
             ts  = float(open(f).read().strip())
             age = int(time.time()-ts)
             beats[svc] = f"{age}s ago"
-        except: beats[svc] = "?"
+        except Exception: beats[svc] = "?"
     fails = [os.path.basename(f) for f in
         glob.glob(JM+"/fail/*.json")][:20]
     budget = {}
     try: budget = json.load(open(J+"/.api_budget"))
-    except: pass
+    except Exception: pass
     return {
         "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "missions": {"done":done,"fail":fail,"pending":pend},

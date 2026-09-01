@@ -15,7 +15,7 @@ def load_identity():
     try:
         with open(IDENTITY_FILE) as f:
             return json.load(f)
-    except:
+    except Exception:
         return {}
 
 def get_recent_errors(limit=5):
@@ -24,7 +24,7 @@ def get_recent_errors(limit=5):
             con.row_factory = sqlite3.Row
             rows = con.execute("SELECT * FROM errors ORDER BY timestamp DESC LIMIT ?", (limit,)).fetchall()
             return [dict(r) for r in rows]
-    except:
+    except Exception:
         return []
 
 def get_last_screenshot():
@@ -38,7 +38,7 @@ def get_system_status():
     try:
         result = subprocess.run("curl -s http://192.168.178.154:8081/api/status", shell=True, capture_output=True, text=True, timeout=5)
         return json.loads(result.stdout) if result.returncode == 0 else {}
-    except:
+    except Exception:
         return {}
 def generate_handshake():
     handshake = {

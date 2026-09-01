@@ -1,0 +1,10 @@
+{
+  "id": "nacht_mv_jack_talk",
+  "act": "grep_count",
+  "ts": "2026-08-31 18:14:23",
+  "ok": true,
+  "note": "grep_count: 3 Treffer (min 1)",
+  "out": "3",
+  "expect": "PASS",
+  "raw_ok": true
+}

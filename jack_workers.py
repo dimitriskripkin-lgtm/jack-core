@@ -11,7 +11,7 @@ def load_workers():
     try:
         with open(WORKERS_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
-    except:
+    except Exception:
         return []
 
 def save_workers(workers):

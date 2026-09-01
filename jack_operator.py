@@ -49,7 +49,7 @@ class JackOperator:
         result = subprocess.run(f"{self.cortex_cmd} report", shell=True, capture_output=True, text=True)
         try:
             return json.loads(result.stdout)
-        except:
+        except Exception:
             return None
     
     def diagnose(self, report):

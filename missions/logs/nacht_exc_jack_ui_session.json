@@ -1,0 +1,10 @@
+{
+  "id": "nacht_exc_jack_ui_session",
+  "act": "grep_count",
+  "ts": "2026-08-31 18:09:30",
+  "ok": true,
+  "note": "grep_count: 0 Treffer (max 0)",
+  "out": "0",
+  "expect": "PASS",
+  "raw_ok": true
+}

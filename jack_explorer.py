@@ -36,7 +36,7 @@ def run_exploration(max_apps=5, send_fn=None):
     if send_fn: send_fn('Xiaomi Apps gefunden: '+str(len(apps))+'. Erkunde '+str(max_apps)+'...')
     try:
         known=json.load(open(APPS_FILE))
-    except: known={}
+    except Exception: known={}
     results=[]
     explored=0
     for paket in apps:
@@ -59,7 +59,7 @@ def run_exploration(max_apps=5, send_fn=None):
                     {'type':'home','desc':'Home'}
                 ]}
                 sk.save('explore_'+paket.split('.')[-1], plan, 'Auto-exploriert: '+paket)
-            except: pass
+            except Exception: pass
             explored+=1
             time.sleep(1)
     json.dump(known, open(APPS_FILE,'w'), ensure_ascii=False, indent=2)

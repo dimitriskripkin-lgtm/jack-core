@@ -49,7 +49,7 @@ def _lese_ui(xml):
                 if pos and pos[1]<2100:
                     buttons.append({'label':(t or d)[:40],'x':pos[0],'y':pos[1]})
         return texts[:20],buttons[:12]
-    except:
+    except Exception:
         return [],[]
 
 def _frage_gemini(ziel,verlauf,texte,buttons):
@@ -69,7 +69,7 @@ def _frage_gemini(ziel,verlauf,texte,buttons):
         "ZIEL_ERREICHT: [ja/nein]")
     try:
         return gb.ask_gemini(prompt,{})
-    except:
+    except Exception:
         return "AKTION: back\nZIEL_BUTTON: \nTIPPEN: \nBEGRUENDUNG: Fehler\nZIEL_ERREICHT: nein"
 
 def _parse(antwort):

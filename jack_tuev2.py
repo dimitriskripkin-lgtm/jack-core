@@ -103,7 +103,7 @@ try:
       f'8500 Zeichen -> {len(sent_parts)} Teile, max {max_part} Zeichen')
 except Exception as e:
     try: _jt.send = old_send
-    except: pass
+    except Exception: pass
     p('FAIL','SPLIT',str(e)[:80])
 
 # === 4. PARALLELZUGRIFF AUF SQLITE (WAL-Stress) ===

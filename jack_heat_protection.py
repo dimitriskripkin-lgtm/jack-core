@@ -17,7 +17,7 @@ def get_temp(device="honor"):
                               capture_output=True, text=True, timeout=5)
             if r.returncode == 0:
                 return int(r.stdout.strip()) / 1000
-    except:
+    except Exception:
         return 0
     return 0
 
@@ -33,7 +33,7 @@ def xiaomi_online():
         r2 = subprocess.run(["curl","-s","-o","/dev/null","-w","%{http_code}","http://localhost:11434/api/tags"],
                            capture_output=True, text=True, timeout=5)
         return r2.stdout.strip() == "200"
-    except:
+    except Exception:
         return False
 
 def fallback_to_local_ollama():

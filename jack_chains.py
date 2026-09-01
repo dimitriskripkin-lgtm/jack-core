@@ -100,7 +100,7 @@ def chain_oauth_final():
         try:
             data = eval(resp)  # Sicher, weil von Vision
             page = data.get("page", "other")
-        except:
+        except Exception:
             page = "other"
         
         print(f"Erkannte Seite: {page}")
@@ -177,7 +177,7 @@ def chain_oauth_final():
         try:
             data = eval(resp)  # Sicher, weil von Vision
             page = data.get("page", "other")
-        except:
+        except Exception:
             page = "other"
         
         print(f"Erkannte Seite: {page}")

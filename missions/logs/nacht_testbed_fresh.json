@@ -1,0 +1,10 @@
+{
+  "id": "nacht_testbed_fresh",
+  "act": "mtime_fresh",
+  "ts": "2026-08-31 18:16:03",
+  "ok": true,
+  "note": "mtime_fresh: 11907s alt limit 86400s",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

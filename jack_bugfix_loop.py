@@ -120,7 +120,7 @@ def markiere_resolved(bug_id, fix_text):
             (fix_text[:200], bug_id))
         con.commit(); con.close()
         return True
-    except: return False
+    except Exception: return False
 
 def run(max_bugs=1):
     """Hauptloop: ein Bug pro Durchlauf fuer Sicherheit."""
