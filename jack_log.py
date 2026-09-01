@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """Legacy-Wrapper: Leitet alte jack_log Aufrufe an jack_logging weiter."""
 import jack_logging
 

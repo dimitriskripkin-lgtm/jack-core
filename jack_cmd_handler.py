@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """jack_cmd_handler.py — einfache /Slash-Commands ohne Threading."""
 import os, sys
 sys.path.insert(0, "/data/data/com.termux/files/home/jack")

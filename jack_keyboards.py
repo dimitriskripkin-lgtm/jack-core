@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 """jack_keyboards.py — alle Keyboard/Menu-Builder. Kein Telegram-State."""
 
 def build_write_keyboard(filename):

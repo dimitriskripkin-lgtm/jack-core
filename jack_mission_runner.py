@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+MODULE_VERSION = 1
 import json, os, shutil, sys, time, traceback, subprocess
 sys.path.insert(0, "/data/data/com.termux/files/home/jack")
 J="/data/data/com.termux/files/home/jack"
