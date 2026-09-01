@@ -1,1 +1,1 @@
-{"id": "sys_exists_jack_testbed_py", "typ": "check", "act": "file_exists", "file": "~/jack/jack_testbed.py", "expect": "PASS", "cat": "health"}
+{"id": "sys_exists_jack_testbed_py", "typ": "check", "act": "file_exists", "file": "~/jack/jack_testbed.py", "expect": "PASS", "cat": "health", "_prio": 2}

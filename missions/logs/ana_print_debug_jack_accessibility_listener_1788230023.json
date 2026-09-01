@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_accessibility_listener_1788230023",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:34:06",
+  "ok": false,
+  "note": "grep_count: 4 Treffer (max 0)",
+  "out": "4",
+  "expect": "PASS",
+  "raw_ok": false
+}

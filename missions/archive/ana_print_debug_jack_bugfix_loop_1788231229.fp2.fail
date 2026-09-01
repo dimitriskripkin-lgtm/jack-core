@@ -1,0 +1,1 @@
+{"id": "ana_print_debug_jack_bugfix_loop_1788231229", "typ": "check", "act": "grep_count", "file": "~/jack/jack_bugfix_loop.py", "pattern": "    print(", "cat": "analyzer_print_debug", "expect_max": 0, "expect": "PASS", "_prio": 5}

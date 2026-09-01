@@ -1,1 +1,1 @@
-{"id": "sys_size_jack_autonomous", "typ": "check", "act": "line_count", "file": "~/jack/jack_autonomous.py", "expect_max": 400, "expect": "PASS", "cat": "size"}
+{"id": "sys_size_jack_autonomous", "typ": "check", "act": "line_count", "file": "~/jack/jack_autonomous.py", "expect_max": 400, "expect": "PASS", "cat": "size", "_prio": 8}

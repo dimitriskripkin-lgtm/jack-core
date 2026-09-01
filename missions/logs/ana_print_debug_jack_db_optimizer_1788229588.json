@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_db_optimizer_1788229588",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:28:57",
+  "ok": false,
+  "note": "grep_count: 6 Treffer (max 0)",
+  "out": "6",
+  "expect": "PASS",
+  "raw_ok": false
+}

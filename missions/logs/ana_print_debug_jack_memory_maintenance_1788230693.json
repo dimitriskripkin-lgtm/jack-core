@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_memory_maintenance_1788230693",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:47:01",
+  "ok": false,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "PASS",
+  "raw_ok": false
+}

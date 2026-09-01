@@ -1,0 +1,10 @@
+{
+  "id": "ana_hardcoded_ip_jack_cmd_crawler_1788230691",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:44:56",
+  "ok": false,
+  "note": "grep_count: 1 Treffer (max 0)",
+  "out": "1",
+  "expect": "PASS",
+  "raw_ok": false
+}

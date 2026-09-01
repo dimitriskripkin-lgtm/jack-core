@@ -1,1 +1,1 @@
-{"id": "sys_gen_fresh", "typ": "check", "act": "mtime_fresh", "file": "~/jack/missions/gen.log", "max_age_s": 172800, "expect": "PASS", "cat": "health"}
+{"id": "sys_gen_fresh", "typ": "check", "act": "mtime_fresh", "file": "~/jack/missions/gen.log", "max_age_s": 172800, "expect": "PASS", "cat": "health", "_prio": 2}

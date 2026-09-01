@@ -1,1 +1,1 @@
-{"id": "sys_shadow_clean", "typ": "check", "act": "grep_count", "file": "~/jack/pending_approvals.json", "pattern": "wartet_freigabe", "expect_max": 10, "expect": "PASS", "cat": "health"}
+{"id": "sys_shadow_clean", "typ": "check", "act": "grep_count", "file": "~/jack/pending_approvals.json", "pattern": "wartet_freigabe", "expect_max": 10, "expect": "PASS", "cat": "health", "_prio": 2}

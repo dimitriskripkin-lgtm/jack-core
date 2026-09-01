@@ -1,0 +1,1 @@
+{"id": "ana_print_debug_jack_curiosity_1788230023", "typ": "check", "act": "grep_count", "file": "~/jack/jack_curiosity.py", "pattern": "    print(", "cat": "analyzer_print_debug", "expect_max": 0, "expect": "PASS", "_prio": 5}

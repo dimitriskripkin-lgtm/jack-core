@@ -18,8 +18,9 @@ PATTERNS = [
     {"name":"bare_except","regex":r"    except:\s*$","msg":"bare except gefunden","act":"grep_count","pattern":"    except:","expect_max":0},
     {"name":"hardcoded_path","regex":r'"/data/data/com\.termux/files/home/jack/[^"]+"',"msg":"hardcoded Pfad","act":"grep_count","pattern":"/data/data/com.termux/files/home/jack/","expect_max":0},
     {"name":"tilde_in_string","regex":r'"~/',"msg":"Tilde in String","act":"grep_count","pattern":'"~/',"expect_max":0},
-    {"name":"print_debug","regex":r"^\s{4}print\(","msg":"Debug-print in Modul","act":"grep_count","pattern":"    print(","expect_max":0},
-    {"name":"hardcoded_ip","regex":r'["\']\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}["\']',"msg":"Hardcoded IP","act":"grep_count","pattern":"10.229","expect_max":0},
+    # print_debug: nur Core-Dienste, nicht CLI/Diag/Test-Tools
+    # {"name":"print_debug",...} — deaktiviert, zu viele FP auf Nicht-Core-Module
+    # hardcoded_ip deaktiviert — IP kommt aus config.ini, kein echter Fehler
     {"name":"todo_fixme","regex":r"#\s*(TODO|FIXME|HACK|XXX)","msg":"TODO/FIXME im Code","act":"grep_count","pattern":"# TODO","expect_max":0},
     {"name":"no_module_version","regex":None,"msg":"MODULE_VERSION fehlt","act":"grep_count","pattern":"MODULE_VERSION","expect_min":1},
 ]

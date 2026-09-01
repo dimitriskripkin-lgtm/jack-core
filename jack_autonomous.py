@@ -333,6 +333,15 @@ def main():
         try:
             import jack_code_analyzer as _jca; _jca.run()
         except Exception: pass
+        try:
+            import jack_mission_prioritizer as _jmp; _jmp.run()
+        except Exception: pass
+        try:
+            import jack_changelog as _jcl; _jcl.run()
+        except Exception: pass
+        try:
+            import jack_health_monitor as _jhm; _jhm.run()
+        except Exception: pass
         _adb_heal_if_needed()
         _heartbeat_sv_check()
         import jack_heartbeat; jack_heartbeat.beat('jack_waechter')

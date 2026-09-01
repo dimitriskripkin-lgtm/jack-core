@@ -1,1 +1,1 @@
-{"id": "sys_size_jack_telegram", "typ": "check", "act": "line_count", "file": "~/jack/jack_telegram.py", "expect_max": 1700, "expect": "PASS", "cat": "size"}
+{"id": "sys_size_jack_telegram", "typ": "check", "act": "line_count", "file": "~/jack/jack_telegram.py", "expect_max": 1700, "expect": "PASS", "cat": "size", "_prio": 8}

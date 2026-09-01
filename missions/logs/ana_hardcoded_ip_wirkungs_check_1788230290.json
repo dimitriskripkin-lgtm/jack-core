@@ -1,0 +1,10 @@
+{
+  "id": "ana_hardcoded_ip_wirkungs_check_1788230290",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:38:29",
+  "ok": false,
+  "note": "grep_count: 2 Treffer (max 0)",
+  "out": "2",
+  "expect": "PASS",
+  "raw_ok": false
+}

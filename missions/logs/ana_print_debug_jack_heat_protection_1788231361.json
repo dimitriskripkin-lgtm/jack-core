@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_heat_protection_1788231361",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:57:45",
+  "ok": false,
+  "note": "grep_count: 15 Treffer (max 0)",
+  "out": "15",
+  "expect": "PASS",
+  "raw_ok": false
+}

@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_autolearn_loop_1788230552",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:43:16",
+  "ok": false,
+  "note": "grep_count: 3 Treffer (max 0)",
+  "out": "3",
+  "expect": "PASS",
+  "raw_ok": false
+}

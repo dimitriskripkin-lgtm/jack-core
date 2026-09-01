@@ -1,0 +1,1 @@
+{"id": "ana_print_debug_jack_calltest_1788230288", "typ": "check", "act": "grep_count", "file": "~/jack/jack_calltest.py", "pattern": "    print(", "cat": "analyzer_print_debug", "expect_max": 0, "expect": "PASS", "_prio": 5}

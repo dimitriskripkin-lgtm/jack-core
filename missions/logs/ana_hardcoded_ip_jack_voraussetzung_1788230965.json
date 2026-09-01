@@ -1,0 +1,10 @@
+{
+  "id": "ana_hardcoded_ip_jack_voraussetzung_1788230965",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:49:41",
+  "ok": true,
+  "note": "grep_count: 0 Treffer (max 0)",
+  "out": "0",
+  "expect": "PASS",
+  "raw_ok": true
+}

@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_approval_1788230552",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:43:04",
+  "ok": false,
+  "note": "grep_count: 5 Treffer (max 0)",
+  "out": "5",
+  "expect": "PASS",
+  "raw_ok": false
+}

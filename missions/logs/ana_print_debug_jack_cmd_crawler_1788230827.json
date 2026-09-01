@@ -1,0 +1,10 @@
+{
+  "id": "ana_print_debug_jack_cmd_crawler_1788230827",
+  "act": "grep_count",
+  "ts": "2026-09-01 04:48:01",
+  "ok": false,
+  "note": "grep_count: 24 Treffer (max 0)",
+  "out": "24",
+  "expect": "PASS",
+  "raw_ok": false
+}

@@ -1,1 +1,1 @@
-{"id": "sys_mv_jack_scout", "typ": "check", "act": "grep_count", "file": "~/jack/jack_scout.py", "pattern": "MODULE_VERSION", "expect_min": 1, "expect": "PASS", "cat": "version"}
+{"id": "sys_mv_jack_scout", "typ": "check", "act": "grep_count", "file": "~/jack/jack_scout.py", "pattern": "MODULE_VERSION", "expect_min": 1, "expect": "PASS", "cat": "version", "_prio": 7}

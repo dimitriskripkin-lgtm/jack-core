@@ -1,1 +1,1 @@
-{"id": "sys_size_jack_cortex", "typ": "check", "act": "line_count", "file": "~/jack/jack_cortex.py", "expect_max": 300, "expect": "PASS", "cat": "size"}
+{"id": "sys_size_jack_cortex", "typ": "check", "act": "line_count", "file": "~/jack/jack_cortex.py", "expect_max": 300, "expect": "PASS", "cat": "size", "_prio": 8}
