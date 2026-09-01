@@ -171,7 +171,7 @@ def run_act(m):
     if act=="compile_ok":
         # "file" (singular) hat Vorrang vor "files" (plural)
         if "file" in m:
-            single = m["file"].replace("~/jack", J).replace("~", os.path.expanduser("~"))
+            single = m["file"].replace("~/jack", J)
             if not os.path.exists(single):
                 return False, f"compile FAIL: Datei fehlt: {os.path.basename(single)}", ""
             rc,o=sh(["python3","-m","py_compile",single],t=12)
