@@ -74,7 +74,7 @@ def propagate_verify(changed_files, graph):
         mname = fname.replace(".py","")
         importers = find_importers(graph, mname)
         for importer in importers:
-            mid = f"dep_verify_{importer}_after_{mname}_{int(time.time())}"
+            mid = f"dep_verify_{importer}_after_{mname}"
             mpath = os.path.join(PEND, f"{mid}.json")
             if os.path.exists(mpath): continue
             m = {
@@ -92,6 +92,10 @@ def propagate_verify(changed_files, graph):
     return written
 
 def run():
+    try:
+        import jack_queue_gate
+        if not jack_queue_gate.allow(): return 0
+    except Exception: pass
     graph = build_graph()
     json.dump(graph, open(GRAPH,'w'), indent=2)
 

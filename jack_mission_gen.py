@@ -60,6 +60,10 @@ def _notify(msg):
         pass
 
 def run():
+    try:
+        import jack_queue_gate
+        if not jack_queue_gate.allow(): return 0
+    except Exception: pass
     if not os.path.exists(FAIL):
         return 0
 
@@ -94,6 +98,10 @@ def run():
 
                 # Fix-Mission schreiben
                 path = os.path.join(PEND, f"{fix_id}.json")
+                try:
+                    import jack_queue_gate
+                    if not jack_queue_gate.allow(): return 0
+                except Exception: pass
                 open(path, "w").write(json.dumps(fix))
                 _log(f"GEN {fix_id}: {strategy['name']} für {m.get('file','?')}")
                 _notify(f"🤖 JACK generiert Fix:\n{fix_id}\n{strategy['name']} in {os.path.basename(m.get('file','?'))}")
@@ -126,6 +134,10 @@ def _generate_trainer_mission():
     }
     path = os.path.join(PEND, f"{mid}.json")
     import json
+    try:
+        import jack_queue_gate
+        if not jack_queue_gate.allow(): return 0
+    except Exception: pass
     open(path, "w").write(json.dumps(mission))
     _log(f"Trainer-Mission generiert: {mid}")
 

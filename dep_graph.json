@@ -1,9 +1,9 @@
 {
   "jack_bug_fixer": [
-    "jack_code_writer",
-    "jack_logging",
     "jack_patch",
+    "jack_logging",
     "jack_log",
+    "jack_code_writer",
     "jack_config"
   ],
   "jack_code_writer": [
@@ -15,12 +15,12 @@
   ],
   "jack_cortex": [
     "jack_sensors",
-    "jack_heat_protection",
-    "jack_oracle",
-    "jack_logging",
     "jack_heartbeat",
+    "jack_logging",
     "jack_log",
-    "jack_config"
+    "jack_heat_protection",
+    "jack_config",
+    "jack_oracle"
   ],
   "jack_handshake_gen": [
     "jack_logging"
@@ -34,34 +34,34 @@
     "jack_logging"
   ],
   "jack_personality": [
-    "jack_log",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_talk": [
+    "jack_voice_el",
+    "jack_voice",
+    "jack_memory",
+    "jack_vecdb",
     "jack_router",
-    "jack_memory_tree",
-    "jack_groq_bridge",
     "jack_chat_router",
-    "jack_logging",
-    "jack_gemini_bridge",
+    "jack_intent",
+    "jack_math",
+    "jack_context_compress",
+    "jack_groq_bridge",
     "jack_delta",
     "jack_telegram",
-    "jack_context_compress",
-    "jack_math",
-    "jack_state",
-    "jack_voice",
-    "jack_graph",
-    "jack_log",
     "jack_exec",
-    "jack_voice_el",
-    "jack_vecdb",
     "jack_episoden",
-    "jack_intent",
-    "jack_memory"
+    "jack_state",
+    "jack_memory_tree",
+    "jack_graph",
+    "jack_gemini_bridge",
+    "jack_logging",
+    "jack_log"
   ],
   "jack_approval": [
-    "jack_voice",
-    "jack_logging"
+    "jack_logging",
+    "jack_voice"
   ],
   "jack_faehigkeiten": [],
   "jack_voice": [
@@ -70,46 +70,43 @@
   "jack_log": [],
   "jack_coder": [
     "jack_gemini_bridge",
-    "jack_haliza",
+    "jack_ast_gate",
     "jack_logging",
-    "jack_ast_gate"
+    "jack_haliza"
   ],
   "jack_outcome": [],
   "jack_sensors": [
     "jack_logging",
-    "jack_gemini_bridge",
     "jack_log",
     "jack_config",
+    "jack_gemini_bridge",
     "jack_budget"
   ],
   "jack_improve": [
-    "jack_haliza",
-    "jack_logging",
-    "jack_gemini_bridge",
     "jack_patch",
-    "jack_log"
+    "jack_logging",
+    "jack_log",
+    "jack_gemini_bridge",
+    "jack_haliza"
   ],
   "jack_agent": [
+    "jack_budget",
     "jack_coder",
-    "jack_log",
     "jack_logging",
-    "jack_budget"
+    "jack_log"
   ],
-  "jack_budget": [
-    "jack_log",
-    "jack_logging"
-  ],
+  "jack_budget": [],
   "jack_skills": [
-    "jack_log",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_voice_el": [
     "jack_log"
   ],
   "jack_publish": [
     "jack_budget",
-    "jack_log",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_gemini_bridge": [
     "jack_ollama_gate",
@@ -119,49 +116,49 @@
     "jack_budget"
   ],
   "jack_autonomous": [
-    "jack_learn",
-    "jack_queue",
-    "jack_heat_protection",
-    "jack_graceful",
-    "jack_skill_builder",
-    "jack_monitor",
-    "jack_logging",
-    "jack_dep_map",
-    "jack_autodoc",
-    "jack_scout",
-    "jack_autofixer_shadow",
-    "jack_db_optimizer",
     "jack_mission_prioritizer",
-    "jack_missions",
-    "jack_changelog",
-    "jack_log",
-    "jack_config",
-    "jack_code_analyzer",
-    "jack_audit",
-    "jack_approval_digest",
-    "jack_chains",
-    "jack_health_monitor",
-    "jack_heartbeat",
     "jack_publish",
+    "jack_scout",
+    "jack_approval_digest",
+    "jack_autofixer_shadow",
+    "jack_queue",
+    "jack_chains",
     "jack_mission_gen",
-    "jack_xiaomi",
-    "jack_talk_trainer",
-    "jack_lerner",
-    "jack_semantic_analyzer",
     "jack_scheduler",
-    "jack_reflexion",
-    "jack_self_improve",
+    "jack_learn",
+    "jack_graceful",
+    "jack_missions",
+    "jack_autodoc",
+    "jack_audit",
+    "jack_config",
+    "jack_self_audit",
+    "jack_skill_builder",
+    "jack_lerner",
+    "jack_health_monitor",
+    "jack_changelog",
+    "jack_semantic_analyzer",
+    "jack_heartbeat",
+    "jack_monitor",
+    "jack_db_optimizer",
+    "jack_heat_protection",
     "jack_sanity",
-    "jack_self_audit"
+    "jack_reflexion",
+    "jack_xiaomi",
+    "jack_code_analyzer",
+    "jack_logging",
+    "jack_log",
+    "jack_self_improve",
+    "jack_dep_map",
+    "jack_talk_trainer"
   ],
   "jack_claude": [
     "jack_logging"
   ],
   "jack_xiaomi": [
-    "jack_memory",
-    "jack_logging",
     "jack_cortex",
+    "jack_logging",
     "jack_log",
+    "jack_memory",
     "jack_config"
   ],
   "jack_math": [
@@ -170,60 +167,62 @@
   "jack_vecdb": [
     "jack_logging"
   ],
-  "jack_schema": [],
+  "jack_schema": [
+    "jack_log"
+  ],
   "jack_telegram": [
-    "jack_android",
-    "jack_coder",
-    "jack_live_bridge",
-    "jack_sensors",
-    "jack_memory_tree",
-    "jack_screen_mapper",
-    "jack_callback_handler",
-    "jack_chat_router",
-    "jack_logging",
-    "jack_keyboards",
-    "jack_gemini_bridge",
-    "jack_intent_lookup",
-    "jack_monitor",
-    "jack_schema",
-    "jack_write",
-    "jack_voice_processor",
-    "jack_xiaomi_inspector",
-    "jack_autonomous",
-    "jack_activity_logger",
-    "jack_harvest_lernen",
-    "jack_claude",
-    "jack_missions",
-    "jack_improve",
-    "jack_talk",
-    "jack_log",
+    "jack_cortex",
+    "jack_bugfix_loop",
+    "jack_ui_nav",
     "jack_grid_vision",
-    "jack_exec",
+    "jack_write",
+    "jack_android",
+    "jack_memory",
+    "jack_talk",
+    "jack_live_bridge",
+    "jack_chains",
+    "jack_chat_router",
+    "jack_skill_lib",
+    "jack_screen_mapper",
+    "jack_voice_handler",
+    "jack_voice_processor",
+    "jack_sensors",
+    "jack_ui_agent",
+    "jack_explorer",
+    "jack_vision",
+    "jack_explorer_deep",
+    "jack_claude",
+    "jack_callback_handler",
+    "jack_missions",
+    "jack_audit",
     "jack_config",
     "jack_budget",
-    "jack_vision",
-    "jack_outcome_tracker",
-    "jack_ui_nav",
-    "jack_audit",
-    "jack_intent_apps",
-    "jack_inbox",
-    "jack_chains",
-    "jack_agent",
     "jack_ui_type",
-    "jack_cmd_handler",
-    "jack_voice_handler",
+    "jack_exec",
     "jack_planner",
-    "jack_cortex",
+    "jack_activity_logger",
     "jack_heartbeat",
-    "jack_bugfix_loop",
-    "jack_explorer_deep",
-    "jack_explorer",
-    "jack_ui_agent",
-    "jack_web_ingest",
-    "jack_skill_lib",
-    "jack_skills",
+    "jack_monitor",
+    "jack_cmd_handler",
+    "jack_schema",
+    "jack_autonomous",
+    "jack_memory_tree",
+    "jack_agent",
     "jack_harvest",
-    "jack_memory"
+    "jack_gemini_bridge",
+    "jack_coder",
+    "jack_intent_lookup",
+    "jack_intent_apps",
+    "jack_harvest_lernen",
+    "jack_keyboards",
+    "jack_inbox",
+    "jack_skills",
+    "jack_logging",
+    "jack_log",
+    "jack_web_ingest",
+    "jack_xiaomi_inspector",
+    "jack_improve",
+    "jack_outcome_tracker"
   ],
   "jack_audit": [
     "jack_logging"
@@ -234,8 +233,8 @@
   ],
   "jack_learn": [
     "jack_gemini_bridge",
-    "jack_log",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_snapshot": [
     "jack_logging"
@@ -248,33 +247,33 @@
     "jack_logging"
   ],
   "jack_voice_processor": [
-    "jack_guard",
-    "jack_heat_protection",
+    "jack_exec",
     "jack_logging",
+    "jack_log",
+    "jack_heat_protection",
     "jack_claude",
     "jack_talk",
-    "jack_log",
-    "jack_exec"
+    "jack_guard"
   ],
   "jack_reflexion": [
+    "jack_gemini_bridge",
     "jack_intent",
-    "jack_episoden",
-    "jack_gemini_bridge"
+    "jack_episoden"
   ],
   "jack_write": [
     "jack_gemini_bridge",
+    "jack_logging",
     "jack_log",
-    "jack_critic",
-    "jack_logging"
+    "jack_critic"
   ],
   "jack_patch": [
     "jack_logging"
   ],
   "jack_planner": [
-    "jack_skill_lib",
-    "jack_ghost",
     "jack_exec",
-    "jack_outcome"
+    "jack_outcome",
+    "jack_skill_lib",
+    "jack_ghost"
   ],
   "jack_skill_lib": [],
   "jack_explorer_deep": [
@@ -293,13 +292,13 @@
     "jack_ghost"
   ],
   "jack_autolearn_loop": [
-    "jack_faehigkeiten",
-    "jack_memory_pruning",
-    "jack_heat_protection",
-    "jack_autonomous",
-    "jack_heartbeat",
     "jack_error_to_rule",
-    "jack_log"
+    "jack_heartbeat",
+    "jack_memory_pruning",
+    "jack_log",
+    "jack_autonomous",
+    "jack_heat_protection",
+    "jack_faehigkeiten"
   ],
   "jack_wissen_tief": [
     "jack_config"
@@ -318,27 +317,27 @@
   "jack_ast_gate": [],
   "jack_observer": [],
   "jack_tuev2": [
-    "jack_intent",
-    "jack_memory_tree",
-    "jack_chains",
-    "jack_skill_builder",
     "jack_telegram",
     "jack_gemini_bridge",
+    "jack_intent",
     "jack_skill_trainer",
     "jack_log",
+    "jack_memory_tree",
+    "jack_skill_builder",
+    "jack_chains",
     "jack_budget"
   ],
   "jack_tuev3": [
-    "jack_briefing",
-    "jack_vecdb",
-    "jack_critic",
-    "jack_memory",
-    "jack_chains",
+    "jack_telegram",
+    "jack_exec",
     "jack_planner",
     "jack_write",
+    "jack_critic",
     "jack_skill_trainer",
-    "jack_telegram",
-    "jack_exec"
+    "jack_memory",
+    "jack_vecdb",
+    "jack_briefing",
+    "jack_chains"
   ],
   "jack_vision": [
     "jack_budget"
@@ -348,8 +347,8 @@
   ],
   "jack_self_improve": [
     "jack_telegram",
-    "jack_log",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_harvest_lernen": [
     "jack_gemini_bridge"
@@ -360,31 +359,31 @@
   "jack_tuev4": [
     "jack_intent_apps",
     "jack_activity_logger",
+    "jack_vision",
     "jack_selftest",
-    "jack_outcome_tracker",
-    "jack_vision"
+    "jack_outcome_tracker"
   ],
   "jack_radar": [
-    "jack_log",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_intent_parser": [],
   "jack_state": [],
   "jack_self_audit": [
+    "jack_config",
     "jack_guard",
-    "jack_log",
-    "jack_config"
+    "jack_log"
   ],
   "jack_context_compress": [],
   "jack_scheduler": [
-    "jack_log",
-    "jack_guard"
+    "jack_guard",
+    "jack_log"
   ],
   "jack_stress": [
-    "jack_oracle",
     "jack_autofixer_shadow",
+    "jack_publish",
     "jack_missions",
-    "jack_publish"
+    "jack_oracle"
   ],
   "jack_freigabe": [
     "jack_log"
@@ -395,9 +394,9 @@
     "jack_config"
   ],
   "jack_live_bridge": [
-    "jack_nc",
+    "jack_whisper_async",
     "jack_groq_bridge",
-    "jack_whisper_async"
+    "jack_nc"
   ],
   "jack_navi": [
     "jack_config",
@@ -413,10 +412,10 @@
   "jack_groq_bridge": [],
   "jack_workers": [],
   "jack_exec": [
-    "jack_xiaomi_unlock",
-    "jack_observer",
     "jack_vision_selector",
+    "jack_xiaomi_unlock",
     "jack_log",
+    "jack_observer",
     "jack_outcome_tracker"
   ],
   "jack_critic": [],
@@ -439,20 +438,20 @@
     "jack_logging"
   ],
   "jack_missions": [
-    "jack_oracle",
     "jack_coder",
+    "jack_logging",
     "jack_log",
-    "jack_logging"
+    "jack_oracle"
   ],
   "jack_ui_type": [
-    "jack_yt_hybrid",
-    "jack_verify_gate",
+    "jack_xiaomi_unlock",
     "jack_ui_session",
-    "jack_xiaomi_unlock"
+    "jack_yt_hybrid",
+    "jack_verify_gate"
   ],
   "jack_skills_db": [
-    "jack_log",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_skill_builder": [],
   "jack_episoden": [
@@ -462,14 +461,14 @@
     "jack_logging"
   ],
   "jack_mission_runner": [
-    "jack_selfsee",
-    "jack_notify",
-    "jack_chat_router",
-    "jack_keyboards",
-    "jack_talk_contract",
-    "jack_mission_pull",
     "jack_telegram",
-    "jack_exec"
+    "jack_exec",
+    "jack_keyboards",
+    "jack_notify",
+    "jack_mission_pull",
+    "jack_chat_router",
+    "jack_selfsee",
+    "jack_talk_contract"
   ],
   "jack_voice_chat_live": [
     "jack_voice_live",
@@ -485,8 +484,8 @@
   ],
   "jack_seal": [],
   "jack_focus_monitor": [
-    "jack_screen_mapper",
-    "jack_activity_logger"
+    "jack_activity_logger",
+    "jack_screen_mapper"
   ],
   "jack_exec_parser": [],
   "jack_ui_learn": [
@@ -498,26 +497,26 @@
   "jack_anomaly": [],
   "jack_chains": [
     "jack_intent",
-    "jack_vision",
+    "jack_logging",
     "jack_ghost",
-    "jack_logging"
+    "jack_vision"
   ],
   "jack_voraussetzung": [
     "jack_config"
   ],
   "jack_verify_gate": [
-    "jack_ui_session",
-    "jack_xiaomi_unlock"
+    "jack_xiaomi_unlock",
+    "jack_ui_session"
   ],
   "jack_briefing": [
-    "jack_log",
     "jack_monitor",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_net_discover": [],
   "jack_memory_maintenance": [
-    "jack_log",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_consolidate": [
     "jack_memory_stale"
@@ -532,11 +531,11 @@
   ],
   "jack_context_ingest": [],
   "jack_autofixer_shadow": [
-    "jack_guard",
-    "jack_heat_protection",
     "jack_patch",
+    "jack_circuit_breaker",
     "jack_log",
-    "jack_circuit_breaker"
+    "jack_heat_protection",
+    "jack_guard"
   ],
   "jack_whisper_async": [],
   "jack_rhythm": [],
@@ -558,10 +557,10 @@
     "jack_log"
   ],
   "jack_bugfix_loop": [
-    "jack_gemini_bridge",
     "jack_telegram",
-    "jack_traceback",
-    "jack_logging"
+    "jack_gemini_bridge",
+    "jack_logging",
+    "jack_traceback"
   ],
   "jack_traceback": [
     "jack_logging"
@@ -574,15 +573,15 @@
   ],
   "jack_adb_heal": [],
   "jack_oracle": [
-    "jack_log",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_haliza": [
-    "jack_approval",
     "jack_patch_memory",
     "jack_logging",
-    "jack_gemini_bridge",
-    "jack_log"
+    "jack_log",
+    "jack_approval",
+    "jack_gemini_bridge"
   ],
   "jack_patch_memory": [
     "jack_logging"
@@ -593,17 +592,17 @@
   ],
   "jack_selfsee": [],
   "jack_monitor": [
-    "jack_log",
-    "jack_logging"
+    "jack_logging",
+    "jack_log"
   ],
   "jack_gedanken": [],
   "jack_lokal": [
     "jack_log"
   ],
   "jack_tuev5": [
-    "jack_vision",
     "jack_intent_apps",
     "jack_activity_logger",
+    "jack_vision",
     "jack_outcome_tracker"
   ],
   "jack_voice_live": [
@@ -613,9 +612,9 @@
     "jack_log"
   ],
   "jack_tuev6": [
-    "jack_vision",
     "jack_intent_apps",
     "jack_activity_logger",
+    "jack_vision",
     "jack_outcome_tracker"
   ],
   "jack_ui_nav": [
@@ -630,23 +629,23 @@
     "jack_heartbeat"
   ],
   "jack_intent": [
-    "jack_gedanken",
+    "jack_exec",
     "jack_sensors",
-    "jack_log",
-    "jack_logging",
-    "jack_gemini_bridge",
-    "jack_write",
-    "jack_subagent",
     "jack_xiaomi",
+    "jack_write",
+    "jack_gedanken",
+    "jack_logging",
+    "jack_subagent",
+    "jack_log",
     "jack_config",
-    "jack_exec"
+    "jack_gemini_bridge"
   ],
   "jack_thermal": [
     "jack_logging"
   ],
   "jack_intent_apps": [
-    "jack_verify_gate",
-    "jack_xiaomi_unlock"
+    "jack_xiaomi_unlock",
+    "jack_verify_gate"
   ],
   "jack_error_to_rule": [],
   "jack_outcome_tracker": [],
@@ -672,12 +671,13 @@
   "jack_dm_gate": [],
   "jack_keyboards": [],
   "jack_talk_trainer": [
-    "jack_talk_contract",
-    "jack_gemini_bridge"
+    "jack_gemini_bridge",
+    "jack_talk_contract"
   ],
   "jack_mission_prioritizer": [],
   "jack_semantic_analyzer": [
     "jack_gemini_bridge",
+    "jack_queue_gate",
     "jack_log"
   ],
   "jack_system_tools": [],
@@ -691,9 +691,11 @@
   ],
   "jack_autodoc": [
     "jack_gemini_bridge",
+    "jack_queue_gate",
     "jack_log"
   ],
   "jack_dep_map": [
+    "jack_queue_gate",
     "jack_log"
   ],
   "jack_yt_sido": [
@@ -714,7 +716,9 @@
   "jack_ui_elements": [
     "jack_groq_bridge"
   ],
-  "jack_code_analyzer": [],
+  "jack_code_analyzer": [
+    "jack_queue_gate"
+  ],
   "jack_health_monitor": [
     "jack_notify"
   ],
@@ -733,29 +737,30 @@
   "jack_cmd_handler": [
     "jack_sensors",
     "jack_intent",
-    "jack_health_monitor",
     "jack_log",
-    "jack_budget"
+    "jack_budget",
+    "jack_health_monitor"
   ],
   "jack_voice_handler": [
-    "jack_voice_processor",
     "jack_intent_apps",
+    "jack_intent_lookup",
     "jack_exec_parser",
-    "jack_intent_lookup"
+    "jack_voice_processor"
   ],
   "jack_callback_handler": [
-    "jack_selfsee",
-    "jack_intent",
-    "jack_memory",
-    "jack_monitor",
-    "jack_telegram",
-    "jack_cmd_handler",
     "jack_bugfix_loop",
-    "jack_log",
+    "jack_telegram",
     "jack_react",
-    "jack_budget"
+    "jack_monitor",
+    "jack_cmd_handler",
+    "jack_intent",
+    "jack_log",
+    "jack_memory",
+    "jack_budget",
+    "jack_selfsee"
   ],
   "jack_mission_gen": [
+    "jack_queue_gate",
     "jack_notify"
   ],
   "jack_loop": [],
@@ -769,6 +774,9 @@
     "jack_groq_bridge"
   ],
   "jack_log_rotate": [],
-  "jack_changelog": [],
+  "jack_changelog": [
+    "jack_queue_gate"
+  ],
+  "jack_queue_gate": [],
   "jack_mission_run": []
 }

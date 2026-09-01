@@ -126,6 +126,10 @@ def write_staged_fix(fname, func_info, docstring):
         return False
 
 def run():
+    try:
+        import jack_queue_gate
+        if not jack_queue_gate.allow(): return 0
+    except Exception: pass
     state = load_state()
     done = state.get("done", {})
     files_done = 0

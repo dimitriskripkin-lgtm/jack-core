@@ -25,10 +25,11 @@ def pull():
     for name in sorted(os.listdir(src)):
         if n>=MAX: break
         if not name.endswith(".json"): continue
-        if any(os.path.exists(x) for x in (J+"/pending/"+name,J+"/logs/"+name,J+"/done/"+name,J+"/fail/"+name,J+"/archive/"+name+".fail")): continue
+        if any(os.path.exists(x) for x in (J+"/missions/pending/"+name,J+"/logs/"+name,J+"/done/"+name,J+"/fail/"+name,J+"/archive/"+name+".fail")): continue
         try: d=json.load(open(src+"/"+name,encoding="utf-8"))
         except Exception: continue
         if str(d.get("act") or "") not in OK: continue
+        if not d.get("staged"): continue
         shutil.copy2(src+"/"+name,J+"/pending/"+name); n+=1
     return "PULLED "+str(n)
 def push_status():

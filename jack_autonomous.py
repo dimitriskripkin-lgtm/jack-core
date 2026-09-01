@@ -325,28 +325,28 @@ def main():
         
         import jack_heartbeat; jack_heartbeat.beat("jack_waechter")
         try:
-            import jack_mission_gen as _jmg; _jmg.run()
+            import importlib,jack_mission_gen as _jmg; importlib.reload(_jmg); _jmg.run()
         except Exception: pass
         try:
             import jack_talk_trainer as _jtt; _jtt.run()
         except Exception: pass
         try:
-            import jack_code_analyzer as _jca; _jca.run()
+            import importlib,jack_code_analyzer as _jca; importlib.reload(_jca); _jca.run()
         except Exception: pass
         try:
-            import jack_semantic_analyzer as _jsa; _jsa.run()
+            import importlib,jack_semantic_analyzer as _jsa; importlib.reload(_jsa); _jsa.run()
         except Exception: pass
         try:
             import jack_autodoc as _jad2; _jad2.run()
         except Exception: pass
         try:
-            import jack_dep_map as _jdm; _jdm.run()
+            import importlib,jack_dep_map as _jdm; importlib.reload(_jdm); _jdm.run()
         except Exception: pass
         try:
             import jack_mission_prioritizer as _jmp; _jmp.run()
         except Exception: pass
         try:
-            import jack_changelog as _jcl; _jcl.run()
+            import importlib,jack_changelog as _jcl; importlib.reload(_jcl); _jcl.run()
         except Exception: pass
         try:
             import jack_health_monitor as _jhm; _jhm.run()

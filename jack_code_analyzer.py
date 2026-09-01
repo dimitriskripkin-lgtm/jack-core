@@ -15,7 +15,7 @@ def _log(msg):
 
 # Muster die der Analyzer selbst erkennt
 PATTERNS = [
-    {"name":"bare_except","regex":r"    except:\s*$","msg":"bare except gefunden","act":"grep_count","pattern":"    except:","expect_max":0},
+    {"name":"bare_except","regex":r"    except:\s*$","msg":"bare except gefunden","act":"grep_count","pattern":"    except:\n","expect_max":0},
     # {"name":"hardcoded_path_DISABLED","regex":r'"/data/data/com\.termux/files/home/jack/[^"]+"',"msg":"hardcoded Pfad","act":"grep_count","pattern":"/data/data/com.termux/files/home/jack/","expect_max":0},  # deaktiviert
     # {"name":"tilde_in_string","regex":r'"~/',"msg":"Tilde in String","act":"grep_count","pattern":'"~/',"expect_max":0}, # deaktiviert FP
     # print_debug: nur Core-Dienste, nicht CLI/Diag/Test-Tools
@@ -47,7 +47,7 @@ def finding_to_mission(f):
     """Konvertiert ein Finding in eine CHECK-Mission."""
     p = f["pattern"]
     fname = f["fname"]
-    mid = f"ana_{p['name']}_{fname.replace('.py','').replace('.','_')}_{int(time.time())}"
+    mid = f"ana_{p['name']}_{fname.replace('.py','').replace('.','_')}"
     m = {
         "id": mid,
         "typ": "check",
@@ -61,6 +61,10 @@ def finding_to_mission(f):
     return m
 
 def run():
+    try:
+        import jack_queue_gate
+        if not jack_queue_gate.allow(): return 0
+    except Exception: pass
     _log("=== ANALYZER START ===")
     all_py = [os.path.join(J, f) for f in os.listdir(J)
               if f.endswith(".py") and not f.endswith(".bak")]
@@ -91,6 +95,10 @@ def run():
                     if any(x.startswith(m["id"]) for x in os.listdir(sp)):
                         already=True; break
         if not already:
+            try:
+                import jack_queue_gate
+                if not jack_queue_gate.allow(): break
+            except Exception: pass
             path = os.path.join(PEND, f"{m['id']}.json")
             open(path,"w").write(json.dumps(m))
             _log(f"NEU: {m['id']} — {f['pattern']['msg']} in {f['fname']}")

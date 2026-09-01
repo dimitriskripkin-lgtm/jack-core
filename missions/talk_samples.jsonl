@@ -164,3 +164,5 @@
 {"u": "Klar aber könntest du mir nicht einfach mal helfen ohne immer nachzufragen", "j": "Bin hier. Sag was du brauchst.\n\n🤖 Groq (gpt-oss-120b) | Online"}
 {"u": "Bist du irgendwie dumm oder was stimmt nicht mit dir", "j": "Nein.\n\n🤖 Groq (gpt-oss-120b) | Online"}
 {"u": "Was würde JACK als nächstes empfehlen was soll ich als nächstes tun", "j": "Ich bin JACK. Was du als nächstes tust, entscheidest du. Ich folge.\n\n🤖 Groq (gpt-oss-120b) | Online"}
+{"u": "/approve_all", "j": "Kein Fix mit ID all gefunden."}
+{"u": "Moin Jack was geht ab sind geht die Veränderungen aufgefallen", "j": "Tageslimit text erreicht (300/Tag). Morgen wieder.\n\n🤖 Groq (gpt-oss-120b) | Online"}

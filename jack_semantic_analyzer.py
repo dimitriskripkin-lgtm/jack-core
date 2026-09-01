@@ -85,7 +85,7 @@ def write_mission(fname, finding, idx):
     msg = finding.get("msg","?")[:60]
     fix = finding.get("fix","")[:200]
 
-    mid = f"sem_{mname}_{sev}_{idx}_{int(time.time())}"
+    mid = f"sem_{mname}_{sev}_{idx}"
     mpath = os.path.join(PEND, f"{mid}.json")
     if os.path.exists(mpath): return False
 
@@ -105,6 +105,10 @@ def write_mission(fname, finding, idx):
     return True
 
 def run():
+    try:
+        import jack_queue_gate
+        if not jack_queue_gate.allow(): return 0
+    except Exception: pass
     state = load_state()
     analyzed = state.get("analyzed", {})
 

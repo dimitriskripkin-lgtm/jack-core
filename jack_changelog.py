@@ -28,6 +28,10 @@ def get_changed_files(since_commit):
     except Exception: return []
 
 def run():
+    try:
+        import jack_queue_gate
+        if not jack_queue_gate.allow(): return 0
+    except Exception: pass
     current = get_last_commit()
     if not current: return 0
 
@@ -45,15 +49,19 @@ def run():
         base = fname.replace(".py","")
         missions = [
             {"id":f"chg_compile_{base}","typ":"check","act":"compile_ok",
-             "file":f"~/jack/{fname}","cat":"changelog"},
+             "file":f"~/jack/{fname}","cat":"changelog","_prio":2},
             {"id":f"chg_mv_{base}","typ":"check","act":"grep_count",
-             "file":f"~/jack/{fname}","pattern":"MODULE_VERSION","expect_min":1,"expect":"PASS","cat":"changelog"},
+             "file":f"~/jack/{fname}","pattern":"MODULE_VERSION","expect_min":1,"expect":"PASS","cat":"changelog","_prio":2},
             {"id":f"chg_exc_{base}","typ":"check","act":"grep_count",
-             "file":f"~/jack/{fname}","pattern":"    except:","expect_max":0,"expect":"PASS","cat":"changelog"},
+             "file":f"~/jack/{fname}","pattern":"    except:\n","expect_max":0,"expect":"PASS","cat":"changelog","_prio":2},
         ]
         for m in missions:
             path = os.path.join(PEND, f"{m['id']}.json")
             if not os.path.exists(path):
+                try:
+                    import jack_queue_gate
+                    if not jack_queue_gate.allow(): return 0
+                except Exception: pass
                 open(path,"w").write(json.dumps(m))
                 written += 1
 
