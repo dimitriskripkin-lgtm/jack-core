@@ -1,0 +1,10 @@
+{
+  "id": "dep_verify_jack_autonomous_after_jack_code_analyzer_1788236364",
+  "act": "compile_ok",
+  "ts": "2026-09-01 06:27:19",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}
