@@ -119,6 +119,12 @@ def _load_persona():
     except Exception: return "Du kennst Dima gut - Details aus jack_identity.json."
 
 def ask_gemini(question, status=None):
+    # Context Cache einbinden wenn verfügbar
+    _cache_name = None
+    try:
+        import jack_gemini_cache as _jgc
+        _cache_name = _jgc.get_cached_name()
+    except Exception: pass
     _persona = _load_persona()
     global _CB_FAILS, _CB_RESET_AT
     import time as _tt2
