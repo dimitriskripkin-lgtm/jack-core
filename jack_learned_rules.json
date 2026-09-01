@@ -4,6 +4,6 @@
     "fehler": "[Cortex] SSH-Timeout (#1)",
     "regel": "SSH-Befehle NUR mit Timeout und via su -c. Kein /tmp nutzen.",
     "anzahl": 15,
-    "ts": "2026-09-01T03:34:14.882494"
+    "ts": "2026-09-01T03:54:20.131731"
   }
 ]

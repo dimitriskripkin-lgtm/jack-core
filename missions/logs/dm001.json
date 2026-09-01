@@ -1,0 +1,10 @@
+{
+  "id": "dm001",
+  "act": "mtime_fresh",
+  "ts": "2026-09-01 03:41:21",
+  "ok": false,
+  "note": "mtime_fresh: 388772s alt limit 10800s",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": false
+}

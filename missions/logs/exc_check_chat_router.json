@@ -1,0 +1,10 @@
+{
+  "id": "exc_check_chat_router",
+  "act": "grep_count",
+  "ts": "2026-09-01 03:41:24",
+  "ok": true,
+  "note": "grep_count: 0 Treffer (max 0)",
+  "out": "0",
+  "expect": "PASS",
+  "raw_ok": true
+}

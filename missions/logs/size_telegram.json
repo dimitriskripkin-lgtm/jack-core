@@ -1,0 +1,10 @@
+{
+  "id": "size_telegram",
+  "act": "line_count",
+  "ts": "2026-09-01 03:41:29",
+  "ok": true,
+  "note": "line_count 1294 min=None max=1650 n=None",
+  "out": "1294",
+  "expect": "PASS",
+  "raw_ok": true
+}

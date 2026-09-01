@@ -1,0 +1,10 @@
+{
+  "id": "health_graph",
+  "act": "file_exists",
+  "ts": "2026-09-01 03:41:24",
+  "ok": true,
+  "note": "file_exists /data/data/com.termux/files/home/jack/jack_graph.db yes",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

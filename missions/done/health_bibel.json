@@ -1,0 +1,1 @@
+{"id": "health_bibel", "typ": "check", "act": "file_exists", "file": "~/jack/jack_mission_gen.py", "expect": "PASS", "cat": "health"}

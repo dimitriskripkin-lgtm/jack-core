@@ -1,0 +1,1 @@
+{"id": "dm_fix001", "typ": "fix", "act": "sed_replace", "staged": true, "file": "~/jack/jack_overmind_result.json", "old": "", "new": "", "cat": "deadman"}
