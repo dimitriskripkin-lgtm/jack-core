@@ -9,7 +9,7 @@ from jack_log import get_logger
 log = get_logger("jack_thermal_guard")
 
 MIN_BATTERY = 20
-MAX_TEMP    = 45.0
+MAX_TEMP    = 62.0
 
 def get_battery():
     try:
