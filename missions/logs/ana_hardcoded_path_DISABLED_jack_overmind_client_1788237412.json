@@ -1,0 +1,10 @@
+{
+  "id": "ana_hardcoded_path_DISABLED_jack_overmind_client_1788237412",
+  "act": "grep_count",
+  "ts": "2026-09-01 06:37:12",
+  "ok": false,
+  "note": "grep_count: 2 Treffer (max 0)",
+  "out": "2",
+  "expect": "PASS",
+  "raw_ok": false
+}

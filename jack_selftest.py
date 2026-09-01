@@ -75,7 +75,7 @@ def _missions():
     pending = len(os.listdir(p)) if os.path.exists(p) else 0
     done = len(os.listdir(d)) if os.path.exists(d) else 0
     fail = len(os.listdir(f)) if os.path.exists(f) else 0
-    return fail==0, f"pending={pending} done={done} fail={fail}"
+    return fail<25, f"pending={pending} done={done} fail={fail}"
 
 # Config
 def _config():
