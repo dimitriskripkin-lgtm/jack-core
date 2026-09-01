@@ -1,0 +1,10 @@
+{
+  "id": "gen_sys_mv_jack_router_module_version_missing",
+  "act": "sed_replace",
+  "ts": "2026-09-01 05:53:39",
+  "ok": true,
+  "note": "shadow: wartet_freigabe — jack_router.py.staged",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

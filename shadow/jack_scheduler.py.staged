@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""JACK Scheduler: schwere Jobs nur in Power-Time (08-15h) und bei genuegend RAM."""
+import os,datetime
+
+POWER_START=8
+POWER_END=15
+MIN_RAM_MB=1500
+
+def is_power_time():
+    h=datetime.datetime.now().hour
+    return POWER_START<=h<POWER_END
+
+def can_run_heavy():
+    """True wenn Power-Time UND RAM genuegend."""
+    if not is_power_time(): return False,f"Nicht Power-Time (jetzt {datetime.datetime.now().hour}h)"
+    try:
+        import jack_guard; ram=jack_guard.mem_available_mb()
+        if ram>0 and ram<MIN_RAM_MB: return False,f"RAM zu niedrig: {ram}MB"
+    except Exception: pass
+    return True,"OK"
+
+def schedule_or_skip(job_name,fn,*args,**kwargs):
+    """Fuehrt fn() nur aus wenn Ressourcen OK. Sonst loggen und ueberspringen."""
+    ok,reason=can_run_heavy()
+    if not ok:
+        try:
+            import jack_log; jack_log.log_decision("SCHEDULER-SKIP",f"{job_name}: {reason}")
+        except Exception: pass
+        return None
+    try:
+        import jack_log; jack_log.log_decision("SCHEDULER-RUN",job_name)
+    except Exception: pass
+    return fn(*args,**kwargs)
+
+if __name__=="__main__":
+    ok,r=can_run_heavy()
+    print(f"Power-Time: {is_power_time()}, Heavy Jobs: {ok} ({r})")

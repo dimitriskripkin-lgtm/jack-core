@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+import json, os, subprocess, time, re
+J="/data/data/com.termux/files/home/jack"
+V="/data/data/com.termux/files/usr/var/service"
+PEND=J+"/.selfsee_pending"
+TG=J+"/jack_telegram.py"
+TK=J+"/jack_talk.py"
+EX=J+"/jack_exec.py"
+def sh(cmd,t=12):
+    try:
+        r=subprocess.run(cmd,capture_output=True,text=True,timeout=t)
+        return r.returncode,(r.stdout or ""),(r.stderr or "")
+    except subprocess.TimeoutExpired:
+        return 99,"","TIMEOUT"
+def wants(text):
+    t=(text or "").lower()
+    keys=("essenz","schau dich","selbst sehen","analysier","anomalie","nicht erreichbar","graceful","xiaomi offline","verbesserungsvorschlag","kompletten code","komplette essenz","eigenen code","eigener code")
+    return any(k in t for k in keys)
+def _age_h(path):
+    try:
+        return (time.time()-os.path.getmtime(path))/3600.0
+    except Exception:
+        return 999.0
+def explain(text):
+    t=(text or "").lower()
+    if "overmind" in t or "deadman" in t:
+        ov=round(_age_h(J+"/jack_overmind_result.json"),1)
+        return "Overmind-Result ist die Datei jack_overmind_result.json. Deadman alarmiert, wenn sie aelter als 3 Stunden ist. Das ist nicht Cortex-Uptime. Gerade: "+str(ov)+"h alt."
+    return None
+def measure():
+    subprocess.run(["python3",J+"/jack_health.py"],capture_output=True,timeout=20)
+    rc,out,err=sh(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6","xiaomi-jack","echo","HELLO"],t=10)
+    ssh="OK" if rc==0 and "HELLO" in out else "DOWN"
+    ov=round(_age_h(J+"/jack_overmind_result.json"),1)
+    git="tot"
+    try:
+        pub=open(J+"/jack_publish.py",encoding="utf-8",errors="ignore").read()
+        git="AN" if "git push" in pub else "tot"
+    except Exception:
+        pass
+    return {"ssh":ssh,"ov_h":ov,"git":git}
+def scan_code():
+    funde=[]
+    acts=[]
+    tg=open(TG,encoding="utf-8",errors="ignore").read() if os.path.isfile(TG) else ""
+    tk=open(TK,encoding="utf-8",errors="ignore").read() if os.path.isfile(TK) else ""
+    ex=open(EX,encoding="utf-8",errors="ignore").read() if os.path.isfile(EX) else ""
+    if "send(chat_id," in tg:
+        funde.append("send(chat_id,...) — send() nimmt nur Text. /forsche und /skills koennen stillos scheitern.")
+        acts.append("fix_send")
+    dnav=tg.find("suggest_deep_navigation")
+    rtr=tg.find("jack_chat_router")
+    gate="JACK_TUNE_CHATGATE" in tg
+    if dnav>=0 and (rtr<0 or dnav<rtr) and not gate:
+        funde.append("Deep-Nav/App-Launch laeuft vor FACT/DIAG. Analyse kann in Chrome landen.")
+        acts.append("chat_gate")
+    live_skills=0
+    for m in re.finditer(r"^\\s*if .*/skills", tg, re.M):
+        line=m.group(0)
+        if "False" in line: continue
+        live_skills += 1
+    if live_skills>=2:
+        funde.append("/skills ist doppelt verdrahtet.")
+    if '"interessiert"' in ex:
+        funde.append("handle_ui_intent: Wort interessiert oeffnet Google.")
+        acts.append("fix_ui")
+    if "| ADB-Heal |" in tk:
+        funde.append("talk.py haengt ADB-Heal in jeden LLM-Prompt.")
+    if "jack_chat_router" not in tg:
+        funde.append("Chat-Router nicht in telegram.handle.")
+    if not funde:
+        funde.append("Keine der bekannten Code-Fallen mehr im Scan.")
+    return funde, acts
+def handle(text):
+    m=measure()
+    funde, acts=scan_code()
+    if m["ssh"]!="OK":
+        funde=["SSH DOWN"]+funde
+        acts=["recheck"]+acts
+    if m["ov_h"]>3 and "overmind_refresh" not in acts:
+        funde.append("Overmind-Result "+str(m["ov_h"])+"h alt.")
+        acts.append("overmind_refresh")
+    act=acts[0] if acts else "recheck"
+    why={
+        "recheck":"Nur messen.",
+        "overmind_refresh":"Result-Datei erneuern, Deadman weg.",
+        "fix_send":"send(chat_id) auf send(text) setzen.",
+        "chat_gate":"FACT/DIAG vor Deep-Nav ziehen.",
+        "fix_ui":"interessiert aus UI-Intent streichen.",
+    }
+    open(PEND,"w").write(json.dumps({"act":act,"ts":time.time()}))
+    lines=["ESSENZ","SSH "+m["ssh"]+" | Overmind "+str(m["ov_h"])+"h | Git "+m["git"],"CODE:"]
+    lines += ["- "+x for x in funde[:5]]
+    lines += ["VORSCHLAG: "+act+" -- "+why.get(act,act)]
+    return "\n".join(lines)
+def _fix_send():
+    t=open(TG,encoding="utf-8",errors="ignore").read()
+    n=t.count("send(chat_id,")
+    if n==0:
+        return 0
+    if not os.path.isfile(TG+".send.bak"):
+        shutil_ok=True
+        try:
+            import shutil; shutil.copy2(TG,TG+".send.bak")
+        except Exception:
+            pass
+    t=t.replace("send(chat_id, ","send(").replace("send(chat_id,","send(")
+    open(TG,"w",encoding="utf-8").write(t)
+    return n
+def _chat_gate():
+    t=open(TG,encoding="utf-8",errors="ignore").read()
+    if "JACK_TUNE_CHATGATE" in t:
+        return False
+    needle="    # Deep-Navigation VOR App-Handler"
+    ins="""    try:  # JACK_TUNE_CHATGATE
+        import jack_chat_router as _cr
+        _lane=_cr.classify(text)
+        if _lane in ("FACT","EXPLAIN","DIAG"):
+            _r=_cr.dispatch(text, send_keyboard)
+            if _r is False:
+                return None
+            if _r:
+                return _r
+    except Exception:
+        pass
+    # Deep-Navigation VOR App-Handler"""
+    if needle not in t:
+        return False
+    if not os.path.isfile(TG+".gate.bak"):
+        try:
+            import shutil; shutil.copy2(TG,TG+".gate.bak")
+        except Exception:
+            pass
+    open(TG,"w",encoding="utf-8").write(t.replace(needle,ins,1))
+    return True
+def _fix_ui():
+    t=open(EX,encoding="utf-8",errors="ignore").read()
+    if '"interessiert"' not in t:
+        return False
+    t=t.replace(', "interessiert"','')
+    open(EX,"w",encoding="utf-8").write(t)
+    return True
+def execute(act=None):
+    if not act and not os.path.isfile(PEND):
+        return "Nichts offen."
+    if not act:
+        try: act=json.loads(open(PEND).read()).get("act")
+        except Exception: return "Nichts offen."
+    try: os.remove(PEND)
+    except Exception: pass
+    if act=="overmind_refresh":
+        sh(["python3",J+"/jack_overmind_client.py"],t=45)
+        m=measure()
+        ok=m["ov_h"]<0.2
+        return ("Fix hat gegriffen." if ok else "Fix hat nicht gegriffen.")+" Overmind "+str(m["ov_h"])+"h. SSH "+m["ssh"]+"."
+    if act=="fix_send":
+        n=_fix_send()
+        return "Fix hat gegriffen. send(chat_id) entfernt: "+str(n)+" Stellen. Bot-Prozess nutzt die Datei beim naechsten Restart."
+    if act=="chat_gate":
+        ok=_chat_gate()
+        return "Fix hat gegriffen. FACT/DIAG vor Deep-Nav." if ok else "Fix hat nicht gegriffen. Marker Deep-Nav nicht gefunden."
+    if act=="fix_ui":
+        ok=_fix_ui()
+        return "Fix hat gegriffen. interessiert raus." if ok else "Fix hat nicht gegriffen. Schon weg."
+    m=measure()
+    funde,_=scan_code()
+    return "Fix hat gegriffen. Messwerte stehen. SSH "+m["ssh"]+" Overmind "+str(m["ov_h"])+"h. Noch offen: "+("; ".join(funde[:2]) if funde else "nichts")
+def deep():
+    return execute(None)
+def follow(text):
+    t=(text or "").strip().lower()
+    if any(k in t for k in ("beenden","stopp","nein","abbrechen")):
+        try: os.remove(PEND)
+        except Exception: pass
+        return "Ok, beendet. Kein Fix."
+    if os.path.isfile(PEND) and any(k in t for k in ("ausfuehren","ausfuhren","mach","ok","ja")):
+        return execute(None)
+    return None

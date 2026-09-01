@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""Publisher-Loop: context.md alle 3 Min nach jack-context pushen."""
+import time, os, subprocess
+H = os.path.expanduser("~/jack")
+
+def run():
+    import jack_publish
+    jack_publish.push()
+
+while True:
+    try:
+        run()
+        import jack_heartbeat; jack_heartbeat.beat("jack_publisher")
+    except Exception as e:
+        print(f"[Publisher] Fehler: {e}")
+    time.sleep(180)

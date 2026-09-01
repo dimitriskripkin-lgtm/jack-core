@@ -1,0 +1,10 @@
+{
+  "id": "gen_ana_no_module_version_jack_orchestrator_1788234591_module_version_missing",
+  "act": "sed_replace",
+  "ts": "2026-09-01 05:53:34",
+  "ok": true,
+  "note": "shadow: wartet_freigabe — jack_orchestrator.py.staged",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

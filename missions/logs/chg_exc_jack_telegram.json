@@ -1,0 +1,10 @@
+{
+  "id": "chg_exc_jack_telegram",
+  "act": "grep_count",
+  "ts": "2026-09-01 05:51:05",
+  "ok": true,
+  "note": "grep_count: 0 Treffer (max 0)",
+  "out": "0",
+  "expect": "PASS",
+  "raw_ok": true
+}

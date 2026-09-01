@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""JACK Meta-Autonomie: generiert SYSTEM_STATE.md fuer KI-Onboarding ohne manuellen Kontext-Dump."""
+import os,sqlite3,json
+from datetime import datetime
+
+JACK=os.path.expanduser("~/jack")
+OUT=os.path.join(JACK,"SYSTEM_STATE.md")
+
+def _services():
+    import subprocess
+    svcs=["jack_cortex","jack_telegram","jack_autolearn","ollama"]
+    result={}
+    for s in svcs:
+        r=subprocess.run(["sv","status",s],capture_output=True,text=True,timeout=5)
+        result[s]="UP" if "run:" in r.stdout else "DOWN"
+    return result
+
+def _errors():
+    try:
+        db=os.path.join(JACK,"jack_errors.db")
+        c=sqlite3.connect(db); c.execute("PRAGMA journal_mode=WAL")
+        n=c.execute("SELECT COUNT(*) FROM errors WHERE resolved=0").fetchone()[0]
+        recent=c.execute("SELECT module,error_msg FROM errors WHERE resolved=0 ORDER BY timestamp DESC LIMIT 3").fetchall()
+        c.close(); return n,recent
+    except Exception: return 0,[]
+
+def _memory_count():
+    try:
+        db=os.path.join(JACK,"jack_memory.db")
+        c=sqlite3.connect(db)
+        n=c.execute("SELECT COUNT(*) FROM memory").fetchone()[0]
+        c.close(); return n
+    except Exception: return 0
+
+def _ram():
+    try:
+        for l in open("/proc/meminfo"):
+            if "MemAvailable" in l: return round(int(l.split()[1])/1024)
+    except Exception: return -1
+
+def _last_log(n=5):
+    try:
+        import jack_log; return jack_log.recent(n)
+    except Exception: return "(unavailable)"
+
+def _config_snapshot():
+    try:
+        import jack_config as _jc
+        return {
+            "xiaomi_ip": _jc.get_param("NETWORK","xiaomi_ip"),
+            "ssh_port": _jc.get_param("NETWORK","ssh_port"),
+        }
+    except Exception: return {}
+
+def _features():
+    try:
+        import jack_config as _jc
+        feats=["elevenlabs","gemini_vision","xiaomi_ssh","voice_pipeline","autolearn"]
+        return {f: _jc.feature_enabled(f) for f in feats}
+    except Exception: return {}
+
+def _model():
+    try:
+        import jack_guard; return jack_guard.get_model()
+    except Exception: return "unbekannt"
+
+def run():
+    ts=datetime.now().strftime("%Y-%m-%d %H:%M")
+    svcs=_services()
+    err_n,err_recent=_errors()
+    mem_n=_memory_count()
+    ram=_ram()
+    cfg=_config_snapshot()
+    feats=_features()
+    model=_model()
+    log=_last_log(5)
+
+    lines=[
+        f"# JACK SYSTEM STATE — {ts}",
+        "",
+        "## Services",
+    ]
+    for s,st in svcs.items():
+        lines.append(f"- {s}: {st}")
+    lines+=[
+        "",
+        f"## Resources",
+        f"- RAM verfuegbar: {ram}MB",
+        f"- Aktives Modell: {model}",
+        f"- Memory-Eintraege: {mem_n}",
+        f"- Offene Fehler: {err_n}",
+        "",
+        "## Config",
+        f"- Xiaomi IP: {cfg.get('xiaomi_ip','?')}",
+        f"- SSH Port: {cfg.get('ssh_port','?')}",
+        "",
+        "## Features",
+    ]
+    for f,v in feats.items():
+        lines.append(f"- {f}: {'AN' if v else 'AUS'}")
+    if err_recent:
+        lines+=["","## Letzte Fehler"]
+        for m,e in err_recent:
+            lines.append(f"- [{m}] {e[:100]}")
+    lines+=["","## Letzte Log-Eintraege",log,"",f"*Generiert: {ts}*"]
+
+    out=chr(10).join(lines)
+    open(OUT,"w",encoding="utf-8").write(out)
+    try:
+        import jack_log; jack_log.log_decision("SELF-AUDIT","SYSTEM_STATE.md generiert")
+    except Exception: pass
+    return out
+
+if __name__=="__main__":
+    print(run())

@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
+"""Echte Proaktivitaet: JACK meldet sich weil ihm was auffaellt."""
+import os, sqlite3, datetime, json, subprocess
+H = os.path.expanduser('~/jack')
+STATE = os.path.join(H, '.reflexion_state')
+MAX_PRO_TAG = 2
+
+def _state():
+    try: return json.load(open(STATE))
+    except Exception: return {'datum':'', 'anzahl':0, 'gemeldet':[]}
+
+def _save(s):
+    try: json.dump(s, open(STATE,'w'))
+    except Exception: pass
+
+def _budget_frei():
+    s = _state(); heute = datetime.date.today().isoformat()
+    if s.get('datum') != heute:
+        _save({'datum':heute,'anzahl':0,'gemeldet':[]}); return True
+    return s.get('anzahl',0) < MAX_PRO_TAG
+
+def _verbrauche(kennung):
+    s = _state(); heute = datetime.date.today().isoformat()
+    if s.get('datum') != heute: s = {'datum':heute,'anzahl':0,'gemeldet':[]}
+    s['anzahl'] = s.get('anzahl',0)+1
+    s.setdefault('gemeldet',[]).append(kennung)
+    _save(s)
+
+def _schon_gemeldet(kennung):
+    return kennung in _state().get('gemeldet',[])
+
+def _jetzt():
+    d = {}
+    try:
+        d['ram'] = int([l for l in open('/proc/meminfo') if 'MemAvailable' in l][0].split()[1])//1024
+    except Exception: pass
+    try:
+        mx = 0
+        for z in os.listdir('/sys/class/thermal'):
+            try:
+                tp = open('/sys/class/thermal/'+z+'/type').read().strip()
+                if any(x in tp for x in ('trip','lvl','vbat')): continue
+                rv = int(open('/sys/class/thermal/'+z+'/temp').read())
+                if rv < 0: continue
+                g = rv/1000 if rv > 1000 else float(rv)
+                if g > mx: mx = g
+            except Exception: pass
+        d['temp'] = mx
+    except Exception: pass
+    try:
+        c = sqlite3.connect(os.path.join(H,'jack_errors.db'))
+        d['fehler'] = c.execute('SELECT COUNT(*) FROM errors WHERE resolved=0').fetchone()[0]
+        c.close()
+    except Exception: pass
+    return d
+
+def baseline():
+    """Durchschnitt der letzten Tage aus der Metrik-Historie."""
+    p = os.path.join(H,'.metrik_historie')
+    try:
+        rows = [json.loads(l) for l in open(p).read().strip().split(chr(10)) if l.strip()][-7:]
+    except Exception:
+        return {}
+    if len(rows) < 3: return {}
+    out = {}
+    for k in ('ram','temp','fehler'):
+        vals = [r[k] for r in rows if k in r]
+        if vals: out[k] = sum(vals)/len(vals)
+    return out
+
+def metrik_schreiben():
+    d = _jetzt(); d['ts'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+    try:
+        with open(os.path.join(H,'.metrik_historie'),'a') as f:
+            f.write(json.dumps(d)+chr(10))
+    except Exception: pass
+    return d
+
+def anomalien():
+    b, j, out = baseline(), _jetzt(), []
+    if not b: return out
+    if 'ram' in b and 'ram' in j and j['ram'] < b['ram']*0.6:
+        out.append(('ram', 'RAM ist heute bei ' + str(j['ram']) + 'MB, sonst um die ' + str(int(b['ram'])) + 'MB. Da frisst was.'))
+    if 'temp' in b and 'temp' in j and j['temp'] > b['temp']+12:
+        out.append(('temp', 'Das Geraet ist bei ' + str(round(j['temp'],1)) + 'C, gute ' + str(round(j['temp']-b['temp'])) + ' Grad ueber deinem Schnitt.'))
+    if 'fehler' in b and 'fehler' in j and j['fehler'] > b['fehler']+2:
+        out.append(('fehler', str(j['fehler']) + ' offene Fehler - deutlich mehr als sonst.'))
+    return out
+
+def follow_ups():
+    try:
+        import jack_episoden as ep
+        return [('ep'+str(e['id']), 'Wir hatten am ' + e['end_ts'][:10] + ' das Thema "' + e['titel'] + '" - das ist nie zu Ende gebracht worden.') for e in ep.offene(2)[:2]]
+    except Exception:
+        return []
+
+def gewohnheit_faellig():
+    try:
+        import jack_intent as ji
+        h = datetime.datetime.now().hour
+        for m in ji.muster_analyse():
+            if m['stunde'] == h and m['anzahl'] >= 4:
+                return [('gw'+m['intent']+str(h), 'Du checkst um diese Zeit meist ' + m['intent'] + '. Hier ist es ungefragt:')]
+    except Exception: pass
+    return []
+
+def reflektiere(dry=False):
+    """Gibt Meldungstext zurueck oder None."""
+    metrik_schreiben()
+    if not _budget_frei(): return None
+    kandidaten = anomalien() + follow_ups() + gewohnheit_faellig()
+    kandidaten = [k for k in kandidaten if not _schon_gemeldet(k[0])]
+    if not kandidaten: return None
+    kennung, roh = kandidaten[0]
+    text = roh
+    try:
+        import jack_gemini_bridge as gb
+        p = ('Du bist JACK, Dimas Kumpel-KI. Dir ist gerade was aufgefallen. '
+             'Formuliere EINEN kurzen Satz dazu, so wie ein Freund der von sich aus schreibt. '
+             'Kein Report, keine Begruessung, kein Moin. Direkt zur Sache. Deutsch.'+chr(10)+chr(10)
+             +'Beobachtung: '+roh)
+        a = gb.ask_gemini(p)
+        if a and len(a.strip()) > 5: text = a.strip()[:400]
+    except Exception: pass
+    if not dry: _verbrauche(kennung)
+    return text
+
+if __name__ == '__main__':
+    import sys
+    r = reflektiere(dry=('dry' in sys.argv))
+    print(r if r else 'Nichts Meldenswertes.')
