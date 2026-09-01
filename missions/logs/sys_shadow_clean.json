@@ -1,0 +1,10 @@
+{
+  "id": "sys_shadow_clean",
+  "act": "grep_count",
+  "ts": "2026-09-01 06:31:56",
+  "ok": false,
+  "note": "grep_count: 801 Treffer (max 10)",
+  "out": "801",
+  "expect": "PASS",
+  "raw_ok": false
+}

@@ -1,0 +1,10 @@
+{
+  "id": "sys_size_jack_gemini_bridge",
+  "act": "line_count",
+  "ts": "2026-09-01 06:31:59",
+  "ok": true,
+  "note": "line_count 216 min=None max=300 n=None",
+  "out": "216",
+  "expect": "PASS",
+  "raw_ok": true
+}

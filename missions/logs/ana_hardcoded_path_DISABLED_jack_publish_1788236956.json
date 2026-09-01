@@ -1,0 +1,10 @@
+{
+  "id": "ana_hardcoded_path_DISABLED_jack_publish_1788236956",
+  "act": "grep_count",
+  "ts": "2026-09-01 06:29:38",
+  "ok": false,
+  "note": "grep_count: 2 Treffer (max 0)",
+  "out": "2",
+  "expect": "PASS",
+  "raw_ok": false
+}
