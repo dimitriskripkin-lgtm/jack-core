@@ -60,6 +60,7 @@ Gib NUR eine bessere Antwort in 1-2 Sätzen. Keine Erklärung, kein Präambel.""
 
 def update_persona(bad_example, good_example, hits):
     """Fügt SCHLECHT/GUT Beispiel in persona.md ein."""
+    return None  # JACK_TUNE_PERSONA_NOWRITE
     content = open(PERSONA, errors="ignore").read()
     marker = "FAKTFRAGEN"
     if marker not in content:

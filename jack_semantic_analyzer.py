@@ -100,7 +100,7 @@ def write_mission(fname, finding, idx):
         "_prio": 0 if sev=="P0" else (1 if sev=="P1" else 3),
         "_source": "semantic_analyzer"
     }
-    json.dump(m, open(mpath,'w'))
+    open(os.path.join(J,"reports","semantic.jsonl"),"a",encoding="utf-8").write(json.dumps(m,ensure_ascii=False)+"\n")
     log.info(f"{fname} [{sev}] L{line}: {msg}")
     return True
 

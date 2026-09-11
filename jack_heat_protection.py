@@ -38,6 +38,9 @@ def xiaomi_online():
 
 def fallback_to_local_ollama():
     """P9 (Qwen 22.08.): Startet lokales Ollama wenn Xiaomi offline."""
+    if os.path.exists("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        print("P9: Ollama-Start gesperrt: .ollama_lock")
+        return False
     print("P9: Xiaomi offline - starte lokales Ollama als Fallback")
     try:
         # Pruefe ob lokales Ollama deaktiviert ist

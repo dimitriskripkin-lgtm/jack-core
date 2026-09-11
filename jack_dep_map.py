@@ -87,7 +87,7 @@ def propagate_verify(changed_files, graph):
                 "_prio": 2,
                 "_source": "dep_map"
             }
-            json.dump(m, open(mpath,'w'))
+            open(os.path.join(J,"reports","dep_map.jsonl"),"a",encoding="utf-8").write(json.dumps(m,ensure_ascii=False)+"\n")
             written += 1
     return written
 

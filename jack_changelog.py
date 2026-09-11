@@ -62,7 +62,8 @@ def run():
                     import jack_queue_gate
                     if not jack_queue_gate.allow(): return 0
                 except Exception: pass
-                open(path,"w").write(json.dumps(m))
+                open(os.path.join(J,"reports","changelog.jsonl"),"a",encoding="utf-8").write(json.dumps(m,ensure_ascii=False)+"\n")
+                return 0
                 written += 1
 
     open(STATE,"w").write(current)

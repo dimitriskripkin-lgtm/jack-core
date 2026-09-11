@@ -51,7 +51,7 @@ BESTAETIGUNG = 'bestaetige schreiben'
 PENDING_IMPROVE = {}
 BESTAETIGUNG_PATCH = 'bestaetige patch'
 
-FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/menu','/m','/trace','/level','/kette','/baum','/lernen','/tap','/forsche','/kill','/stop'}
+FAST_CMDS = {'/selftest','/akku','/sensor','/standort','/status','/report','/budget','/log','/werkstatt','/start','/help','/missionen','/errors','/befehle','/oracle_result','/menu','/m','/trace','/level','/kette','/baum','/lernen','/tap','/forsche','/kill','/stop'}
 
 def load_secrets():
     token, chat_id = None, None
@@ -1203,7 +1203,7 @@ def _einzelinstanz():
 
 def main():
     _einzelinstanz()
-    try: send("JACK online. Alle Dienste gestartet.")
+    try: send("JACK online.")  # JACK_TUNE_BOOTLIE
     except Exception: pass
     vibrate(200)
     offset = _offset_lesen()

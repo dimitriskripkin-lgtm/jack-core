@@ -1,4 +1,25 @@
 #!/usr/bin/env python3
+# ---------------------------------------------------------------
+# OLLAMA-REFERENZEN — Klassifizierung 03.09.2026 (Cloud + Honor-Messung)
+# 16 Dateien nennen Port 11434. Nur drei koennen Ollama STARTEN.
+#
+# STARTET (Lock noetig, Lock vorhanden):
+#   jack_ollama_gate.py        start() prueft .ollama_lock
+#   jack_heat_protection.py    fallback prueft .ollama_lock
+#   jack_voraussetzung.py      ollama_an() prueft Lock ab L57
+#
+# LIEST NUR (kein Lock noetig):
+#   jack_autonomous.py         L220 urlopen /api/tags — Sonde
+#   jack_voice_router.py       L190 /api/chat gegen localhost (Honor hat kein
+#                              Ollama -> toter Pfad). Popen L86 ist mpv, nicht Ollama.
+#   jack_autofixer_shadow.py   jack_curiosity.py    jack_intent.py
+#   jack_lokal.py              jack_loop.py         jack_talk.py
+#   jack_tuev3.py              jack_ui_elements.py  jack_ui_read.py
+#   jack_xiaomi_think.py       jack_xiaomi_web.py
+#
+# Ergebnis: Lock-Abdeckung vollstaendig. Kein weiterer Patch noetig.
+# ---------------------------------------------------------------
+
 MODULE_VERSION = 1
 """jack_ollama_gate.py — Ollama on-demand: warm -> use -> cool down."""
 import subprocess, time, threading, os, logging
@@ -50,6 +71,9 @@ def _ollama_ready(retries=12) -> bool:
     return False
 
 def start() -> bool:
+    if os.path.exists("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        log.warning("Ollama-Start gesperrt: .ollama_lock")
+        return False
     if not temp_ok():
         log.warning("Ollama-Start abgelehnt: Xiaomi zu heiss")
         return False

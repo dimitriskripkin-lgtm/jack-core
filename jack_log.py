@@ -136,3 +136,102 @@ try:
         return _log_decision_raw(*a, **k)
 except Exception:
     pass
+
+# ---------------------------------------------------------------
+# Entscheidungs-Log — append-only JSONL, eine Zeile pro Entscheidung
+# Zweck: Trainingsdaten fuer spaeteres lokales Routing.
+# Regel: LLM-Begruendungen sind Behauptungen, keine Fakten.
+# ---------------------------------------------------------------
+DECISION_LOG = os.path.join(J, "reports", "decisions.jsonl")
+SCHEMA_V = 1
+
+def log_decision_event(msg, route_by, chosen, available=None,
+                       tool=None, claim=None, ok=None, raw=None,
+                       err=None, ms=None, reply_by=None,
+                       correction_of=None, is_test=False):
+    """Schreibt eine Entscheidung als JSONL-Zeile.
+
+    msg           : Original-Nachricht wortwoertlich
+    route_by      : "keyword" | "graph" | "llm" | "fallback"
+    chosen        : "tool" | "graph" | "groq"
+    available     : Liste der zur Wahl stehenden Werkzeuge
+    tool          : gewaehltes Werkzeug oder None
+    claim         : Begruendung des Modells — BEHAUPTUNG, kein Fakt
+    ok            : True/False ob die Ausfuehrung geklappt hat
+    raw           : Rohergebnis, ungekuerzt wenn kurz
+    err           : Fehlertext falls vorhanden
+    ms            : Dauer in Millisekunden
+    reply_by      : "groq" | "template" | "graph"
+    correction_of : id einer frueheren Zeile, wenn dies eine Korrektur ist
+    is_test       : True bei Testnachrichten, damit filterbar
+    """
+    import json, uuid, time as _t
+    try:
+        os.makedirs(os.path.dirname(DECISION_LOG), exist_ok=True)
+        row = {
+            "v": SCHEMA_V,
+            "id": uuid.uuid4().hex[:12],
+            "ts": _t.strftime("%Y-%m-%dT%H:%M:%S"),
+            "msg": str(msg)[:2000],
+            "route": {
+                "by": route_by,
+                "chosen": chosen,
+                "tool": tool,
+                "available": available or [],
+                "claim": claim,
+                "claim_is_fact": False
+            },
+            "exec": {
+                "ok": ok,
+                "raw": str(raw)[:1000] if raw is not None else None,
+                "err": str(err)[:300] if err else None,
+                "ms": ms
+            },
+            "reply_by": reply_by,
+            "correction_of": correction_of,
+            "is_test": bool(is_test)
+        }
+        with _lock:
+            with open(DECISION_LOG, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+        return row["id"]
+    except Exception:
+        return None
+
+
+def decisions_read(limit=200, skip_tests=True):
+    """Liest die letzten Entscheidungen zurueck. Fuer Auswertung."""
+    import json
+    out = []
+    try:
+        for line in open(DECISION_LOG, encoding="utf-8"):
+            try:
+                r = json.loads(line)
+                if skip_tests and r.get("is_test"):
+                    continue
+                out.append(r)
+            except Exception:
+                continue
+    except Exception:
+        return []
+    return out[-limit:]
+
+
+def decisions_stats():
+    """Kurzauswertung: wie oft welcher Pfad, wie oft Fehler."""
+    rows = decisions_read(limit=100000)
+    if not rows:
+        return {"n": 0}
+    paths, tools, fails, corrections = {}, {}, 0, 0
+    for r in rows:
+        p = r.get("route", {}).get("chosen", "?")
+        paths[p] = paths.get(p, 0) + 1
+        t = r.get("route", {}).get("tool")
+        if t:
+            tools[t] = tools.get(t, 0) + 1
+        if r.get("exec", {}).get("ok") is False:
+            fails += 1
+        if r.get("correction_of"):
+            corrections += 1
+    return {"n": len(rows), "pfade": paths, "werkzeuge": tools,
+            "fehler": fails, "korrekturen": corrections}

@@ -69,6 +69,9 @@ def _sha(p):
     return h.hexdigest()
 
 def _apply(file_path, shadow_path, err_id, summary):
+    if os.path.isfile(file_path) and os.path.isfile(shadow_path) and os.path.getmtime(file_path) > os.path.getmtime(shadow_path):
+        return False, "stale: live newer than shadow"  # JACK_TUNE_MTIME
+
     """GATE CRIT-001: veraendert NIE eine Produktivdatei. Nur Vorschlag + Metadaten."""
     import uuid as _uu
     try:

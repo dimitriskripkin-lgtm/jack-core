@@ -29,7 +29,15 @@ def main():
     for rel, mark in (("jack_hey.py","JACK_TUNE_NC"),("jack_voice.py","JACK_TUNE_NC"),("jack_publish.py","JACK_TUNE_HASH"),("jack_autolearn_loop.py","JACK_TUNE_PAUSE")):
         p = H / rel
         health["marks"][rel] = (mark in p.read_text(encoding="utf-8", errors="ignore")) if p.is_file() else False
+    health["lock"] = (H / ".ollama_lock").is_file()
+    health["persona_b"] = (H / "jack_persona.md").stat().st_size if (H / "jack_persona.md").is_file() else -1
+    health["approvals_b"] = (H / "pending_approvals.json").stat().st_size if (H / "pending_approvals.json").is_file() else -1
+    _osvc = "/data/data/com.termux/files/usr/var/service"
+    health["ollama_svc"] = "disabled" if Path(_osvc + "/_ollama_disabled").is_dir() else ("live" if Path(_osvc + "/ollama").is_dir() else "missing")
+    health["fix_bak"] = len(list(H.glob("*.fix.bak")))
+    # JACK_TUNE_HEALTHHONEST
     out = H / "jack_health_now.json"
+    health["written_at"] = int(__import__("time").time())
     out.write_text(json.dumps(health, indent=2, ensure_ascii=False))
     print(json.dumps({k: health[k] for k in ("ts", "ssh_xiaomi", "heartbeats", "tune", "marks")}, ensure_ascii=False))
     return 0 if health["ssh_xiaomi"] == "OK" else 1

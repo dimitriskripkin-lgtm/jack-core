@@ -173,6 +173,9 @@ def _heartbeat_sv_check():
             ("jack_autolearn", 900),
         ]
         for name, max_age in dienste:
+            _df="/data/data/com.termux/files/usr/var/service/%s/down"%name
+            if os.path.isfile(_df):
+                continue  # JACK_TUNE_HBDOWN
             try:
                 _alive = jack_heartbeat.is_alive(name, max_age=max_age)
                 try:
@@ -202,7 +205,14 @@ def _heartbeat_sv_check():
                 try:
                     import jack_log
                     jack_log.log_decision("HB_XIAOMI_DOWN", "SSH-Port nicht erreichbar")
-                    notify("Xiaomi nicht erreichbar (HB-Probe). SSH-Check fehlgeschlagen.")
+                    _xi_st = os.path.join(J, ".xi_hb_down")
+                    _xi_now = __import__("time").time(); _xi_last = 0.0
+                    try: _xi_last = float(open(_xi_st).read())
+                    except Exception: pass
+                    if _xi_now - _xi_last > 10800:
+                        open(_xi_st, "w").write(str(_xi_now))
+                        notify("Xiaomi nicht erreichbar (HB-Probe). SSH-Check fehlgeschlagen.")
+                    # JACK_TUNE_XIHB3H
                 except Exception:
                     pass
         except Exception:
@@ -224,7 +234,10 @@ def _heartbeat_sv_check():
                 _now=__import__("time").time(); _last=0.0
                 try: _last=float(open(_st).read())
                 except Exception: pass
-                if _now-_last>10800:
+                _lk="/data/data/com.termux/files/home/jack/.ollama_lock"
+                if os.path.isfile(_lk):
+                    pass  # JACK_TUNE_OLLOCK — Lock da, Refuse ist Soll
+                elif _now-_last>10800:
                     open(_st,"w").write(str(_now))
                     notify(f"Ollama auf Xiaomi nicht erreichbar: {str(_oe)[:60]}")
                 # JACK_TUNE_OLHB3H
@@ -372,6 +385,19 @@ def main():
         except Exception:
             pass
         import jack_heartbeat; jack_heartbeat.beat('jack_waechter')
+        # JACK_TUNE_HEALTHTICK — health_now alle 600s neu schreiben
+        try:
+            _hs = "/data/data/com.termux/files/home/jack/.health_tick"
+            _hn = __import__("time").time(); _hl = 0.0
+            try: _hl = float(open(_hs).read())
+            except Exception: pass
+            if _hn - _hl > 600:
+                open(_hs, "w").write(str(_hn))
+                import subprocess as _sp
+                _sp.run(["python3", "/data/data/com.termux/files/home/jack/jack_health.py"],
+                        capture_output=True, timeout=30)
+        except Exception:
+            pass
         try:
             import jack_graceful
             jack_graceful.main()

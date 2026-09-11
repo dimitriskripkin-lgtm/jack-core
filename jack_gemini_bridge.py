@@ -107,10 +107,20 @@ def _cb_reset_check():
     if _CB_OPEN and (_ct3.time() - _CB_SINCE) > _CB_COOLDOWN:
         _CB_OPEN = False; _CB_FAILS = 0
 
+def _groq_not_ollama(question):
+    try:
+        import jack_groq_bridge as _gq
+        _ps=open('/data/data/com.termux/files/home/jack/jack_persona_kern.md',encoding='utf-8').read()[:4000]
+        r=_gq.ask_groq(_ps, question)
+        if r: return r
+    except Exception as e:
+        return '[Talk] Groq tot, Ollama gesperrt. '+str(e)[:80]
+    return '[Talk] Groq leer, Ollama bleibt aus.'
+
 def _ollama_fallback(question):
     try:
         import jack_ollama_gate
-        return '[Ollama] ' + jack_ollama_gate.call(question)
+        return '[Ollama] ' + _groq_not_ollama(question)
     except Exception as e:
         return '[Fallback fehlgeschlagen] ' + str(e)
 
@@ -142,7 +152,7 @@ def ask_gemini(question, status=None):
         import jack_log; jack_log.log_decision("GEMINI-CB-SKIP", f"CB aktiv, nutze Ollama")
         try:
             import jack_ollama_gate
-            return '[Ollama-CB] ' + jack_ollama_gate.call(question)
+            return '[Ollama-CB] ' + _groq_not_ollama(question)
         except Exception as _e:
             return f"Gemini CB aktiv + Ollama Fehler: {_e}"
     elif _tt2.time() >= _CB_RESET_AT and _CB_FAILS > 0:
@@ -242,3 +252,5 @@ if __name__ == "__main__":
     status = collect_status()
     answer = ask_gemini(question, status)
     pass  # debug print entfernt
+
+# JACK_TUNE_KERNREAD

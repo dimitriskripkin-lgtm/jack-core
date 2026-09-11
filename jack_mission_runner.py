@@ -20,6 +20,8 @@ def load(path):
     return json.load(open(path,encoding="utf-8"))
 
 def _run_fix_shadow(m, fp, content, bak):
+    return False, 'freeze: no new staged'  # JACK_TUNE_NOSTAGE
+
     """Fix in shadow/ anwenden, 3x verifizieren, dann wartet_freigabe."""
     import os, shutil, subprocess, json, time
     J = "/data/data/com.termux/files/home/jack"

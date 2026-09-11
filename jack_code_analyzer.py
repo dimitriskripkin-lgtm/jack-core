@@ -99,8 +99,7 @@ def run():
                 import jack_queue_gate
                 if not jack_queue_gate.allow(): break
             except Exception: pass
-            path = os.path.join(PEND, f"{m['id']}.json")
-            open(path,"w").write(json.dumps(m))
+            open(os.path.join(J,"reports","analyzer.jsonl"),"a",encoding="utf-8").write(json.dumps(m,ensure_ascii=False)+"\n")
             _log(f"NEU: {m['id']} — {f['pattern']['msg']} in {f['fname']}")
             written += 1
 

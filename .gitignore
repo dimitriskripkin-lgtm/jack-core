@@ -101,3 +101,23 @@ jack_learned_rules.json
 *.log
 vision_test*
 
+
+# Laufzeitzustand — gehoert nicht ins Repo
+.adb_heal_count
+.api_budget_week
+.delta_erwaehnt
+.ollama_hb_down
+.xi_hb_down
+.health_tick
+.groq_tpd_until
+.publisher_hash
+.monitor_state
+.haliza_rate
+autodoc_last_run.json
+changelog_last_commit.txt
+dep_graph.json
+dep_map_state.json
+hb_fail_state.json
+jack_health_now.json
+jack_diag_snapshot.json
+reports/

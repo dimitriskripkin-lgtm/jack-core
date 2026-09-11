@@ -54,6 +54,8 @@ def xiaomi_ssh():
     return False, (r.stderr or 'unbekannt')[:80]
 
 def ollama_an():
+    if os.path.isfile('/data/data/com.termux/files/home/jack/.ollama_lock'):
+        return False  # JACK_TUNE_OLLAMA_ANLOCK
     try:
         import urllib.request
         urllib.request.urlopen('http://localhost:11434/api/tags', timeout=4)

@@ -102,7 +102,7 @@ def run():
                     import jack_queue_gate
                     if not jack_queue_gate.allow(): return 0
                 except Exception: pass
-                open(path, "w").write(json.dumps(fix))
+                open(os.path.join(J,"reports","gen.jsonl"),"a",encoding="utf-8").write(json.dumps(fix,ensure_ascii=False)+"\n")
                 _log(f"GEN {fix_id}: {strategy['name']} für {m.get('file','?')}")
                 _notify(f"🤖 JACK generiert Fix:\n{fix_id}\n{strategy['name']} in {os.path.basename(m.get('file','?'))}")
                 generated += 1
@@ -138,7 +138,7 @@ def _generate_trainer_mission():
         import jack_queue_gate
         if not jack_queue_gate.allow(): return 0
     except Exception: pass
-    open(path, "w").write(json.dumps(mission))
+    open(os.path.join(J,"reports","gen.jsonl"),"a",encoding="utf-8").write(json.dumps(mission,ensure_ascii=False)+"\n")
     _log(f"Trainer-Mission generiert: {mid}")
 
 if __name__ == "__main__":

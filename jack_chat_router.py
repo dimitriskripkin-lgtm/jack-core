@@ -22,8 +22,183 @@ def classify(text):
     if diag: return "DIAG"
     return "TALK"
 
-def talk_local(text):
+
+def _bat_parse(out):
+    if out and out.strip().startswith("{"):
+        import json as _j
+        try:
+            d=_j.loads(out)
+            temp=d.get("temperature")
+            lev=d.get("percentage")
+            pl=str(d.get("plugged") or "")
+            st=str(d.get("status") or "")
+            pw=[]
+            if "AC" in pl: pw.append("AC")
+            if "USB" in pl: pw.append("USB")
+            if "WIRELESS" in pl: pw.append("Wireless")
+            sm={"CHARGING":"laedt","DISCHARGING":"entlaedt","FULL":"voll","NOT_CHARGING":"nicht laden"}.get(st,st.lower())
+            return temp, lev, pw, sm
+        except Exception:
+            pass
+
+    temp=lev=None
+    powered=[]
+    status=None
+    for ln in (out or "").splitlines():
+        s=ln.strip().lower()
+        if "temperature" in s and ":" in s:
+            try: temp=int("".join(ch for ch in s.split(":")[-1] if ch.isdigit() or ch=="-"))/10.0
+            except Exception: pass
+        if "level:" in s and "voltage" not in s:
+            try: lev=int("".join(ch for ch in s.split(":")[-1] if ch.isdigit()))
+            except Exception: pass
+        if s.startswith("ac powered:") and "true" in s: powered.append("AC")
+        if s.startswith("usb powered:") and "true" in s: powered.append("USB")
+        if s.startswith("wireless powered:") and "true" in s: powered.append("Wireless")
+        if s.startswith("status:"):
+            try: status=int("".join(ch for ch in s.split(":")[-1] if ch.isdigit()))
+            except Exception: pass
+    st={1:"unbekannt",2:"laedt",3:"entlaedt",4:"voll",5:"nicht laden"}.get(status,"status "+str(status))
+    return temp, lev, powered, st
+
+def _tool_name(text):
+    """JACK_TUNE_TOOLNAME — welches Werkzeug wuerde greifen. Nur fuer den Logger."""
+    t = norm(text)
+    low = (text or "").lower()
+    if any(w in t for w in ("zeig mir alles","zeig mir alle","alles davon","alle davon","alle werte")):
+        return "sammel_alles"
+    if any(w in t for w in ("wie alt sind diese","diese daten","wie frisch")):
+        return "daten_alter"
+    if any(w in t for w in ("temperatur","akku","batterie","warm","hitze","grad","laden","ladeger")):
+        if "xiaomi" in low or "muskel" in low: return "bat_xiaomi"
+        if "honor" in low or "gehirn" in low: return "bat_honor"
+        return "bat_beide"
+    if any(w in t for w in ("erinnerung","erinnerst","gedachtnis","gedaechtnis","memory")):
+        return "graph_knoten"
+    if any(w in t for w in ("erreichbar","ssh","verbindung")):
+        return "ssh_xiaomi"
+    if any(w in t for w in ("welche dienste","was laeuft","dienste")):
+        return "sv_status"
+    if any(w in t for w in ("speicher","wie voll","platz","speicherplatz")):
+        return "df_xiaomi" if "xiaomi" in low else "df_honor"
+    if any(w in t for w in ("welche werkzeuge","was kannst du messen","kiste")):
+        return "kiste_liste"
+    return None
+
+def _tools(text):
+    # JACK_TUNE_TOOLBOX
     t=norm(text)
+    if any(w in t for w in ("zeig mir alles","zeig mir alle","alles davon","alle davon","alle werte","alles messen")):
+        bits=[]
+        for q in ("wie warm xiaomi und honor","ist xiaomi erreichbar","welche dienste laufen","wie voll speicher xiaomi","wie voll speicher honor","letzte erinnerungen"):
+            r=_tools(q)
+            if r: bits.append(r)
+        return "\n".join(bits) if bits else "Kiste leer."  # JACK_TUNE_TOOLALL
+    raw=(text or "")
+    low=raw.lower()
+    import subprocess
+    def sh(cmd, tmo=10):
+        r=subprocess.run(cmd, capture_output=True, text=True, timeout=tmo)
+        return ((r.stdout or "")+(r.stderr or ""))
+    want_bat=any(w in t for w in ("temperatur","akku","batterie","warm","hitze","grad","laden","ladeger"))
+    want_mem=any(w in t for w in ("erinnerung","erinnerst","gedachtnis","gedaechtnis","memory"))
+    want_age=any(w in t for w in ("wie alt sind diese","diese daten","wie frisch")) and any(w in t for w in ("daten","messung","sensor","akku","temp"))  # JACK_TUNE_AGEENG
+    if want_age and not want_bat:
+        return "Sensorwerte gelten nur fuer die letzte Messung, nicht aus Logs."
+    if want_bat:
+        parts=[]
+        do_x=("xiaomi" in low) or ("honor" not in low)
+        do_h=("honor" in low) or ("xiaomi" not in low)
+        if do_x:
+            try:
+                out=sh(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6","xiaomi-jack","su","-c","dumpsys battery"])
+                temp,lev,pw,st=_bat_parse(out)
+                parts.append("Xiaomi Temp %s C Akku %s %% %s Strom %s jetzt" % (
+                    temp if temp is not None else "?",
+                    lev if lev is not None else "?",
+                    st,
+                    ",".join(pw) if pw else "kein"))
+            except Exception as e:
+                parts.append("Xiaomi Sensor: "+str(e)[:60])
+        if do_h:
+            try:
+                out=sh(["termux-battery-status"], 8)
+                if "{" not in out:
+                    out=sh(["/system/bin/dumpsys","battery"], 8)
+                temp,lev,pw,st=_bat_parse(out)
+                parts.append("Honor Temp %s C Akku %s %% %s Strom %s jetzt" % (
+                    temp if temp is not None else "?",
+                    lev if lev is not None else "?",
+                    st,
+                    ",".join(pw) if pw else "kein"))
+            except Exception as e:
+                parts.append("Honor Sensor: "+str(e)[:60])
+        if parts:
+            return "; ".join(parts)
+    if want_mem:
+        try:
+            import jack_graph as _g
+            rows=_g.con().execute("SELECT typ,name,wert FROM nodes ORDER BY rowid DESC LIMIT 10").fetchall()
+            if not rows:
+                return "Graph leer."
+            return "Letzte Knoten:\n"+"\n".join("%s %s=%s"%(a,b,c) for a,b,c in rows)
+        except Exception as e:
+            return "Graph-Lesen fehl: "+str(e)[:80]
+    want_ssh=any(w in t for w in ("erreichbar","ssh ok","xiaomi da","ping xiaomi"))
+    if want_ssh or ("ssh" in t and "xiaomi" in t):
+        try:
+            out=sh(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6","xiaomi-jack","echo OK"], 8)
+            return "Xiaomi SSH " + ("OK" if "OK" in out else "DOWN "+out[:80])
+        except Exception as e:
+            return "Xiaomi SSH DOWN "+str(e)[:80]
+    want_sv=any(w in t for w in ("welche dienste","was laeuft","was lauft","sv status"))
+    if want_sv:
+        try:
+            out=sh(["sv","status","jack_telegram"])+" | "+sh(["sv","status","jack_waechter"])+" | "+sh(["sv","status","jack_cortex"])
+            return "Dienste jetzt: "+out.replace("\n"," ")[:400]
+        except Exception as e:
+            return "sv fehl: "+str(e)[:80]
+    want_disk=any(w in t for w in ("speicher","wie voll","freier platz"))
+    if want_disk or (("xiaomi" in t) and ("voll" in t or "speicher" in t)):
+        parts=[]
+        do_x=("xiaomi" in t)
+        do_h=("honor" in t) or not do_x
+        if do_h:
+            try:
+                h=sh(["df","-h","/data"], 8)
+                line=[ln for ln in h.splitlines() if ln.strip()][-1]
+                parts.append("Honor Speicher: "+line[:160])
+            except Exception as e:
+                parts.append("Honor df: "+str(e)[:60])
+        if do_x:
+            try:
+                x=sh(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6","xiaomi-jack","df -h /data"], 10)
+                line=[ln for ln in x.splitlines() if ln.strip()][-1]
+                parts.append("Xiaomi Speicher: "+line[:160])
+            except Exception as e:
+                parts.append("Xiaomi df: "+str(e)[:60])
+        if parts:
+            return "; ".join(parts)
+    want_list=any(w in t for w in ("welche werkzeuge","was kannst du messen","was misst du","werkzeugkiste"))
+    if want_list:
+        return "Kiste jetzt: Temp/Akku/Laden Honor+Xiaomi. Graph letzte Knoten. SSH Xiaomi. Dienste telegram/waechter/cortex. Speicher Honor+Xiaomi. Keine erfundenen Listen."
+    return None  # JACK_TUNE_TOOLIST
+
+def talk_local(text):
+
+    t=norm(text)
+    _tb=_tools(text)
+    try:
+        import jack_log as _jl
+        if hasattr(_jl,"log_decision_event"):
+            _tn = _tool_name(text) if _tb else None
+            _jl.log_decision_event(text,"keyword","tool" if _tb else "talk",
+                ["sammel_alles","daten_alter","bat_xiaomi","bat_honor","bat_beide",
+                 "graph_knoten","ssh_xiaomi","sv_status","df_xiaomi","df_honor",
+                 "kiste_liste","talk"], tool=_tn)
+    except Exception:
+        pass  # JACK_TUNE_LOGEV
+    if _tb: return _tb
     raw=(text or "").strip()
     low=raw.lower()
     if low.startswith("merk dir") or low.startswith("merke dir"):
@@ -74,7 +249,8 @@ def talk_local(text):
     # JACK_TUNE_WASIST
     if any(x in t for x in ("du bist jack","wer bist du","wer bist du eigentlich")):
         return "JACK. Dimas System auf Honor, Xiaomi als Arm. Kein Assistent."
-    if len(raw.split())<=12 and (("hund" in t) or ("rex" in t)):
+    _bezug=any(w in t for w in ("mein hund","dein hund","sein hund","hast du","habe ich","hast du einen","kein hund","keinen hund"))
+    if (("hund" in t) or ("rex" in t)) and _bezug:  # JACK_TUNE_HUNDREF
         try:
             import jack_graph as _g
             r=(_g.recall(text) or "")
@@ -203,3 +379,5 @@ def apply_lane(llm_text, user_text):
         try: os.remove(J+"/.chat_lane")
         except Exception: pass
     return talk_scrub(strip_lane(llm_text or ""))
+
+# JACK_TUNE_PACK517

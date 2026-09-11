@@ -11,10 +11,10 @@ H = os.path.expanduser("~/jack")
 XIP, XPORT = __import__("jack_config").get_param("NETWORK","xiaomi_ip"), 8022
 
 def _dienste():
-    r = subprocess.run("sv status jack_cortex jack_telegram jack_waechter ollama", shell=True, capture_output=True, text=True)
+    r = subprocess.run("sv status jack_cortex jack_telegram jack_waechter", shell=True, capture_output=True, text=True)
     ls = [l for l in r.stdout.strip().split("\n") if l]
     run = sum(1 for l in ls if l.startswith("run:"))
-    out = ["Dienste:        %d/4 laufen%s" % (run, "" if run==4 else "  <-- PRUEFEN!")]
+    out = ["Dienste:        %d/3 laufen%s" % (run, "" if run==3 else "  <-- PRUEFEN!")]
     for l in ls:
         if not l.startswith("run:"): out.append("   PROBLEM: " + l)
     return "\n".join(out)

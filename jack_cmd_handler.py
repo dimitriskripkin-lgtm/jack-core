@@ -134,6 +134,27 @@ def handle(rt: str, text: str, send) -> str:
             return f"Fehler reject_all: {e}"
 
 
+    if cmd == "/report":
+        try:
+            import json as _jr, os as _os
+            R="/data/data/com.termux/files/home/jack/reports"
+            if not _os.path.isdir(R):
+                return "keine reports"
+            out=["Reports"]
+            for n in sorted(_os.listdir(R)):
+                if not n.endswith(".jsonl"): continue
+                p=_os.path.join(R,n)
+                rows=open(p,encoding="utf-8",errors="ignore").read().splitlines()
+                out.append("%s %s"%(n,len(rows)))
+                for row in rows[-3:]:
+                    try:
+                        d=_jr.loads(row)
+                        out.append("  "+str(d.get("id") or d.get("mid") or row[:70]))
+                    except Exception:
+                        out.append("  "+row[:70])
+            return "\n".join(out)[:3500]
+        except Exception as _re:
+            return "report-fehler "+type(_re).__name__+" "+str(_re)[:120]
     if cmd == "/status":
         import subprocess, time, json
         lines = ["📊 *JACK Status*\n"]

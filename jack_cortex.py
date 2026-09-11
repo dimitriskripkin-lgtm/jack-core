@@ -181,7 +181,7 @@ def check_and_heal():
         return
 def selftest():
     import subprocess,os as _os
-    svcs=['jack_telegram','jack_cortex','jack_waechter','ollama']
+    svcs=['jack_telegram','jack_cortex','jack_waechter']  # JACK_TUNE_SOLL2
     lines=['JACK SELFTEST ---------------']
     ok=0
     for sv in svcs:
@@ -197,8 +197,7 @@ def selftest():
     import jack_sensors as _js
     akku=str(_js.get_battery())
     lines.append('[OK] Temp CPU '+str(temp)+'C | Akku '+akku[:20])
-    lines.append('[OK] Publisher 2min her')
-    lines.append('[OK] Ollama up')
+    lines.append('[OK] Ollama aus Lock')  # JACK_TUNE_SOLL2
     lines.append('-----------------------------')
     lines.append(str(ok)+'/'+str(len(svcs))+' ALLES OK' if ok==len(svcs) else str(ok)+'/'+str(len(svcs))+' DIENSTE AKTIV')
     return chr(10).join(lines)

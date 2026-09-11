@@ -118,15 +118,9 @@ def run_voice_loop():
             print(f'Dima: {user_input}')
             if user_input.lower().strip() in ['beenden', 'stop', 'exit']: break
             
-            # Frag Gemini Trigger
+            # Frag Gemini Trigger — JACK_TUNE_NOGEMVOICE, Gemini nie Chat
             if user_input.lower().strip().startswith("frag gemini"):
-                import jack_gemini_bridge
-                question = user_input[11:].strip() or "System-Status analysieren."
-                status = jack_gemini_bridge.collect_status()
-                gemini_response = jack_gemini_bridge.ask_gemini(question, status)
-                print(f"Gemini: {gemini_response}")
-                auto_save_to_memory(user_input, gemini_response)
-                continue
+                user_input = user_input[11:].strip() or user_input
 
             math_res = jack_math.try_direct_calculation(user_input)
             if math_res is not None:
@@ -212,7 +206,7 @@ def _talk_to_gemini_impl(prompt):
     # Persoenliche Gespraeche -> Groq (besser Persona-Treue)
     # System-Calls, Vision, Reasoning -> Gemini
     _personal = ["wer bin ich","wer bist du","was denkst","erzaehl","erklaer mir","wie geht","was magst","was haeltst","kumpel","zusammen","gefuehl","meinung","freund","ueber mich","über mich","ueber dich","über dich","ueber uns","wer bist","ich bin","selbst","charakter","person"]
-    if not any(w in prompt.lower() for w in ("zustand","status","architektur","tune","health")):
+    if not any(w in prompt.lower() for w in ("zustand","status","tune","health")):
         try:
             import jack_groq_bridge as _gq
             _persona = _persona_cached
@@ -261,7 +255,7 @@ def _talk_to_gemini_impl(prompt):
     _q=(prompt or "").lower()
     _user_satz = (prompt.split("<user_query>")[-1].split("</user_query>")[0]
         if "<user_query>" in prompt else prompt[-200:]).lower()
-    if any(w in _user_satz for w in ("zustand","status","architektur","tune","health")):
+    if any(w in _user_satz for w in ("zustand","status","tune","health")):
         try:
             _live="IST-HEALTH:\n"+open(os.path.join(JACK_HOME, "jack_health_now.json"),encoding="utf-8").read()[:1500]
         except Exception:
@@ -371,11 +365,31 @@ def _talk_to_gemini_impl(prompt):
         except Exception as _le:
             _jlog and _jlog.fehler("talk","unbenannt",_le)
         if result and result.startswith('[Ollama]'):
-            return result + '\n\n💾 Lokal (llama3.2)'
+            try:
+                import jack_groq_bridge as _g2
+                _ps=open('/data/data/com.termux/files/home/jack/jack_persona.md',encoding='utf-8').read()[:4000]
+                try:
+                    _gr=_g2.ask_groq(_ps, prompt)
+                except Exception:
+                    _gr=talk_to_ollama(prompt, [])
+                if _gr and str(_gr)[:12].find('[Groq')<0:
+                    return str(_gr)+chr(10)+chr(10)+'Groq (gpt-oss-120b) | Online'
+            except Exception:
+                pass
+            return 'Talk: Groq-Fallback. Ollama bleibt aus.'
         return _scrub_out(result) + "\n\n🤖 Groq (gpt-oss-120b) | Online"
     except Exception:
-        result = talk_to_ollama(prompt, [])
-        return result + "\n\n💾 Lokal (llama3.2)"
+        try:
+            import jack_groq_bridge as _g3
+            _ps=open('/data/data/com.termux/files/home/jack/jack_persona.md',encoding='utf-8').read()[:4000]
+            try:
+                _gr=_g3.ask_groq(_ps, prompt)
+            except Exception:
+                _gr=talk_to_ollama(prompt, [])
+            if _gr:
+                return str(_gr)+chr(10)+chr(10)+'Groq (gpt-oss-120b) | Online'
+        except Exception as _ge:
+            return 'Talk: Groq tot, Ollama gesperrt. '+str(_ge)[:80]
 
 if __name__ == '__main__':
     if len(sys.argv) < 2: run_voice_loop()
