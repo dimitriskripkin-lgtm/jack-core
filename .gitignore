@@ -121,3 +121,16 @@ hb_fail_state.json
 jack_health_now.json
 jack_diag_snapshot.json
 reports/
+.ollama_lock
+.quota_last
+.selfsee_pending
+attic/
+jack_main.log*
+missions/STOP
+service/jack_autolearn/down
+jack_dash.txt
+jack_diag_snapshot.json
+jack_score_hist.jsonl
+last_selftest_score.json
+semantic_last_run.json
+pending_approvals.json
