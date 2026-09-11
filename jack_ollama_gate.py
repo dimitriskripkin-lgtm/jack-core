@@ -82,10 +82,22 @@ def start() -> bool:
     log.info("Ollama bereit" if ok else "Ollama nicht bereit nach Start")
     return ok
 
+MAX_RUN = 300  # JACK_TUNE_HARDSTOP — harte Obergrenze in Sekunden
+_start_ts = None
+
 def _schedule_stop():
-    global _timer
+    global _timer, _start_ts
     if _timer:
         _timer.cancel()
+    # harte Grenze: laeuft der Dienst laenger als MAX_RUN, sofort stoppen
+    import time as _t
+    if _start_ts is None:
+        _start_ts = _t.time()
+    elif _t.time() - _start_ts > MAX_RUN:
+        _ssh(f"sv down {SVC}")
+        log.info(f"Ollama nach {MAX_RUN}s Hartgrenze gestoppt")
+        _start_ts = None
+        return
     def _do_stop():
         _ssh(f"sv down {SVC}")
         t = get_temp()

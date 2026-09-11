@@ -192,6 +192,19 @@ def log_decision_event(msg, route_by, chosen, available=None,
             "is_test": bool(is_test)
         }
         with _lock:
+            # JACK_TUNE_DEDUP — gleiche Nachricht in derselben Sekunde nicht doppelt
+            try:
+                if os.path.exists(DECISION_LOG):
+                    with open(DECISION_LOG, "rb") as _rf:
+                        _rf.seek(0, 2)
+                        _rf.seek(max(0, _rf.tell() - 4000))
+                        _last = _rf.read().decode("utf-8", "replace").strip().splitlines()
+                    for _l in reversed(_last[-3:]):
+                        _p = json.loads(_l)
+                        if _p.get("msg") == row["msg"] and _p.get("ts") == row["ts"]:
+                            return _p.get("id")
+            except Exception:
+                pass
             with open(DECISION_LOG, "a", encoding="utf-8") as fh:
                 fh.write(json.dumps(row, ensure_ascii=False) + "\n")
         return row["id"]

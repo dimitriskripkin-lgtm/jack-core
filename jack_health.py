@@ -44,3 +44,180 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+# ---------------------------------------------------------------
+# JACK_TUNE_DAILY — Tagesbericht: was hat sich VERAENDERT
+# Kein Alarm, keine Ampel. Verlauf statt Zustand.
+# Vergleich mit dem Vortag, damit Abweichungen auffallen.
+# ---------------------------------------------------------------
+def _d_snap():
+    """Sammelt die Kennzahlen des Tages."""
+    import os as _o, json as _j, sqlite3, subprocess, time
+    J = "/data/data/com.termux/files/home/jack"
+    s = {"ts": time.strftime("%Y-%m-%d %H:%M"), "tag": time.strftime("%Y-%m-%d")}
+
+    try: s["persona_b"] = _o.path.getsize(_o.path.join(J, "jack_persona.md"))
+    except Exception: s["persona_b"] = None
+
+    for name, datei in (("gespraeche", "reports/decisions.jsonl"),
+                        ("groq_calls", "reports/groq_usage.jsonl")):
+        try:
+            s[name] = sum(1 for _ in open(_o.path.join(J, datei), encoding="utf-8"))
+        except Exception:
+            s[name] = 0
+
+    try:
+        tot = 0
+        for l in open(_o.path.join(J, "reports/groq_usage.jsonl"), encoding="utf-8"):
+            d = _j.loads(l)
+            if str(d.get("ts", "")).startswith(s["tag"]):
+                tot += int(d.get("total") or 0)
+        s["token_heute"] = tot
+    except Exception:
+        s["token_heute"] = 0
+
+    try:
+        con = sqlite3.connect(_o.path.join(J, "jack_errors.db"))
+        s["fehler_offen"] = con.execute(
+            "SELECT COUNT(*) FROM errors WHERE resolved=0").fetchone()[0]
+        con.close()
+    except Exception:
+        s["fehler_offen"] = None
+
+    for d in ("pending", "fail", "done"):
+        try:
+            p = _o.path.join(J, "missions", d)
+            s["m_" + d] = len([x for x in _o.listdir(p) if x.endswith(".json")])
+        except Exception:
+            s["m_" + d] = 0
+
+    try:
+        s["temp_honor"] = round(int(open(
+            "/sys/class/thermal/thermal_zone0/temp").read().strip()) / 1000, 1)
+    except Exception:
+        s["temp_honor"] = None
+
+    try:
+        r = subprocess.run(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=6",
+                            "xiaomi-jack",
+                            "cat /sys/class/thermal/thermal_zone0/temp"],
+                           capture_output=True, text=True, timeout=12)
+        s["temp_xiaomi"] = round(int((r.stdout or "0").strip()) / 1000, 1)
+    except Exception:
+        s["temp_xiaomi"] = None
+
+    s["lock"] = _o.path.isfile(_o.path.join(J, ".ollama_lock"))
+    s["stop"] = _o.path.isfile(_o.path.join(J, "missions", "STOP"))
+
+    try:
+        r = subprocess.run(
+            ["sv", "status",
+             "/data/data/com.termux/files/usr/var/service/jack_telegram",
+             "/data/data/com.termux/files/usr/var/service/jack_waechter",
+             "/data/data/com.termux/files/usr/var/service/jack_cortex"],
+            capture_output=True, text=True, timeout=12)
+        s["dienste_run"] = (r.stdout or "").count("run:")
+    except Exception:
+        s["dienste_run"] = None
+
+    return s
+
+
+def _d_diff(a, b, name, einheit="", wichtig=False):
+    """Eine Zeile Veraenderung. a=gestern b=heute."""
+    if b is None:
+        return f"  {name}: nicht messbar"
+    if a is None or a == b:
+        return f"  {name}: {b}{einheit}"
+    d = b - a if isinstance(a, (int, float)) and isinstance(b, (int, float)) else None
+    if d is None:
+        return f"  {name}: {b}{einheit}  (war {a}{einheit})"
+    pfeil = "+" if d > 0 else ""
+    mark = "  <-- " if wichtig else "  "
+    return f"  {name}: {b}{einheit}{mark}({pfeil}{d})"
+
+
+def tagesbericht(speichern=True):
+    """Erzeugt den Bericht. Vergleicht mit dem letzten gespeicherten Stand."""
+    import os as _o, json as _j
+    J = "/data/data/com.termux/files/home/jack"
+    P = _o.path.join(J, "reports", "daily.jsonl")
+
+    heute = _d_snap()
+    gestern = None
+    try:
+        zeilen = [l for l in open(P, encoding="utf-8") if l.strip()]
+        for l in reversed(zeilen):
+            k = _j.loads(l)
+            if k.get("tag") != heute["tag"]:
+                gestern = k
+                break
+    except Exception:
+        pass
+
+    g = gestern or {}
+    z = []
+    z.append(f"JACK Tagesbericht {heute['ts']}")
+    if gestern:
+        z.append(f"Vergleich mit {gestern.get('tag')}")
+    else:
+        z.append("Erster Bericht - noch kein Vergleich moeglich")
+    z.append("")
+
+    z.append("System")
+    z.append(_d_diff(g.get("persona_b"), heute["persona_b"], "Persona", " B", True))
+    z.append(_d_diff(g.get("dienste_run"), heute["dienste_run"], "Dienste aktiv", "/3", True))
+    z.append(f"  Ollama-Sperre: {'liegt' if heute['lock'] else 'FEHLT'}")
+    z.append(f"  Warteschlangen-Stopp: {'liegt' if heute['stop'] else 'offen'}")
+    z.append("")
+
+    z.append("Temperatur")
+    z.append(_d_diff(g.get("temp_honor"), heute["temp_honor"], "Honor", " C"))
+    z.append(_d_diff(g.get("temp_xiaomi"), heute["temp_xiaomi"], "Xiaomi", " C"))
+    z.append("")
+
+    z.append("Nutzung")
+    z.append(_d_diff(g.get("gespraeche"), heute["gespraeche"], "Entscheidungen", ""))
+    z.append(_d_diff(g.get("groq_calls"), heute["groq_calls"], "Groq-Aufrufe", ""))
+    tok = heute["token_heute"]
+    proz = round(100 * tok / 200000) if tok else 0
+    z.append(f"  Token heute: {tok} ({proz}% vom Tageslimit)")
+    z.append("")
+
+    z.append("Missionen und Fehler")
+    z.append(_d_diff(g.get("m_pending"), heute["m_pending"], "wartend", "", True))
+    z.append(_d_diff(g.get("m_fail"), heute["m_fail"], "fehlgeschlagen", "", True))
+    z.append(_d_diff(g.get("m_done"), heute["m_done"], "erledigt", ""))
+    z.append(_d_diff(g.get("fehler_offen"), heute["fehler_offen"], "offene Fehler", "", True))
+
+    auff = []
+    if heute["persona_b"] and g.get("persona_b") and heute["persona_b"] != g["persona_b"]:
+        auff.append("Persona hat sich veraendert - pruefen wer geschrieben hat")
+    if not heute["lock"]:
+        auff.append("Ollama-Sperre fehlt")
+    if heute["m_pending"] and heute["m_pending"] > 0:
+        auff.append(f"{heute['m_pending']} Missionen warten trotz Stopp")
+    if proz > 80:
+        auff.append(f"Token-Tageslimit zu {proz}% verbraucht")
+    if heute["temp_xiaomi"] and heute["temp_xiaomi"] > 45:
+        auff.append(f"Xiaomi bei {heute['temp_xiaomi']} C")
+
+    if auff:
+        z.append("")
+        z.append("Auffaellig")
+        for a in auff:
+            z.append("  - " + a)
+
+    if speichern:
+        try:
+            _o.makedirs(_o.path.dirname(P), exist_ok=True)
+            with open(P, "a", encoding="utf-8") as fh:
+                fh.write(_j.dumps(heute, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+
+    return "\n".join(z)
+
+
+if __name__ == "__main__" and "--daily" in __import__("sys").argv:
+    print(tagesbericht())

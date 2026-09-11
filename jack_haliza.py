@@ -169,3 +169,64 @@ def selbsttest():
 
 if __name__ == "__main__":
     selbsttest()
+
+# ---------------------------------------------------------------
+# JACK_TUNE_AUTOROLL — Selbstheilung nach kaputtem Patch
+# Prueft ob eine Datei nach Aenderung noch kompiliert.
+# Wenn nicht: juengstes .bak zurueckspielen, Ereignis melden.
+# Entstanden 11.09.2026 nachdem ein Kommentar mitten in einem
+# Funktionsaufruf jack_audit.py unbrauchbar gemacht hat.
+# ---------------------------------------------------------------
+def pruefe_und_heile(pfad):
+    """True wenn Datei ok. False wenn geheilt oder unrettbar."""
+    import subprocess, glob, shutil, os as _os
+    if not _os.path.isfile(pfad):
+        return False
+    r = subprocess.run(["python3", "-m", "py_compile", pfad],
+                       capture_output=True, text=True, timeout=30)
+    if r.returncode == 0:
+        return True
+
+    fehler = (r.stderr or "")[:200]
+    _log("AUTOROLL", f"{_os.path.basename(pfad)} kaputt: {fehler[:80]}")
+
+    baks = sorted(glob.glob(pfad + ".bak*"), key=_os.path.getmtime, reverse=True)
+    for b in baks:
+        p = subprocess.run(["python3", "-m", "py_compile", b],
+                           capture_output=True, timeout=30)
+        if p.returncode == 0:
+            shutil.copy2(b, pfad)
+            _log("AUTOROLL", f"{_os.path.basename(pfad)} aus {_os.path.basename(b)} geheilt")
+            try:
+                import jack_autonomous as _ja
+                _ja.notify(f"Patch an {_os.path.basename(pfad)} war kaputt.\n"
+                           f"Automatisch zurueckgerollt auf {_os.path.basename(b)}.\n"
+                           f"Fehler: {fehler[:120]}")
+            except Exception:
+                pass
+            return False
+
+    _log("AUTOROLL", f"{_os.path.basename(pfad)} kaputt und KEIN heiles Backup")
+    try:
+        import jack_autonomous as _ja
+        _ja.notify(f"ACHTUNG: {_os.path.basename(pfad)} ist kaputt und es gibt "
+                   f"kein funktionierendes Backup. Handarbeit noetig.\n{fehler[:150]}")
+    except Exception:
+        pass
+    return False
+
+
+def pruefe_alle_kernmodule():
+    """Geht die Kernmodule durch. Gibt Liste der geheilten zurueck."""
+    import os as _os
+    J = "/data/data/com.termux/files/home/jack"
+    kern = ["jack_autonomous.py", "jack_telegram.py", "jack_cortex.py",
+            "jack_talk.py", "jack_chat_router.py", "jack_groq_bridge.py",
+            "jack_health.py", "jack_selftest.py", "jack_audit.py",
+            "jack_ollama_gate.py", "jack_log.py", "jack_queue_gate.py"]
+    geheilt = []
+    for m in kern:
+        p = _os.path.join(J, m)
+        if _os.path.isfile(p) and not pruefe_und_heile(p):
+            geheilt.append(m)
+    return geheilt
