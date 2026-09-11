@@ -134,3 +134,24 @@ jack_score_hist.jsonl
 last_selftest_score.json
 semantic_last_run.json
 pending_approvals.json
+
+# Laufzeitzustand (nicht ins Repo)
+.api_budget*
+.quota_last
+.selfsee_pending
+.health_tick
+.ollama_lock
+hb_fail_state.json
+jack_score_hist.jsonl
+missions/STOP
+attic/
+reports/
+jack_main.log*
+missions/pending/gen_ana_no_module_version_*
+missions/pending/chg_*
+dep_graph.json
+dep_map_state.json
+.publisher_hash
+jack_diag_snapshot.json
+last_selftest_score.json
+semantic_last_run.json
