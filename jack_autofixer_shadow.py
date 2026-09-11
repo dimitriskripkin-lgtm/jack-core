@@ -32,6 +32,9 @@ def _get_open_errors(limit=5):
     except Exception as e: _log(f"DB-Fehler: {e}","ERROR"); return []
 
 def _ollama_fix(module,err_type,err_msg,file_path,line_num,context,original):
+    # JACK_TUNE_SHADOWLOCK — bei gesetzter Sperre gar nicht erst versuchen
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return None
     import urllib.request
     orig_short=original[:1500].replace("\n"," ")
     prompt=(f"Du bist JACK Bug-Fixer. Nur SEARCH/REPLACE Bloecke ausgeben."

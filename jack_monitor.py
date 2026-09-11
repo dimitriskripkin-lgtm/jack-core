@@ -98,7 +98,7 @@ def check_ram():
 def check_dienste():
     try:
         r = subprocess.run(
-            ["sv", "status", "jack_cortex", "jack_telegram", "jack_waechter", "ollama"],
+            ["sv", "status", "jack_cortex", "jack_telegram", "jack_waechter"],  # JACK_TUNE_MON3D
             capture_output=True, text=True, timeout=8
         )
         tote = [l.split(":")[1].strip().split()[0] for l in r.stdout.splitlines() if l.startswith("down:")]
@@ -205,7 +205,7 @@ def vollscan():
     dienste = check_dienste()
     if dienste:
         if dienste["alle_ok"]:
-            zeilen.append("Dienste: alle 4 laufen")
+            zeilen.append("Dienste: alle 3 laufen  # JACK_TUNE_MON3")
         else:
             zeilen.append(f"Dienste: TOT -> {', '.join(dienste['tote'])}")
 

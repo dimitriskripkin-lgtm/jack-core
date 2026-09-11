@@ -46,6 +46,8 @@ def get_window_ctx():
     return chr(10).join([f"Dima: {c} | JACK: {r}" for c,r in _ROLLING_WINDOW])
 
 def get_embedding(text):
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return None  # JACK_TUNE_EMBEDLOCK
     url = 'http://10.229.239.131:11434/api/embeddings'
     data = json.dumps({'model': 'nomic-embed-text', 'prompt': text}).encode('utf-8')
     req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
@@ -56,6 +58,8 @@ def get_embedding(text):
         return None
 
 def talk_to_ollama(prompt, context_memories):
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return "Ollama aus (Lock)."  # JACK_TUNE_TALKLOCK
     url = 'http://10.229.239.131:11434/api/chat'
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Prompt auf Voice-Brevity optimiert

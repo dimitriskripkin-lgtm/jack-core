@@ -8,7 +8,7 @@ OUT=os.path.join(JACK,"SYSTEM_STATE.md")
 
 def _services():
     import subprocess
-    svcs=["jack_cortex","jack_telegram","jack_autolearn","ollama"]
+    svcs=["jack_cortex","jack_telegram","jack_waechter"]  # JACK_TUNE_SOLLAUDIT
     result={}
     for s in svcs:
         r=subprocess.run(["sv","status",s],capture_output=True,text=True,timeout=5)

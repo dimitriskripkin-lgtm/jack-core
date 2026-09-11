@@ -301,7 +301,7 @@ def main():
                 import jack_memory_pruning
                 # Phase 3+P4 (Qwen 22.08.): worker_target() entscheidet wo Pruning laeuft
                 import subprocess, jack_heat_protection as _hp
-                if _hp.worker_target() == "xiaomi":
+                if _hp.ist_xiaomi(_hp.worker_target()):
                     try:
                         result = subprocess.run(
                             ["ssh", "xiaomi-jack", "cd ~/jack && python3 jack_memory_pruning.py"],

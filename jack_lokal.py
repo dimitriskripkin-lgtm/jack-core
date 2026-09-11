@@ -39,6 +39,8 @@ def _temp():
     return mx
 
 def installiert():
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return []  # JACK_TUNE_LOKLOCK
     try:
         with urllib.request.urlopen(OLLAMA+'/api/tags', timeout=5) as r:
             return [m['name'] for m in json.loads(r.read()).get('models',[])]
@@ -88,6 +90,8 @@ def bereit():
     return True, m
 
 def frage(prompt, aufgabe='allgemein', timeout=90, max_tokens=350, temp=0.3):
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return None, "Ollama aus (Lock)."  # JACK_TUNE_FRAGELOCK
     """Lokale Inferenz. Gibt (text, fehler) zurueck."""
     if aufgabe in VERBOTEN:
         return None, 'Lokales Modell darf Code nicht validieren - Regel'

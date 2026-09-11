@@ -219,13 +219,17 @@ def _heartbeat_sv_check():
             pass
         # Ollama HTTP Live-Probe
         try:
-            import urllib.request as _ur
-            import configparser as _cp, os as _os
-            cfg = _cp.ConfigParser()
-            cfg.read(_os.path.expanduser('~/jack/config.ini'))
-            ohost = cfg.get('xiaomi', 'ip', fallback='10.229.239.131')
-            _ur.urlopen(f'http://{ohost}:11434/api/tags', timeout=5)
-            _heat_ollama_guard()
+            _lk="/data/data/com.termux/files/home/jack/.ollama_lock"
+            if os.path.isfile(_lk):
+                pass  # JACK_TUNE_OLLOCK2
+            else:
+                import urllib.request as _ur
+                import configparser as _cp, os as _os
+                cfg = _cp.ConfigParser()
+                cfg.read(_os.path.expanduser('~/jack/config.ini'))
+                ohost = cfg.get('xiaomi', 'ip', fallback='10.229.239.131')
+                _ur.urlopen(f'http://{ohost}:11434/api/tags', timeout=5)
+                _heat_ollama_guard()
         except Exception as _oe:
             try:
                 import jack_log
@@ -319,7 +323,7 @@ def main():
                 print("Shadow-Fixer übersprungen (Xiaomi nicht erreichbar)")
                 return
             
-            if _hp.worker_target() == "xiaomi":
+            if _hp.ist_xiaomi(_hp.worker_target()):
                 try:
                     result = subprocess.run(
                         ["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack", "cd ~/jack && python3 jack_autofixer_shadow.py"],
@@ -385,6 +389,40 @@ def main():
         except Exception:
             pass
         import jack_heartbeat; jack_heartbeat.beat('jack_waechter')
+        # JACK_TUNE_ROLLTICK — Kernmodule alle 1800s auf Kompilierbarkeit pruefen
+        try:
+            _rs = "/data/data/com.termux/files/home/jack/.roll_tick"
+            _rn = __import__("time").time(); _rl = 0.0
+            try: _rl = float(open(_rs).read())
+            except Exception: pass
+            if _rn - _rl > 1800:
+                open(_rs, "w").write(str(_rn))
+                import jack_haliza as _hz
+                _kaputt = _hz.pruefe_alle_kernmodule()
+                if _kaputt:
+                    import jack_log as _jl3
+                    _jl3.log_decision("ROLLTICK", "geheilt: " + ",".join(_kaputt))
+        except Exception:
+            pass
+        # JACK_TUNE_OLLWATCH — Ollama-Laufzeit hart begrenzen, unabhaengig vom Gate
+        try:
+            import subprocess as _sp2
+            _r = _sp2.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6",
+                           "xiaomi-jack","sv status ollama 2>/dev/null"],
+                          capture_output=True, text=True, timeout=15)
+            _o = (_r.stdout or "")
+            if _o.startswith("run:"):
+                import re as _re
+                _m = _re.search(r"(\d+)s", _o)
+                if _m and int(_m.group(1)) > 300:
+                    _sp2.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6",
+                              "xiaomi-jack","sv down ollama"],
+                             capture_output=True, timeout=15)
+                    notify(f"Ollama lief {_m.group(1)}s — Hartgrenze, gestoppt.")
+                    import jack_log as _jl2
+                    _jl2.log_decision("OLLWATCH", f"gestoppt nach {_m.group(1)}s")
+        except Exception:
+            pass
         # JACK_TUNE_HEALTHTICK — health_now alle 600s neu schreiben
         try:
             _hs = "/data/data/com.termux/files/home/jack/.health_tick"

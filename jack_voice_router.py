@@ -176,6 +176,8 @@ async def process_stack_b_offline(audio_path):
         return None, f"STT-Fehler: {e}"
     
     # 2. LLM: Ollama mit Streaming
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return None, "Ollama aus (Lock)."  # JACK_TUNE_VLOCK
     try:
         import json as _json
         req_data = _json.dumps({

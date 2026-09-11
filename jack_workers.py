@@ -89,11 +89,30 @@ def get_best_worker(honor_temp):
     Returns:
         Worker-Dict oder None (wenn lokal ausführen)
     """
-    if honor_temp <= 55:
-        return None  # Honor ist kühl genug
+    # JACK_TUNE_WORKERFLIP 11.09.2026 — Worker ist Standard, nicht Notfall.
+    # Vorher: Honor rechnet bis 55 C. Die Schwelle wurde nie erreicht
+    # (Honor typisch 37-47 C), die Geraetewahl war faktisch tot.
+    # Grund fuer die Umkehr: Honor traegt vier Dienste plus Bedienung,
+    # Xiaomi hat nichts zu tun und ist gemessen 15-20 Grad kuehler.
     
     workers = load_workers()
     # Nur online Worker mit temp < 60°C berücksichtigen
+    # JACK_TUNE_FRESHTEMP — Temperatur live holen statt aus der Registry
+    # workers.json war am 11.09. noch auf dem Stand vom 22.08.
+    for w in workers:
+        try:
+            import subprocess as _sp
+            r = _sp.run(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=6",
+                         w.get("ssh_alias", ""),
+                         "cat /sys/class/thermal/thermal_zone0/temp"],
+                        capture_output=True, text=True, timeout=10)
+            if r.returncode == 0 and (r.stdout or "").strip().isdigit():
+                w["temp"] = round(int(r.stdout.strip()) / 1000, 1)
+                w["online"] = True
+            else:
+                w["online"] = False
+        except Exception:
+            w["online"] = False
     candidates = [w for w in workers if w.get('online') and w.get('temp', 999) < 60]
     
     if not candidates:

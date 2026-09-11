@@ -39,14 +39,18 @@ def is_remote_alive(host, port, timeout=5):
         return False
 
 def is_xiaomi_alive():
-    """SSH-Port-Probe auf Xiaomi — Wahrheit statt Datei-mtime."""
-    import configparser, os
-    cfg = configparser.ConfigParser()
-    cfg.read(os.path.expanduser('~/jack/config.ini'))
-    host = cfg.get('xiaomi', 'ip', fallback='10.229.239.131')
-    port = int(cfg.get('xiaomi', 'ssh_port', fallback='8022'))
-    return is_remote_alive(host, port)
-
+    import subprocess
+    host, port = "10.229.239.131", 8022
+    try:
+        g = subprocess.run(["ssh","-G","xiaomi-jack"], capture_output=True, text=True, timeout=5)
+        for ln in (g.stdout or "").splitlines():
+            if ln.startswith("hostname "): host=ln.split(None,1)[1].strip()
+            if ln.startswith("port "):
+                try: port=int(ln.split(None,1)[1].strip())
+                except Exception: pass
+    except Exception:
+        pass
+    return is_remote_alive(host, port)  # JACK_TUNE_SSHG
 if __name__ == "__main__":
     import sys
     for d in ("jack_cortex", "jack_telegram", "jack_autolearn", "jack_waechter"):

@@ -26,7 +26,7 @@ def process_voice_message(ogg_path):
     # P8 (Qwen 22.08.): Whisper auf Xiaomi wenn Honor heiss, Fallback lokal
     import jack_heat_protection as _hp
     try:
-        if _hp.worker_target() == "xiaomi":
+        if _hp.ist_xiaomi(_hp.worker_target()):
             try:
                 # P10 (Qwen 22.08.): SSH-PIPE statt scp (schneller, kein Temp-File)
                 # Audio via stdin an Xiaomi streamen, dort direkt verarbeiten

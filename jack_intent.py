@@ -301,7 +301,10 @@ def execute(d):
             erg = re.sub(r'\x1b\[[0-9;]*m', '', r.stdout).strip()
         elif aktion == 'ollama_check':
             import urllib.request
-            d2 = json.loads(urllib.request.urlopen('http://localhost:11434/api/tags', timeout=5).read())
+            if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+                erg = 'Ollama aus (Lock).'  # JACK_TUNE_INTLOCK
+            else:
+                d2 = json.loads(urllib.request.urlopen('http://localhost:11434/api/tags', timeout=5).read())
             namen = [m['name'] for m in d2.get('models', [])]
             erg = 'Ollama laeuft | Modelle: ' + ', '.join(namen)
         elif aktion == 'fehler_check':
@@ -316,7 +319,7 @@ def execute(d):
         elif aktion == 'dienst_neustart':
             P = os.environ.get('PREFIX','/data/data/com.termux/files/usr')
             tot = []
-            for s in ('jack_cortex','jack_telegram','jack_waechter','ollama'):
+            for s in ('jack_cortex','jack_telegram','jack_waechter'):  # JACK_TUNE_INTSV
                 st = subprocess.run(['sv','status',f'{P}/var/service/{s}'], capture_output=True, text=True, timeout=8)
                 if 'run:' not in st.stdout:
                     subprocess.run(['sv','up',f'{P}/var/service/{s}'], capture_output=True, timeout=10)

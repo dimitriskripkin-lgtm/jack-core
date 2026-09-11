@@ -86,6 +86,11 @@ def _check_persona_size():
     return True
 
 def run():
+    # JACK_TUNE_TRAINERSTOP 11.09.2026
+    # update_persona ist seit 02.09. stumm — der Trainer fragte aber weiter
+    # das Modell und warf die Antworten weg. Gemessen: ~14000 Token/Tag.
+    # Schutz gehoert nach aussen, nicht nur nach innen.
+    return 0
     if not _check_persona_size(): return 0
     _log("=== TRAINER START ===")
     breaches = get_breaches(100)

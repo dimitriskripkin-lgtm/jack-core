@@ -38,7 +38,10 @@ def _xiaomi():
 
 # Ollama HTTP
 def _ollama():
-    """Prüft ob Ollama startbar ist — nicht ob er läuft (by-design off)."""
+    """Lock = Soll. Binary nur wenn kein Lock. JACK_TUNE_STOLL"""
+    import os
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return True, "Lock liegt — aus by design"
     try:
         import jack_heartbeat
         if not jack_heartbeat.is_xiaomi_alive():

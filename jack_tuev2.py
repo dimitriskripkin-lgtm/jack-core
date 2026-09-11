@@ -226,7 +226,7 @@ except Exception as e: p('FAIL','CONFIG',str(e)[:80])
 
 # === 12. DIENSTE UNTER LAST (nach allem noch oben?) ===
 print("\n[PHASE 12] Dienste nach Stresstest")
-for d in ['jack_cortex','jack_telegram','jack_waechter','ollama']:
+for d in ['jack_cortex','jack_telegram','jack_waechter']:  # JACK_TUNE_TUEV3D
     _,out,_=sh(f'sv status {d}')
     p('OK' if out.startswith('run:') else 'FAIL','FINAL',d+' '+out[:40])
 

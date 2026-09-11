@@ -21,6 +21,23 @@ def get_temp(device="honor"):
         return 0
     return 0
 
+def xiaomi_erreichbar():
+    """JACK_TUNE_SPLITSTATE — nur Erreichbarkeit, ohne Ollama.
+    Vorher pruefte xiaomi_online() beides zusammen und meldete offline,
+    obwohl das Geraet lief — nur weil Ollama absichtlich aus war (Muster P1)."""
+    try:
+        r = subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6",
+                            "xiaomi-jack","echo ok"],
+                           capture_output=True, text=True, timeout=10)
+        return r.returncode == 0 and "ok" in (r.stdout or "")
+    except Exception:
+        return False
+
+
+def ist_xiaomi(t):
+    """JACK_TUNE_ISTXIAOMI — xiaomi und xiaomi-jack."""
+    return str(t or "").strip().lower() in ("xiaomi", "xiaomi-jack")
+
 def xiaomi_online():
     """Prueft ob Xiaomi via SSH erreichbar ist UND Ollama läuft."""
     try:
@@ -73,8 +90,7 @@ def worker_target():
     """
     honor_temp = get_temp("honor")
 
-    if honor_temp <= HONOR_TEMP_WARN:
-        return "honor"  # Honor ist kuehl genug
+    # JACK_TUNE_WORKERFIRST — Worker zuerst fragen, nicht erst bei Hitze
 
     # P11: Multi-Worker - wähle besten Worker
     try:
@@ -86,14 +102,14 @@ def worker_target():
     except Exception as e:
         print(f"P11: Worker-Registry Fehler ({e}), Fallback auf alte Logik")
         # Fallback auf alte Logik
-        if xiaomi_online():
+        if xiaomi_erreichbar():
             xiaomi_temp = get_temp("xiaomi")
             if xiaomi_temp > 0 and xiaomi_temp < HONOR_TEMP_BLOCK:
                 print(f"WORKER-TARGET: Xiaomi (Honor {honor_temp:.1f}°C > {HONOR_TEMP_WARN}°C, Xiaomi {xiaomi_temp:.1f}°C)")
-                return "xiaomi"
+                return "xiaomi-jack"  # JACK_TUNE_REACH2
 
-    # P9 (Qwen 22.08.): Fallback auf lokales Ollama wenn Xiaomi offline
-    if not xiaomi_online():
+    # JACK_TUNE_SPLITUSE — Erreichbarkeit statt Ollama-Status
+    if not xiaomi_erreichbar():
         print("P9: Xiaomi offline - aktiviere lokales Ollama als Fallback")
         fallback_to_local_ollama()
 
@@ -135,7 +151,7 @@ def emergency_shutdown():
 def get_status():
     """Kompakter Status fuer /status oder /selftest."""
     h_temp = get_temp("honor")
-    x_online = xiaomi_online()
+    x_online = xiaomi_erreichbar()  # JACK_TUNE_REACH2
     x_temp = get_temp("xiaomi") if x_online else 0
     target = worker_target()
     return {
