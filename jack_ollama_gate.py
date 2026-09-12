@@ -26,7 +26,16 @@ import subprocess, time, threading, os, logging
 
 JACK      = "/data/data/com.termux/files/home/jack"
 SVC       = "/data/data/com.termux/files/usr/var/service/ollama"
-OLLAMA    = "http://10.229.239.131:11434"
+def _ollama_url():
+    host="10.229.239.131"
+    try:
+        g=subprocess.run(["ssh","-G","xiaomi-jack"],capture_output=True,text=True,timeout=5)
+        for ln in (g.stdout or "").splitlines():
+            if ln.startswith("hostname "): host=ln.split(None,1)[1].strip()
+    except Exception:
+        pass
+    return "http://%s:11434"%host  # JACK_TUNE_GURL
+OLLAMA = _ollama_url()
 TEMP_MAX  = 52.0
 IDLE_STOP = 90
 log       = logging.getLogger("ollama_gate")
