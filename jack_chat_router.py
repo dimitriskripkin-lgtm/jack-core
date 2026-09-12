@@ -81,7 +81,7 @@ def _tool_name(text):
         return "sv_status"
     if any(w in t for w in ("speicher","wie voll","platz","speicherplatz")):
         return "df_xiaomi" if "xiaomi" in low else "df_honor"
-    if any(w in t for w in ("welche werkzeuge","was kannst du messen","kiste")):
+    if any(w in t for w in ("welche werkzeuge","was kannst du messen","was kannst du","was kannst du tun","kiste")):
         return "kiste_liste"
     return None
 
@@ -179,7 +179,13 @@ def _tools(text):
                 parts.append("Xiaomi df: "+str(e)[:60])
         if parts:
             return "; ".join(parts)
-    want_list=any(w in t for w in ("welche werkzeuge","was kannst du messen","was misst du","werkzeugkiste"))
+    if any(w in t for w in ("wer bist du","was bist du","was ist deine persona","deine persona","wer bin ich")):
+        try:
+            k=open("/data/data/com.termux/files/home/jack/jack_persona_kern.md",encoding="utf-8").read().strip()
+            return k[:500]
+        except Exception as e:
+            return "Kern fehlt: "+str(e)[:60]
+    want_list=any(w in t for w in ("welche werkzeuge","was kannst du messen","was kannst du","was kannst du tun","was misst du","werkzeugkiste","kiste"))
     if want_list:
         return "Kiste jetzt: Temp/Akku/Laden Honor+Xiaomi. Graph letzte Knoten. SSH Xiaomi. Dienste telegram/waechter/cortex. Speicher Honor+Xiaomi. Keine erfundenen Listen."
     return None  # JACK_TUNE_TOOLIST
