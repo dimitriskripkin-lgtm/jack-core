@@ -210,7 +210,15 @@ def _tools(text):
             c=_g.con()
             rows=c.execute("SELECT typ,name,wert FROM nodes ORDER BY rowid DESC LIMIT 10").fetchall()
             if not rows: return "Keine Knoten."
-            return "Letzte Knoten:\n" + "\n".join("%s %s=%s"%(a,b,c) for a,b,c in rows)
+            lines=[]
+            for typ,name,wert in rows:
+                if typ=="fakt":
+                    lines.append("%s: %s"%(name, wert))
+                elif typ=="geraet":
+                    continue
+                else:
+                    lines.append("%s: %s"%(name, wert))
+            return "Was ich ueber dich habe:\n" + "\n".join(lines)  # JACK_TUNE_LESBAR
         except Exception as e:
             return "Graph: "+str(e)[:60]
     return None  # JACK_TUNE_TOOLIST
