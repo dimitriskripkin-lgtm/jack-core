@@ -70,7 +70,15 @@ def cycle(dry=False):
                     jack_log.log_decision("WAECHTER-NEUSTART",d); notify(f"Dienst {d} war tot, hab ihn neugestartet.")
         if not xi and alt.get("xiaomi",True):
             akt.append("Xiaomi weg")
-            if not dry: jack_log.log_decision("WAECHTER-MELDUNG","Xiaomi weg"); notify("Xiaomi ist nicht mehr erreichbar.")
+            if not dry:
+                jack_log.log_decision("WAECHTER-MELDUNG","Xiaomi weg")
+                _st=os.path.join(H if "H" in dir() else "/data/data/com.termux/files/home/jack",".xi_hb_down")
+                _now=__import__("time").time(); _last=0.0
+                try: _last=float(open(_st).read())
+                except Exception: pass
+                if _now-_last>10800:
+                    open(_st,"w").write(str(_now))
+                    notify("Xiaomi ist nicht mehr erreichbar.")  # JACK_TUNE_CYCL3H
         if err>alt.get("errors",0)+3:
             akt.append(f"Fehler auf {err}")
             if not dry: jack_log.log_decision("WAECHTER-MELDUNG",f"Fehler {err}"); notify(f"Offene Fehler auf {err} gestiegen. /errors zeigt sie.")

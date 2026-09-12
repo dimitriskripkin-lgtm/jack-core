@@ -2,7 +2,7 @@ MODULE_VERSION = 1
 import json, os, time
 J = "/data/data/com.termux/files/home/jack"
 F = J + "/hb_fail_state.json"
-N, COOL = 3, 600
+N, COOL = 3, 10800  # JACK_TUNE_AL3H
 def _load():
     try:
         d=json.load(open(F,encoding="utf-8"))

@@ -16,7 +16,7 @@ try:
 except Exception:
     _jlog = None
 
-MODEL_NAME = 'llama3.2:3b'
+MODEL_NAME = 'qwen3:4b'  # JACK_TUNE_QWEN4
 DB_PATH = os.path.expanduser('~/jack/jack_memory.db')
 
 # Rolling Window - letzte 10 Telegram-Nachrichten im RAM
@@ -46,9 +46,7 @@ def get_window_ctx():
     return chr(10).join([f"Dima: {c} | JACK: {r}" for c,r in _ROLLING_WINDOW])
 
 def get_embedding(text):
-    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
-        return None  # JACK_TUNE_EMBEDLOCK
-    url = 'http://10.229.239.131:11434/api/embeddings'
+    url = "http://%s:11434/api/embeddings" % _xiaomi_ollama()  # JACK_TUNE_XIOLL
     data = json.dumps({'model': 'nomic-embed-text', 'prompt': text}).encode('utf-8')
     req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
     try:
@@ -57,10 +55,17 @@ def get_embedding(text):
     except Exception:
         return None
 
+def _xiaomi_ollama():
+    host="10.229.239.131"
+    try:
+        g=subprocess.run(["ssh","-G","xiaomi-jack"],capture_output=True,text=True,timeout=5)
+        for ln in (g.stdout or "").splitlines():
+            if ln.startswith("hostname "): host=ln.split(None,1)[1].strip()
+    except Exception:
+        pass
+    return host
 def talk_to_ollama(prompt, context_memories):
-    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
-        return "Ollama aus (Lock)."  # JACK_TUNE_TALKLOCK
-    url = 'http://10.229.239.131:11434/api/chat'
+    url = "http://%s:11434/api/chat" % _xiaomi_ollama()  # JACK_TUNE_XIOLL
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Prompt auf Voice-Brevity optimiert
     system_prompt = (
@@ -72,7 +77,7 @@ def talk_to_ollama(prompt, context_memories):
     )
     
     try:
-        _mv = get_embedding(prompt)
+        _mv = None  # JACK_TUNE_NOEMBFALL
         _hits = jack_vecdb.search_mem(_mv, limit=3) if _mv else []
         if _hits:
             _ctx = "\n".join([f"- Frueher: {h[1]} -> {h[2][:120]}" for h in _hits])
@@ -242,7 +247,10 @@ def _talk_to_gemini_impl(prompt):
                 if _gb: system=system+chr(10)+_gb
             except Exception:
                 pass
-            return _scrub_out(_gq.ask_groq(system, prompt))
+            _r=_scrub_out(_gq.ask_groq(system, prompt))
+            if _r.startswith("[Groq Limit]") or _r.startswith("[Groq Fehler]"):
+                return talk_to_ollama(prompt, [])  # JACK_TUNE_G2O
+            return _r
         except Exception:
             return talk_to_ollama(prompt, [])  # Groq fail → direkt Ollama, nie Gemini für TALK
     import jack_gemini_bridge

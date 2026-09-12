@@ -176,7 +176,9 @@ def event_check():
     if wlan:
         letztes_ssid = state.get("wlan_ssid", "")
         if wlan["ssid"] != letztes_ssid and letztes_ssid:
-            meldungen.append(f"WLAN gewechselt: {letztes_ssid} -> {wlan['ssid']}")
+            _bad=("<unknown ssid>","unknown ssid","")
+            if wlan["ssid"] not in _bad and letztes_ssid not in _bad:
+                meldungen.append(f"WLAN gewechselt: {letztes_ssid} -> {wlan['ssid']}")  # JACK_TUNE_WLANQ
         state["wlan_ssid"] = wlan["ssid"]
         state["wlan_ip"] = wlan["ip"]
 

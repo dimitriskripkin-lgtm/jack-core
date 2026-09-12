@@ -85,13 +85,12 @@ def ask_groq(system_prompt, user_msg, timeout=20):
             _ra = _h.get("retry-after", "?")
             # JACK_TUNE_TPDSET — bei Tageslimit Sperre setzen
             try:
-                if "per day" in _body or "TPD" in _body:
-                    import time as _t3
-                    _w = float(_ra) if str(_ra).isdigit() else 300.0
-                    open("/data/data/com.termux/files/home/jack/.groq_tpd_until",
-                         "w").write(str(_t3.time() + _w))
+                import time as _t3
+                _w = float(_ra) if str(_ra).isdigit() else 60.0
+                open("/data/data/com.termux/files/home/jack/.groq_tpd_until",
+                     "w").write(str(_t3.time() + _w))
             except Exception:
-                pass
+                pass  # JACK_TUNE_COOL429
             return f"[Groq Limit] {e.code} - wieder frei in {_ra}s. Details: {_body[:150]}"
         return f"[Groq Fehler] {e}"
     except Exception as e:
