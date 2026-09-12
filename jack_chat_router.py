@@ -188,6 +188,31 @@ def _tools(text):
     want_list=any(w in t for w in ("welche werkzeuge","was kannst du messen","was kannst du","was kannst du tun","was misst du","werkzeugkiste","kiste"))
     if want_list:
         return "Kiste jetzt: Temp/Akku/Laden Honor+Xiaomi. Graph letzte Knoten. SSH Xiaomi. Dienste telegram/waechter/cortex. Speicher Honor+Xiaomi. Keine erfundenen Listen."
+    if any(w in t for w in ("gespraechsverlauf","chatverlauf","telegram verlauf","letzte frage","letzte was","zuletzt gefragt","was habe ich gefragt","was fragte ich","gefragt habe")):
+        try:
+            import json
+            rows=[]
+            for ln in open("/data/data/com.termux/files/home/jack/reports/decisions.jsonl",encoding="utf-8"):
+                try:
+                    o=json.loads(ln)
+                    m=(o.get("msg") or "").strip()
+                    if m: rows.append((o.get("ts",""), m))
+                except Exception:
+                    pass
+            rows=rows[-3:]
+            if not rows: return "Keine Fragen im Log."
+            return "Zuletzt:\n" + "\n".join("%s %s"%(a,b[:80]) for a,b in rows)
+        except Exception as e:
+            return "Log fehlt: "+str(e)[:60]
+    if any(w in t for w in ("ueber mich","über mich","letzten 10","letzte 10 sachen","was weisst du alles ueber")):
+        try:
+            import jack_graph as _g
+            c=_g.con()
+            rows=c.execute("SELECT typ,name,wert FROM nodes ORDER BY rowid DESC LIMIT 10").fetchall()
+            if not rows: return "Keine Knoten."
+            return "Letzte Knoten:\n" + "\n".join("%s %s=%s"%(a,b,c) for a,b,c in rows)
+        except Exception as e:
+            return "Graph: "+str(e)[:60]
     return None  # JACK_TUNE_TOOLIST
 
 def talk_local(text):
@@ -220,6 +245,18 @@ def talk_local(text):
             except Exception as e:
                 return "Graph-Schreibfehler: "+str(e)[:80]
     # JACK_TUNE_MERK
+    low2=low
+    if "ich fahre" in low2 or "mein auto" in low2 or "meinen passat" in low2 or "einen passat" in low2:
+        try:
+            import jack_graph as _g
+            wert=raw
+            for p in ("ich fahre ","ich fahre einen ","mein auto ist ","meinen "):
+                if p in low2:
+                    i=low2.find(p); wert=raw[i+len(p):].strip(" .")[:80]; break
+            if wert:
+                _g.put_node("fakt","Auto",wert,"chat")
+        except Exception:
+            pass
     # JACK_TUNE_EDGE
     if (not low.startswith(("was ","wie ","wer ","wo ","warum ","wieso "))) and low.startswith("mein ") and " ist " in low:
         rest=raw[4:].strip()
