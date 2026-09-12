@@ -65,7 +65,7 @@ def _tool_name(text):
     """JACK_TUNE_TOOLNAME — welches Werkzeug wuerde greifen. Nur fuer den Logger."""
     t = norm(text)
     low = (text or "").lower()
-    if any(w in t for w in ("zeig mir alles","zeig mir alle","alles davon","alle davon","alle werte")):
+    if any(w in t for w in ("zeig mir alles","zeig mir alle","alles davon","alle davon","alle werte","umgebung","wie sieht")):
         return "sammel_alles"
     if any(w in t for w in ("wie alt sind diese","diese daten","wie frisch")):
         return "daten_alter"
@@ -88,7 +88,7 @@ def _tool_name(text):
 def _tools(text):
     # JACK_TUNE_TOOLBOX
     t=norm(text)
-    if any(w in t for w in ("zeig mir alles","zeig mir alle","alles davon","alle davon","alle werte","alles messen")):
+    if any(w in t for w in ("zeig mir alles","zeig mir alle","alles davon","alle davon","alle werte","alles messen","umgebung","wie sieht")):
         bits=[]
         for q in ("wie warm xiaomi und honor","ist xiaomi erreichbar","welche dienste laufen","wie voll speicher xiaomi","wie voll speicher honor","letzte erinnerungen"):
             r=_tools(q)
