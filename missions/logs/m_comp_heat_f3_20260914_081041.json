@@ -1,0 +1,10 @@
+{
+  "id": "m_comp_heat_f3_20260914_081041",
+  "act": "compile_ok",
+  "ts": "2026-09-14 08:11:08",
+  "ok": true,
+  "note": "compile OK",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

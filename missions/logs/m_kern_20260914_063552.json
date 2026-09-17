@@ -1,0 +1,10 @@
+{
+  "id": "m_kern_20260914_063552",
+  "act": "file_exists",
+  "ts": "2026-09-14 06:36:06",
+  "ok": true,
+  "note": "file_exists /data/data/com.termux/files/home/jack/jack_persona_kern.md yes",
+  "out": "",
+  "expect": "PASS",
+  "raw_ok": true
+}

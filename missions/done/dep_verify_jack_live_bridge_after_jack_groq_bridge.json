@@ -1,1 +1,0 @@
-{"id": "dep_verify_jack_live_bridge_after_jack_groq_bridge", "typ": "check", "cat": "dep_verify", "act": "compile_ok", "file": "~/jack/jack_live_bridge.py", "desc": "Verify jack_live_bridge nach \u00c4nderung von jack_groq_bridge", "_prio": 50, "_source": "dep_map"}

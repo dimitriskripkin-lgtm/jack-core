@@ -38,9 +38,10 @@ def _messe():
         c.close()
     except Exception: pass
     try:
-        import subprocess
-        b = json.loads(subprocess.run(['termux-battery-status'],capture_output=True,text=True,timeout=8).stdout)
-        d['akku'] = b.get('percentage'); d['laden'] = b.get('status')
+        import jack_health as _jh
+        b=_jh.bat_fresh() or {}
+        d['akku'] = b.get('pct')
+        d['laden'] = b.get('status')  # JACK_TUNE_BATFRESH
     except Exception: pass
     try:
         import subprocess as sp

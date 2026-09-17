@@ -8,7 +8,7 @@ OUT=os.path.join(JACK,"SYSTEM_STATE.md")
 
 def _services():
     import subprocess
-    svcs=["jack_cortex","jack_telegram","jack_waechter"]  # JACK_TUNE_SOLLAUDIT
+    svcs=["jack_cortex","jack_telegram","jack_waechter","jack_missions"]  # JACK_TUNE_SOLLAUDIT4
     result={}
     for s in svcs:
         r=subprocess.run(["sv","status",s],capture_output=True,text=True,timeout=5)
@@ -97,7 +97,10 @@ def run():
         "## Features",
     ]
     for f,v in feats.items():
-        lines.append(f"- {f}: {'AN' if v else 'AUS'}")
+        extra=""
+        if f=="autolearn":
+            extra=" dienst down" if os.path.isfile("/data/data/com.termux/files/usr/var/service/jack_autolearn/down") else " dienst up"
+        lines.append(f"- {f}: config {'AN' if v else 'AUS'}"+extra)  # JACK_TUNE_FEATLIVE
     if err_recent:
         lines+=["","## Letzte Fehler"]
         for m,e in err_recent:

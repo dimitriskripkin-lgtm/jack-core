@@ -8,6 +8,16 @@ import sqlite3, subprocess, time, os, sys
 
 DB = os.path.expanduser("~/jack/jack_cmd_crawler.db")
 XIAOMI_HOST = "10.229.239.131"
+try:
+    g=subprocess.run(["ssh","-G","xiaomi-jack"],capture_output=True,text=True,timeout=5)
+    for ln in (g.stdout or "").splitlines():
+        if ln.startswith("hostname "): XIAOMI_HOST=ln.split(None,1)[1].strip()
+        if ln.startswith("port "):
+            try: XIAOMI_PORT=ln.split(None,1)[1].strip()
+            except Exception: pass
+except Exception:
+    pass  # JACK_TUNE_MAPG
+
 XIAOMI_PORT = "8022"
 XIAOMI_KEY = os.path.expanduser("~/.ssh/id_jack")
 

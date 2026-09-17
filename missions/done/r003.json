@@ -1,1 +1,0 @@
-{"id": "r003", "act": "file_exists", "file": "~/jack/jack_selftest.py", "expect": "PASS", "cat": "refactor"}

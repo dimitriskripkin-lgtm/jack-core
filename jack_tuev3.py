@@ -161,19 +161,22 @@ except Exception as e:
 
 # === OLLAMA LOKAL ===
 print("\n[PHASE 11] Ollama Lokal-Inferenz")
-try:
-    import urllib.request,json as _j
-    req=urllib.request.Request('http://localhost:11434/api/generate',
-        data=_j.dumps({'model':'llama3.2:3b','prompt':'Antworte nur: ok','stream':False}).encode(),
-        headers={'Content-Type':'application/json'})
-    t0=time.time()
-    with urllib.request.urlopen(req,timeout=30) as res:
-        r=_j.loads(res.read())
-    ms=(time.time()-t0)*1000
-    out=r.get('response','').strip()
-    p('OK' if out else 'FAIL','OLLAMA',f'{ms:.0f}ms -> {out[:40]}')
-except Exception as e:
-    p('FAIL','OLLAMA',f'{e}')
+if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+    p('OK','OLLAMA','skip lock')  # JACK_TUNE_TUEVLOCK
+else:
+    try:
+        import urllib.request,json as _j
+        req=urllib.request.Request('http://localhost:11434/api/generate',
+            data=_j.dumps({'model':'llama3.2:3b','prompt':'Antworte nur: ok','stream':False}).encode(),
+            headers={'Content-Type':'application/json'})
+        t0=time.time()
+        with urllib.request.urlopen(req,timeout=30) as res:
+            r=_j.loads(res.read())
+        ms=(time.time()-t0)*1000
+        out=r.get('response','').strip()
+        p('OK' if out else 'FAIL','OLLAMA',f'{ms:.0f}ms -> {out[:40]}')
+    except Exception as e:
+        p('FAIL','OLLAMA',f'{e}')
 
 # === XIAOMI FULL CHECK ===
 print("\n[PHASE 12] Xiaomi End-to-End")

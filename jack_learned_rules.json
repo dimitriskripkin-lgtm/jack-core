@@ -1,9 +1,1 @@
-[
-  {
-    "quelle": "jack_cortex/CORTEX_ERR",
-    "fehler": "[Cortex] SSH-Timeout (#1)",
-    "regel": "SSH-Befehle NUR mit Timeout und via su -c. Kein /tmp nutzen.",
-    "anzahl": 15,
-    "ts": "2026-09-03T11:43:31.993673"
-  }
-]
+[]

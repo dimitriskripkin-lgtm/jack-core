@@ -130,6 +130,8 @@ def think(elements, step, history, foc):
         log("Groq: %s" % (ans or "")[:70])
     except Exception as e:
         log("Groq err %s" % e)
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return "AKTION: DONE\nWARUM: lock"  # JACK_TUNE_UIELOCK
     try:
         data = json.dumps({
             "model": "llama3.2:3b",

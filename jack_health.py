@@ -4,6 +4,23 @@ import json, subprocess, time
 from pathlib import Path
 H = Path("/data/data/com.termux/files/home/jack")
 
+
+def bat_fresh(max_age=900):
+    """Honor-Akku aus health_now.json. None wenn tot oder aelter max_age. JACK_TUNE_BATFRESH"""
+    import json, os, time
+    hn = "/data/data/com.termux/files/home/jack/jack_health_now.json"
+    try:
+        if not os.path.isfile(hn):
+            return None
+        if time.time() - os.path.getmtime(hn) > max_age:
+            return None
+        b = (json.loads(open(hn, encoding="utf-8").read()).get("bat") or {})
+        if b.get("err") is not None or b.get("pct") is None:
+            return None
+        return b
+    except Exception:
+        return None
+
 def sh(cmd, t=8):
     try:
         p = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=t)
@@ -18,8 +35,14 @@ def main():
         "ssh_xiaomi": "OK" if "OK" in sh("ssh -o ConnectTimeout=4 -o BatchMode=yes xiaomi-jack 'echo OK'") else "DOWN",
         "heartbeats": {},
     }
+    health["hb_stale"] = []
     for f in H.glob(".heartbeat_*"):
-        health["heartbeats"][f.name.replace(".heartbeat_", "")] = round(time.time() - f.stat().st_mtime, 1)
+        name = f.name.replace(".heartbeat_", "")
+        age = round(time.time() - f.stat().st_mtime, 1)
+        health["heartbeats"][name] = age
+        down = Path("/data/data/com.termux/files/usr/var/service/" + name + "/down").is_file()
+        if down or age > 3600:
+            health["hb_stale"].append(name)
     try:
         tj = H / "jack_tune.json"
         health["tune"] = json.loads(tj.read_text()) if tj.is_file() else None
@@ -36,6 +59,37 @@ def main():
     health["ollama_svc"] = "disabled" if Path(_osvc + "/_ollama_disabled").is_dir() else ("live" if Path(_osvc + "/ollama").is_dir() else "missing")
     health["fix_bak"] = len(list(H.glob("*.fix.bak")))
     # JACK_TUNE_HEALTHHONEST
+    try:
+        _br = subprocess.run(["termux-battery-status"], capture_output=True, text=True, timeout=5)
+        _bd = json.loads(_br.stdout or "{}")
+        _ma = _bd.get("current")
+        _note = None
+        try:
+            _mai = int(_ma)
+            if abs(_mai) >= 10000:
+                _note = "roh wirkt wie uA, nicht mA"
+        except Exception:
+            _mai = _ma
+        health["bat"] = {
+            "pct": _bd.get("percentage"),
+            "c": _bd.get("temperature"),
+            "ma_raw": _ma,
+            "ma": _mai,
+            "note": _note,
+            "plugged": _bd.get("plugged"),
+            "status": _bd.get("status"),
+        }
+    except Exception as _be:
+        health["bat"] = {"err": str(_be)[:80]}
+    try:
+        _dr = H / "reports" / "drain.jsonl"
+        _dr.parent.mkdir(parents=True, exist_ok=True)
+        _b = health.get("bat") or {}
+        _line = json.dumps({"ts": health["ts"], "pct": _b.get("pct"), "c": _b.get("c"), "ma_raw": _b.get("ma_raw"), "plugged": _b.get("plugged"), "status": _b.get("status"), "ssh": health.get("ssh_xiaomi")}, ensure_ascii=False)
+        with _dr.open("a", encoding="utf-8") as _fh:
+            _fh.write(_line + "\n")
+    except Exception:
+        pass  # JACK_TUNE_DRAINLOG
     out = H / "jack_health_now.json"
     health["written_at"] = int(__import__("time").time())
     out.write_text(json.dumps(health, indent=2, ensure_ascii=False))
@@ -43,6 +97,10 @@ def main():
     return 0 if health["ssh_xiaomi"] == "OK" else 1
 
 if __name__ == "__main__":
+    import sys as _s
+    if "--daily" in _s.argv:
+        print(tagesbericht())
+        raise SystemExit(0)
     raise SystemExit(main())
 
 # ---------------------------------------------------------------
@@ -166,7 +224,7 @@ def tagesbericht(speichern=True):
 
     z.append("System")
     z.append(_d_diff(g.get("persona_b"), heute["persona_b"], "Persona", " B", True))
-    z.append(_d_diff(g.get("dienste_run"), heute["dienste_run"], "Dienste aktiv", "/3", True))
+    z.append(_d_diff(g.get("dienste_run"), heute["dienste_run"], "Dienste aktiv", "/4", True))  # JACK_TUNE_DAILY4
     z.append(f"  Ollama-Sperre: {'liegt' if heute['lock'] else 'FEHLT'}")
     z.append(f"  Warteschlangen-Stopp: {'liegt' if heute['stop'] else 'offen'}")
     z.append("")
@@ -219,5 +277,3 @@ def tagesbericht(speichern=True):
     return "\n".join(z)
 
 
-if __name__ == "__main__" and "--daily" in __import__("sys").argv:
-    print(tagesbericht())

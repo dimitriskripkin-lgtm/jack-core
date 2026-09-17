@@ -46,15 +46,20 @@ def generate_briefing():
             pass
 
     # Briefing Text
+    lage=""
+    try:
+        import jack_heat_protection as _h
+        lage="ssh="+_h.lage("ssh")+" ollama="+_h.lage("ollama")+" missions="+_h.lage("missions")+" autolearn="+_h.lage("autolearn")
+    except Exception:
+        lage="lage unbekannt"
     text = (
-        f"☀️ *GUTEN MORGEN, DIMA!* ☀️\n\n"
-        f"📅 *Datum:* {now}\n"
-        f"🔄 *Rhythmus:* {rhythm}\n"
-        f"🧠 *Master RAM:* {ram_str}\n"
-        f"⚠️ *Offene Fehler:* {open_errors}\n\n"
-        f"JACK v1.0 läuft stabil. Alles startklar für den Tag!"
+        f"[JACK Briefing {now}]\n"
+        f"RAM {ram_str}\n"
+        f"Rhythmus {rhythm}\n"
+        f"Offene Fehler {open_errors}\n"
+        f"{lage}\n"
     )
-    return text
+    return text  # JACK_TUNE_F7BRIEF
 
 def send_telegram(text):
     telegram_script = os.path.expanduser("~/jack/jack_telegram.py")

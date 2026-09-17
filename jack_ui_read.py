@@ -91,6 +91,8 @@ def think(els, step, history):
             return ans
     except Exception as e:
         log("Groq %s" % e)
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return "AKTION: SWIPE_UP\nWARUM: lock"  # JACK_TUNE_UIREADLOCK
     try:
         data = json.dumps({"model": "llama3.2:3b", "prompt": system + "\n" + user, "stream": False}).encode()
         req = urllib.request.Request("http://127.0.0.1:11434/api/generate", data=data,

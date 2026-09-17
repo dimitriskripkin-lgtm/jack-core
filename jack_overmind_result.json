@@ -1,23 +1,61 @@
 {
-  "ts": "2026-08-27T15:41:25",
+  "ts": "2026-09-14T15:58:08",
   "plan": {
-    "teacher": "grok_api",
-    "goal": "Verify JACK module health after git sync with mixed heartbeat ages",
+    "teacher": "file",
+    "goal": "SSH, ADB, Dienste und Skills-Liste einmal hart pruefen",
     "actions": [
       {
         "id": "1",
         "cmd_type": "status",
-        "why": "ssh_xiaomi and adb_device true but waechter/autolearn heartbeats exceed 100s"
+        "why": "Lagebild"
+      },
+      {
+        "id": "2",
+        "cmd_type": "ssh_check",
+        "why": "Xiaomi Link"
+      },
+      {
+        "id": "3",
+        "cmd_type": "sv_status",
+        "why": "runit"
+      },
+      {
+        "id": "4",
+        "cmd_type": "skills_list",
+        "why": "DB sauber?"
       }
     ],
-    "notes": "git_tip indicates Honor live modules synced; telegram/cortex fresh"
+    "notes": "mission:test_health_20260824",
+    "forbidden": [
+      "core_patch",
+      "rm_rf",
+      "read_secrets"
+    ]
   },
   "results": [
     {
       "id": "1",
       "cmd_type": "status",
       "ok": true,
-      "out": "{\"ssh_xiaomi\": true, \"adb_device\": true, \"git_tip\": \"c2a4fd9 Sync: alle aktiven Module die live auf Honor laufen aber im Repo fehlten\", \"heartbeats_age_s\": {\"jack_telegram\": 2.0217270851135254, \"jack_cortex\": 51.08616328239441, \"jack_waechter\": 5.398228406906128, \"jack_autolearn\": 206.05155849456787, \"jack_publisher\": 120.3937680721283}, \"why\": \"ssh_xiaomi and adb_device true but waechter/autolearn heartbeats exceed 100s\"}"
+      "out": "{\"ssh_xiaomi\": true, \"adb_device\": true, \"git_tip\": \"643e0c38 fix: Ollama-Gate URL aus ssh -G\", \"heartbeats_age_s\": {\"jack_telegram\": 2.037571430206299, \"jack_cortex\": 23.850026607513428, \"jack_waechter\": 56.78445792198181, \"jack_autolearn\": 965676.3274893761, \"jack_publisher\": 965362.8352923393}, \"why\": \"Lagebild\"}"
+    },
+    {
+      "id": "2",
+      "cmd_type": "ssh_check",
+      "ok": true,
+      "out": "SSH_OK\n"
+    },
+    {
+      "id": "3",
+      "cmd_type": "sv_status",
+      "ok": true,
+      "out": "run: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 27667) 2542s\nrun: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 11872) 14920s\nrun: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 31805) 7692s\ndown: /data/data/com.termux/files/usr/var/service/jack_autolearn: 593042s\ndown: /data/data/com.termux/files/usr/var/service/jack_publisher: 593042s; run: log: (pid 22285) 593042s"
+    },
+    {
+      "id": "4",
+      "cmd_type": "skills_list",
+      "ok": true,
+      "out": "Einstellungen WLAN Skill|DEFEKT|0/0\nplay_sido_youtube_loop|DEFEKT|0/3\nEcho Skill Test|VERIFIED|3/3\nSystem Health Check v3|VERIFIED|3/3\nakku_status|VERIFIED|3/3\napi_budget_check|VERIFIED|3/3\ncleanup_bak_files|VERIFIED|5/5\ndaily_system_health_check|VERIFIED|3/3\nfehler_zusammenfassung|VERIFIED|3/3\ngeraet_info|VERIFIED|3/3\nmemory_statistik|VERIFIED|3/3\nollama_tunnel_check|VERIFIED|1/1\nrouter_test_skill|VERIFIED|3/3\nsensoren_liste|VERIFIED|3/3\nskill_schmied_bak_cleanup_v2|VERIFIED|3/3\nstandort|VERIFIED|3/3\ntest_skill|VERIFIED|3/3\ntuev3_test|VERIFIED|4/4\nwifi_status|VERIFIED|3/3"
     }
   ]
 }

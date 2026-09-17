@@ -4,20 +4,23 @@ sys.path.insert(0, os.path.expanduser('~/jack'))
 APPS_FILE=os.path.expanduser('~/jack/xiaomi_app_map.json')
 
 def scan_apps():
-    r=subprocess.run(['ssh','xiaomi-jack',"su -c 'pm list packages -3 2>/dev/null'"],capture_output=True,text=True,timeout=20)
+  try:
+    r=subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=8','xiaomi-jack',"su -c 'pm list packages -3 2>/dev/null'"],capture_output=True,text=True,timeout=20)
     pkgs=[l.replace('package:','').strip() for l in r.stdout.splitlines() if l.startswith('package:')]
     if not pkgs:
-        r2=subprocess.run(['ssh','xiaomi-jack','pm list packages -3 2>/dev/null'],capture_output=True,text=True,timeout=20)
+        r2=subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=8','xiaomi-jack','pm list packages -3 2>/dev/null'],capture_output=True,text=True,timeout=20)
         pkgs=[l.replace('package:','').strip() for l in r2.stdout.splitlines() if l.startswith('package:')]
     if not pkgs:
-        r2=subprocess.run(['ssh','xiaomi-jack','pm list packages -3 2>/dev/null'],capture_output=True,text=True,timeout=20)
+        r2=subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=8','xiaomi-jack','pm list packages -3 2>/dev/null'],capture_output=True,text=True,timeout=20)
         pkgs=[l.replace('package:','').strip() for l in r2.stdout.splitlines() if l.startswith('package:')]
     return pkgs
+  except Exception:
+    return []  # JACK_TUNE_EXPLSAFE
 
 def explore_app(paket, timeout=12):
     import jack_ghost as jg
     try:
-        subprocess.run(['ssh','xiaomi-jack',"su -c 'monkey -p "+paket+" 1'"],capture_output=True,timeout=10)
+        subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=8','xiaomi-jack',"su -c 'monkey -p "+paket+" 1'"],capture_output=True,timeout=10)
         time.sleep(3)
         xml=jg.hol_xiaomi_ui()
         if not xml.startswith('<'): return None
@@ -25,8 +28,8 @@ def explore_app(paket, timeout=12):
         root=ET.fromstring(xml)
         texts=[n.get('text','') for n in root.iter('node') if n.get('text','').strip()]
         clickable=len([n for n in root.iter('node') if n.get('clickable')=='true'])
-        subprocess.run(['ssh','xiaomi-jack',"su -c 'input keyevent 3'"],capture_output=True,timeout=5)
-        subprocess.run(['ssh','xiaomi-jack',"am force-stop "+paket],capture_output=True,timeout=5)
+        subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=8','xiaomi-jack',"su -c 'input keyevent 3'"],capture_output=True,timeout=20)
+        subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=8','xiaomi-jack',"am force-stop "+paket],capture_output=True,timeout=20)
         return {'paket':paket,'texts':texts[:20],'clickable':clickable,'ts':int(time.time())}
     except Exception as e:
         return {'paket':paket,'error':str(e)[:100],'ts':int(time.time())}

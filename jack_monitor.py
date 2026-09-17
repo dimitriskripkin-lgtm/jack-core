@@ -70,13 +70,15 @@ def speichere_state(state):
 
 def check_akku():
     try:
-        r = subprocess.run(["termux-battery-status"], capture_output=True, text=True, timeout=8)
-        d = json.loads(r.stdout)
+        import jack_health as _jh
+        d=_jh.bat_fresh()
+        if not d:
+            return None  # JACK_TUNE_BATFRESH
         return {
-            "prozent": int(d.get("percentage", 100)),
+            "prozent": int(d.get("pct")),
             "status": d.get("status", "?"),
-            "temperatur": float(d.get("temperature", 0)),
-            "plugged": d.get("plugged", "?"),
+            "temperatur": float(d.get("c") or 0),
+            "plugged": d.get("plug", d.get("plugged", "?")),
         }
     except Exception:
         return None

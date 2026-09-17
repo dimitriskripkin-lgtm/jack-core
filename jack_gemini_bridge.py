@@ -108,6 +108,12 @@ def _cb_reset_check():
         _CB_OPEN = False; _CB_FAILS = 0
 
 def _groq_not_ollama(question):
+    import os as _os
+    if _os.environ.get("JACK_ALLOW_GROQ_FROM_GEMINI") != "1":
+        try:
+            import jack_log; jack_log.log_decision("GEMINI-LEAK-STOP","Gemini aus, Ollama gesperrt - kein Groq")
+        except Exception: pass
+        return "[Analyse] Gemini nicht verfuegbar, Ollama gesperrt. Kein Ersatz."
     try:
         import jack_groq_bridge as _gq
         _ps=open('/data/data/com.termux/files/home/jack/jack_persona_kern.md',encoding='utf-8').read()[:4000]
@@ -125,7 +131,7 @@ def _ollama_fallback(question):
         return '[Fallback fehlgeschlagen] ' + str(e)
 
 def _load_persona():
-    try: return open(os.path.expanduser("~/.jack_persona")).read().strip()
+    try: return open("/data/data/com.termux/files/home/jack/jack_persona_kern.md",encoding="utf-8").read().strip()  # JACK_TUNE_ONEMOUTH
     except Exception: return "Du kennst Dima gut - Details aus jack_identity.json."
 
 def ask_gemini(question, status=None):
@@ -137,7 +143,7 @@ def ask_gemini(question, status=None):
             try:
                 import jack_circuit_breaker as _cb; _cb.record_fail()
             except Exception: pass
-        return _ollama_fallback(question)
+            return _ollama_fallback(question)
     except Exception: pass
     # Context Cache einbinden wenn verfügbar
     _cache_name = None

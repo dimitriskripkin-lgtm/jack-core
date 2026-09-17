@@ -20,7 +20,9 @@ def con():
     c.execute("CREATE UNIQUE INDEX IF NOT EXISTS euniq ON edges(a,rel,b)")
     return c
 def put_node(typ,name,wert="",src="seed"):
+    import jack_corr as _jc; _jc.audit("put_node","jack_graph.db",str(typ)+":"+str(name),"jack_graph")
     if typ not in TYPS: return None
+    if _is_suspicious(name) or _is_suspicious(wert): return None  # JACK_TUNE_BUGD
     i=nid(typ,name); t=time.time()
     c=con()
     c.execute("INSERT INTO nodes(id,typ,name,wert,src,ts) VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET wert=excluded.wert,src=excluded.src,ts=excluded.ts",
@@ -38,6 +40,7 @@ def _is_suspicious(text):
     return any(s in low for s in SUSPICIOUS)
 
 def put_edge(a,rel,b,src="seed"):
+    import jack_corr as _jc; _jc.audit("put_edge","jack_graph.db",str(a)+"->"+str(b),"jack_graph")
     if rel not in RELS: return
     c=con(); t=time.time()
     c.execute("INSERT OR IGNORE INTO edges(a,rel,b,src,ts) VALUES(?,?,?,?,?)",(a,rel,b,src,t))

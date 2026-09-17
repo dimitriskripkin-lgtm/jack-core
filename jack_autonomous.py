@@ -319,6 +319,14 @@ def main():
             import jack_autofixer_shadow as _afs
             # Phase 3+P4 (Qwen 22.08.): worker_target() entscheidet wo Shadow-Fixer laeuft
             import subprocess, jack_heat_protection as _hp
+            try:
+                import json as _jl, time as _tl, os as _ol
+                _ld={"ts":_tl.strftime("%Y-%m-%d %H:%M:%S"),"pid":_ol.getpid(),"mark":"JACK_TUNE_LAGESTAMP"}
+                for _n in ("telegram","cortex","waechter","missions","autolearn","publisher","ollama","xiaomi","quatsch"):
+                    _ld[_n]=_hp.lage(_n)
+                open("/data/data/com.termux/files/home/jack/reports/lage_waechter.json","w").write(_jl.dumps(_ld,ensure_ascii=False,indent=2))
+            except Exception:
+                pass  # JACK_TUNE_LAGESTAMP
             
             # NIGHT-FIX (Qwen 23.08.): Xiaomi-Online-Check VOR SSH-Call
             # Wenn Xiaomi offline → skippen, kein Error, kein Fallback
@@ -331,7 +339,7 @@ def main():
                 print("Shadow-Fixer übersprungen (Xiaomi nicht erreichbar)")
                 return
             
-            if _hp.ist_xiaomi(_hp.worker_target()):
+            if _hp.ist_xiaomi(_hp.arbeiter()):
                 try:
                     result = subprocess.run(
                         ["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack", "cd ~/jack && python3 jack_autofixer_shadow.py"],
@@ -412,23 +420,27 @@ def main():
                     _jl3.log_decision("ROLLTICK", "geheilt: " + ",".join(_kaputt))
         except Exception:
             pass
-        # JACK_TUNE_OLLWATCH — Ollama-Laufzeit hart begrenzen, unabhaengig vom Gate
+        # JACK_TUNE_OLLWATCH2 — Lock da: nicht per SSH nachfragen
         try:
-            import subprocess as _sp2
-            _r = _sp2.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6",
-                           "xiaomi-jack","sv status ollama 2>/dev/null"],
-                          capture_output=True, text=True, timeout=15)
-            _o = (_r.stdout or "")
-            if _o.startswith("run:"):
-                import re as _re
-                _m = _re.search(r"(\d+)s", _o)
-                if _m and int(_m.group(1)) > 300:
-                    _sp2.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6",
-                              "xiaomi-jack","sv down ollama"],
-                             capture_output=True, timeout=15)
-                    notify(f"Ollama lief {_m.group(1)}s — Hartgrenze, gestoppt.")
-                    import jack_log as _jl2
-                    _jl2.log_decision("OLLWATCH", f"gestoppt nach {_m.group(1)}s")
+            _lk="/data/data/com.termux/files/home/jack/.ollama_lock"
+            if os.path.isfile(_lk):
+                pass
+            else:
+                import subprocess as _sp2
+                _r = _sp2.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6",
+                               "xiaomi-jack","sv status ollama 2>/dev/null"],
+                              capture_output=True, text=True, timeout=15)
+                _o = (_r.stdout or "")
+                if _o.startswith("run:"):
+                    import re as _re
+                    _m = _re.search(r"(\d+)s", _o)
+                    if _m and int(_m.group(1)) > 300:
+                        _sp2.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6",
+                                  "xiaomi-jack","sv down ollama"],
+                                 capture_output=True, timeout=15)
+                        notify("Ollama lief "+_m.group(1)+"s — Hartgrenze, gestoppt.")
+                        import jack_log as _jl2
+                        _jl2.log_decision("OLLWATCH", "gestoppt nach "+_m.group(1)+"s")
         except Exception:
             pass
         # JACK_TUNE_HEALTHTICK — health_now alle 600s neu schreiben
@@ -458,6 +470,7 @@ from jack_log import get_logger
 log = get_logger("jack_autonomous")
 
 def _autolearn_loop():
+    return  # JACK_TUNE_D2ONE — Lernen nur Dienst, nicht Thread
     while True:
         try:
             import jack_learn; jack_learn.run_once()
@@ -597,12 +610,15 @@ def _proaktiv_loop():
                 _last_moin = _t2.time()
             # Akku-Warnung
             try:
-                import subprocess as _sp2, json as _j2
-                r = _sp2.run(['termux-battery-status'], capture_output=True, text=True, timeout=8)
-                d = _j2.loads(r.stdout)
-                pct = d.get('percentage', 100)
-                if pct < 20 and d.get('status') != 'CHARGING':
-                    notify(f"Akku bei {pct}%. Laden oder Ollama pausieren?")
+                import json as _j2, os as _os2, time as _t2b
+                _hn="/data/data/com.termux/files/home/jack/jack_health_now.json"
+                d={}
+                if _os2.path.isfile(_hn) and (_t2b.time()-_os2.path.getmtime(_hn))<=900:
+                    d=(_j2.loads(open(_hn,encoding="utf-8").read()).get("bat") or {})
+                pct = d.get("pct", d.get("percentage", 100))
+                _st = str(d.get("status") or "")
+                if float(pct) < 20 and _st != "CHARGING":
+                    notify(f"Akku bei {pct}%. Laden oder Ollama pausieren?")  # JACK_TUNE_AUTOBAT
             except Exception as _le:
                 _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         except Exception as _e:
@@ -633,17 +649,20 @@ def _lerner_loop():
                 _tm.sleep(3600)
                 continue
             # Hardware-Drosselung: Akku
-            import subprocess as _sp, json as _j
+            import json as _j, os as _os3, time as _t3
             try:
-                _b = _j.loads(_sp.run(['termux-battery-status'], capture_output=True, text=True, timeout=8).stdout)
-                if _b.get('percentage', 100) < 30:
+                _hn="/data/data/com.termux/files/home/jack/jack_health_now.json"
+                _b={}
+                if _os3.path.isfile(_hn) and (_t3.time()-_os3.path.getmtime(_hn))<=900:
+                    _b=(_j.loads(open(_hn,encoding="utf-8").read()).get("bat") or {})
+                if float(_b.get("pct", _b.get("percentage", 100))) < 30:
                     import jack_log; jack_log.log_decision('LERNER-SKIP', 'Akku unter 30%')
                     _tm.sleep(3600)
                     continue
-                if float(_b.get('temperature', 0)) > 45:
+                if float(_b.get("c", _b.get("temperature", 0)) or 0) > 45:
                     import jack_log; jack_log.log_decision('LERNER-SKIP', 'Temp ueber 45C')
                     _tm.sleep(3600)
-                    continue
+                    continue  # JACK_TUNE_AUTOBAT
             except Exception:
                 pass
             # Hardware-Drosselung: RAM

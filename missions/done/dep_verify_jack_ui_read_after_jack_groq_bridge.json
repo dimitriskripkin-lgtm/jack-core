@@ -1,1 +1,0 @@
-{"id": "dep_verify_jack_ui_read_after_jack_groq_bridge", "typ": "check", "cat": "dep_verify", "act": "compile_ok", "file": "~/jack/jack_ui_read.py", "desc": "Verify jack_ui_read nach \u00c4nderung von jack_groq_bridge", "_prio": 50, "_source": "dep_map"}

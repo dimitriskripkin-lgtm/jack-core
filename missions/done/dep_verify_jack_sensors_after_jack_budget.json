@@ -1,1 +1,0 @@
-{"id": "dep_verify_jack_sensors_after_jack_budget", "typ": "check", "cat": "dep_verify", "act": "compile_ok", "file": "~/jack/jack_sensors.py", "desc": "Verify jack_sensors nach \u00c4nderung von jack_budget", "_prio": 50, "_source": "dep_map"}

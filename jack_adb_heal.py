@@ -2,6 +2,12 @@
 """SSH ok -> ADB-TCP an -> adb connect. Return 0 nur bei status device."""
 import subprocess, sys
 IP, PORT = "10.229.239.131", "5555"
+try:
+    g=subprocess.run(["ssh","-G","xiaomi-jack"],capture_output=True,text=True,timeout=5)
+    for ln in (g.stdout or "").splitlines():
+        if ln.startswith("hostname "): IP=ln.split(None,1)[1].strip()
+except Exception:
+    pass  # JACK_TUNE_ADBG
 SSH = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=8", "xiaomi-jack"]
 
 def run(cmd, timeout=15):

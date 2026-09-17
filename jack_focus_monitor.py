@@ -6,10 +6,13 @@ import jack_screen_mapper as sm
 STATE = os.path.expanduser("~/jack/.focus_state")
 STOP = os.path.expanduser("~/jack/.focus_stop")
 def fokus():
-    r = subprocess.run(["ssh", "xiaomi-jack",
-        "su -c 'dumpsys window | grep mCurrentFocus'"],
-        capture_output=True, text=True, timeout=8)
-    return r.stdout.strip()
+    try:
+        r = subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=5",
+            "xiaomi-jack","su -c 'dumpsys window | grep mCurrentFocus'"],
+            capture_output=True, text=True, timeout=8)
+        return r.stdout.strip()
+    except Exception:
+        return ""  # JACK_TUNE_FOCUSSAFE
 def main():
     letzter = open(STATE).read().strip() if os.path.exists(STATE) else ""
     print("FOCUS-MONITOR aktiv. Stop: touch ~/jack/.focus_stop")

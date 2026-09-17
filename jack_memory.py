@@ -23,6 +23,12 @@ def init():
 
 def save(cmd, result, intent='unknown'):
     init()
+    import sqlite3 as _sqd
+    try:
+        _cd=_sqd.connect(DB); _n=_cd.execute("SELECT count(*) FROM memory WHERE cmd=? AND intent=?",(cmd,intent)).fetchone()[0]; _cd.close()
+        if _n>0: return True
+    except Exception: pass
+    import jack_corr as _jc; _jc.audit("memory_save","jack_memory.db","intent="+str(intent),"jack_memory")
     import jack_db_queue as _dq
     uid = hashlib.md5((cmd + str(datetime.now())).encode()).hexdigest()[:16]
     ts = str(datetime.now())
@@ -32,8 +38,8 @@ def save(cmd, result, intent='unknown'):
         wait=True)
     if ok:
         # FTS sync: erst loeschen, dann neu einfuegen - verhindert Duplikate
-        _dq.write(DB, 'DELETE FROM memory_fts WHERE rowid IN (SELECT rowid FROM memory WHERE id=?)', (uid,))
-        _dq.write(DB, 'INSERT INTO memory_fts(rowid,cmd,result) SELECT rowid,cmd,result FROM memory WHERE id=?', (uid,))
+        pass  # JACK_TUNE_FTSONE2 rowid-Delete traf fremde FTS-Zeilen
+        pass  # JACK_TUNE_FTSONE Trigger fts_sync_dima uebernimmt
     return ok
 
 def query(text, n=5):

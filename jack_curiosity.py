@@ -30,7 +30,7 @@ def candidates():
 
 streak = {}
 POOL = [
-    ("tunnel", "curl -s -m 3 -o /dev/null -w %{http_code} http://127.0.0.1:11434/api/tags"),
+    # tunnel 11434 raus  # JACK_TUNE_NOTUNNEL
     ("xiaomi_ssh", SSH + " -o BatchMode=yes -o ConnectTimeout=5 xiaomi-jack echo SSH_OK"),
     ("sv_core", "sv status jack_telegram jack_cortex jack_autolearn ssh_tunnel_ollama"),
     ("uptime", "uptime"),

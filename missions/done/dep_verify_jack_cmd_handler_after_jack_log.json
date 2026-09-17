@@ -1,1 +1,0 @@
-{"id": "dep_verify_jack_cmd_handler_after_jack_log", "typ": "check", "cat": "dep_verify", "act": "compile_ok", "file": "~/jack/jack_cmd_handler.py", "desc": "Verify jack_cmd_handler nach \u00c4nderung von jack_log", "_prio": 50, "_source": "dep_map"}

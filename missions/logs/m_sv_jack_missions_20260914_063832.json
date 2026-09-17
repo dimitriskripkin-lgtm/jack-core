@@ -1,0 +1,10 @@
+{
+  "id": "m_sv_jack_missions_20260914_063832",
+  "act": "sv_ok",
+  "ts": "2026-09-14 06:38:47",
+  "ok": true,
+  "note": "sv jack_missions",
+  "out": "run: /data/data/com.termux/files/usr/var/service/jack_missions: (pid 18126) 390s\n",
+  "expect": "PASS",
+  "raw_ok": true
+}

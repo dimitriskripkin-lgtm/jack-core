@@ -48,7 +48,7 @@ def _ssh_ok(ip):
         cmd=["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8"]
         if ip: cmd += ["-o","HostName="+str(ip)]
         cmd += ["xiaomi-jack","true"]
-        r=subprocess.run(cmd,capture_output=True,timeout=12)
+        r=subprocess.run(cmd,capture_output=True,timeout=20)
         return r.returncode==0
     except Exception:
         return False
@@ -67,7 +67,7 @@ def find_xiaomi():
         except Exception as _le:
             _jlog and _jlog.fehler("cortex","unbenannt",_le)
     try:
-        arp=subprocess.run(["ip","neigh"],capture_output=True,text=True,timeout=12).stdout
+        arp=subprocess.run(["ip","neigh"],capture_output=True,text=True,timeout=20).stdout
         kand=[l.split()[0] for l in arp.splitlines() if l.strip() and "." in l.split()[0]]
     except Exception:
         kand=[]
@@ -131,7 +131,7 @@ def check_and_heal():
     global SSH_FAIL_COUNT, SSH_ERR_COUNT, XIAOMI_IP
     quick = subprocess.run(
         ["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","true"],
-        capture_output=True, timeout=6)
+        capture_output=True, timeout=20)
     if quick.returncode != 0:
         XIAOMI_IP = find_xiaomi()
         notify_xiaomi_state(False)
@@ -163,7 +163,7 @@ def check_and_heal():
     try:
         ssh_test = subprocess.run(
             ["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack", "su -c 'whoami'"],
-            capture_output=True, text=True, timeout=12
+            capture_output=True, text=True, timeout=20
         )
         if ssh_test.returncode != 0:
             SSH_ERR_COUNT += 1
@@ -181,7 +181,7 @@ def check_and_heal():
         return
 def selftest():
     import subprocess,os as _os
-    svcs=['jack_telegram','jack_cortex','jack_waechter']  # JACK_TUNE_SOLL2
+    svcs=['jack_telegram','jack_cortex','jack_waechter','jack_missions']  # JACK_TUNE_K4SV
     lines=['JACK SELFTEST ---------------']
     ok=0
     for sv in svcs:
@@ -194,12 +194,21 @@ def selftest():
     lines.append(('[OK] ' if ram>800 else '[WARN] ')+'RAM '+str(ram)+'MB verfuegbar')
     tf='/sys/class/thermal/thermal_zone0/temp'
     temp=int(open(tf).read())//1000 if _os.path.exists(tf) else 0
-    import jack_sensors as _js
-    akku=str(_js.get_battery())
-    lines.append('[OK] Temp CPU '+str(temp)+'C | Akku '+akku[:20])
+    akku='health fehlt'
+    try:
+        import json as _j, time as _t
+        _hp='/data/data/com.termux/files/home/jack/jack_health_now.json'
+        if _t.time()-_os.stat(_hp).st_mtime<900:  # JACK_TUNE_N2AGE
+            _b=(_j.load(open(_hp,encoding='utf-8')).get('bat') or {})
+            akku=str(_b.get('pct','?'))+'% '+str(_b.get('status','?'))
+        else:
+            akku='health alt'
+    except Exception:
+        pass  # JACK_TUNE_N2BAT
+    lines.append('[OK] Temp CPU '+str(temp)+'C | Akku '+akku[:24])
     lines.append('[OK] Ollama aus Lock')  # JACK_TUNE_SOLL2
     lines.append('-----------------------------')
-    lines.append(str(ok)+'/'+str(len(svcs))+' ALLES OK' if ok==len(svcs) else str(ok)+'/'+str(len(svcs))+' DIENSTE AKTIV')
+    lines.append(str(ok)+'/'+str(len(svcs))+' laufen')  # JACK_TUNE_NOALLES
     return chr(10).join(lines)
 def main():
     my_pid = os.getpid()
@@ -222,7 +231,7 @@ def main():
         # Xiaomi-Check (still, kein Error-Log)
         try:
             import subprocess
-            r = subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","true"], capture_output=True, timeout=5)
+            r = subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","true"], capture_output=True, timeout=20)
             if r.returncode != 0:
                 time.sleep(60)  # Still pausieren, kein Error
                 continue

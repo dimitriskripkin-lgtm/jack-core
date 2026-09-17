@@ -88,6 +88,8 @@ def think(vis, step, history):
         log("Groq: %s" % (ans or "")[:80])
     except Exception as e:
         log("Groq err %s" % e)
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return "AKTION: DONE\nWARUM: lock"  # JACK_TUNE_XIWEBLOCK
     try:
         data = json.dumps({"model": "llama3.2:3b", "prompt": system + "\n\n" + user, "stream": False}).encode()
         req = urllib.request.Request("http://127.0.0.1:11434/api/generate", data=data,

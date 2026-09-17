@@ -1,1 +1,0 @@
-{"id": "s002", "act": "grep_count", "file": "~/jack/jack_cortex.py", "pattern": "AIza", "expect_max": 0, "expect": "PASS", "cat": "security"}

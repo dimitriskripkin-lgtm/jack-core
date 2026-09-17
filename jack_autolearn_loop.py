@@ -1,3 +1,15 @@
+
+def _d2_rate_ok():
+    import os, time
+    st="/data/data/com.termux/files/home/jack/.autolearn_last"
+    idp="/data/data/com.termux/files/home/jack/jack_identity.json"
+    if os.path.isfile(idp) and os.path.getsize(idp)>80000:
+        return False
+    if os.path.isfile(st) and time.time()-float(open(st).read() or 0)<21600:
+        return False
+    open(st,"w").write(str(time.time()))
+    return True
+
 #!/usr/bin/env python3
 MODULE_VERSION = 1
 """
@@ -301,7 +313,7 @@ def main():
                 import jack_memory_pruning
                 # Phase 3+P4 (Qwen 22.08.): worker_target() entscheidet wo Pruning laeuft
                 import subprocess, jack_heat_protection as _hp
-                if _hp.ist_xiaomi(_hp.worker_target()):
+                if _hp.ist_xiaomi(_hp.arbeiter()):
                     try:
                         result = subprocess.run(
                             ["ssh", "xiaomi-jack", "cd ~/jack && python3 jack_memory_pruning.py"],
@@ -346,6 +358,16 @@ def main():
         time.sleep(_ps)  # JACK_TUNE_PAUSE
         cycle_num += 1
 
+if not _d2_rate_ok():
+    import time as _tw, os as _to
+    _B='/data/data/com.termux/files/home/jack'
+    if _to.path.isfile(_B+'/jack_identity.json') and _to.path.getsize(_B+'/jack_identity.json')>80000:
+        _tw.sleep(3600)
+    else:
+        try: _rest=21600-(_tw.time()-float(open(_B+'/.autolearn_last').read() or 0))+5
+        except Exception: _rest=60
+        _tw.sleep(max(30,min(_rest,21600)))
+    raise SystemExit(0)
 if __name__ == "__main__":
     try:
         main()

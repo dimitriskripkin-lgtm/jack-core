@@ -15,7 +15,7 @@ def classify(text):
     if not t:
         return "TALK"
     fact=("ist zustand" in t) or t in ("status","/status") or ("kiste" in t and "steht" in t) or t.startswith("wie steht")
-    diag=any(k in t for k in ("analysier","essenz","schau dich","schau mal","selbst sehen","eigenen code","eigener code","kompletten code","anomalie","nicht erreichbar","graceful","xiaomi offline","verbesser","murks","fehler","guck dir"))
+    diag=any(k in t for k in ("essenz","schau dich","selbst sehen","eigenen code","eigener code","kompletten code","anomalie","nicht erreichbar","graceful","xiaomi offline","murks","guck dir")) or (any(k in t for k in ("analysier","fehler","verbesser","schau mal")) and any(k in t for k in ("code","modul","datei","log","dienst",".py")))  # JACK_TUNE_GATE1
     expl=("overmind" in t or "deadman" in t) and not fact and not diag
     if fact: return "FACT"
     if expl: return "EXPLAIN"
@@ -73,22 +73,23 @@ def _tool_name(text):
         if "xiaomi" in low or "muskel" in low: return "bat_xiaomi"
         if "honor" in low or "gehirn" in low: return "bat_honor"
         return "bat_beide"
-    if any(w in t for w in ("erinnerung","erinnerst","gedachtnis","gedaechtnis","memory")):
+    # P3-Fix (16.09.): nur explizite Knoten-Anfragen, keine Gespraechsfragen
+    if any(w in t for w in ("letzte knoten","knoten zeigen","zeig die knoten","zeig mir die knoten","graph knoten","liste der knoten")):
         return "graph_knoten"
-    if any(w in t for w in ("erreichbar","ssh","verbindung")):
+    if any(w in t for w in ("erreichbar","ssh","verbindung","verbunden","online","xiaomi da","xiaomi laeuft","xiaomi läuft")):
         return "ssh_xiaomi"
     if any(w in t for w in ("welche dienste","was laeuft","dienste")):
         return "sv_status"
     if any(w in t for w in ("speicher","wie voll","platz","speicherplatz")):
         return "df_xiaomi" if "xiaomi" in low else "df_honor"
-    if any(w in t for w in ("welche werkzeuge","was kannst du messen","was kannst du","was kannst du tun","kiste")):
+    if any(w in t for w in ("welche werkzeuge","was kannst du messen","was kannst du","was kannst du tun","kiste","zehn punkte","umsetzen kannst","was kannst du umsetzen")):
         return "kiste_liste"
     return None
 
 def _tools(text):
     # JACK_TUNE_TOOLBOX
     t=norm(text)
-    if any(w in t for w in ("zeig mir alles","zeig mir alle","alles davon","alle davon","alle werte","alles messen","umgebung","wie sieht")):
+    if any(w in t for w in ("zeig mir alles","zeig mir alle","alles davon","alle davon","alle werte","alles messen","komplette kiste","systemzustand jetzt")):  # JACK_TUNE_NOAMB
         bits=[]
         for q in ("wie warm xiaomi und honor","ist xiaomi erreichbar","welche dienste laufen","wie voll speicher xiaomi","wie voll speicher honor","letzte erinnerungen"):
             r=_tools(q)
@@ -101,7 +102,8 @@ def _tools(text):
         r=subprocess.run(cmd, capture_output=True, text=True, timeout=tmo)
         return ((r.stdout or "")+(r.stderr or ""))
     want_bat=any(w in t for w in ("temperatur","akku","batterie","warm","hitze","grad","laden","ladeger"))
-    want_mem=any(w in t for w in ("erinnerung","erinnerst","gedachtnis","gedaechtnis","memory"))
+    # P3-Fix (16.09.): nur explizite Knoten-Anfragen
+    want_mem=any(w in t for w in ("letzte knoten","knoten zeigen","zeig die knoten","zeig mir die knoten","graph knoten","liste der knoten"))
     want_age=any(w in t for w in ("wie alt sind diese","diese daten","wie frisch")) and any(w in t for w in ("daten","messung","sensor","akku","temp"))  # JACK_TUNE_AGEENG
     if want_age and not want_bat:
         return "Sensorwerte gelten nur fuer die letzte Messung, nicht aus Logs."
@@ -122,15 +124,19 @@ def _tools(text):
                 parts.append("Xiaomi Sensor: "+str(e)[:60])
         if do_h:
             try:
-                out=sh(["termux-battery-status"], 8)
-                if "{" not in out:
-                    out=sh(["/system/bin/dumpsys","battery"], 8)
-                temp,lev,pw,st=_bat_parse(out)
-                parts.append("Honor Temp %s C Akku %s %% %s Strom %s jetzt" % (
-                    temp if temp is not None else "?",
-                    lev if lev is not None else "?",
-                    st,
-                    ",".join(pw) if pw else "kein"))
+                _used=False
+                try:
+                    import jack_health as _jhbf
+                    _bat=_jhbf.bat_fresh() or {}
+                    if _bat.get("pct") is not None:
+                        parts.append("Honor Temp %s C Akku %s %% %s Strom %s jetzt" % (
+                            _bat.get("c") if _bat.get("c") is not None else "?",
+                            _bat.get("pct"),
+                            str(_bat.get("status") or "?").lower(),
+                            str(_bat.get("plugged") or "kein")))
+                        _used=True  # JACK_TUNE_TBHEALTH
+                except Exception:
+                    _used=False
             except Exception as e:
                 parts.append("Honor Sensor: "+str(e)[:60])
         if parts:
@@ -144,7 +150,7 @@ def _tools(text):
             return "Letzte Knoten:\n"+"\n".join("%s %s=%s"%(a,b,c) for a,b,c in rows)
         except Exception as e:
             return "Graph-Lesen fehl: "+str(e)[:80]
-    want_ssh=any(w in t for w in ("erreichbar","ssh ok","xiaomi da","ping xiaomi"))
+    want_ssh=any(w in t for w in ("erreichbar","ssh ok","xiaomi da","ping xiaomi","ssh xiaomi","verbunden","verbindung","online"))  # JACK_TUNE_F2SSH
     if want_ssh or ("ssh" in t and "xiaomi" in t):
         try:
             out=sh(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=6","xiaomi-jack","echo OK"], 8)
@@ -154,7 +160,7 @@ def _tools(text):
     want_sv=any(w in t for w in ("welche dienste","was laeuft","was lauft","sv status"))
     if want_sv:
         try:
-            out=sh(["sv","status","jack_telegram"])+" | "+sh(["sv","status","jack_waechter"])+" | "+sh(["sv","status","jack_cortex"])
+            out=sh(["sv","status","jack_telegram"])+" | "+sh(["sv","status","jack_waechter"])+" | "+sh(["sv","status","jack_cortex"])+" | "+sh(["sv","status","jack_missions"])  # JACK_TUNE_K4TB
             return "Dienste jetzt: "+out.replace("\n"," ")[:400]
         except Exception as e:
             return "sv fehl: "+str(e)[:80]
@@ -180,14 +186,10 @@ def _tools(text):
         if parts:
             return "; ".join(parts)
     if any(w in t for w in ("wer bist du","was bist du","was ist deine persona","deine persona","wer bin ich")):
-        try:
-            k=open("/data/data/com.termux/files/home/jack/jack_persona_kern.md",encoding="utf-8").read().strip()
-            return k[:500]
-        except Exception as e:
-            return "Kern fehlt: "+str(e)[:60]
-    want_list=any(w in t for w in ("welche werkzeuge","was kannst du messen","was kannst du","was kannst du tun","was misst du","werkzeugkiste","kiste"))
+        return "JACK. Dimas System auf Honor, Xiaomi als Arm. Kein Assistent."  # JACK_TUNE_WERBIN1
+    want_list=any(w in t for w in ("welche werkzeuge","was kannst du messen","was misst du","werkzeugkiste","toolkiste","zehn punkte","umsetzen kannst","was kannst du umsetzen"))  # JACK_TUNE_NOAMB2
     if want_list:
-        return "Kiste jetzt: Temp/Akku/Laden Honor+Xiaomi. Graph letzte Knoten. SSH Xiaomi. Dienste telegram/waechter/cortex. Speicher Honor+Xiaomi. Keine erfundenen Listen."
+        return None  # JACK_TUNE_KISTELIVE
     if any(w in t for w in ("gespraechsverlauf","chatverlauf","telegram verlauf","letzte frage","letzte was","zuletzt gefragt","was habe ich gefragt","was fragte ich","gefragt habe")):
         try:
             import json
@@ -223,9 +225,51 @@ def _tools(text):
             return "Graph: "+str(e)[:60]
     return None  # JACK_TUNE_TOOLIST
 
+def kiste_fuer_prompt(text):
+    t=norm(text)
+    keys=("was kannst","wie kannst","fuer mich tun","mir dienen","zehn punkte","umsetzen kannst","ausfuehren kannst","welche werkzeuge","werkzeugkiste","toolkiste")
+    if not any(w in t for w in keys):
+        return None
+    return ("Nur das: Temp/Akku Honor+Xiaomi messen, Graph-Knoten lesen, SSH Xiaomi pruefen, sv-Status der vier Dienste sagen, Speicher beider Geraete. Talk=Groq. Ollama aus. missions pausiert. autolearn/publisher aus. Keine Dienste starten oder stoppen. Keine lokalen Modelle. Keine erfundenen Scheduler. Formuliere frei. Keine Tune-Marke.")
+
 def talk_local(text):
 
     t=norm(text)
+    # JACK_TUNE_LERN1 (16.09., Phase 8.3+8.4): Korrektur-Erkennung
+    try:
+        import json as _jl, time as _jt2, os as _jo
+        _stp = J + "/reports/last_msg.json"
+        _tnow = _jt2.time()
+        _toks = set(w for w in t.split() if len(w) > 3)
+        _prev = None
+        if _jo.path.isfile(_stp):
+            try: _prev = _jl.loads(open(_stp, encoding="utf-8").read())
+            except Exception: _prev = None
+        if _prev and _prev.get("msg","") != (text or "")[:300] and (_tnow - _prev.get("t", 0)) <= 120:  # JACK_TUNE_LERN2
+            _gemeinsam = _toks & set(_prev.get("toks", []))
+            _expl = any(w in t for w in ("hoer auf", "nicht fragen", "sagte doch", "falsch", "nicht so"))
+            if _gemeinsam or _expl:
+                _pair = {"ts": _jt2.strftime("%Y-%m-%d %H:%M:%S"), "original": _prev.get("msg", ""), "korrektur": (text or "")[:300], "explizit": bool(_expl), "quelle": "live"}
+                with open(J + "/reports/korrekturen.jsonl", "a", encoding="utf-8") as _kf:
+                    _kf.write(_jl.dumps(_pair, ensure_ascii=False) + chr(10))
+        open(_stp, "w", encoding="utf-8").write(_jl.dumps({"t": _tnow, "msg": (text or "")[:300], "toks": list(_toks)[:20]}, ensure_ascii=False))
+    except Exception:
+        pass
+    if ("zehn punkte" in t or "10 punkte" in t or "punkte auf" in t) and ("erzaehl" not in t):  # JACK_TUNE_GATE1
+        pts=[
+            "Temp und Akku Honor messen",
+            "Temp und Akku Xiaomi messen",
+            "SSH zu Xiaomi pruefen",
+            "sv-Status telegram, waechter, cortex, missions sagen",
+            "Speicher Honor sagen",
+            "Speicher Xiaomi sagen",
+            "letzte Graph-Knoten lesen",
+            "mit dir ueber Groq sprechen",
+        ]
+        lines=["Echt sind %d. Mehr waere erfunden."%len(pts)]
+        for k,x in enumerate(pts,1):
+            lines.append("%d. %s"%(k,x))
+        return "\n".join(lines)
     _tb=_tools(text)
     try:
         import jack_log as _jl
@@ -333,6 +377,8 @@ _LAST=""
 def talk_scrub(s):
     raw=str(s or "").strip()
     t=norm(raw)
+    if any(x in t for x in ("muss nachsehen","im log nachsehen","im log nachschauen","fehlt im log","aus den logs","aus den vorhandenen logs")):
+        return "Kein Werkzeug fuer den Satz."  # JACK_TUNE_F5LOG
     if t.startswith(("na dima","na klar","na ","ach dima","alles klar bei","hey dima")):
         rest=raw.replace("!",".").split(".",1)
         if len(rest)>1 and len(rest[1].strip())>12:

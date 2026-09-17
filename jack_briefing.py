@@ -21,11 +21,11 @@ def _sec(k):
 
 def batteriestand():
     try:
-        r = subprocess.run(["termux-battery-status"], capture_output=True, text=True, timeout=5)
-        d = json.loads(r.stdout)
-        pct = d.get("percentage", "?")
-        status = d.get("status", "?")
-        return f"Honor: {pct}% ({status})"
+        import jack_health as _jh
+        d=_jh.bat_fresh()
+        if not d:
+            return "Honor: Akku unbekannt (health tot)"
+        return f"Honor: {d.get('pct')}% ({d.get('status')})"  # JACK_TUNE_BATFRESH
     except Exception:
         return "Honor: Akku-Daten nicht verfuegbar"
 

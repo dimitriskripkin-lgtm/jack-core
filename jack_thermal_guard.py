@@ -13,10 +13,13 @@ MAX_TEMP    = 62.0
 
 def get_battery():
     try:
-        r = subprocess.run(["termux-battery-status"],
-            capture_output=True, text=True, timeout=5)
-        return json.loads(r.stdout).get("percentage", 100)
-    except Exception: return 100
+        import jack_health as _jh
+        b=_jh.bat_fresh()
+        if not b:
+            return None  # JACK_TUNE_BATFRESH kein 100-Fake
+        return int(b.get("pct"))
+    except Exception:
+        return None
 
 def get_temp():
     try:
@@ -34,6 +37,9 @@ def get_temp():
 
 def check(job_name="job") -> bool:
     bat  = get_battery()
+    if bat is None:
+        log.warn(f"{job_name} pausiert: Akku unbekannt")
+        return False
     temp = get_temp()
     if bat < MIN_BATTERY:
         log.warn(f"{job_name} pausiert: Akku {bat}%")

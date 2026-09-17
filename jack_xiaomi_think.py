@@ -102,6 +102,8 @@ def think(vis, step, history):
         log("Groq fail: %s" % ans[:80])
     except Exception as e:
         log("Groq import/call: %s" % e)
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return "AKTION: DONE\nWARUM: lock"  # JACK_TUNE_XITHINKLOCK
     # Ollama Fallback
     try:
         prompt = system + "\n\n" + user

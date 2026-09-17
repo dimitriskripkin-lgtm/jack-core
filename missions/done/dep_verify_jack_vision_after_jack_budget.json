@@ -1,1 +1,0 @@
-{"id": "dep_verify_jack_vision_after_jack_budget", "typ": "check", "cat": "dep_verify", "act": "compile_ok", "file": "~/jack/jack_vision.py", "desc": "Verify jack_vision nach \u00c4nderung von jack_budget", "_prio": 50, "_source": "dep_map"}

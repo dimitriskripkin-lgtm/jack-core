@@ -1,1 +1,0 @@
-{"id": "dep_verify_jack_gemini_bridge_after_jack_log", "typ": "check", "cat": "dep_verify", "act": "compile_ok", "file": "~/jack/jack_gemini_bridge.py", "desc": "Verify jack_gemini_bridge nach \u00c4nderung von jack_log", "_prio": 50, "_source": "dep_map"}

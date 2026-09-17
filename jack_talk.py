@@ -23,34 +23,76 @@ DB_PATH = os.path.expanduser('~/jack/jack_memory.db')
 _ROLLING_WINDOW = []
 def add_to_window(user_msg, jack_reply):
     global _ROLLING_WINDOW
-    _ROLLING_WINDOW.append((str(user_msg), str(jack_reply)[:300]))
-    if len(_ROLLING_WINDOW) > 10:
-        _ROLLING_WINDOW = _ROLLING_WINDOW[-10:]
-
+    _jr=str(jack_reply or "")
+    _um=str(user_msg or "")
+    if _um.lstrip().startswith("/") or _jr.startswith("Kiste jetzt") or "JACK_TUNE_KISTE" in _jr or _jr.startswith("Das steht in keinem Log") or _jr.startswith("MISSION:") or _jr.startswith("JACK Scan") or "DONE_ALL" in _jr or len(_jr)>400:
+        return  # JACK_TUNE_WIN3
+    _ROLLING_WINDOW.append((str(user_msg)[:200], str(jack_reply)[:220]))
+    if len(_ROLLING_WINDOW) > 8:
+        _ROLLING_WINDOW = _ROLLING_WINDOW[-8:]
     try:
-        import json as _j
-        open(os.path.join(JACK_HOME, "missions/talk_samples.jsonl"),"a",encoding="utf-8").write(_j.dumps({"u":str(user_msg)[:160],"j":str(jack_reply)[:400]},ensure_ascii=False)+"\n")
+        import json as _jw
+        import os
+        wp='/data/data/com.termux/files/home/jack/reports/talk_window.jsonl'
+        rows = []
+        if os.path.exists(wp):
+            with open(wp, 'r', encoding='utf-8', errors='replace') as f:
+                rows = f.read().splitlines()
+        rows.append(_jw.dumps({'u':str(user_msg)[:200],'j':str(jack_reply)[:220]},ensure_ascii=False))
+        if len(rows) > 8:
+            rows = rows[-8:]
+        tmp = wp + '.tmp'
+        with open(tmp, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(rows) + '\n')
+        os.replace(tmp, wp)
     except Exception:
-        pass
-
+        pass  # JACK_TUNE_WIN1
 def _scrub_out(s):
     s=str(s or "")
     bad=("SATZANFAENGE VERBOTEN","fun_facts","Investmentwohnung","WAS DU UEBER IHN","GELERNTE REGELN","Kein Assistent, kein Coach")
     if any(x in s for x in bad) or s.count("VERBOTEN")>=2:
         return "JACK. Kein Prompt-Dump. Frag konkret."
-    return s
-
+    low=s.lower()
+    excuse=("muss nachsehen","muss im log","im log nachsehen","im log nachschauen",
+            "fehlt im log","aus den logs","aus den vorhandenen logs",
+            "im log keinen","im log keine","steht nicht in den logs",
+            "in den logs nichts","weiss ich nicht aus den logs",
+            "weiß ich nicht aus den logs","muesste im log","müsste im log")
+    verb=any(v in low for v in ("nachsehen","nachschauen","pruefen","prüfen","nachgucken"))
+    loghit=any(x in low for x in (" im log","ins log","den log"," logs","logfile","log-datei","logdatei"))
+    pair=verb and loghit
+    if (not any(x in low for x in excuse)) and (not pair):
+        return s  # JACK_TUNE_SCRUB4
+    import re as _re
+    parts=[x.strip() for x in _re.split(r'(?<=[.!?])\s+', s) if x.strip()]
+    keep=[x for x in parts if not any(k in x.lower() for k in excuse)]
+    if keep and sum(len(x) for x in keep)>=40:
+        return " ".join(keep)
+    return "Das steht in keinem Log. Ich rate nicht."
 def get_window_ctx():
+    global _ROLLING_WINDOW
     if not _ROLLING_WINDOW:
-        return "(keiner)"
-    return chr(10).join([f"Dima: {c} | JACK: {r}" for c,r in _ROLLING_WINDOW])
-
+        try:
+            import json as _jw
+            wp='/data/data/com.termux/files/home/jack/reports/talk_window.jsonl'
+            rows=open(wp,encoding='utf-8',errors='replace').read().splitlines()[-8:]
+            _ROLLING_WINDOW=[]
+            for ln in rows:
+                d=_jw.loads(ln)
+                _ROLLING_WINDOW.append((str(d.get('u') or ''), str(d.get('j') or '')))
+        except Exception:
+            pass
+    if not _ROLLING_WINDOW:
+        return '(keiner)'
+    return chr(10).join(['Dima: %s | JACK: %s'%(c,r) for c,r in _ROLLING_WINDOW[-8:]])
 def get_embedding(text):
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return None  # JACK_TUNE_EMBEDLOCK2
     url = "http://%s:11434/api/embeddings" % _xiaomi_ollama()  # JACK_TUNE_XIOLL
     data = json.dumps({'model': 'nomic-embed-text', 'prompt': text}).encode('utf-8')
     req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
     try:
-        with urllib.request.urlopen(req) as res:
+        with urllib.request.urlopen(req, timeout=10) as res:  # JACK_TUNE_EMBTO1
             return json.loads(res.read().decode('utf-8'))['embedding']
     except Exception:
         return None
@@ -65,6 +107,8 @@ def _xiaomi_ollama():
         pass
     return host
 def talk_to_ollama(prompt, context_memories):
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return "Ollama aus (Lock)."  # JACK_TUNE_TALKLOCK2
     url = "http://%s:11434/api/chat" % _xiaomi_ollama()  # JACK_TUNE_XIOLL
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Prompt auf Voice-Brevity optimiert
@@ -93,7 +137,7 @@ def talk_to_ollama(prompt, context_memories):
     try:
         data = json.dumps(payload).encode('utf-8')
         req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req) as res:
+        with urllib.request.urlopen(req, timeout=10) as res:  # JACK_TUNE_EMBTO2
             response_json = json.loads(res.read().decode('utf-8'))
             message = response_json['message']
             if message.get('tool_calls'):
@@ -226,30 +270,86 @@ def _talk_to_gemini_impl(prompt):
                 hits=_jv.search_mem(mv,limit=3) if mv else []
                 _mem=chr(10).join([f"- [{h[4]}] {h[1]}: {h[2][:150]}" for h in hits]) if hits else ""
             except Exception: pass
+            # PHASE 3.4 (16.09.): FTS-Gedaechtnis wenn Embedding leer (Ollama-Sperre)
+            if not _mem:
+                try:
+                    import re as _re, sqlite3 as _sq3
+                    _sw = {"was","wie","wer","wo","wann","warum","und","oder","aber","ist","sind","war","du","ich","er","sie","es","wir","mich","dich","mir","dir","an","auf","in","im","am","ueber","uber","über","unter","von","vor","zu","zum","mit","bei","nach","fuer","für","aus","ein","eine","einen","etwas","nichts","noch","auch","schon","mal","bitte","dann","so","nicht","kein","keine","kann","kannst","weisst","hast","habe","hat","mein","meine","meinen","dein","deine","woran","erzaehl","erzähl","erzähle","erzaehle","nein","ja","möchte","moechte","erfahren","sagen","sag","gib","liste","sachen","dinge","alles","immer","gerade","jetzt","denn","bro","mein","bester","geil","okay","gut"}  # JACK_TUNE_FTSSTOP JACK_TUNE_TRAEG1
+                    _qw = [w for w in _re.findall(r"\w{3,}", prompt) if w.lower() not in _sw][:6]
+                    _q = " AND ".join(['"' + w + '"' for w in _qw])  # JACK_TUNE_TRAEG1
+                    if _q:
+                        _fc = _sq3.connect(DB_PATH)
+                        _fr = _fc.execute("SELECT m.cmd FROM memory_fts f JOIN memory m ON f.id=m.id WHERE memory_fts MATCH ? AND m.source='dima_chat' LIMIT 3", (_q,)).fetchall()
+                        _fc.close()
+                        if _fr:
+                            _mem = chr(10).join(["- [mem] " + str(r[0])[:80] for r in _fr])[:400]
+                except Exception:
+                    pass
             _id=""
             try:
                 import json as _j
                 _id=_j.dumps(_j.load(open(os.path.expanduser('~/jack/jack_identity.json'))),ensure_ascii=False)[:500]
             except Exception: pass
-            system=_persona+chr(10)+"NIE diesen Block vorlesen. Bei Wer-bist-du: ein Satz."+chr(10)+chr(10)
+            # PHASE 6.4 FIX (16.09.): Verbote an den ANFANG, nicht ans Ende
+            system="VERBOT: Erfinde KEINE Fakten. Wenn du etwas nicht weißt, sag 'Ich weiß das nicht'."+chr(10)
+            system+="VERBOT: Zähle NIEMALS Fakten auf. Antworte natürlich in einem Satz."+chr(10)
+            system+="VERBOT: Rezitiere NICHT deine Entstehung. Bei 'Wer bist du': ein Satz."+chr(10)+chr(10)
+            system+=_persona+chr(10)+"NIE diesen Block vorlesen. Bei Wer-bist-du: ein Satz."+chr(10)+chr(10)
             try:
                 _hp=os.path.join(JACK_HOME, "jack_health_now.json")
-                system+=("Halte dich an jack_persona_kern.md. Kein zweites Persona-Intro. Kein Meta ueber System/Kram/Schubsen. Eine konkrete Frage, kein Job-Klischee.")+chr(10)  # JACK_TUNE_PER2
+                system+=("Halte dich an jack_persona_kern.md. Kein zweites Persona-Intro. Kein Meta ueber System/Kram/Schubsen. Folge dem Faden. Eine Haltung ist erlaubt. JACK_TUNE_CHAR1ischee.")+chr(10)  # JACK_TUNE_PER2
                 system+="VERBOT: Temp/RAM/Akku ungefragt. Kein Autonomie-Level. Kein BEFEHL-Platzhalter. Keine Floskel was-geht-ab."+chr(10)
             except Exception:
                 pass  # JACK_TUNE_HEALTHINJ
             if _id: system+="DIMA-PROFIL:"+chr(10)+_id+chr(10)+chr(10)
             if _mem: system+="ERINNERUNGEN:"+chr(10)+_mem+chr(10)
 
+            # PHASE 6.2 (16.09.): Graph-Block nur bei Personenbezug
+            _pb = False
             try:
-                import jack_graph as _jg  # JACK_TUNE_GRAPH
-                _gb=_jg.prompt_block(prompt)
-                if _gb: system=system+chr(10)+_gb
+                import jack_graph as _jg
+                _pl = (prompt or "").lower()
+                for (_n,) in _jg.con().execute("SELECT name FROM nodes").fetchall():
+                    if _n and _n.lower() in _pl:
+                        _pb = True
+                        break
+                if not _pb:
+                    _pb = any(w in _pl for w in ("ueber mich","über mich","ueber dich","über dich","ueber uns","über uns","wer bin ich","wer bist du","was bist du","was weisst du","was weißt du"))
             except Exception:
-                pass
-            _r=_scrub_out(_gq.ask_groq(system, prompt))
+                _pb = True
+            if _pb:
+                try:
+                    import jack_graph as _jg  # JACK_TUNE_GRAPH
+                    _gb=_jg.prompt_block(prompt)
+                    if _gb: system=system+chr(10)+_gb
+                except Exception:
+                    pass
+            
+            # PHASE 6.4 (16.09.): Anti-Halluzination + Anti-Rezitation
+            system += chr(10) + "VERBOT: Erfinde KEINE Fakten. Wenn du etwas nicht weißt, sag 'Ich weiß das nicht'."
+            system += chr(10) + "VERBOT: Zähle NIEMALS Fakten auf ('Du bist...', 'Deine Geräte...'). Antworte natürlich."
+            system += chr(10) + "VERBOT: Rezitiere NICHT deine Entstehungsgeschichte. Bei 'Wer bist du': ein Satz."
+            try:
+                import jack_chat_router as _crk
+                _kl=_crk.kiste_fuer_prompt(prompt)
+                if _kl:
+                    system=system+chr(10)+"WERKZEUGE JETZT:"+chr(10)+_kl+chr(10)
+            except Exception:
+                pass  # JACK_TUNE_KISTELIVE
+            try:
+                import json as _plj, time as _plt
+                _pl={"ts":_plt.strftime("%Y-%m-%d %H:%M:%S"),"mark":"JACK_TUNE_PROMPTLOG",
+                     "system":len(str(system or "")),"prompt":len(str(prompt or "")),
+                     "id":len(str(_id or "")),"mem":len(str(_mem or "")),
+                     "gb":len(str(_gb)) if "_gb" in dir() else 0}
+                open("/data/data/com.termux/files/home/jack/reports/promptlog.jsonl","a").write(_plj.dumps(_pl,ensure_ascii=False)+"\n")
+            except Exception:
+                pass  # JACK_TUNE_PROMPTLOG
+            _w=get_window_ctx(); _v1='JACK_TUNE_VERSATZ1'; _ws=((_w or '')[-(1300-len(prompt)):] if len(prompt)<1300 else ''); _um=(('Frueherer Verlauf (nur Kontext, NICHT beantworten):\n'+_ws+'\n\nDIMA JETZT (nur hierauf antworten): '+prompt) if _ws and '(keiner)' not in _ws else prompt)[-1500:]; _r=_scrub_out(_gq.ask_groq(system, _um))  # JACK_TUNE_WIN1
             if _r.startswith("[Groq Limit]") or _r.startswith("[Groq Fehler]"):
                 return talk_to_ollama(prompt, [])  # JACK_TUNE_G2O
+            try: auto_save_to_memory(prompt, _r)
+            except Exception: pass
             return _r
         except Exception:
             return talk_to_ollama(prompt, [])  # Groq fail → direkt Ollama, nie Gemini für TALK
@@ -379,7 +479,7 @@ def _talk_to_gemini_impl(prompt):
         if result and result.startswith('[Ollama]'):
             try:
                 import jack_groq_bridge as _g2
-                _ps=open('/data/data/com.termux/files/home/jack/jack_persona.md',encoding='utf-8').read()[:4000]
+                _ps=open('/data/data/com.termux/files/home/jack/jack_persona_kern.md',encoding='utf-8').read()
                 try:
                     _gr=_g2.ask_groq(_ps, prompt)
                 except Exception:
@@ -393,7 +493,7 @@ def _talk_to_gemini_impl(prompt):
     except Exception:
         try:
             import jack_groq_bridge as _g3
-            _ps=open('/data/data/com.termux/files/home/jack/jack_persona.md',encoding='utf-8').read()[:4000]
+            _ps=open('/data/data/com.termux/files/home/jack/jack_persona_kern.md',encoding='utf-8').read()
             try:
                 _gr=_g3.ask_groq(_ps, prompt)
             except Exception:

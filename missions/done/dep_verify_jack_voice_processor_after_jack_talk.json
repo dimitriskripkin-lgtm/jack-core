@@ -1,1 +1,0 @@
-{"id": "dep_verify_jack_voice_processor_after_jack_talk", "typ": "check", "cat": "dep_verify", "act": "compile_ok", "file": "~/jack/jack_voice_processor.py", "desc": "Verify jack_voice_processor nach \u00c4nderung von jack_talk", "_prio": 50, "_source": "dep_map"}

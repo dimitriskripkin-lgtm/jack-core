@@ -7,10 +7,10 @@ def _agent_honor(res):
         ram=next(int(l.split()[1])//1024 for l in mi.splitlines() if 'MemAvailable' in l)
         tf='/sys/class/thermal/thermal_zone0/temp'
         temp=int(open(tf).read().strip())//1000 if os.path.exists(tf) else 0
-        import json as _j2, subprocess as _sp2
         try:
-            _b=_j2.loads(_sp2.run(['termux-battery-status'],capture_output=True,text=True,timeout=10).stdout)
-            akku=str(_b.get('percentage','?'))+'% '+str(_b.get('status',''))
+            import jack_health as _jh
+            _b=_jh.bat_fresh()
+            akku='health tot' if not _b else (str(_b.get('pct'))+'% '+str(_b.get('status','')))  # JACK_TUNE_BATFRESH
         except Exception:
             akku='?'
         res['honor']=f"RAM {ram}MB | Temp {temp}C | Akku {akku}"

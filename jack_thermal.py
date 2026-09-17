@@ -23,8 +23,11 @@ def farbe(wert, gruen, gelb, rot):
 
 def akku():
     try:
-        r = subprocess.run(["termux-battery-status"], capture_output=True, text=True, timeout=8)
-        return json.loads(r.stdout)
+        import jack_health as _jh
+        b=_jh.bat_fresh()
+        if not b:
+            return {}  # JACK_TUNE_BATFRESH
+        return {"percentage": b.get("pct"), "status": b.get("status"), "temperature": b.get("c"), "plugged": b.get("plug", b.get("plugged"))}
     except Exception:
         return {}
 

@@ -1,17 +1,17 @@
 {
-  "ts": "2026-08-27T15:41:49",
+  "ts": "2026-09-14T15:58:08",
   "host": "honor",
-  "git_tip": "c2a4fd9 Sync: alle aktiven Module die live auf Honor laufen aber im Repo fehlten",
+  "git_tip": "643e0c38 fix: Ollama-Gate URL aus ssh -G",
   "ssh_xiaomi": true,
   "adb_device": true,
   "adb_raw": "List of devices attached\n10.229.239.131:5555\tdevice",
-  "sv": "run: /data/data/com.termux/files/usr/var/service/jack_autolearn: (pid 17276) 90306s\nrun: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 14123) 49527s\nrun: /data/data/com.termux/files/usr/var/service/jack_focus_monitor: (pid 19956) 51171s\nrun: /data/data/com.termux/files/usr/var/service/jack_missions: (pid 26609) 79546s\nrun: /data/data/com.termux/files/usr/var/service/jack_publisher: (pid 2745) 87533s; run: log: (pid 16522) 270222s\nrun: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 13188) 10954s\nrun: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 17007) 13693s",
+  "sv": "down: /data/data/com.termux/files/usr/var/service/jack_autolearn: 593042s\nrun: /data/data/com.termux/files/usr/var/service/jack_cortex: (pid 11872) 14920s\nrun: /data/data/com.termux/files/usr/var/service/jack_focus_monitor: (pid 30163) 22041s\nrun: /data/data/com.termux/files/usr/var/service/jack_missions: (pid 16233) 14723s\ndown: /data/data/com.termux/files/usr/var/service/jack_publisher: 593042s; run: log: (pid 22285) 593042s\nrun: /data/data/com.termux/files/usr/var/service/jack_telegram: (pid 27667) 2542s\nrun: /data/data/com.termux/files/usr/var/service/jack_waechter: (pid 31805) 7692s",
   "heartbeats_age_s": {
-    "jack_telegram": 2.0217270851135254,
-    "jack_cortex": 51.08616328239441,
-    "jack_waechter": 5.398228406906128,
-    "jack_autolearn": 206.05155849456787,
-    "jack_publisher": 120.3937680721283
+    "jack_telegram": 2.037571430206299,
+    "jack_cortex": 23.850026607513428,
+    "jack_waechter": 56.78445792198181,
+    "jack_autolearn": 965676.3274893761,
+    "jack_publisher": 965362.8352923393
   },
   "ui_pipeline": "",
   "allowed_actions": [
@@ -28,5 +28,5 @@
     "rm_rf",
     "read_secrets"
   ],
-  "last_errors_hint": "Thu Aug 27 15:20:00 CEST 2026: Ollama auf Honor disabled - skip\nThu Aug 27 15:30:00 CEST 2026: Cortex laeuft bereits\nThu Aug 27 15:30:00 CEST 2026: Ollama auf Honor disabled - skip\nThu Aug 27 15:40:00 CEST 2026: Cortex laeuft bereits\nThu Aug 27 15:40:00 CEST 2026: Ollama auf Honor disabled - skip\n"
+  "last_errors_hint": "Mon Sep 14 15:30:00 CEST 2026: Ollama auf Honor disabled - skip\nMon Sep 14 15:40:00 CEST 2026: Cortex laeuft bereits\nMon Sep 14 15:40:00 CEST 2026: Ollama auf Honor disabled - skip\nMon Sep 14 15:50:00 CEST 2026: Cortex laeuft bereits\nMon Sep 14 15:50:00 CEST 2026: Ollama auf Honor disabled - skip\n"
 }

@@ -21,9 +21,9 @@ def chk(name, fn):
 def _svcs():
     import subprocess
     # JACK_TUNE_SOLL — Freeze-Soll: nur Dienste die laufen MUESSEN.
-    # Bewusst unten (kein Fehler): jack_autolearn, jack_publisher,
-    # jack_missions, ssh_tunnel_ollama
-    SVCS = ["jack_cortex","jack_telegram","jack_waechter"]
+    # Bewusst unten: jack_autolearn, jack_publisher, ssh_tunnel_ollama
+    # jack_missions = Pflicht im Selftest  # JACK_TUNE_K4NOTE
+    SVCS = ["jack_cortex","jack_telegram","jack_waechter","jack_missions"]  # JACK_TUNE_F1SVCS
     dead = []
     for s in SVCS:
         r = subprocess.run(["sv","status",s], capture_output=True, text=True, timeout=5)
@@ -66,7 +66,7 @@ def _graph():
 # Heartbeats
 def _beats():
     import jack_heartbeat
-    SVCS = ["jack_cortex","jack_telegram","jack_waechter"]  # JACK_TUNE_SOLL
+    SVCS = ["jack_cortex","jack_telegram","jack_waechter","jack_missions"]  # JACK_TUNE_F1SVCS  # JACK_TUNE_SOLL
     stale = []
     for s in SVCS:
         a = jack_heartbeat.age(s)

@@ -5,7 +5,7 @@ try:
 except Exception:
     _jlog = None
 sys.path.append('/data/data/com.termux/files/home/jack')
-import jack_gemini_bridge
+jack_gemini_bridge = None  # JACK_TUNE_D2NOGEM
 
 DB="/data/data/com.termux/files/home/jack/jack_memory.db"
 IDENTITY="/data/data/com.termux/files/home/jack/jack_identity.json"
@@ -34,7 +34,8 @@ def learn_from_recent(n=30):
         f"ABSOLUTE KORREKTUREN (entferne jeden widersprechenden Fakt, fuege ihn NIE wieder hinzu):\n{json.dumps(korrekturen,ensure_ascii=False)}\n\n"
         f"BEKANNTE FAKTEN:\n{json.dumps(existing,ensure_ascii=False)}\n\n"
         f"NEUE GESPRAECHE (Dimas Korrekturen haben Vorrang):\n{convo}")
-    ans=jack_gemini_bridge.ask_gemini(prompt).strip()
+    return existing  # JACK_TUNE_D2NOGEM
+    ans=''
     if ans.startswith("```"): ans="\n".join(ans.split("\n")[1:])
     if ans.endswith("```"): ans="\n".join(ans.split("\n")[:-1])
     try:

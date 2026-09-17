@@ -56,7 +56,7 @@ def get_temp() -> float:
         return round(int(raw.strip()) / 1000, 1)
     except Exception as e:
         log.warning(f"Temp-Read fehlgeschlagen: {e}")
-        return 0.0
+        return 999.0  # JACK_TUNE_TEMPFAIL1 fail-safe, kein Lesezugriff = annehme zu heiss
 
 def temp_ok() -> bool:
     t = get_temp()

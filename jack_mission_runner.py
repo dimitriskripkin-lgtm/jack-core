@@ -110,7 +110,7 @@ def run_act(m):
             return False,"fix: old fehlt",""
         content=open(fp,errors="ignore").read()
 
-        # Shadow-Modus wenn staged=True
+        return False, "fix: live write zu — nur staged/shadow", ""  # JACK_TUNE_NOWLIVE
         if m.get("staged") or m.get("shadow"):
             ok2, info2 = _run_fix_shadow(m, fp, content, bak=None)
             return ok2, info2, ""
@@ -390,7 +390,7 @@ def loop(poll=30, maxn=200):
     while True:
         _hb()
         if os.path.isfile(STOP):
-            print("STOP-FILE"); return 0
+            print("STOP-FILE"); time.sleep(poll); continue  # JACK_TUNE_STOPSLEEP
         try:
             import importlib as _il, jack_mission_pull as _jp
             _il.reload(_jp)

@@ -294,13 +294,9 @@ def answer_callback(callback_id, text="OK"):
         _jlog and _jlog.fehler("telegram","unbenannt",_le)
 
 def _check_memory_trigger(text, chat_id):
-    triggers=["merk dir","vergiss nicht","ich hab jetzt","ich bin jetzt","ab sofort","wichtig:","ich wohne","ich arbeite"]
+    triggers=["merk dir","vergiss nicht","ich hab jetzt","ich bin jetzt","ab sofort","wichtig:","ich wohne","ich arbeite","ich habe einen","ich habe eine","ich habe ein","ich hab einen","ich hab eine","ich hab ein","mein name ist","ich heisse","ich heiße"]  # JACK_TUNE_BUGB
     if any(t in text.lower() for t in triggers):
-        kb={"inline_keyboard":[[
-            {"text":"Ja, speichern","callback_data":"mem_save:"+text[:200]},
-            {"text":"Nein","callback_data":"mem_skip"}
-        ]]}
-        send_keyboard("Soll ich das speichern? "+text[:150], kb["inline_keyboard"])
+        send_keyboard("Soll ich das speichern? "+text[:150], [[("Ja, speichern","mem_save:"+text[:200]),("Nein","mem_skip")]])
         return True
     return False
 
@@ -840,7 +836,7 @@ def handle(text):
     if _rt == '/skill_builder':
         return 'SKILL-BUILDER: Status: In Entwicklung (braucht jack_skill_builder Modul)'
     if _rt == '/tb':
-        return 'TRACEBACK: Kein aktiver Fehler. System läuft stabil.'
+        return 'TRACEBACK: kein Werkzeug. Kein Stabil-Satz.'  # JACK_TUNE_K5TB
     if _rt.startswith('/verbessere'):
         _modul = text.strip()[11:].strip() or "jack_memory"
         return 'VERBESSERE: ' + _modul + chr(10) + 'Status: In Entwicklung (braucht jack_coder Integration)'
@@ -948,13 +944,18 @@ def handle(text):
         threading.Thread(target=_do_standort, daemon=True).start()
         return None
     if _rt == '/lernen' or _rt.startswith('/lernen '):
-        import subprocess as _sp_l, json as _j_l
+        import json as _j_l, os as _os_l, time as _t_l
         try:
-            _b = _j_l.loads(_sp_l.run(['termux-battery-status'], capture_output=True, text=True, timeout=8).stdout)
-            if _b.get('percentage', 100) < 30:
+            _hn="/data/data/com.termux/files/home/jack/jack_health_now.json"
+            _b={}
+            if _os_l.path.isfile(_hn) and (_t_l.time()-_os_l.path.getmtime(_hn))<=900:
+                _b=(_j_l.loads(open(_hn,encoding="utf-8").read()).get("bat") or {})
+            _pct=_b.get("pct", _b.get("percentage", 100))
+            _c=_b.get("c", _b.get("temperature", 0))
+            if float(_pct) < 30:
                 return 'Akku unter 30% - Lernen ausgesetzt'
-            if float(_b.get('temperature', 0)) > 45:
-                return 'Temperatur ueber 45C - Lernen ausgesetzt'
+            if float(_c or 0) > 45:
+                return 'Temperatur ueber 45C - Lernen ausgesetzt'  # JACK_TUNE_LERNBAT
         except Exception:
             pass
         try:
@@ -1214,6 +1215,7 @@ def main():
             updates = get_updates(offset)
             for u in updates:
                 offset = u['update_id'] + 1
+                import jack_corr as _jc; _jc.new("tg-%s" % u.get('update_id'))
                 _offset_schreiben(offset)
                 cb = u.get('callback_query', {})
                 if cb:
@@ -1268,6 +1270,8 @@ def main():
                     continue
                 if text and chat_id:
                     vibrate(40)
+                    if _check_memory_trigger(text, chat_id):  # JACK_TUNE_BUGB_CALL
+                        continue
                     reply = handle(text)
                     if reply:
                         import re as _rw

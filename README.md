@@ -5,10 +5,11 @@ Gebaut von Dima, LKW, ein Daumen, Termux.
 
 GitHub ist der Spiegel. Honor ist die Wahrheit.
 
-## Ist 11.09.2026
+## Ist 14.09.2026
 
 Pflicht-Dienste: jack_telegram, jack_cortex, jack_waechter.
-Bewusst aus: jack_autolearn, jack_publisher, jack_missions, ssh_tunnel_ollama.
+Messgürtel: jack_missions an, nur messen, kein Live-Write.
+Bewusst aus: jack_autolearn, jack_publisher, ssh_tunnel_ollama.
 Ollama: aus. Datei `.ollama_lock` ist hartes Nein. Dienst heißt `_ollama_disabled`.
 Mund: Groq. Gemini denkt, chattet nicht.
 Persona-Kern: klein, `jack_persona_kern.md`.

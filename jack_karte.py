@@ -60,7 +60,22 @@ def component(a):
 def klasse(a):
     return a.strip().split("/")[-1].split(".")[-1]
 
+def _muskel_ok():
+    try:
+        import jack_heat_protection as _h
+        return _h.lage("ssh")=="OK"
+    except Exception:
+        return False
+
+def _karte_frisch(max_h=8):
+    try:
+        return os.path.isfile(KARTE) and os.path.getsize(KARTE)>100 and (time.time()-os.path.getmtime(KARTE))/3600.0 < max_h
+    except Exception:
+        return False
+
 def home():
+    if not _muskel_ok():
+        return
     sh("su -c 'input keyevent 3'")
 
 def fokus():
@@ -84,6 +99,10 @@ def dump_elemente():
     return els[:40]
 
 def chunk(n=10):
+    if not _muskel_ok():
+        return status() + " | kein Dump (SSH nicht OK)"  # JACK_TUNE_F6ADB
+    if _karte_frisch(8):
+        return status() + " | frisch <8h kein ADB"  # JACK_TUNE_F6ADB
     acts, w = activities()
     if not acts:
         return "KEY settings_activities FEHLT. Vorhanden: " + ", ".join(sorted(w.keys()))
@@ -112,7 +131,8 @@ def chunk(n=10):
         gemacht += 1
         if geoeffnet: echt += 1
         home()
-    sichere_karte(karte)
+    if gemacht:
+        sichere_karte(karte)  # JACK_TUNE_K3ZERO
     return (str(gemacht) + " kartiert, davon " + str(echt) + " echt geoeffnet. Gesamt "
             + str(len(karte)) + "/" + str(len(acts)))
 

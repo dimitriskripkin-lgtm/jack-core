@@ -55,7 +55,7 @@ def xiaomi_ssh():
 
 def ollama_an():
     if os.path.isfile('/data/data/com.termux/files/home/jack/.ollama_lock'):
-        return False  # JACK_TUNE_OLLAMA_ANLOCK
+        return False, 'lock'  # JACK_TUNE_ANLOCK2
     try:
         import urllib.request
         urllib.request.urlopen('http://localhost:11434/api/tags', timeout=4)
@@ -95,7 +95,7 @@ PRUEFER = {
     'gps':     (gps_an,       'GPS ist aus. Schalt es in den Schnelleinstellungen an, dann nochmal.'),
     'wlan':    (wlan_an,      'Kein WLAN. Ohne Netz geht das nicht.'),
     'xiaomi':  (xiaomi_ssh,   'Xiaomi nicht erreichbar.'),
-    'ollama':  (ollama_an,    'Ollama laeuft nicht. sv up ollama.'),
+    'ollama':  (ollama_an,    'Ollama aus. Lock oder Dienst _ollama_disabled.'),
     'adb':     (adb_verbunden,'ADB nicht verbunden. adb connect 127.0.0.1:PORT.'),
     'kamera':  (kamera_frei,  'Kamera belegt oder nicht verfuegbar.'),
 }

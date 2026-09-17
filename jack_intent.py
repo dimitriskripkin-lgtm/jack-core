@@ -277,9 +277,12 @@ def execute(d):
             r = _ssh('true', 8)
             erg = 'Xiaomi SSH: ' + ('erreichbar' if r.returncode == 0 else 'nicht erreichbar')
         elif aktion == 'akku_check':
-            r = subprocess.run(['termux-battery-status'], capture_output=True, text=True, timeout=12)
-            b = json.loads(r.stdout)
-            erg = f"Akku {b.get('percentage')}% | {b.get('status')} | {b.get('temperature')}C"
+            import jack_health as _jh
+            b=_jh.bat_fresh()
+            if not b:
+                erg = 'Akku unbekannt (health tot)'  # JACK_TUNE_BATFRESH
+            else:
+                erg = f"Akku {b.get('pct')}% | {b.get('status')} | {b.get('c')}C"
         elif aktion == 'ram_check':
             mi = {l.split(':')[0]: int(l.split()[1])//1024 for l in open('/proc/meminfo') if ':' in l}
             erg = f"RAM frei {mi.get('MemAvailable',0)}MB von {mi.get('MemTotal',0)}MB | Swap frei {mi.get('SwapFree',0)}MB"
@@ -302,11 +305,11 @@ def execute(d):
         elif aktion == 'ollama_check':
             import urllib.request
             if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
-                erg = 'Ollama aus (Lock).'  # JACK_TUNE_INTLOCK
+                erg = 'Ollama aus (Lock).'  # JACK_TUNE_INTLOCK2
             else:
                 d2 = json.loads(urllib.request.urlopen('http://localhost:11434/api/tags', timeout=5).read())
-            namen = [m['name'] for m in d2.get('models', [])]
-            erg = 'Ollama laeuft | Modelle: ' + ', '.join(namen)
+                namen = [m['name'] for m in d2.get('models', [])]
+                erg = 'Ollama laeuft | Modelle: ' + ', '.join(namen)
         elif aktion == 'fehler_check':
             con = sqlite3.connect(os.path.join(H,'jack_errors.db'))
             rows = con.execute("SELECT error_msg, timestamp FROM errors WHERE resolved=0 ORDER BY timestamp DESC LIMIT 5").fetchall()

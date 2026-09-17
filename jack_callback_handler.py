@@ -52,6 +52,7 @@ def handle(callback_data, callback_id):
         try:
             import jack_memory as _jm; _jm.save(fact,"Dima erwaehnte",intent="dima_fact")
             tg.answer_callback(callback_id,"Gespeichert")
+            tg.send("Okay, gespeichert: "+fact[:100])
         except Exception as e:
             tg.answer_callback(callback_id,"Fehler: "+str(e)[:50])
         return

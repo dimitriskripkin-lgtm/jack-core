@@ -60,7 +60,7 @@ def check_and_heal_xiaomi():
         )
         notify_telegram(notify_msg)
     else:
-        log("✅ Xiaomi Systemzustand im grünen Bereich.")
+        log("Xiaomi RAM %s MB — Schwelle 600 nicht unterschritten." % free_ram)  # JACK_TUNE_K5ORCH
 
 def generate_morning_briefing():
     log("🌅 Generiere Morgen-Briefing...")

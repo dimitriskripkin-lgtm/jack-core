@@ -21,8 +21,13 @@ def save(d):
 def status_snapshot():
     rc, sv = run(["sv", "status", "jack_telegram", "jack_cortex", "jack_waechter", "jack_autolearn", "ssh_tunnel_ollama"])
     rc2, mem = run(["free", "-h"])
-    curl = subprocess.run(["curl", "-s", "-m", "4", "-o", "/dev/null", "-w", "%{http_code}", "http://127.0.0.1:11434/api/tags"], capture_output=True, text=True, timeout=8)
-    return True, {"sv": sv[-800:], "mem": mem[-400:], "ollama_tunnel": (curl.stdout or "").strip()}
+    _lk="/data/data/com.termux/files/home/jack/.ollama_lock"
+    if os.path.isfile(_lk):
+        ot="lock"  # JACK_TUNE_LOOPLOCK
+    else:
+        curl = subprocess.run(["curl", "-s", "-m", "4", "-o", "/dev/null", "-w", "%{http_code}", "http://127.0.0.1:11434/api/tags"], capture_output=True, text=True)
+        ot=(curl.stdout or "").strip()
+    return True, {"sv": sv[-800:], "mem": mem[-400:], "ollama_tunnel": ot}
 
 def verify_youtube():
     s = su_xiaomi("dumpsys media_session")

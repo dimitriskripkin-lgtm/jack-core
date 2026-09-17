@@ -1,1 +1,0 @@
-{"id": "sys_exists_config_ini", "typ": "check", "act": "file_exists", "file": "~/jack/config.ini", "expect": "PASS", "cat": "health", "_prio": 2}
