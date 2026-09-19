@@ -29,6 +29,20 @@ def is_alive(dienst, max_age=600):
     return a is not None and a < max_age
 
 
+def sleep_until(dienst, seconds):
+    """JACK_TUNE_PHASEA2: Dienst meldet eigene geplante Aufwachzeit."""
+    try:
+        open(os.path.join(H, f".sleep_until_{dienst}"), "w").write(str(time.time()+seconds))
+    except Exception:
+        pass
+
+def is_sleeping(dienst):
+    p = os.path.join(H, f".sleep_until_{dienst}")
+    try:
+        return time.time() < float(open(p).read().strip())
+    except Exception:
+        return False
+
 def is_remote_alive(host, port, timeout=5):
     """Live TCP-Probe — kein Ping, funktioniert auf Android."""
     import socket

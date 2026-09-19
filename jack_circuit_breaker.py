@@ -48,3 +48,7 @@ def record_success():
         log.info("Circuit Breaker: reset nach Erfolg")
 
 def status() -> dict: return _load()
+
+def check_allowed() -> bool:
+    """F3: Gegenpart zu is_open() fuer autofixer_shadow.py:135"""
+    return not is_open()

@@ -279,7 +279,7 @@ def _talk_to_gemini_impl(prompt):
                     _q = " AND ".join(['"' + w + '"' for w in _qw])  # JACK_TUNE_TRAEG1
                     if _q:
                         _fc = _sq3.connect(DB_PATH)
-                        _fr = _fc.execute("SELECT m.cmd FROM memory_fts f JOIN memory m ON f.id=m.id WHERE memory_fts MATCH ? AND m.source='dima_chat' LIMIT 3", (_q,)).fetchall()
+                        _fr = _fc.execute("SELECT m.cmd FROM memory_fts f JOIN memory m ON f.id=m.id WHERE memory_fts MATCH ? AND m.source IN ('dima_chat','manual','kortex_archive') LIMIT 3  # JACK_TUNE_BUGF1", (_q,)).fetchall()
                         _fc.close()
                         if _fr:
                             _mem = chr(10).join(["- [mem] " + str(r[0])[:80] for r in _fr])[:400]
@@ -301,7 +301,8 @@ def _talk_to_gemini_impl(prompt):
                 system+="VERBOT: Temp/RAM/Akku ungefragt. Kein Autonomie-Level. Kein BEFEHL-Platzhalter. Keine Floskel was-geht-ab."+chr(10)
             except Exception:
                 pass  # JACK_TUNE_HEALTHINJ
-            if _id: system+="DIMA-PROFIL:"+chr(10)+_id+chr(10)+chr(10)
+            _p6w=("ueber mich","über mich","ueber dich","über dich","wer bin ich","wer bist du","was weisst du","was weißt du","mein name","kennst du mich","erzaehl mir")
+            if _id and any(w in (prompt or "").lower() for w in _p6w): system+="DIMA-PROFIL:"+chr(10)+_id+chr(10)+chr(10)  # JACK_TUNE_P6PROFIL
             if _mem: system+="ERINNERUNGEN:"+chr(10)+_mem+chr(10)
 
             # PHASE 6.2 (16.09.): Graph-Block nur bei Personenbezug

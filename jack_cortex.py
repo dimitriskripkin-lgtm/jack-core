@@ -230,7 +230,6 @@ def main():
         
         # Xiaomi-Check (still, kein Error-Log)
         try:
-            import subprocess
             r = subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","true"], capture_output=True, timeout=20)
             if r.returncode != 0:
                 time.sleep(60)  # Still pausieren, kein Error

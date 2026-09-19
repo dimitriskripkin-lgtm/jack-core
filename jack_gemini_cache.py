@@ -24,7 +24,7 @@ def load_api_key():
 
 def load_persona():
     try:
-        p = os.path.join(J, "jack_persona.md")
+        p = os.path.join(J, "jack_persona_kern.md")  # JACK_TUNE_BUGE
         return open(p).read()[:8000] if os.path.exists(p) else ""
     except Exception: return ""
 

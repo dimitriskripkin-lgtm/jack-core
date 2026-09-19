@@ -12,7 +12,7 @@ except Exception:
 from datetime import datetime, timedelta
 
 ERRORS_DB = os.path.expanduser("~/jack/jack_errors.db")
-MEMORY_DB = os.path.expanduser("~/jack/kortex_memory.db")
+MEMORY_DB = os.path.expanduser("~/jack/jack_memory.db")
 WERKSTATT  = os.path.expanduser("~/jack_werkstatt")
 FIXES_LOG  = os.path.expanduser("~/jack/jack_fixes.json")
 JACK_PATH  = os.path.expanduser("~/jack")
@@ -116,21 +116,18 @@ else:
     return fix_id, ziel
 
 def in_memory_speichern(beschreibung, fix_id):
-    """Schreibt Selbstdiagnose in kortex_memory.db."""
-    try:
-        conn = sqlite3.connect(MEMORY_DB)
-        ts = datetime.now().isoformat()
-        conn.execute(
-            "INSERT INTO memories (timestamp,category,content,source,tags) VALUES (?,?,?,?,?)",
-            (ts, "selbstdiagnose", beschreibung, "jack_self_improve",
-             f"autofix {fix_id if fix_id else 'kein_fix'}")
-        )
-        conn.commit()
-        conn.close()
-    except Exception as e:
-        import jack_log
-        jack_log.log_decision("SELF-IMPROVE-MEMORY-FEHLER", str(e)[:100])
-
+    """Schreibt Selbstdiagnose in jack_memory.db + FTS."""
+    import datetime as dt
+    conn = sqlite3.connect(MEMORY_DB)
+    c = conn.cursor()
+    ts = dt.datetime.now().isoformat()
+    mid = "si_" + str(fix_id) + "_" + str(int(dt.datetime.now().timestamp()))
+    cmd = "[self_improve] " + str(beschreibung)
+    c.execute("INSERT INTO memory (id,cmd,result,intent,time,timestamp,source,parent_id,kontext_typ) VALUES (?,?,?,?,?,?,?,?,?)",
+              (mid, cmd, str(fix_id), "self_improve", ts, ts, "self_improve", "", "diagnose"))
+    # F5: FTS kommt jetzt per Trigger fts_sync_all
+    conn.commit()
+    conn.close()
 def run():
     treffer_liste = analyse()
 

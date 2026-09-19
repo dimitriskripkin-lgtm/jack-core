@@ -174,16 +174,25 @@ def _heartbeat_sv_check():
     try:
         import jack_heartbeat
         import subprocess
-        dienste = [
+        # JACK_TUNE_PHASEA: max_age zentral aus jack_tune.json, Fallback = alter Festwert
+        _defaults = [
             ("jack_telegram", 180),
             ("jack_cortex", 300),
             ("jack_publisher", 400),
-            ("jack_autolearn", 900),
+            ("jack_autolearn", 22000),
         ]
+        try:
+            import json as _pj
+            _tune = _pj.load(open(J+"/jack_tune.json"))
+        except Exception:
+            _tune = {}
+        dienste = [(n, _tune.get(n+"_max_age", d)) for n, d in _defaults]
         for name, max_age in dienste:
             _df="/data/data/com.termux/files/usr/var/service/%s/down"%name
             if os.path.isfile(_df):
                 continue  # JACK_TUNE_HBDOWN
+            if jack_heartbeat.is_sleeping(name):
+                continue  # JACK_TUNE_PHASEA2
             try:
                 _alive = jack_heartbeat.is_alive(name, max_age=max_age)
                 try:

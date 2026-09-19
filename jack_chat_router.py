@@ -240,7 +240,8 @@ def talk_local(text):
         import json as _jl, time as _jt2, os as _jo
         _stp = J + "/reports/last_msg.json"
         _tnow = _jt2.time()
-        _toks = set(w for w in t.split() if len(w) > 3)
+        _sw2={"habe","hast","eine","einen","einem","mich","dich","sich","auch","noch","dann","dass","oder","aber","wenn","nach","beim","wird","wurde","wuerd","ueber","uber","gibt","geht","kann","kein","keine","mal","jetzt","bitte","okay","halt","eher","sehr"}  # JACK_TUNE_LERN2STOP
+        _toks = set(w for w in t.split() if len(w) > 3 and w not in _sw2)
         _prev = None
         if _jo.path.isfile(_stp):
             try: _prev = _jl.loads(open(_stp, encoding="utf-8").read())

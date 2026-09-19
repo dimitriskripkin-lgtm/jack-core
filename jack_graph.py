@@ -4,7 +4,7 @@ import os,re,sqlite3,time,sys
 from jack_log import get_logger
 log = get_logger("jack_graph")
 DB=os.path.join(os.path.expanduser("~"),"jack","jack_graph.db")
-TYPS=("person","geraet","fakt","skill","chat")
+TYPS=("person","geraet","fakt","skill","chat","persona","ziel")
 RELS=("hat","widerspricht","betrifft","folgt_aus")
 def norm(s):
     s=(s or "").lower()

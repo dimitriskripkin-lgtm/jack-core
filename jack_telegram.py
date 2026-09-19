@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 MODULE_VERSION = 1
 import os, sys, json, time, urllib.request, urllib.parse, subprocess
-_PERSONA_PATH=os.path.expanduser("~/jack/jack_persona.md")
+_PERSONA_PATH=os.path.expanduser("~/jack/jack_persona_kern.md")  # JACK_TUNE_BUGE
 try:
     _PERSONA=open(_PERSONA_PATH,encoding="utf-8").read().strip()
 except Exception:
@@ -35,12 +35,7 @@ def _ui_gate_text(text):
     except Exception:
         return None
 
-try:
-    from kortex_memory import add_memory, search_memory, get_recent
-except Exception as _ke:
-    def add_memory(*a,**k): pass
-    def search_memory(*a,**k): return []
-    def get_recent(*a,**k): return []
+# M3 17.09.: Kortex-Import entfernt (keine Aufrufe, E19). Archiv lebt in jack_memory.db als source=kortex_archive.
 
 ERRORS_DB = os.path.expanduser('~/jack/jack_errors.db')  # errors-Tabelle, nicht db_path
 PENDING_WRITE = {}

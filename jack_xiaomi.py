@@ -155,7 +155,7 @@ def explore_next():
     try:
         import jack_memory as _jm
         summary=json.dumps(results, ensure_ascii=False)
-        _jm.save('xiaomi_explore', summary, intent='explore')
+        _jm.save('xiaomi_explore', summary, intent='explore', source='explorer')
     except Exception as e:
         try: import jack_log; jack_log.log_decision('EXPLORE-FEHLER', str(e)[:100])
         except Exception: pass

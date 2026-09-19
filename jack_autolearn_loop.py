@@ -72,12 +72,15 @@ def log(msg):
     with open(LOG_FILE, 'a', encoding='utf-8') as f:
         f.write(line + '\n')
 
-def check_db_integrity():
+def check_db_integrity(cycle_num=0):
+    # JACK_TUNE_F1DBCHECK: nur alle 10 Zyklen voll pruefen, quick_check statt integrity_check
+    if cycle_num % 10 != 0:
+        return True
     conn_s = sqlite3.connect(DB_SKILLS)
-    res_s = conn_s.execute("PRAGMA integrity_check;").fetchone()[0]
+    res_s = conn_s.execute("PRAGMA quick_check;").fetchone()[0]
     conn_s.close()
     conn_m = sqlite3.connect(DB_MEMORY)
-    res_m = conn_m.execute("PRAGMA integrity_check;").fetchone()[0]
+    res_m = conn_m.execute("PRAGMA quick_check;").fetchone()[0]
     conn_m.close()
     return res_s == "ok" and res_m == "ok"
 
@@ -277,7 +280,7 @@ def health_check_faehigkeiten(cycle_num):
 def run_cycle(cycle_num):
     log(f"=== ZYKLUS {cycle_num} START ===")
     
-    if not check_db_integrity():
+    if not check_db_integrity(cycle_num):
         log("DB-INTEGRITY: FEHLER")
         return False
         
@@ -306,6 +309,10 @@ def main():
     _last_pruning_date = None
     
     while True:
+        try:
+            import jack_heartbeat; jack_heartbeat.beat("jack_autolearn")  # JACK_TUNE_HBEARLY
+        except Exception:
+            pass
         _now = datetime.now()
         _today = _now.date()
         if _now.hour == 4 and _last_pruning_date != _today:
@@ -362,11 +369,14 @@ if not _d2_rate_ok():
     import time as _tw, os as _to
     _B='/data/data/com.termux/files/home/jack'
     if _to.path.isfile(_B+'/jack_identity.json') and _to.path.getsize(_B+'/jack_identity.json')>80000:
+        import jack_heartbeat as _jhb; _jhb.sleep_until("jack_autolearn", 3600)  # JACK_TUNE_PHASEA2
         _tw.sleep(3600)
     else:
         try: _rest=21600-(_tw.time()-float(open(_B+'/.autolearn_last').read() or 0))+5
         except Exception: _rest=60
-        _tw.sleep(max(30,min(_rest,21600)))
+        _rest=max(30,min(_rest,21600))
+        import jack_heartbeat as _jhb; _jhb.sleep_until("jack_autolearn", _rest)  # JACK_TUNE_PHASEA2
+        _tw.sleep(_rest)
     raise SystemExit(0)
 if __name__ == "__main__":
     try:

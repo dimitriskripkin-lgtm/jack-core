@@ -21,7 +21,7 @@ def init():
     conn.commit()
     conn.close()
 
-def save(cmd, result, intent='unknown'):
+def save(cmd, result, intent='unknown', source='manual'):
     init()
     import sqlite3 as _sqd
     try:
@@ -34,12 +34,10 @@ def save(cmd, result, intent='unknown'):
     ts = str(datetime.now())
     ok, rowid = _dq.write(DB,
         'INSERT OR REPLACE INTO memory(id,cmd,result,intent,time,timestamp,source) VALUES(?,?,?,?,?,?,?)',
-        (uid, cmd, result, intent, ts, ts, 'manual'),
+        (uid, cmd, result, intent, ts, ts, source),
         wait=True)
     if ok:
-        # FTS sync: erst loeschen, dann neu einfuegen - verhindert Duplikate
-        pass  # JACK_TUNE_FTSONE2 rowid-Delete traf fremde FTS-Zeilen
-        pass  # JACK_TUNE_FTSONE Trigger fts_sync_dima uebernimmt
+        pass  # FTS-Sync via Trigger fts_sync_all (AFTER INSERT ON memory) - FIX1
     return ok
 
 def query(text, n=5):

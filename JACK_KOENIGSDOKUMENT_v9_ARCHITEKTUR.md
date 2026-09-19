@@ -146,3 +146,6 @@ Vergleichswert: Audit-Journal mit Sequenz+flock und prozessuebergreifender Trace
 "gedaechtnisse":{"graph":"jack_graph.db, Schreiber autolearn+Haken","memory":"jack_memory.db+FTS, Save schreibt source=manual, Abruf filtert dima_chat = BUG F GAP 1","kortex":"kortex_memory.db, 56 memories, Leser telegram Z39/132/140, Schreiber tot seit 31.08."},
 "ki_fehler_katalog":"B-Q1..B-Q18 in v8+v9","offen":["Roadmap F","Roadmap G Nav-Filter","Kortex-Rente oder Anbindung","workers.json Schreiber","Installer","Dependency-Map","~200 Waisen"],
 "naechste_session":"erst lesen (v8+v9), dann Bug F, eine Aenderung pro Block, erst lesen dann patchen"}
+
+## MODUL-LANDKARTE (17.09. neu vermessen)
+Aktiv 124 transitive Module. 31 Klein-Orphans im attic (Manifest). Gross: 5 auto-gestartet, 27 stringref-gehalten, 25 nirgends (Einzelsichtung). Details in reports/modul_landkarte.md und .json
