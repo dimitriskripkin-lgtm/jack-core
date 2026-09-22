@@ -4,7 +4,7 @@ import json, datetime
 J="/data/data/com.termux/files/home/jack"
 F=J+"/.api_budget"
 W=J+"/.api_budget_week"
-LIMITS={"text":40,"vision":8}
+LIMITS={"text":300,"vision":40}  # JACK_TUNE_BUDGET2009
 EUR_WEEK=3.0
 EUR_PER_MTOK=0.40
 def _load():

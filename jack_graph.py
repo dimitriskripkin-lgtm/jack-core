@@ -89,3 +89,43 @@ if __name__=="__main__":
     seed()
     q=" ".join(sys.argv[1:]) or "Hund Dima"
     print(prompt_block(q))
+
+def fakt_aus_satz(satz, src="telegram"):  # JACK_TUNE_FAKT1
+    """Zerlegt einen Satz per LLM in Fakt-Name/Wert, haengt ihn an person:dima."""
+    try:
+        import jack_gemini_bridge as _jgb, json as _j
+        p = ('Zerlege den Satz in einen kurzen Fakt-Namen (1-2 Woerter) und einen Wert. '
+             'Antworte NUR mit JSON. Kein Fakt -> {}. '
+             '"Ich habe eine Katze namens Bibi" -> {"name":"katze","wert":"Bibi"}. '
+             '"Ich spiele gerne Playstation 5" -> {"name":"hobby","wert":"Playstation 5"}. '
+             'Satz: ') + str(satz)[:200]
+        r = _jgb.ask_gemini(p)
+        if not r or r.lstrip().startswith(("[Analyse]", "[Talk]", "[Ollama]")):
+            return None
+        r = r.strip().strip("`")
+        d = _j.loads(r[r.find("{"):r.rfind("}") + 1])
+        n = str(d.get("name", "")).strip()
+        w = str(d.get("wert", "")).strip()
+        if not n or not w:
+            return None
+        i = put_node("fakt", n, w, src=src)
+        if not i:
+            return None
+        put_edge("person:dima", "hat", i, src=src)
+        return i
+    except Exception:
+        return None
+
+def embed_lokal(text):  # JACK_TUNE_EMBLOKAL
+    """Embedding ueber das lokale Ollama auf dem Honor, kein Xiaomi-Umweg."""
+    try:
+        import urllib.request, json as _j
+        data = _j.dumps({'model': 'nomic-embed-text', 'prompt': text}).encode('utf-8')
+        req = urllib.request.Request('http://localhost:11434/api/embeddings', data=data,
+                                      headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=10) as res:
+            return _j.loads(res.read().decode('utf-8'))['embedding']
+    except Exception:
+        return None
+
+# aehnlicher_knoten entfernt 22.09.2026 — fakt_vec-Tabelle existiert nicht (JACK_TUNE_EMBLOKAL)

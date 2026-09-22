@@ -175,6 +175,12 @@ def lage(was):
     H="/data/data/com.termux/files/home/jack"
     S="/data/data/com.termux/files/usr/var/service"
     OK,TW,AA,PA,UN="OK","TEMPORAER_WEG","ABSICHTLICH_AUS","PAUSIERT","UNBEKANNT"
+    def _schlaeft(svc):  # JACK_TUNE_LAGE6
+        try:
+            import jack_heartbeat as _jhb
+            return bool(_jhb.is_sleeping(svc))
+        except Exception:
+            return False
     def _down(svc):
         return _os.path.isfile(S+"/"+svc+"/down")
     def _stat(svc):
@@ -205,11 +211,13 @@ def lage(was):
         if _down(svc):
             return AA
         st=_stat(svc)
-        return OK if st.startswith("run") else TW
+        if not st.startswith("run"): return TW
+        return PA if _schlaeft(svc) else OK
     if w in ("telegram","cortex","waechter"):
         svc="jack_"+w
         if _down(svc):
             return AA
         st=_stat(svc)
-        return OK if st.startswith("run") else TW
+        if not st.startswith("run"): return TW
+        return PA if _schlaeft(svc) else OK
     return UN

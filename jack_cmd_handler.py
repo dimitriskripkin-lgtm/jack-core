@@ -44,7 +44,7 @@ def handle(rt: str, text: str, send) -> str:
             return f'Missions: {pend} pending | {done} done | {fail} fail'
         except Exception as e: return 'Missions-Fehler: '+str(e)[:80]
 
-    if rt.startswith('/approve_') or rt.startswith('/reject_'):
+    if (rt.startswith('/approve_') or rt.startswith('/reject_')) and rt not in ('/approve_all','/reject_all'):  # JACK_TUNE_ALLFIX
         try:
             import json, os, shutil
             J = "/data/data/com.termux/files/home/jack"

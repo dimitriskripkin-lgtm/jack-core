@@ -155,3 +155,13 @@ dep_map_state.json
 jack_diag_snapshot.json
 last_selftest_score.json
 semantic_last_run.json
+.autolearn_last
+.roll_tick
+.sleep_until_jack_autolearn
+digest_last_sent.json
+workers.json
+.xiaomi_degraded
+missions/logs/
+missions/done/
+missions/fail/
+missions/dead_counts.json

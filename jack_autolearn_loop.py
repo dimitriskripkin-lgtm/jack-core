@@ -353,15 +353,20 @@ def main():
         import jack_heartbeat; jack_heartbeat.beat("jack_autolearn")
         _ps=PAUSE_SECONDS
         try:
-            import json as _j, sqlite3 as _sq
+            import json as _j, sqlite3 as _sq, glob as _gl
             _t=_j.load(open("/data/data/com.termux/files/home/jack/jack_tune.json"))
             _c=_sq.connect(DB_SKILLS)
             _n=_c.execute("SELECT COUNT(*) FROM skills WHERE state=?",("CANDIDATE",)).fetchone()[0]
             _c.close()
-            _ps=int(_t.get("autolearn_idle_s",600) if _n==0 else _t.get("autolearn_busy_s",300))
+            _pend=len(_gl.glob("/data/data/com.termux/files/home/jack/missions/pending/*.json"))
+            _busy=(_n>0 or _pend>0)
+            _ps=int(_t.get("autolearn_busy_s",300) if _busy else _t.get("autolearn_idle_s",600))
         except Exception:
             _ps=PAUSE_SECONDS
-        log(f"PAUSE: {_ps}s")
+        log(f"PAUSE: {_ps}s (JACK_TUNE_INTEL)")
+        try:
+            import jack_heartbeat as _jhb; _jhb.sleep_until("jack_autolearn", _ps)
+        except Exception: pass
         time.sleep(_ps)  # JACK_TUNE_PAUSE
         cycle_num += 1
 

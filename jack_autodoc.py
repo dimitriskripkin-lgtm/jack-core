@@ -71,7 +71,7 @@ Funktion: {func_info['name']}
 Code:
 {func_info['snippet']}"""
         result = _jgb.ask_gemini(prompt)
-        if result:
+        if result and not result.lstrip().startswith(("[Analyse]","[Talk]","[Ollama]")):
             return result.strip().strip('"').strip("'")[:200]
     except Exception as e:
         log.exception("Gemini Docstring fehlgeschlagen", e)
@@ -96,6 +96,15 @@ def write_staged_fix(fname, func_info, docstring):
 
         lines.insert(def_line + 1, doc_line)
         new_src = "".join(lines)
+        try:  # JACK_TUNE_HALDOC
+            import jack_haliza as _hz
+            _r = _hz.pruefe(fname, src, new_src, "Docstring " + func_info["name"], mit_gemini=False)
+            if not _r.get("ok"):
+                log.info("HALIZA-STOP " + str(_r.get("grund",""))[:120])
+                return False
+        except Exception as _he:
+            log.exception("Haliza-Aufruf fehlgeschlagen", _he)
+            return False
 
         # Staged schreiben
         os.makedirs(SHADOW, exist_ok=True)

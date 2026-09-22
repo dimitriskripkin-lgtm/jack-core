@@ -401,7 +401,7 @@ def loop(poll=30, maxn=200):
         # JACK_TUNE_BRIDGEHOOK
         if pending_files():
             rc=run_queue(maxn=maxn)
-            if rc!=0: return rc
+            if rc!=0: print("QUEUE-FAIL rc", rc)  # JACK_TUNE_QSTAY
         time.sleep(poll)
 if __name__=="__main__":
     mode=sys.argv[1] if len(sys.argv)>1 else "once"

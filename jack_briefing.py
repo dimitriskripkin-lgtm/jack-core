@@ -69,6 +69,23 @@ def offene_fixes():
     except Exception:
         return None
 
+def alte_staged():  # JACK_TUNE_STOLPER
+    """Meldet staged Vorschlaege, die aelter sind als ihre Zieldatei."""
+    try:
+        sh = os.path.expanduser("~/jack/shadow")
+        alt = []
+        for f in os.listdir(sh):
+            if not f.endswith(".staged"): continue
+            ziel = os.path.expanduser("~/jack/" + f[:-7])
+            if not os.path.exists(ziel): continue
+            if os.path.getmtime(os.path.join(sh, f)) < os.path.getmtime(ziel):
+                alt.append(f[:-7])
+        if alt:
+            return "VERALTETE VORSCHLAEGE (nicht genehmigen):\n  " + "\n  ".join(alt)
+        return None
+    except Exception:
+        return None
+
 def dienste_status():
     try:
         r = subprocess.run(
@@ -99,7 +116,13 @@ def run():
     ts = datetime.now().strftime("%d.%m.%Y %H:%M")
 
     # Immer: Batteriestand
+    try:  # JACK_TUNE_STANDAUTO
+        import jack_stand as _js, json as _j
+        _j.dump(_js.bauen(), open(os.path.expanduser("~/jack/reports/flugschreiber_stand.json"),"w"), indent=1, ensure_ascii=False)
+    except Exception: pass
     meldungen.append(batteriestand())
+    _as = alte_staged()  # JACK_TUNE_STOLPER2
+    if _as: meldungen.append(_as)
 
     # Vollscan immer mit dabei
     meldungen.append(scan_snapshot())
