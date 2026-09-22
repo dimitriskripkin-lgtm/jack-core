@@ -1,83 +1,80 @@
-"""JACK MCP Server (Phase 1, Qwen 22.08.2026)
-Minimaler MCP-kompatibler HTTP-Server auf Xiaomi.
-Nur 127.0.0.1 + Bearer-Token aus ~/.jack_secrets (MCP_TOKEN=...).
-"""
-import json, os, subprocess
-from http.server import HTTPServer, BaseHTTPRequestHandler
+#!/usr/bin/env python3
+"""JACK MCP Server — Tools für externe KIs (Claude, Gemini, Qwen)"""
+from mcp.server.mcpserver import MCPServer
+import sqlite3
+import json
+import os
 
-PORT = 8080
-SECRETS = os.path.expanduser("~/.jack_secrets")
+JACK_HOME = "/data/data/com.termux/files/home/jack"
+GRAPH_DB = os.path.join(JACK_HOME, "jack_graph.db")
+MEMORY_DB = os.path.join(JACK_HOME, "jack_memory.db")
 
-def get_token():
+app = MCPServer("jack-server")
+
+@app.tool()
+def graph_list_nodes(limit: int = 20) -> str:
+    """Listet Knoten im JACK-Graph auf (typ, name, wert)."""
     try:
-        with open(SECRETS) as f:
-            for line in f:
-                if line.startswith("MCP_TOKEN="):
-                    return line.strip().split("=", 1)[1]
-    except Exception:
-        pass
-    return None
+        conn = sqlite3.connect(GRAPH_DB)
+        cur = conn.execute("SELECT typ, name, wert, src FROM nodes ORDER BY ts DESC LIMIT ?", (limit,))
+        nodes = [{"typ": r[0], "name": r[1], "wert": r[2], "src": r[3]} for r in cur.fetchall()]
+        conn.close()
+        return json.dumps(nodes, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
 
-class H(BaseHTTPRequestHandler):
-    def log_message(self, *a):
-        pass
-
-    def _auth(self):
-        tok = get_token()
-        hdr = self.headers.get("Authorization", "")
-        return bool(tok) and hdr == "Bearer " + tok
-
-    def _send(self, obj, code=200):
-        body = json.dumps(obj).encode()
-        self.send_response(code)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Connection", "close")
-        self.end_headers()
-        self.wfile.write(body)
-        self.wfile.flush()
-
-    def do_GET(self):
-        if self.path == "/ping":
-            self._send({"status": "ok"})
+@app.tool()
+def graph_read_node(node_id: str) -> str:
+    """Liest einen Knoten per ID (z.B. 'person:dima', 'fakt:katze')."""
+    try:
+        conn = sqlite3.connect(GRAPH_DB)
+        cur = conn.execute("SELECT typ, name, wert, src, ts FROM nodes WHERE id=?", (node_id,))
+        row = cur.fetchone()
+        conn.close()
+        if row:
+            return json.dumps({"id": node_id, "typ": row[0], "name": row[1], "wert": row[2], "src": row[3], "ts": row[4]}, ensure_ascii=False)
         else:
-            self._send({"error": "not found"}, 404)
+            return json.dumps({"error": f"Knoten {node_id} nicht gefunden"})
+    except Exception as e:
+        return json.dumps({"error": str(e)})
 
-    def do_POST(self):
-        if not self._auth():
-            self._send({"error": "unauthorized"}, 401)
-            return
-        ln = int(self.headers.get("Content-Length", 0))
-        try:
-            req = json.loads(self.rfile.read(ln) or b"{}")
-        except Exception:
-            req = {}
-        m = req.get("method")
-        rid = req.get("id")
-        if m == "initialize":
-            self._send({"jsonrpc": "2.0", "id": rid, "result": {"protocolVersion": "2024-11-05", "serverInfo": {"name": "jack-mcp", "version": "1.0"}}})
-        elif m == "tools/list":
-            self._send({"jsonrpc": "2.0", "id": rid, "result": {"tools": [{
-                "name": "shell_exec",
-                "description": "Fuehrt Shell-Befehl auf Xiaomi (JACK Worker) aus",
-                "inputSchema": {"type": "object", "properties": {"cmd": {"type": "string"}}, "required": ["cmd"]}
-            }]}})
-        elif m == "tools/call":
-            args = req.get("params", {}).get("arguments", {})
-            cmd = args.get("cmd", "echo leer")
-            if "rm -rf /" in cmd or "rm -rf ~" in cmd:
-                self._send({"jsonrpc": "2.0", "id": rid, "result": {"content": [{"type": "text", "text": "BLOCKIERT: zerstoerender Befehl"}], "isError": True}})
-                return
-            try:
-                r = subprocess.run(["sh", "-c", cmd], capture_output=True, text=True, timeout=30)
-                out = (r.stdout + r.stderr)[:4000]
-                self._send({"jsonrpc": "2.0", "id": rid, "result": {"content": [{"type": "text", "text": out}], "isError": r.returncode != 0}})
-            except Exception as e:
-                self._send({"jsonrpc": "2.0", "id": rid, "result": {"content": [{"type": "text", "text": str(e)[:500]}], "isError": True}})
-        else:
-            self._send({"jsonrpc": "2.0", "id": rid, "error": {"code": -32601, "message": "method not found"}})
+@app.tool()
+def graph_search(query: str) -> str:
+    """Sucht Knoten nach Name oder Wert."""
+    try:
+        conn = sqlite3.connect(GRAPH_DB)
+        cur = conn.execute("SELECT id, typ, name, wert FROM nodes WHERE name LIKE ? OR wert LIKE ? LIMIT 10", (f"%{query}%", f"%{query}%"))
+        results = [{"id": r[0], "typ": r[1], "name": r[2], "wert": r[3]} for r in cur.fetchall()]
+        conn.close()
+        return json.dumps(results, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
+@app.tool()
+def memory_search(query: str, limit: int = 10) -> str:
+    """Durchsucht das Gedächtnis (memory-Tabelle) nach cmd oder result."""
+    try:
+        conn = sqlite3.connect(MEMORY_DB)
+        cur = conn.execute("SELECT id, cmd, result, intent, timestamp FROM memory WHERE cmd LIKE ? OR result LIKE ? ORDER BY timestamp DESC LIMIT ?", (f"%{query}%", f"%{query}%", limit))
+        results = [{"id": r[0], "cmd": r[1][:150], "result": r[2][:200], "intent": r[3], "timestamp": r[4]} for r in cur.fetchall()]
+        conn.close()
+        return json.dumps(results, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
+@app.tool()
+def memory_recent(limit: int = 5) -> str:
+    """Zeigt die letzten Gedächtnis-Einträge."""
+    try:
+        conn = sqlite3.connect(MEMORY_DB)
+        cur = conn.execute("SELECT id, cmd, result, intent, timestamp FROM memory ORDER BY timestamp DESC LIMIT ?", (limit,))
+        results = [{"id": r[0], "cmd": r[1][:150], "result": r[2][:200], "intent": r[3], "timestamp": r[4]} for r in cur.fetchall()]
+        conn.close()
+        return json.dumps(results, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
 
 if __name__ == "__main__":
-    srv = HTTPServer(("127.0.0.1", PORT), H)
-    print(f"JACK MCP laeuft auf 127.0.0.1:{PORT}")
-    srv.serve_forever()
+    print("JACK MCP Server startet auf Port 8000...")
+    print("Tools: graph_list_nodes, graph_read_node, graph_search, memory_search, memory_recent")
+    app.run(transport="streamable-http", host="127.0.0.1"  # JACK_TUNE_MCPLOCAL — auf localhost bis Zugangs-Entscheidung, port=8000)
