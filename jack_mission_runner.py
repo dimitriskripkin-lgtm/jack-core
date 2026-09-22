@@ -361,6 +361,22 @@ def one(path):
         except Exception:
             pass
 
+    # JACK_TUNE_MCPKANAL: Ergebnis in jack_memory.db damit Claude es via memory_recent lesen kann
+    try:
+        import sqlite3 as _sq, uuid as _uuid
+        from datetime import datetime as _dtm
+        _mdb = J+"/jack_memory.db"
+        _conn = _sq.connect(_mdb)
+        _mid = str(_uuid.uuid4())
+        _ts = _dtm.now().isoformat()[:19]
+        _summ = ("ok" if rec.get("ok") else "fail")+": "+str(rec.get("raw_ok",""))[:200]
+        _conn.execute(
+            "INSERT INTO memory (id, cmd, result, intent, time, timestamp, source, kontext_typ) VALUES (?,?,?,?,?,?,?,?)",
+            (_mid, rec.get("id",""), _summ, "mission_result", _ts, _ts, "jack_mission_runner", "mission"))
+        _conn.commit(); _conn.close()
+    except Exception:
+        pass  # nie blockieren
+
     return rec
 
 
