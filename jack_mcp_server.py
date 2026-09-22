@@ -74,6 +74,35 @@ def memory_recent(limit: int = 5) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
+
+@app.tool()
+def create_mission(act: str, description: str, extra: str = "{}") -> str:
+    """Erstellt eine Mission in JACKs pending/-Ordner. act muss aus ALLOWED sein.
+    extra: JSON-String mit zusaetzlichen Feldern z.B. {"file":"...", "old":"...", "new":"..."}.
+    Erlaubte acts: sed_replace, py_replace, compile_ok, sv_ok, hb_ok, fact, grep_count, file_exists, diag."""
+    import json as _j, os as _os
+    from datetime import datetime as _dt
+    ALLOWED = {"shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none",
+               "classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid",
+               "no_secret","grep_count","line_check","hb_ok","file_exists","line_count",
+               "sed_replace","py_replace"}
+    if act not in ALLOWED:
+        return _j.dumps({"error": f"act nicht erlaubt: {act}", "allowed": sorted(ALLOWED)})
+    try:
+        extra_d = _j.loads(extra) if extra.strip() else {}
+    except Exception as e:
+        return _j.dumps({"error": f"extra kein gueltiges JSON: {e}"})
+    PENDING = "/data/data/com.termux/files/home/jack/missions/pending"
+    ts = _dt.now().strftime("%Y%m%d_%H%M%S")
+    mid = f"m_{act}_{ts}"
+    mission = {"id": mid, "act": act, "src": "claude_mcp",
+               "ts": _dt.now().isoformat()[:19], "description": description}
+    mission.update(extra_d)
+    path = _os.path.join(PENDING, mid + ".json")
+    with open(path, "w", encoding="utf-8") as fp:
+        _j.dump(mission, fp, ensure_ascii=False, indent=2)
+    return _j.dumps({"ok": True, "mission_id": mid, "act": act, "path": path})
+
 if __name__ == "__main__":
     print("JACK MCP Server startet auf Port 8000...")
     print("Tools: graph_list_nodes, graph_read_node, graph_search, memory_search, memory_recent")
