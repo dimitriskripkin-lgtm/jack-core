@@ -4,6 +4,12 @@ MODULE_VERSION = 1
 import os, sys
 sys.path.insert(0, "/data/data/com.termux/files/home/jack")
 
+def ist_veraltet(staged_pfad, live_pfad):
+    """E31: staged-Datei ist veraltet, wenn die live-Datei juenger ist."""
+    if not os.path.exists(staged_pfad) or not os.path.exists(live_pfad):
+        return False
+    return os.path.getmtime(staged_pfad) < os.path.getmtime(live_pfad)
+
 def handle(rt: str, text: str, send) -> str:
     cmd = (rt.split() or [''])[0] if isinstance(rt,str) else rt
     if rt in ('/akku','/sensor'):
@@ -57,11 +63,16 @@ def handle(rt: str, text: str, send) -> str:
             if not match:
                 return f"Kein Fix mit ID {mission_id} gefunden."
             approval = match[0]
-            staged = approval.get("staged","")
-            live = approval.get("file","")
+            staged = approval.get("staged_path") or approval.get("staged","")
+            live = os.path.expanduser(approval.get("file",""))
             if rt.startswith('/approve_'):
                 if not os.path.exists(staged):
                     return f"Staged-Datei fehlt: {staged}"
+                if ist_veraltet(staged, live):
+                    os.remove(staged)
+                    approvals = [a for a in approvals if a.get("id") != mission_id]
+                    json.dump(approvals, open(APPROVALS,"w"), indent=2)
+                    return f"⚠️ Staged veraltet (live juenger): {os.path.basename(live)} — verworfen"
                 shutil.copy2(staged, live)
                 os.remove(staged)
                 approval["status"] = "approved"
@@ -102,6 +113,10 @@ def handle(rt: str, text: str, send) -> str:
                 if os.path.exists(src):
                     import shutil as _sh
                     _sh.copy2(dst, dst+".fix.bak")
+                    if ist_veraltet(src, dst):
+                        os.remove(src)
+                        results.append(f"⚠️ {eid} — staged veraltet, verworfen")
+                        continue
                     _sh.copy2(src, dst)
                     os.remove(src)
                     results.append(f"✅ {os.path.basename(dst)}")
