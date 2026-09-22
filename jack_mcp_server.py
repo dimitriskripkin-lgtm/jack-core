@@ -77,4 +77,4 @@ def memory_recent(limit: int = 5) -> str:
 if __name__ == "__main__":
     print("JACK MCP Server startet auf Port 8000...")
     print("Tools: graph_list_nodes, graph_read_node, graph_search, memory_search, memory_recent")
-    app.run(transport="streamable-http", host="127.0.0.1"  # JACK_TUNE_MCPLOCAL — auf localhost bis Zugangs-Entscheidung, port=8000)
+    app.run(transport="streamable-http", host="127.0.0.1", port=8000)  # JACK_TUNE_MCPLOCAL
