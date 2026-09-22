@@ -106,4 +106,4 @@ def create_mission(act: str, description: str, extra: str = "{}") -> str:
 if __name__ == "__main__":
     print("JACK MCP Server startet auf Port 8000...")
     print("Tools: graph_list_nodes, graph_read_node, graph_search, memory_search, memory_recent")
-    app.run(transport="streamable-http", host="100.69.117.20", port=8000)  # JACK_TUNE_MCPTAILSCALE
+    app.run(transport="streamable-http", host="0.0.0.0", port=8000)  # JACK_TUNE_MCPTAILSCALE
