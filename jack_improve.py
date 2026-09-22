@@ -28,7 +28,10 @@ def propose_improvement(module):
         f"MODUL {name}:\n{code}"
     )
     try:
-        ans=gb.ask_gemini(prompt).strip()
+        _raw=gb.ask_gemini(prompt)
+        if _raw is None:
+            return None, "Gemini nicht erreichbar"
+        ans=_raw.strip()
     except Exception as e:
         return None, f"Gemini-Fehler: {e}"
     if "NICHTS_ZU_TUN" in ans and "SEARCH" not in ans:

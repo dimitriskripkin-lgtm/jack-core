@@ -71,7 +71,7 @@ Funktion: {func_info['name']}
 Code:
 {func_info['snippet']}"""
         result = _jgb.ask_gemini(prompt)
-        if result and not result.lstrip().startswith(("[Analyse]","[Talk]","[Ollama]")):
+        if result and not _jgb.ist_fehlertext(result):
             return result.strip().strip('"').strip("'")[:200]
     except Exception as e:
         log.exception("Gemini Docstring fehlgeschlagen", e)

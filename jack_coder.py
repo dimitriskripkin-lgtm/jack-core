@@ -42,7 +42,10 @@ def write_code(task, filename=None):
         "Keine Netzwerkzugriffe, keine Datei-Loeschungen, kein Zugriff ausserhalb des Ordners.\n\n"
         f"AUFGABE: {task}"
     )
-    code = gb.ask_gemini(prompt).strip()
+    _raw = gb.ask_gemini(prompt)
+    if _raw is None:
+        return None, None, "Gemini nicht erreichbar (kein Ersatz)"
+    code = _raw.strip()
     if code.startswith("Gemini") and any(m in code for m in ("Rate-Limit","ueberlastet","Verbindungsfehler")):
         return None, None, code
     if code.startswith("```"):

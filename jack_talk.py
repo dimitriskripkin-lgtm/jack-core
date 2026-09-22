@@ -447,6 +447,8 @@ def _talk_to_gemini_impl(prompt):
                     return _lok + chr(10) + chr(10) + '(offline beantwortet - lokales Modell)'
         except Exception: pass
         result = jack_gemini_bridge.ask_gemini(context)
+        if not result:
+            return "(Gemini und Ollama liefern gerade keine Antwort.)"
         if _intent_res:
             result = result + chr(10) + chr(10) + "[geprueft] " + str(_intent_res)
         try:

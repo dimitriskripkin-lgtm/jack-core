@@ -86,7 +86,7 @@ def detect_write_request(prompt):
         f"NACHRICHT: {prompt}"
     )
     try:
-        ans = _gb.ask_gemini(q).strip()
+        ans = (_gb.ask_gemini(q) or "").strip()
         if ans.startswith("```"):
             ans = "\n".join(ans.split("\n")[1:])
         if ans.endswith("```"):

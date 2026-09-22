@@ -22,7 +22,7 @@ def lernen(max_chats=60):
               'KEINE Fakten ueber die KIs. Ein Fakt pro Zeile, beginnend mit "- ". '
               'Nur Fakten die klar aus dem Text hervorgehen, nichts erfinden.'
               + chr(10) + chr(10) + material[:12000])
-    antwort = gb.ask_gemini(prompt)
+    antwort = gb.ask_gemini(prompt) or ""
     neu = 0
     for zeile in antwort.split(chr(10)):
         z = zeile.strip()

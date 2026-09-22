@@ -107,28 +107,56 @@ def _cb_reset_check():
     if _CB_OPEN and (_ct3.time() - _CB_SINCE) > _CB_COOLDOWN:
         _CB_OPEN = False; _CB_FAILS = 0
 
+FEHLER_PRAEFIXE = ("[JACK-FAIL]", "[Analyse]", "[Talk]", "[Ollama]",
+                   "[Fallback fehlgeschlagen]", "[Ollama-CB]",
+                   "Gemini CB aktiv", "Gemini nicht verfuegbar")
+
+def _fail(grund):
+    try:
+        import jack_log
+        jack_log.log_decision("GEMINI-FAIL", str(grund)[:120])
+    except Exception:
+        pass
+    return None
+
+def ist_fehlertext(text):
+    if not text:
+        return True
+    return str(text).lstrip().startswith(FEHLER_PRAEFIXE)
+
 def _groq_not_ollama(question):
     import os as _os
     if _os.environ.get("JACK_ALLOW_GROQ_FROM_GEMINI") != "1":
         try:
             import jack_log; jack_log.log_decision("GEMINI-LEAK-STOP","Gemini aus, Ollama gesperrt - kein Groq")
         except Exception: pass
-        return "[Analyse] Gemini nicht verfuegbar, Ollama gesperrt. Kein Ersatz."
+        return _fail("analyse: gemini nicht verfuegbar, ollama gesperrt")
     try:
         import jack_groq_bridge as _gq
         _ps=open('/data/data/com.termux/files/home/jack/jack_persona_kern.md',encoding='utf-8').read()[:4000]
         r=_gq.ask_groq(_ps, question)
         if r: return r
     except Exception as e:
-        return '[Talk] Groq tot, Ollama gesperrt. '+str(e)[:80]
-    return '[Talk] Groq leer, Ollama bleibt aus.'
+        return _fail("talk: groq tot, ollama gesperrt: "+str(e)[:80])
+    return _fail("talk: groq leer, ollama bleibt aus")
 
 def _ollama_fallback(question):
+    """Lokaler Honor-Ollama-Fallback mit 10s Timeout."""
+    import requests
+    import jack_log
     try:
-        import jack_ollama_gate
-        return '[Ollama] ' + _groq_not_ollama(question)
+        r = requests.post("http://localhost:11434/api/generate",
+                         json={"model": "llama3.2:3b", "prompt": question, "stream": False},
+                         timeout=10)
+        if r.status_code == 200:
+            text = r.json().get("response", "").strip()
+            if text and len(text) > 20:
+                jack_log.log_decision("OLLAMA-OK", f"lokal {len(text)} Zeichen")
+                return text
+        jack_log.log_decision("OLLAMA-FAIL", f"HTTP {r.status_code}")
     except Exception as e:
-        return '[Fallback fehlgeschlagen] ' + str(e)
+        jack_log.log_decision("OLLAMA-FAIL", str(e)[:80])
+    return None
 
 def _load_persona():
     try: return open("/data/data/com.termux/files/home/jack/jack_persona_kern.md",encoding="utf-8").read().strip()  # JACK_TUNE_ONEMOUTH
@@ -158,14 +186,15 @@ def ask_gemini(question, status=None):
         import jack_log; jack_log.log_decision("GEMINI-CB-SKIP", f"CB aktiv, nutze Ollama")
         try:
             import jack_ollama_gate
-            return '[Ollama-CB] ' + _groq_not_ollama(question)
+            return _groq_not_ollama(question)
         except Exception as _e:
-            return f"Gemini CB aktiv + Ollama Fehler: {_e}"
+            return _fail("cb aktiv + ollama-fehler: "+str(_e)[:80])
     elif _tt2.time() >= _CB_RESET_AT and _CB_FAILS > 0:
         _CB_FAILS = 0
     import jack_budget
     _ok,_m=jack_budget.check_and_count('text')
-    if not _ok: return _m
+    if not _ok:
+        return _fail("budget: "+str(_m)[:80])
     try:
         key = load_api_key()
     except Exception as _ke:
@@ -228,7 +257,10 @@ def ask_gemini(question, status=None):
                     import jack_budget; jack_budget.add_tokens(result.get("usageMetadata",{}).get("totalTokenCount",0))
                 except Exception as _e:
                     import jack_log; jack_log.log_decision("SILENT-FAIL jack_gemini", str(_e)[:120])
-                return result["candidates"][0]["content"]["parts"][0]["text"]
+                _txt = result["candidates"][0]["content"]["parts"][0]["text"]
+                if ist_fehlertext(_txt):
+                    return _fail("gemini lieferte fehlerpraefix: "+str(_txt)[:60])
+                return _txt
         except Exception as _e:
             _code = getattr(_e, "code", None)
             if _code == 429 and _a < 2:

@@ -46,7 +46,10 @@ def denke(prompt, aufgabe='allgemein'):
         ziel = 'cloud'
     try:
         import jack_gemini_bridge as gb
-        return gb.ask_gemini(prompt), 'cloud'
+        _r = gb.ask_gemini(prompt)
+        if _r:
+            return _r, 'cloud'
+        return 'Gemini nicht erreichbar (und lokal ging nicht).', 'keins'
     except Exception as e:
         return 'Cloud-Fehler: ' + str(e)[:100], 'keins'
 
