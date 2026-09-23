@@ -144,6 +144,19 @@ def read_file(path: str, lines: int = 100) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
+
+@app.tool()
+def graph_list_edges(limit: int = 30) -> str:
+    """Listet Kanten (Beziehungen) im JACK-Graph auf: a -rel-> b."""
+    try:
+        conn = sqlite3.connect(GRAPH_DB)
+        cur = conn.execute("SELECT a, rel, b, src FROM edges ORDER BY ts DESC LIMIT ?", (limit,))
+        edges = [{"a": r[0], "rel": r[1], "b": r[2], "src": r[3]} for r in cur.fetchall()]
+        conn.close()
+        return json.dumps(edges, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
 if __name__ == "__main__":
     import uvicorn
     print("JACK MCP Server startet auf Port 8000 (mit Bearer-Token-Auth)...")
