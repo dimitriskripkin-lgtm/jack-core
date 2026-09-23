@@ -20,8 +20,6 @@ def load(path):
     return json.load(open(path,encoding="utf-8"))
 
 def _run_fix_shadow(m, fp, content, bak):
-    return False, 'freeze: no new staged'  # JACK_TUNE_NOSTAGE
-
     """Fix in shadow/ anwenden, 3x verifizieren, dann wartet_freigabe."""
     import os, shutil, subprocess, json, time
     J = "/data/data/com.termux/files/home/jack"
@@ -110,7 +108,6 @@ def run_act(m):
             return False,"fix: old fehlt",""
         content=open(fp,errors="ignore").read()
 
-        return False, "fix: live write zu — nur staged/shadow", ""  # JACK_TUNE_NOWLIVE
         if m.get("staged") or m.get("shadow"):
             ok2, info2 = _run_fix_shadow(m, fp, content, bak=None)
             return ok2, info2, ""
