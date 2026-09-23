@@ -123,6 +123,27 @@ def create_mission(act: str, description: str, extra: str = "{}") -> str:
         _j.dump(mission, fp, ensure_ascii=False, indent=2)
     return _j.dumps({"ok": True, "mission_id": mid, "act": act, "path": path})
 
+
+@app.tool()
+def read_file(path: str, lines: int = 100) -> str:
+    """Liest die ersten N Zeilen einer Datei innerhalb von JACK_HOME (read-only, fuer Diagnose vor Code-Aenderungen)."""
+    import os as _osrf
+    try:
+        full = _osrf.path.realpath(path if path.startswith("/") else _osrf.path.join(JACK_HOME, path))
+        root = _osrf.path.realpath(JACK_HOME)
+        if not full.startswith(root + _osrf.sep) and full != root:
+            return json.dumps({"error": "Pfad ausserhalb von JACK_HOME nicht erlaubt"})
+        blocked = {"config.ini", ".jack_mcp_token"}
+        if _osrf.path.basename(full) in blocked or "/.ssh/" in full:
+            return json.dumps({"error": "Datei gesperrt (Secrets)"})
+        if not _osrf.path.isfile(full):
+            return json.dumps({"error": f"Datei nicht gefunden: {full}"})
+        with open(full, "r", encoding="utf-8", errors="replace") as fp:
+            content = "".join(fp.readlines()[:max(1,min(lines,500))])
+        return json.dumps({"path": full, "content": content}, ensure_ascii=False)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
 if __name__ == "__main__":
     import uvicorn
     print("JACK MCP Server startet auf Port 8000 (mit Bearer-Token-Auth)...")
