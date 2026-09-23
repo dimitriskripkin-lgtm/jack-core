@@ -5,15 +5,21 @@ Gebaut von Dima, LKW, ein Daumen, Termux.
 
 GitHub ist der Spiegel. Honor ist die Wahrheit.
 
-## Ist 14.09.2026
+## Ist 23.09.2026
 
-Pflicht-Dienste: jack_telegram, jack_cortex, jack_waechter.
-Messgürtel: jack_missions an, nur messen, kein Live-Write.
-Bewusst aus: jack_autolearn, jack_publisher, ssh_tunnel_ollama.
-Ollama: aus. Datei `.ollama_lock` ist hartes Nein. Dienst heißt `_ollama_disabled`.
-Mund: Groq. Gemini denkt, chattet nicht.
-Persona-Kern: klein, `jack_persona_kern.md`.
-Selftest-Soll: 3 Dienste, nicht 6 und nicht Ollama-up.
+Dienste (Honor, via runit sv): jack_telegram, jack_cortex, jack_waechter, jack_autolearn, jack_publisher, jack_focus_monitor, jack_missions, jack_mcp, ollama_local.
+Missions: Schreib-Missionen (sed_replace/py_replace) aktiv, mit Backup+Compile-Rollback.
+Ollama: hybrid erlaubt (Honor lokal + Xiaomi remote), Hitzeschutz via jack_ollama_guard.py (42°C-Limit).
+
+## Neu: JACK spricht mit externen KIs (MCP)
+
+`jack_mcp_server.py` — Dienst `jack_mcp`, Port 8000, authentifiziert per Bearer-Token.
+9 Tools: graph_list_nodes, graph_read_node, graph_search, graph_list_edges, memory_search, memory_recent, read_file, create_mission, describe_system.
+Externe KIs koennen selbststaendig lesen, Code lesen, Missionen queuen, Ergebnisse zurücklesen.
+Neue KIs fragen describe_system() statt ein Dokument zu lesen.
+Mund: Groq (Talk). Gemini: Technik/Code + Fakt-Extraktion, None-Vertrag bei Ausfall + Ollama-Fallback.
+Persona-Kern: `jack_persona_kern.md`.
+Budget: 300 Text / 40 Vision pro Tag, EUR_WEEK=3.0 als Reißleine.
 
 ## Geräte
 
@@ -24,8 +30,8 @@ Xiaomi = Muskel. SSH-Alias `xiaomi-jack`. Hotspot-IP wechselt. Alias schlägt fe
 
 Telegram nimmt den Satz. Router sortiert Werkzeug oder Talk.
 Talk geht an Groq. Xiaomi führt aus, denkt nicht.
-Wächter prüft Pulse. Shadow-Fixes enden vor Freigabe.
-Ollama startet nur nach Dimas Satz „ollama an“.
+Wächter prüft Pulse, kennt geplanten Schlaf (sleep_until/is_sleeping).
+Missions-Pipeline: pending/ automatisch verarbeitet, Ergebnis im Rückkanal.
 
 ## Was JACK nicht tut
 
@@ -41,7 +47,7 @@ GitHub nicht als Wahrheit lesen.
 python3 /data/data/com.termux/files/home/jack/jack_selftest.py
 ```
 
-Soll: services 3/3, Ollama-Check = Lock liegt.
+Aktuell: services 4/4, Xiaomi + Cortex je nach Netzwerk.
 
 ## Eisen
 
