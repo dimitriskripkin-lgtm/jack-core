@@ -1,6 +1,26 @@
 #!/usr/bin/env python3
 """JACK MCP Server — Tools für externe KIs (Claude, Gemini, Qwen)"""
 from mcp.server.mcpserver import MCPServer
+
+_JACK_MCP_TOKEN = None
+try:
+    with open("/data/data/com.termux/files/home/jack/.jack_mcp_token") as _tf:
+        for _line in _tf:
+            if _line.startswith("JACK_MCP_TOKEN="):
+                _JACK_MCP_TOKEN = _line.strip().split("=",1)[1].strip('"')
+except Exception:
+    pass
+
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import JSONResponse
+
+class _JackAuthMiddleware(BaseHTTPMiddleware):  # JACK_TUNE_MCPAUTH
+    async def dispatch(self, request, call_next):
+        if _JACK_MCP_TOKEN:
+            auth = request.headers.get("authorization", "")
+            if auth != f"Bearer {_JACK_MCP_TOKEN}":
+                return JSONResponse({"error": "unauthorized"}, status_code=401)
+        return await call_next(request)
 import sqlite3
 import json
 import os
@@ -104,6 +124,9 @@ def create_mission(act: str, description: str, extra: str = "{}") -> str:
     return _j.dumps({"ok": True, "mission_id": mid, "act": act, "path": path})
 
 if __name__ == "__main__":
-    print("JACK MCP Server startet auf Port 8000...")
-    print("Tools: graph_list_nodes, graph_read_node, graph_search, memory_search, memory_recent")
-    app.run(transport="streamable-http", host="0.0.0.0", port=8000)  # JACK_TUNE_MCPTAILSCALE
+    import uvicorn
+    print("JACK MCP Server startet auf Port 8000 (mit Bearer-Token-Auth)...")
+    print("Tools: graph_list_nodes, graph_read_node, graph_search, memory_search, memory_recent, create_mission")
+    _asgi = app.streamable_http_app(host="0.0.0.0")
+    _asgi.add_middleware(_JackAuthMiddleware)  # JACK_TUNE_MCPAUTH
+    uvicorn.run(_asgi, host="0.0.0.0", port=8000, log_level="warning")
