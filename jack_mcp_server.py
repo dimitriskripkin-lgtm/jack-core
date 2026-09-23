@@ -157,6 +157,36 @@ def graph_list_edges(limit: int = 30) -> str:
     except Exception as e:
         return json.dumps({"error": str(e)})
 
+
+@app.tool()
+def describe_system() -> str:
+    """Selbstbeschreibung fuer neue KIs: Tools, Grenzen, aktuelle Freigaben. Kein Onboarding-Dokument noetig."""
+    info = {
+        "system": "JACK",
+        "beschreibung": "Autonomes Reparatur- und Programmiersystem auf zwei Android-Phones (Honor=Gehirn, Xiaomi=Muskel)",
+        "tools": [
+            {"name": "graph_list_nodes", "zugriff": "lesend", "beschreibung": "Fakten-Knoten im Graph"},
+            {"name": "graph_read_node", "zugriff": "lesend", "beschreibung": "Ein Knoten per ID"},
+            {"name": "graph_search", "zugriff": "lesend", "beschreibung": "Knoten nach Name/Wert suchen"},
+            {"name": "graph_list_edges", "zugriff": "lesend", "beschreibung": "Beziehungen zwischen Knoten"},
+            {"name": "memory_search", "zugriff": "lesend", "beschreibung": "Gespraechsverlauf durchsuchen"},
+            {"name": "memory_recent", "zugriff": "lesend", "beschreibung": "Letzte Eintraege, inkl. Mission-Ergebnisse"},
+            {"name": "read_file", "zugriff": "lesend", "beschreibung": "Datei in JACK_HOME lesen, Secrets gesperrt"},
+            {"name": "create_mission", "zugriff": "schreibend", "beschreibung": "Mission queuen, wird automatisch ausgefuehrt"},
+        ],
+        "schreib_acts_erlaubt": ["sed_replace", "py_replace", "compile_ok", "sv_ok", "hb_ok",
+                                  "fact", "grep_count", "file_exists", "diag"],
+        "grenzen": [
+            "Kein freies exec — nur die ALLOWED-Liste an Acts",
+            "Dienst-Neustarts nach Code-Aenderungen kann keine KI selbst ausloesen (kein Mission-Act dafuer)",
+            "SQLite-Datenbanken (Graph) nicht per Text-Ersetzung aenderbar — nur Dateien",
+            "Secrets (config.ini, Tokens, .ssh) per read_file gesperrt",
+        ],
+        "rueckkanal": "Mission-Ergebnisse landen in jack_memory.db (intent=mission_result), lesbar ueber memory_recent",
+        "version": "v31",
+    }
+    return json.dumps(info, ensure_ascii=False, indent=2)
+
 if __name__ == "__main__":
     import uvicorn
     print("JACK MCP Server startet auf Port 8000 (mit Bearer-Token-Auth)...")
