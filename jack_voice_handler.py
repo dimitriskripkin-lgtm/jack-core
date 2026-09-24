@@ -3,6 +3,12 @@ MODULE_VERSION = 1
 # JACK_TUNE_VOICEH
 import os, json, urllib.request, subprocess, threading
 J="/data/data/com.termux/files/home/jack"
+def _voice_mem(heard, ans):
+    try:
+        import jack_memory as _jmem
+        _jmem.save(str(heard)[:500], str(ans)[:1500], "voice_episode", "telegram_voice")
+    except Exception:
+        pass
 def get_voice(api, token, file_id, out_path):
     url=api+"/getFile?file_id="+file_id
     with urllib.request.urlopen(url) as res:
@@ -25,11 +31,15 @@ def handle_voice(msg, ctx):
             rw2, heard, ans = process_voice_message(ogg)
             ans=str(ans or "")
             if ans.startswith("__APPCMD__:"):
-                pkg=ans.split(":",1)[1]
+                pkg=ans.split(":",1)[1].strip()  # JACK_TUNE_APPCMD_SAFE
+                import re as _re
+                if not _re.fullmatch(r"[a-zA-Z0-9.]+", pkg):
+                    send("Ungueltige App-ID abgebrochen: "+pkg[:40]); return
                 cmd='ssh xiaomi-jack "su -c \'monkey -p '+pkg+' -c android.intent.category.LAUNCHER 1\'"'
                 pend.clear(); pend["cmd"]=cmd
                 kb("VORSCHLAG:\n"+cmd, [[("Ausfuehren","run_exec"),("Abbrechen","cancel_exec")]])
                 send("Du: "+str(heard)+"\n\nJACK: App-Befehl erkannt - Freigabe tippen.")
+                _voice_mem(heard, "APPCMD "+pkg)
                 return
             try:
                 import jack_intent_lookup as il
@@ -40,11 +50,13 @@ def handle_voice(msg, ctx):
                 pend.clear(); pend["cmd"]=cmd
                 kb("VORSCHLAG (Deep):\n"+cmd, [[("Ausfuehren","run_exec"),("Abbrechen","cancel_exec")]])
                 send("Du: "+str(heard)+"\n\nJACK: Deep-Navigation bereit - Freigabe tippen.")
+                _voice_mem(heard, "DEEP "+str(cmd)[:200])
                 return
             try:
                 import jack_intent_apps
                 if jack_intent_apps.try_app_launch(str(heard), pend, kb):
                     send("Du: "+str(heard)+"\n\nJACK: App-Befehl bereit - Freigabe tippen.")
+                    _voice_mem(heard, "APPLAUNCH")
                     return
             except Exception:
                 pass
@@ -54,6 +66,10 @@ def handle_voice(msg, ctx):
             except Exception:
                 pass
             send("Du: "+str(heard)+"\n\nJACK: "+str(ans))
+            try:  # JACK_TUNE_VOICELEAK
+                import jack_memory as _jmem
+                _jmem.save(str(heard), str(ans), "voice_episode")
+            except Exception: pass
             try: send_voice(ctx["api"], ctx["chat_id"], rw2)
             except Exception: pass
             for f in (ogg, rw2):

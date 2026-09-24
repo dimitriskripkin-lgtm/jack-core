@@ -34,11 +34,20 @@ def staged():
     except Exception: pass
     return r
 def approvals():
+    # pending_approvals = echte Freigaben. jack_fixes = alte Vorschlaege, extra zaehlen.
     n = 0
-    for p in ("jack_fixes.json", "pending_approvals.json"):
-        try: n += len(json.load(open(os.path.join(J, p))))
-        except Exception: pass
+    try:
+        p = json.load(open(os.path.join(J, "pending_approvals.json")))
+        n = len(p) if isinstance(p, list) else len(p)
+    except Exception:
+        n = 0
     return n
+def fix_vorschlaege():
+    try:
+        p = json.load(open(os.path.join(J, "jack_fixes.json")))
+        return len(p) if isinstance(p, dict) else len(p)
+    except Exception:
+        return 0
 def module():
     try:
         d = json.load(open(os.path.join(J, "reports", "module_status.json")))
@@ -46,7 +55,7 @@ def module():
     except Exception: return {}
 def bauen():
     return {"gemessen": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "git": git(), "dienste": dienste(),
-            "staged": staged(), "offene_approvals": approvals(), "module": module(), "marken": marken()}
+            "staged": staged(), "offene_approvals": approvals(), "offene_fixes": fix_vorschlaege(), "module": module(), "marken": marken()}
 if __name__ == "__main__":
     d = bauen()
     json.dump(d, open(os.path.join(J, "reports", "flugschreiber_stand.json"), "w"), indent=1, ensure_ascii=False)

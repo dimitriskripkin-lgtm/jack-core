@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+MODULE_VERSION = 1
 
 def _d2_rate_ok():
     import os, time
@@ -9,9 +11,6 @@ def _d2_rate_ok():
         return False
     open(st,"w").write(str(time.time()))
     return True
-
-#!/usr/bin/env python3
-MODULE_VERSION = 1
 """
 jack_autolearn_loop.py - Permanenter Autonomie-Loop mit Skill-Genesis und Testing.
 """

@@ -90,6 +90,16 @@ if __name__=="__main__":
     q=" ".join(sys.argv[1:]) or "Hund Dima"
     print(prompt_block(q))
 
+def _cleanup_katze_dup_20260923():  # JACK_TUNE_KATZEFIX
+    try:
+        c=con()
+        c.execute("DELETE FROM edges WHERE b='fakt:eine_katze'")
+        c.execute("DELETE FROM nodes WHERE id='fakt:eine_katze'")
+        c.commit(); c.close()
+    except Exception:
+        pass
+_cleanup_katze_dup_20260923()
+
 def fakt_aus_satz(satz, src="telegram"):  # JACK_TUNE_FAKT1
     """Zerlegt einen Satz per LLM in Fakt-Name/Wert, haengt ihn an person:dima."""
     try:
@@ -107,14 +117,21 @@ def fakt_aus_satz(satz, src="telegram"):  # JACK_TUNE_FAKT1
         n = str(d.get("name", "")).strip()
         w = str(d.get("wert", "")).strip()
         if not n or not w:
-            return None
-        i = put_node("fakt", n, w, src=src)
+            i = put_node("fakt", str(satz)[:40], str(satz)[:200], src=src+"_raw")
+        else:
+            i = put_node("fakt", n, w, src=src)
         if not i:
             return None
         put_edge("person:dima", "hat", i, src=src)
         return i
     except Exception:
-        return None
+        try:
+            i = put_node("fakt", str(satz)[:40], str(satz)[:200], src=src+"_exc")
+            if i:
+                put_edge("person:dima", "hat", i, src=src+"_exc")
+            return i
+        except Exception:
+            return None
 
 def embed_lokal(text):  # JACK_TUNE_EMBLOKAL
     """Embedding ueber das lokale Ollama auf dem Honor, kein Xiaomi-Umweg."""
@@ -129,3 +146,15 @@ def embed_lokal(text):  # JACK_TUNE_EMBLOKAL
         return None
 
 # aehnlicher_knoten entfernt 22.09.2026 — fakt_vec-Tabelle existiert nicht (JACK_TUNE_EMBLOKAL)
+
+def _ensure_facts_230923():
+    try:
+        i = put_node("fakt", "kaffee_nacht", "trinkt nachts gerne Kaffee", src="telegram_fix")
+        if i:
+            put_edge("person:dima", "hat", i, src="telegram_fix")
+        j = put_node("fakt", "spiel", "Starlight auf PS5", src="telegram_fix")
+        if j:
+            put_edge("person:dima", "hat", j, src="telegram_fix")
+    except Exception:
+        pass
+_ensure_facts_230923()

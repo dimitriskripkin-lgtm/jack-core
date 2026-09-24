@@ -61,6 +61,44 @@ def _bat_parse(out):
     st={1:"unbekannt",2:"laedt",3:"entlaedt",4:"voll",5:"nicht laden"}.get(status,"status "+str(status))
     return temp, lev, powered, st
 
+def _is_save_fakt(t):
+    # Fakt merken, nicht Platte. "speicher das" != speicherplatz
+    if any(x in t for x in ("speicherplatz", "wie voll", "freier platz", "df honor", "df xiaomi")):
+        return False
+    return any(x in t for x in (
+        "speicher das", "speichere", "speicher bitte", "merk dir", "merke dir",
+        "das ist ein fakt", "ist ein fakt", "fakt dass", "bitte speicher"
+    ))
+
+def _do_save_fakt(text):
+    raw = (text or "").strip()
+    t = norm(raw)
+    payload = raw
+    for p in ("Speicher das bitte", "speicher das bitte", "Speicher das", "speicher das",
+              "speichere bitte", "speichere", "merk dir das bitte", "merke dir das bitte",
+              "merk dir", "merke dir", "das ist ein Fakt", "das ist ein fakt",
+              "Der Fakt dass", "der Fakt dass", "Fact gespeichert"):
+        if payload.lower().startswith(p.lower()):
+            payload = payload[len(p):].lstrip(" :,-")
+            break
+    payload = payload.strip() or raw
+    try:
+        import jack_memory as _jm
+        _jm.save(payload, "Dima erwaehnte", intent="episode")
+    except Exception:
+        pass
+    gid = None
+    try:
+        import jack_graph as _jg
+        gid = _jg.fakt_aus_satz(payload)
+        if not gid:
+            gid = _jg.put_node("fakt", payload[:40], payload[:200], src="telegram_save")
+            if gid:
+                _jg.put_edge("person:dima", "hat", gid, src="telegram_save")
+    except Exception:
+        gid = None
+    return "Okay, gespeichert: " + payload[:120]
+
 def _tool_name(text):
     """JACK_TUNE_TOOLNAME — welches Werkzeug wuerde greifen. Nur fuer den Logger."""
     t = norm(text)
@@ -80,7 +118,11 @@ def _tool_name(text):
         return "ssh_xiaomi"
     if any(w in t for w in ("welche dienste","was laeuft","dienste")):
         return "sv_status"
-    if any(w in t for w in ("speicher","wie voll","platz","speicherplatz")):
+    if _is_save_fakt(t):
+        return None
+    if any(w in t for w in ("speicherplatz","wie voll","freier platz")) or (
+        "speicher" in t and not _is_save_fakt(t)
+    ):
         return "df_xiaomi" if "xiaomi" in low else "df_honor"
     if any(w in t for w in ("welche werkzeuge","was kannst du messen","was kannst du","was kannst du tun","kiste","zehn punkte","umsetzen kannst","was kannst du umsetzen")):
         return "kiste_liste"
@@ -164,7 +206,7 @@ def _tools(text):
             return "Dienste jetzt: "+out.replace("\n"," ")[:400]
         except Exception as e:
             return "sv fehl: "+str(e)[:80]
-    want_disk=any(w in t for w in ("speicher","wie voll","freier platz"))
+    want_disk=(not _is_save_fakt(t)) and any(w in t for w in ("speicherplatz","wie voll","freier platz"))
     if want_disk or (("xiaomi" in t) and ("voll" in t or "speicher" in t)):
         parts=[]
         do_x=("xiaomi" in t)
@@ -235,6 +277,8 @@ def kiste_fuer_prompt(text):
 def talk_local(text):
 
     t=norm(text)
+    if _is_save_fakt(t):
+        return _do_save_fakt(text)
     # JACK_TUNE_LERN1 (16.09., Phase 8.3+8.4): Korrektur-Erkennung
     try:
         import json as _jl, time as _jt2, os as _jo

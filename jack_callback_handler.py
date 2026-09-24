@@ -50,7 +50,7 @@ def handle(callback_data, callback_id):
     if callback_data.startswith("mem_save:"):
         fact=callback_data[9:]
         try:
-            import jack_memory as _jm; _jm.save(fact,"Dima erwaehnte",intent="dima_fact")
+            import jack_memory as _jm; _jm.save(fact,"Dima erwaehnte",intent="episode")
             try:  # JACK_TUNE_FAKT1
                 import jack_graph as _jg; _jg.fakt_aus_satz(fact)
             except Exception: pass

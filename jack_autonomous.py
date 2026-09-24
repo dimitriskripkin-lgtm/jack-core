@@ -25,6 +25,10 @@ def _sec(k):
     return None
 
 def notify(t):
+    try:  # JACK_TUNE_NOTIFYMEM
+        import jack_memory as _jmem
+        _jmem.save("", str(t), "waechter_alarm")
+    except Exception: pass
     tok=_sec("TELEGRAM_BOT_TOKEN"); cid=_sec("TELEGRAM_CHAT_ID")
     if not tok or not cid: return
     try:

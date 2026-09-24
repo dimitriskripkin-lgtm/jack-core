@@ -32,7 +32,7 @@ MEMORY_DB = os.path.join(JACK_HOME, "jack_memory.db")
 app = MCPServer("jack-server")
 
 @app.tool()
-def graph_list_nodes(limit: int = 20) -> str:
+def graph_list_nodes(limit: int = 200) -> str:
     """Listet Knoten im JACK-Graph auf (typ, name, wert)."""
     try:
         conn = sqlite3.connect(GRAPH_DB)
@@ -125,22 +125,48 @@ def create_mission(act: str, description: str, extra: str = "{}") -> str:
 
 
 @app.tool()
-def read_file(path: str, lines: int = 100) -> str:
-    """Liest die ersten N Zeilen einer Datei innerhalb von JACK_HOME (read-only, fuer Diagnose vor Code-Aenderungen)."""
+def read_file(path: str, lines: int = 100, plain: bool = False) -> str:
+    """Liest Datei in JACK_HOME. plain=True: nur Text, kein JSON-Mantel."""
     import os as _osrf
     try:
         full = _osrf.path.realpath(path if path.startswith("/") else _osrf.path.join(JACK_HOME, path))
-        root = _osrf.path.realpath(JACK_HOME)
-        if not full.startswith(root + _osrf.sep) and full != root:
-            return json.dumps({"error": "Pfad ausserhalb von JACK_HOME nicht erlaubt"})
+        roots = [
+            _osrf.path.realpath(JACK_HOME),
+            _osrf.path.realpath("/storage/emulated/0"),
+        ]
+        ok_root = any(full == r or full.startswith(r + _osrf.sep) for r in roots)
+        if not ok_root:
+            return json.dumps({"error": "Pfad nicht in JACK_HOME oder internem Speicher"})
         blocked = {"config.ini", ".jack_mcp_token"}
         if _osrf.path.basename(full) in blocked or "/.ssh/" in full:
             return json.dumps({"error": "Datei gesperrt (Secrets)"})
         if not _osrf.path.isfile(full):
             return json.dumps({"error": f"Datei nicht gefunden: {full}"})
         with open(full, "r", encoding="utf-8", errors="replace") as fp:
-            content = "".join(fp.readlines()[:max(1,min(lines,500))])
+            content = "".join(fp.readlines()[:max(1,min(lines,5000))])  # JACK_TUNE_READCAP
+        if plain:
+            return content
         return json.dumps({"path": full, "content": content}, ensure_ascii=False)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
+
+@app.tool()
+def list_files(path: str = "/storage/emulated/0/Download") -> str:
+    """Listet Dateien in JACK_HOME oder Download. Nur Namen, kein Inhalt."""
+    import os as _oslf
+    try:
+        full = _oslf.path.realpath(path if path.startswith("/") else _oslf.path.join(JACK_HOME, path))
+        roots = [
+            _oslf.path.realpath(JACK_HOME),
+            _oslf.path.realpath("/storage/emulated/0"),
+        ]
+        if not any(full == r or full.startswith(r + _oslf.sep) for r in roots):
+            return json.dumps({"error": "Pfad nicht erlaubt"})
+        if not _oslf.path.isdir(full):
+            return json.dumps({"error": "kein Ordner"})
+        names = sorted(_oslf.listdir(full))[:400]
+        return json.dumps({"path": full, "n": len(names), "names": names}, ensure_ascii=False)
     except Exception as e:
         return json.dumps({"error": str(e)})
 
