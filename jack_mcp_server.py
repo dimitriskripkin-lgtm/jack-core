@@ -105,7 +105,7 @@ def create_mission(act: str, description: str, extra: str = "{}") -> str:
     ALLOWED = {"shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none",
                "classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid",
                "no_secret","grep_count","line_check","hb_ok","file_exists","line_count",
-               "sed_replace","py_replace"}
+               "sed_replace","py_replace","file_create","file_delete","batch"}
     if act not in ALLOWED:
         return _j.dumps({"error": f"act nicht erlaubt: {act}", "allowed": sorted(ALLOWED)})
     try:
@@ -122,6 +122,29 @@ def create_mission(act: str, description: str, extra: str = "{}") -> str:
     with open(path, "w", encoding="utf-8") as fp:
         _j.dump(mission, fp, ensure_ascii=False, indent=2)
     return _j.dumps({"ok": True, "mission_id": mid, "act": act, "path": path})
+
+
+@app.tool()
+def mission_status() -> str:
+    """Uebersicht ueber die Mission-Warteschlange: Anzahl pending/done/fail und die letzten 5 Ergebnisse."""
+    import json as _j, os as _os
+    base = "/data/data/com.termux/files/home/jack/missions"
+    def _count(d):
+        p = _os.path.join(base, d)
+        return len([f for f in _os.listdir(p) if f.endswith(".json")]) if _os.path.isdir(p) else 0
+    counts = {"pending": _count("pending"), "done": _count("done"), "fail": _count("fail")}
+    logs_dir = _os.path.join(base, "logs")
+    recent = []
+    if _os.path.isdir(logs_dir):
+        files = sorted(_os.listdir(logs_dir), reverse=True)[:5]
+        for fn in files:
+            try:
+                with open(_os.path.join(logs_dir, fn), encoding="utf-8") as fp:
+                    rec = _j.load(fp)
+                recent.append({"id": rec.get("id"), "ok": rec.get("ok"), "note": str(rec.get("note",""))[:100]})
+            except Exception:
+                pass
+    return _j.dumps({"counts": counts, "recent": recent})
 
 
 @app.tool()

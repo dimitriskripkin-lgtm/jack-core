@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -140,6 +140,57 @@ def run_act(m):
             try: shutil.copy2(bak,fp); os.remove(bak)
             except Exception: pass
             return False,"fix Exception Rollback: "+str(e)[:80],""
+
+    if act=="batch":
+        steps=m.get("steps",[])
+        if not isinstance(steps,list) or not steps:
+            return False,"batch: steps fehlt oder leer",""
+        results=[]
+        all_ok=True
+        for i,step in enumerate(steps):
+            if not isinstance(step,dict) or "act" not in step:
+                results.append(str(i)+": ungueltiger step"); all_ok=False; break
+            sok,snote,sout=run_act(step)
+            results.append(str(i)+" "+step.get("act","?")+": "+("OK" if sok else "FAIL")+" "+snote[:80])
+            if not sok and not step.get("continue_on_fail"):
+                all_ok=False
+                break
+            if not sok:
+                all_ok=False
+        return all_ok,"batch("+str(len(results))+"/"+str(len(steps))+"): "+" | ".join(results)[:400],""
+
+    if act=="file_create":
+        import os
+        HOME=os.environ.get("HOME","/data/data/com.termux/files/home")
+        fp=m.get("file","").replace("~",HOME)
+        if not fp.startswith(J):
+            return False,"file_create: Pfad-Tabu",""
+        if os.path.exists(fp):
+            return False,"file_create: Datei existiert schon, nutze sed_replace/py_replace",""
+        content=m.get("content","")
+        os.makedirs(os.path.dirname(fp),exist_ok=True)
+        open(fp,"w").write(content)
+        if fp.endswith(".py"):
+            rc,out=sh(["python3","-m","py_compile",fp],t=10)
+            if rc!=0:
+                os.remove(fp)
+                return False,"file_create: py_compile FAIL, geloescht: "+out[:60],""
+        return True,"file_create: "+fp+" angelegt ("+str(len(content))+" Zeichen)",""
+
+    if act=="file_delete":
+        import os, shutil, time as _t
+        HOME=os.environ.get("HOME","/data/data/com.termux/files/home")
+        fp=m.get("file","").replace("~",HOME)
+        if not fp.startswith(J):
+            return False,"file_delete: Pfad-Tabu",""
+        if not os.path.exists(fp):
+            return False,"file_delete: Datei existiert nicht",""
+        attic=J+"/Attic"
+        os.makedirs(attic,exist_ok=True)
+        stamp=_t.strftime("%Y%m%d_%H%M%S")
+        dest=os.path.join(attic,os.path.basename(fp)+"_"+stamp)
+        shutil.move(fp,dest)
+        return True,"file_delete: "+fp+" ins Attic verschoben nach "+dest,""
 
     if act=="fact":
         import jack_chat_router as c
@@ -399,6 +450,10 @@ def _hb():
         open("/data/data/com.termux/files/home/jack/.heartbeat_jack_missions","w").write(str(time.time()))
     except Exception:
         pass
+BOOST_FILE=J+"/.mission_boost"  # JACK_TUNE_BOOST
+def _poll_now(default_poll):
+    return 1 if os.path.exists(BOOST_FILE) else default_poll
+
 def loop(poll=30, maxn=200):
     while True:
         _hb()
@@ -415,7 +470,7 @@ def loop(poll=30, maxn=200):
         if pending_files():
             rc=run_queue(maxn=maxn)
             if rc!=0: print("QUEUE-FAIL rc", rc)  # JACK_TUNE_QSTAY
-        time.sleep(poll)
+        time.sleep(_poll_now(poll))
 if __name__=="__main__":
     mode=sys.argv[1] if len(sys.argv)>1 else "once"
     sys.exit(loop() if mode=="loop" else run_queue())

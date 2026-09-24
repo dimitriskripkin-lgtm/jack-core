@@ -81,3 +81,19 @@ Verdrahtet in:
 - jack_coder.write_code() - nur Syntax-Schicht (Werkstatt-Code, API-Kosten sparen)
 
 Verifiziert: faengt UnboundLocalError (Variable vor Zuweisung), laesst sauberen Code durch.
+
+## SWAPPABLE-ENGINE-PRINZIP (dokumentiert 24.09.2026, lebt seit Wochen implizit)
+
+JACKs Gedaechtnis (Graph+Memory) und Persoenlichkeit (Core Identity) sind vom
+sprechenden/denkenden Modell komplett entkoppelt:
+
+- Talk/Charakter: Groq (schnell, guenstig, fuer Alltagsgespraech)
+- Technik/Code/Fakt-Extraktion: Gemini 2.5 Flash-Lite
+- Offline-Fallback: Ollama lokal (llama3.2:3b) bei Netzausfall
+
+Ein Wechsel des Modells (anderer API-Key, anderer Anbieter) aendert NICHT den
+Inhalt von jack_graph.db oder jack_memory.db. Das Gedaechtnis ist die Konstante,
+das Modell ist der austauschbare Motor. Das erlaubt spaeter auch ein staerkeres
+lokales Modell (z.B. 70B auf dedizierter Hardware) einzustecken, ohne dass JACK
+etwas ueber sich selbst neu lernen muss -- er weiss es bereits, nur die Stimme,
+die es ausspricht, waere eine andere.
