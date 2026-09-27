@@ -216,10 +216,14 @@ def run_act(m):
             return False,"xiaomi_battery: "+str(e)[:100],""
 
     if act=="xiaomi_ollama_restart":
-        import subprocess
+        import subprocess, time as _tro
         try:
             r=subprocess.run(["ssh","xiaomi-jack","su","-c","sv restart ollama_local 2>&1 || (pkill -f ollama; nohup ollama serve >/dev/null 2>&1 &)"],capture_output=True,text=True,timeout=20)
-            return True,"xiaomi_ollama_restart: ausgefuehrt",r.stdout[:200]+r.stderr[:100]
+            _tro.sleep(3)
+            _chk=subprocess.run(["ssh","xiaomi-jack","curl","-s","-m","5","http://127.0.0.1:11434/api/tags"],capture_output=True,text=True,timeout=12)
+            _erreichbar = _chk.returncode==0 and ("models" in (_chk.stdout or "") or _chk.stdout.strip().startswith("{"))
+            _note = "xiaomi_ollama_restart: "+("erreichbar nach Neustart" if _erreichbar else "NICHT erreichbar nach Neustart-Versuch")
+            return _erreichbar, _note, (r.stdout[:150]+r.stderr[:100])
         except Exception as e:
             return False,"xiaomi_ollama_restart: "+str(e)[:100],""
 
