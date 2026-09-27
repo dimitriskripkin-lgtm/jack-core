@@ -1,0 +1,1 @@
+{"id": "m_batch_20260927_155413", "act": "batch", "src": "claude_mcp", "ts": "2026-09-27T15:54:13", "description": "beide Dienste neu starten", "steps": [{"act": "sv_restart", "service": "jack_missions"}, {"act": "sv_restart", "service": "jack_mcp"}], "_prio": 50}

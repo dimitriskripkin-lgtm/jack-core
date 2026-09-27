@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -349,6 +349,18 @@ def run_act(m):
         svc=m.get("service","")
         if svc not in SV_ALLOWED:
             return False,"sv_restart: Dienst nicht erlaubt: "+svc+" (erlaubt: "+",".join(sorted(SV_ALLOWED))+")",""
+        if svc=="jack_missions":
+            # JACK_TUNE_SELFRESTART_SAFE: Selbst-Neustart tötet diesen Prozess sofort und
+            # verhindert, dass diese Mission je fertig geschrieben/verschoben wird -> Queue haengt.
+            # Stattdessen: Neustart um 3s verzoegert und losgekoppelt im Hintergrund anstossen,
+            # damit dieser Mission-Durchlauf erst sauber zu Ende laufen kann.
+            try:
+                subprocess.Popen(["sh","-c","sleep 3 && sv restart "+V+"/"+svc],
+                                  start_new_session=True,
+                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                return True,"sv_restart: "+svc+" verzoegerter Selbst-Neustart in 3s geplant",""
+            except Exception as e:
+                return False,"sv_restart: "+str(e)[:100],""
         try:
             r=subprocess.run(["sv","restart",V+"/"+svc],capture_output=True,text=True,timeout=15)
             out=(r.stdout or "")+(r.stderr or "")
@@ -460,6 +472,22 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
             return True, "dashboard_render: geschrieben nach "+out_path+_dl_note, ""
         except Exception as e:
             return False, "dashboard_render: "+str(e)[:120], ""
+
+    if act=="reload_module":
+        import importlib, sys
+        RELOAD_ALLOWED = {"jack_ui_type","jack_verify_gate","jack_xiaomi_unlock","jack_yt_hybrid","jack_chat_router","jack_ui_session"}
+        name = m.get("module","")
+        if name not in RELOAD_ALLOWED:
+            return False,"reload_module: nicht erlaubt: "+name+" (erlaubt: "+",".join(sorted(RELOAD_ALLOWED))+")",""
+        try:
+            if name in sys.modules:
+                importlib.reload(sys.modules[name])
+                return True,"reload_module: "+name+" neu geladen (war bereits im Speicher)",""
+            else:
+                importlib.import_module(name)
+                return True,"reload_module: "+name+" frisch importiert (war noch nicht geladen)",""
+        except Exception as e:
+            return False,"reload_module: "+type(e).__name__+" "+str(e)[:150],""
 
     if act=="fact":
         import jack_chat_router as c
@@ -712,7 +740,7 @@ def run_queue(maxn=20):
         print((rec["out"] or "")[:300]); print("---")
         n+=1
         if not rec["ok"]:
-            rc=1; break
+            rc=1  # JACK_TUNE_QUEUENOFAIL: merken, aber weitermachen statt Schleife abzubrechen
     return rc
 def _hb():
     try:

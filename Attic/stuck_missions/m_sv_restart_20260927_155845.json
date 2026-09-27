@@ -1,0 +1,8 @@
+{
+  "id": "m_sv_restart_20260927_155845",
+  "act": "sv_restart",
+  "src": "claude_mcp",
+  "ts": "2026-09-27T15:58:45",
+  "description": "run_queue-Fix aktivieren",
+  "service": "jack_missions"
+}
