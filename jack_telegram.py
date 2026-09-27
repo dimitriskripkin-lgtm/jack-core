@@ -807,6 +807,53 @@ def handle(text):
                 return f'NICHT GEFUNDEN: "{_element}" auf Screen {pkg}/{act}'
         except Exception as e:
             return 'Find-Fehler: ' + str(e)[:100]
+    if _rt.startswith('/vorschlaege') or _rt.startswith('/vorschläge'):
+        import json as _tj, os as _to
+        pdir = "/data/data/com.termux/files/home/jack/missions/proposals/pending"
+        if not _to.path.isdir(pdir):
+            return "VORSCHLAEGE: keine offen"
+        items = []
+        for fn in sorted(_to.listdir(pdir)):
+            if fn.endswith(".json"):
+                try:
+                    with open(_to.path.join(pdir, fn), encoding="utf-8") as f:
+                        items.append(_tj.load(f))
+                except Exception:
+                    pass
+        if not items:
+            return "VORSCHLAEGE: keine offen"
+        lines = [f"VORSCHLAEGE ({len(items)} offen):"]
+        for it in items:
+            lines.append(f"- {it.get('id')}: {it.get('problem','')[:100]}")
+        lines.append("Freigeben mit: /freigeben <id>")
+        return chr(10).join(lines)
+
+    if _rt.startswith('/freigeben '):
+        import json as _tj, os as _to, time as _tt
+        pid = text.strip()[len('/freigeben '):].strip()
+        if not pid:
+            return "FREIGEBEN: bitte /freigeben <id> mit der Vorschlags-ID"
+        pending_dir = "/data/data/com.termux/files/home/jack/missions/pending"
+        _to.makedirs(pending_dir, exist_ok=True)
+        mid = "m_approve_" + _tt.strftime("%Y%m%d_%H%M%S")
+        mission = {"id": mid, "act": "approve_proposal", "src": "telegram",
+                   "ts": _tt.strftime("%Y-%m-%dT%H:%M:%S"), "description": "Telegram-Freigabe",
+                   "proposal_id": pid}
+        with open(_to.path.join(pending_dir, mid + ".json"), "w", encoding="utf-8") as f:
+            _tj.dump(mission, f, ensure_ascii=False, indent=2)
+        log_path = "/data/data/com.termux/files/home/jack/missions/logs/" + mid + ".json"
+        for _ in range(8):
+            _tt.sleep(2)
+            if _to.path.isfile(log_path):
+                try:
+                    with open(log_path, encoding="utf-8") as f:
+                        rec = _tj.load(f)
+                    status = "OK" if rec.get("ok") else "FEHLGESCHLAGEN"
+                    return f"FREIGEGEBEN [{status}]: {rec.get('note','')[:200]}"
+                except Exception:
+                    break
+        return f"FREIGEGEBEN: {pid} eingereicht, wird noch verarbeitet - prüf gleich mit /vorschlaege nach"
+
     if _rt.startswith('/mission'):
         _aufgabe = text.strip()[8:].strip() or "pruefe logs"
         try:
