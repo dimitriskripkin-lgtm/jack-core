@@ -276,8 +276,67 @@ def health_check_faehigkeiten(cycle_num):
             except Exception: pass
     log("HEALTH: " + str(ok) + "/3 Faehigkeiten ok")
 
+def _proaktiv_check():
+    """JACK_TUNE_PROAKTIV: beobachtet Akku/Fehlerrate/Xiaomi-SSH und meldet proaktiv per notify(),
+    mit Entprellung ueber Marker-Dateien damit nicht bei jedem Zyklus erneut gemeldet wird."""
+    import subprocess, json as _pj, os as _po, glob as _pg, time as _pt
+    B = "/data/data/com.termux/files/home/jack"
+    def _once(key, cond, msg):
+        mp = B+"/.proaktiv_"+key
+        if cond:
+            if not _po.path.isfile(mp):
+                open(mp,"w").write(str(_pt.time()))
+                try:
+                    from jack_autonomous import notify
+                    notify(msg)
+                except Exception:
+                    pass
+        else:
+            try:
+                if _po.path.isfile(mp): _po.remove(mp)
+            except Exception:
+                pass
+    # Xiaomi-Akku
+    try:
+        r = subprocess.run(["ssh","xiaomi-jack","termux-battery-status"], capture_output=True, text=True, timeout=15)
+        _b = _pj.loads(r.stdout)
+        pct = _b.get("percentage", 100)
+        _once("xiaomi_battery_low", pct < 15, f"Xiaomi-Akku niedrig: {pct}%")
+    except Exception:
+        pass
+    # Fehlerrate letzte 20 Missionen
+    try:
+        logs_dir = B+"/missions/logs"
+        files = sorted(_pg.glob(logs_dir+"/*.json"), key=_po.path.getmtime, reverse=True)[:20]
+        fails = 0
+        for f in files:
+            try:
+                with open(f, encoding="utf-8") as fp:
+                    if not _pj.load(fp).get("ok", True):
+                        fails += 1
+            except Exception:
+                pass
+        rate = fails/len(files) if files else 0
+        _once("fail_spike", rate > 0.5 and len(files)>=10, f"Fehlerrate hoch: {fails}/{len(files)} der letzten Missionen fehlgeschlagen")
+    except Exception:
+        pass
+    # Xiaomi SSH lange tot
+    try:
+        xi_down_marker = B+"/.xi_hb_down"
+        if _po.path.isfile(xi_down_marker):
+            age = _pt.time() - float(open(xi_down_marker).read().strip())
+            _once("xiaomi_ssh_long_down", age > 600, f"Xiaomi SSH seit {int(age/60)} Min. nicht erreichbar")
+        else:
+            _once("xiaomi_ssh_long_down", False, "")
+    except Exception:
+        pass
+
 def run_cycle(cycle_num):
     log(f"=== ZYKLUS {cycle_num} START ===")
+    try:
+        _proaktiv_check()
+    except Exception as _e:
+        log(f"PROAKTIV-FEHLER: {_e}")
     
     if not check_db_integrity(cycle_num):
         log("DB-INTEGRITY: FEHLER")
