@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -578,6 +578,23 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         else:
             preview = "Act: "+inner_act+" mit Parametern: "+_pvj.dumps(inner_extra)[:300]
         return True, "preview_proposal: "+pid+" -> "+prop.get("problem","")[:100], preview
+
+    if act=="close_app_xiaomi":
+        import subprocess
+        pkg = m.get("package","")
+        _known = {"chrome":"com.android.chrome","spotify":"com.spotify.music",
+                  "maps":"com.google.android.apps.maps","youtube":"com.google.android.youtube"}
+        pkg = _known.get(pkg.lower(), pkg) if pkg else ""
+        if not pkg or "." not in pkg:
+            return False,"close_app_xiaomi: ungueltiges package/App-Name: "+str(pkg),""
+        try:
+            r=subprocess.run(["ssh","xiaomi-jack","su","-c","am force-stop "+pkg],
+                              capture_output=True,text=True,timeout=15)
+            if r.returncode!=0:
+                return False,"close_app_xiaomi: rc="+str(r.returncode)+" "+(r.stderr or r.stdout)[:120],""
+            return True,"close_app_xiaomi: "+pkg+" geschlossen (force-stop)",""
+        except Exception as e:
+            return False,"close_app_xiaomi: "+str(e)[:100],""
 
     if act=="fact":
         import jack_chat_router as c
