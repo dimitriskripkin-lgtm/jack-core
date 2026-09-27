@@ -98,6 +98,10 @@ jack_learned_rules.json
 # Backups
 *.bak
 *.bak_*
+
+# Secrets (kritisch - Leak-Vorfall 24.09.)
+.jack_mcp_token
+.jack_mcp_token.bak*
 *\~
 .focus_state
 
