@@ -317,7 +317,28 @@ def _proaktiv_check():
             except Exception:
                 pass
         rate = fails/len(files) if files else 0
-        _once("fail_spike", rate > 0.5 and len(files)>=10, f"Fehlerrate hoch: {fails}/{len(files)} der letzten Missionen fehlgeschlagen")
+        _fail_cond = rate > 0.5 and len(files)>=10
+        _once("fail_spike", _fail_cond, f"Fehlerrate hoch: {fails}/{len(files)} der letzten Missionen fehlgeschlagen")
+        if _fail_cond and not _do.path.isfile(B+"/.proaktiv_fail_spike_proposed"):
+            try:
+                import json as _pj2
+                pdir = B+"/missions/proposals/pending"
+                _do.makedirs(pdir, exist_ok=True)
+                pid = "prop_autolearn_"+_pt.strftime("%Y%m%d_%H%M%S")
+                pdata = {"id":pid, "ts":_pt.strftime("%Y-%m-%d %H:%M:%S"),
+                         "problem": f"Autolearn: Fehlerrate hoch ({fails}/{len(files)}), moeglicherweise haengt die Warteschlange",
+                         "proposed_act":"sv_restart", "proposed_extra": _pj2.dumps({"service":"jack_missions"}),
+                         "status":"pending", "quelle":"autolearn_proaktiv"}
+                with open(_do.path.join(pdir, pid+".json"), "w", encoding="utf-8") as _pf:
+                    _pj2.dump(pdata, _pf, ensure_ascii=False, indent=2)
+                open(B+"/.proaktiv_fail_spike_proposed","w").write(str(_pt.time()))
+            except Exception:
+                pass
+        if not _fail_cond:
+            try:
+                if _do.path.isfile(B+"/.proaktiv_fail_spike_proposed"): _do.remove(B+"/.proaktiv_fail_spike_proposed")
+            except Exception:
+                pass
     except Exception:
         pass
     # Xiaomi SSH lange tot
