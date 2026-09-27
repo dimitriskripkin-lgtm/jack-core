@@ -825,7 +825,34 @@ def handle(text):
         lines = [f"VORSCHLAEGE ({len(items)} offen):"]
         for it in items:
             lines.append(f"- {it.get('id')}: {it.get('problem','')[:100]}")
-        lines.append("Freigeben mit: /freigeben <id>")
+        lines.append("Vorschau mit: /vorschau <id>, danach /freigeben <id>")
+        return chr(10).join(lines)
+
+    if _rt.startswith('/vorschau '):
+        import json as _tj, os as _to
+        pid = text.strip()[len('/vorschau '):].strip()
+        pdir = "/data/data/com.termux/files/home/jack/missions/proposals/pending"
+        fp = _to.path.join(pdir, pid+".json")
+        if not _to.path.isfile(fp):
+            return f"VORSCHAU: {pid} nicht gefunden"
+        try:
+            with open(fp, encoding="utf-8") as f:
+                prop = _tj.load(f)
+        except Exception as e:
+            return f"VORSCHAU-Fehler: {e}"
+        inner_act = prop.get("proposed_act","")
+        try:
+            inner_extra = _tj.loads(prop.get("proposed_extra","{}") or "{}")
+        except Exception:
+            inner_extra = {}
+        if inner_act in ("sed_replace","py_replace"):
+            lines = [f"VORSCHAU {pid}", f"Datei: {inner_extra.get('file','?')}",
+                     "ALT: " + str(inner_extra.get("old",""))[:200],
+                     "NEU: " + str(inner_extra.get("new",""))[:200],
+                     "Freigeben mit: /freigeben " + pid]
+        else:
+            lines = [f"VORSCHAU {pid}", f"Act: {inner_act}", f"Parameter: {_tj.dumps(inner_extra)[:200]}",
+                     "Freigeben mit: /freigeben " + pid]
         return chr(10).join(lines)
 
     if _rt.startswith('/freigeben '):

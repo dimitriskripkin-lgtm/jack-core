@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -553,6 +553,31 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         except Exception:
             pass
         return ok, "approve_proposal: "+pid+" angewendet -> "+note, out
+
+    if act=="preview_proposal":
+        import json as _pvj, os as _pvo
+        pid = m.get("proposal_id","")
+        pdir = J+"/missions/proposals/pending"
+        fp = _pvo.path.join(pdir, pid+".json")
+        if not _pvo.path.isfile(fp):
+            return False,"preview_proposal: nicht gefunden: "+pid,""
+        with open(fp, encoding="utf-8") as f:
+            prop = _pvj.load(f)
+        inner_act = prop.get("proposed_act","")
+        try:
+            inner_extra = _pvj.loads(prop.get("proposed_extra","{}") or "{}")
+        except Exception:
+            inner_extra = {}
+        if inner_act in ("sed_replace","py_replace"):
+            _file = inner_extra.get("file","?")
+            _old = inner_extra.get("old","")
+            _new = inner_extra.get("new","")
+            preview = ("DATEI: "+_file+chr(10)+
+                       "ALT :"+chr(10)+_old[:300]+chr(10)+
+                       "NEU :"+chr(10)+_new[:300])
+        else:
+            preview = "Act: "+inner_act+" mit Parametern: "+_pvj.dumps(inner_extra)[:300]
+        return True, "preview_proposal: "+pid+" -> "+prop.get("problem","")[:100], preview
 
     if act=="fact":
         import jack_chat_router as c
