@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -191,6 +191,275 @@ def run_act(m):
         dest=os.path.join(attic,os.path.basename(fp)+"_"+stamp)
         shutil.move(fp,dest)
         return True,"file_delete: "+fp+" ins Attic verschoben nach "+dest,""
+
+    if act=="open_url_xiaomi":
+        import re, subprocess
+        url=m.get("url","")
+        if not re.match(r"^https?://[a-zA-Z0-9._\-/?=&%#]+$", url):
+            return False,"open_url_xiaomi: ungueltige URL",""
+        try:
+            r=subprocess.run(["ssh","xiaomi-jack","su","-c","am start -a android.intent.action.VIEW -d \'"+url+"\'"],capture_output=True,text=True,timeout=15)
+            if r.returncode!=0:
+                return False,"open_url_xiaomi: SSH/am-Fehler: "+r.stderr[:100],""
+            return True,"open_url_xiaomi: geoeffnet: "+url,""
+        except Exception as e:
+            return False,"open_url_xiaomi: "+str(e)[:100],""
+
+    if act=="xiaomi_battery":
+        import subprocess
+        try:
+            r=subprocess.run(["ssh","xiaomi-jack","termux-battery-status"],capture_output=True,text=True,timeout=15)
+            if r.returncode!=0:
+                return False,"xiaomi_battery: SSH-Fehler: "+r.stderr[:100],""
+            return True,"xiaomi_battery: ok",r.stdout[:300]
+        except Exception as e:
+            return False,"xiaomi_battery: "+str(e)[:100],""
+
+    if act=="xiaomi_ollama_restart":
+        import subprocess
+        try:
+            r=subprocess.run(["ssh","xiaomi-jack","su","-c","sv restart ollama_local 2>&1 || (pkill -f ollama; nohup ollama serve >/dev/null 2>&1 &)"],capture_output=True,text=True,timeout=20)
+            return True,"xiaomi_ollama_restart: ausgefuehrt",r.stdout[:200]+r.stderr[:100]
+        except Exception as e:
+            return False,"xiaomi_ollama_restart: "+str(e)[:100],""
+
+    if act=="xiaomi_ssh_check":
+        import subprocess, time as _tm2
+        t0=_tm2.time()
+        try:
+            r=subprocess.run(["ssh","-o","ConnectTimeout=5","xiaomi-jack","echo","ok"],capture_output=True,text=True,timeout=10)
+            dt=round(_tm2.time()-t0,2)
+            if r.returncode==0 and "ok" in r.stdout:
+                return True,"xiaomi_ssh_check: erreichbar in "+str(dt)+"s",""
+            return False,"xiaomi_ssh_check: nicht erreichbar: "+r.stderr[:80],""
+        except Exception as e:
+            return False,"xiaomi_ssh_check: "+str(e)[:100],""
+
+    if act=="create_demo_file":
+        import os, re
+        DOWNLOADS="/storage/emulated/0/Download"
+        name=m.get("name","")
+        if not re.match(r"^jack_demo_[a-zA-Z0-9_\-]+\.txt$", name):
+            return False,"create_demo_file: Name muss jack_demo_*.txt sein",""
+        fp=os.path.join(DOWNLOADS, name)
+        if os.path.exists(fp):
+            return False,"create_demo_file: Datei existiert schon: "+name,""
+        content=m.get("content","")[:2000]
+        try:
+            os.makedirs(DOWNLOADS, exist_ok=True)
+            with open(fp,"w") as f:
+                f.write(content)
+            return True,"create_demo_file: "+fp+" angelegt ("+str(len(content))+" Zeichen)",""
+        except Exception as e:
+            return False,"create_demo_file: "+str(e)[:100],""
+
+    if act=="spotify_play_xiaomi":
+        try:
+            import jack_ui_type as _ut
+            try:
+                import jack_xiaomi_unlock as _xu
+                _xu.ensure_unlocked()  # JACK_TUNE_UNLOCK_FIRST
+            except Exception: pass
+            q=m.get("query","")
+            if not q:
+                return False,"spotify_play_xiaomi: query fehlt",""
+            ok,msg=_ut.spotify_play(q)
+            return ok,"spotify_play_xiaomi: "+str(msg)[:180],""
+        except Exception as e:
+            return False,"spotify_play_xiaomi: "+str(e)[:100],""
+
+    if act=="chrome_search_xiaomi":
+        try:
+            import jack_ui_type as _ut
+            try:
+                import jack_xiaomi_unlock as _xu
+                _xu.ensure_unlocked()
+            except Exception: pass
+            q=m.get("query","")
+            if not q:
+                return False,"chrome_search_xiaomi: query fehlt",""
+            ok,msg=_ut.chrome_search(q)
+            return ok,"chrome_search_xiaomi: "+str(msg)[:180],""
+        except Exception as e:
+            return False,"chrome_search_xiaomi: "+str(e)[:100],""
+
+    if act=="maps_nav_xiaomi":
+        try:
+            import jack_ui_type as _ut
+            try:
+                import jack_xiaomi_unlock as _xu
+                _xu.ensure_unlocked()
+            except Exception: pass
+            q=m.get("query","")
+            if not q:
+                return False,"maps_nav_xiaomi: query fehlt",""
+            ok,msg=_ut.maps_nav(q)
+            return ok,"maps_nav_xiaomi: "+str(msg)[:180],""
+        except Exception as e:
+            return False,"maps_nav_xiaomi: "+str(e)[:100],""
+
+    if act=="maps_open_xiaomi":
+        try:
+            import jack_ui_type as _ut
+            try:
+                import jack_xiaomi_unlock as _xu
+                _xu.ensure_unlocked()
+            except Exception: pass
+            q=m.get("query","")
+            if not q:
+                return False,"maps_open_xiaomi: query fehlt",""
+            ok,msg=_ut.maps_open(q)
+            return ok,"maps_open_xiaomi: "+str(msg)[:180],""
+        except Exception as e:
+            return False,"maps_open_xiaomi: "+str(e)[:100],""
+
+    if act=="youtube_search_xiaomi":
+        try:
+            import jack_ui_type as _ut
+            try:
+                import jack_xiaomi_unlock as _xu
+                _xu.ensure_unlocked()
+            except Exception: pass
+            q=m.get("query","")
+            if not q:
+                return False,"youtube_search_xiaomi: query fehlt",""
+            ok,msg=_ut.youtube_search(q)
+            return ok,"youtube_search_xiaomi: "+str(msg)[:180],""
+        except Exception as e:
+            return False,"youtube_search_xiaomi: "+str(e)[:100],""
+
+    if act=="youtube_play_xiaomi":
+        try:
+            import jack_ui_type as _ut
+            try:
+                import jack_xiaomi_unlock as _xu
+                _xu.ensure_unlocked()
+            except Exception: pass
+            q=m.get("query","")
+            if not q:
+                return False,"youtube_play_xiaomi: query fehlt",""
+            ok,msg=_ut.youtube_play(q)
+            return ok,"youtube_play_xiaomi: "+str(msg)[:180],""
+        except Exception as e:
+            return False,"youtube_play_xiaomi: "+str(e)[:100],""
+
+    if act=="sv_restart":
+        import subprocess
+        SV_ALLOWED={"jack_telegram","jack_cortex","jack_waechter","jack_autolearn","jack_publisher","jack_focus_monitor","jack_missions","jack_mcp"}
+        svc=m.get("service","")
+        if svc not in SV_ALLOWED:
+            return False,"sv_restart: Dienst nicht erlaubt: "+svc+" (erlaubt: "+",".join(sorted(SV_ALLOWED))+")",""
+        try:
+            r=subprocess.run(["sv","restart",V+"/"+svc],capture_output=True,text=True,timeout=15)
+            out=(r.stdout or "")+(r.stderr or "")
+            if r.returncode!=0:
+                return False,"sv_restart: rc="+str(r.returncode)+" "+out[:150],""
+            return True,"sv_restart: "+svc+" neu gestartet: "+out.strip()[:100],""
+        except Exception as e:
+            return False,"sv_restart: "+str(e)[:100],""
+
+    if act=="dashboard_render":
+        import subprocess, json as _dj, os as _do, glob as _dg, time as _dt
+        base = J + "/missions"
+        def _count(d):
+            p = _do.path.join(base, d)
+            return len([f for f in _do.listdir(p) if f.endswith(".json")]) if _do.path.isdir(p) else 0
+        counts = {"pending": _count("pending"), "done": _count("done"), "fail": _count("fail")}
+        # letzte Aktion als Warum-Feld
+        why = "keine Daten"
+        try:
+            logs_dir = _do.path.join(base, "logs")
+            files = sorted(_do.listdir(logs_dir), key=lambda f: _do.path.getmtime(_do.path.join(logs_dir,f)), reverse=True)[:1]
+            if files:
+                with open(_do.path.join(logs_dir, files[0]), encoding="utf-8") as _wf:
+                    _rec = _dj.load(_wf)
+                why = (_rec.get("act","?") + ": " + str(_rec.get("note",""))[:160])
+        except Exception:
+            pass
+        # Honor-Akku lokal
+        honor_batt = "unbekannt"
+        try:
+            r = subprocess.run(["termux-battery-status"], capture_output=True, text=True, timeout=8)
+            _b = _dj.loads(r.stdout)
+            honor_batt = str(_b.get("percentage","?")) + "% " + str(_b.get("status",""))
+        except Exception as _eH:
+            honor_batt = "FEHLER: "+type(_eH).__name__+" "+str(_eH)[:80]
+        # Xiaomi-Akku per SSH
+        xiaomi_batt = "unbekannt"
+        try:
+            r = subprocess.run(["ssh","xiaomi-jack","termux-battery-status"], capture_output=True, text=True, timeout=15)
+            _b = _dj.loads(r.stdout)
+            xiaomi_batt = str(_b.get("percentage","?")) + "% " + str(_b.get("status",""))
+        except Exception as _eX:
+            xiaomi_batt = "FEHLER: "+type(_eX).__name__+" "+str(_eX)[:80]
+        # Xiaomi-SSH-Status
+        xiaomi_ssh = "offline"
+        try:
+            r = subprocess.run(["ssh","-o","ConnectTimeout=5","xiaomi-jack","echo","ok"], capture_output=True, text=True, timeout=10)
+            if r.returncode==0 and "ok" in r.stdout:
+                xiaomi_ssh = "online"
+        except Exception:
+            pass
+        stand = _dt.strftime("%d.%m.%Y %H:%M:%S")
+        total = counts["done"]+counts["fail"]
+        rate = round(100*counts["done"]/total,1) if total else 0.0
+        html = """<!DOCTYPE html><html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JACK Dashboard</title>
+<style>
+body{margin:0;background:#111;color:#eee;font-family:-apple-system,Helvetica,Arial,sans-serif;padding:20px;}
+h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 20px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.card{background:#1c1c1e;border-radius:14px;padding:14px;}
+.card p.label{font-size:12px;color:#999;margin:0 0 4px;}
+.card p.val{font-size:22px;font-weight:600;margin:0;}
+.list{background:#1c1c1e;border-radius:14px;padding:14px 16px;margin-bottom:12px;}
+.row{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #2c2c2e;font-size:14px;}
+.row:first-child{border-top:none;}
+.ok{color:#34d058;} .bad{color:#ff453a;}
+.why{background:#1c1c1e;border-radius:14px;padding:14px 16px;}
+.why p.label{font-size:12px;color:#999;margin:0 0 6px;}
+.why p.val{font-size:13px;line-height:1.6;margin:0;color:#ddd;}
+</style></head><body>
+<h1>JACK Dashboard</h1>
+<p class="stand">Stand: STANDX</p>
+<div class="grid">
+<div class="card"><p class="label">Akku Honor</p><p class="val">HONORBATTX</p></div>
+<div class="card"><p class="label">Akku Xiaomi</p><p class="val">XIAOMIBATTX</p></div>
+<div class="card"><p class="label">Missionen (Pending/Done/Fail)</p><p class="val">PENDX / DONEX / FAILX</p></div>
+<div class="card"><p class="label">Erfolgsrate</p><p class="val">RATEX%</p></div>
+</div>
+<div class="list">
+<div class="row"><span>MCP-Schnittstelle</span><span class="ok">Online</span></div>
+<div class="row"><span>Xiaomi SSH</span><span class="XSSHCLASSX">XSSHVALX</span></div>
+</div>
+<div class="why"><p class="label">Warum JACK das gerade tut</p><p class="val">WHYX</p></div>
+</body></html>"""
+        html = html.replace("STANDX", stand)
+        html = html.replace("HONORBATTX", honor_batt)
+        html = html.replace("XIAOMIBATTX", xiaomi_batt)
+        html = html.replace("PENDX", str(counts["pending"]))
+        html = html.replace("DONEX", str(counts["done"]))
+        html = html.replace("FAILX", str(counts["fail"]))
+        html = html.replace("RATEX", str(rate))
+        html = html.replace("XSSHCLASSX", "ok" if xiaomi_ssh=="online" else "bad")
+        html = html.replace("XSSHVALX", xiaomi_ssh.capitalize())
+        html = html.replace("WHYX", why)
+        out_path = J + "/jack_dashboard.html"
+        dl_path = "/storage/emulated/0/Download/jack_dashboard.html"
+        try:
+            with open(out_path, "w", encoding="utf-8") as _of:
+                _of.write(html)
+            _dl_note = ""
+            try:
+                with open(dl_path, "w", encoding="utf-8") as _odl:
+                    _odl.write(html)
+                _dl_note = " + Downloads-Kopie (Chrome-zugreifbar)"
+            except Exception as _eD:
+                _dl_note = " (Downloads-Kopie fehlgeschlagen: "+str(_eD)[:60]+")"
+            return True, "dashboard_render: geschrieben nach "+out_path+_dl_note, ""
+        except Exception as e:
+            return False, "dashboard_render: "+str(e)[:120], ""
 
     if act=="fact":
         import jack_chat_router as c

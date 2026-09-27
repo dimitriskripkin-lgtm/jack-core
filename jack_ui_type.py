@@ -236,12 +236,13 @@ def youtube_search(query):
         r=subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=10","xiaomi-jack",cmd],
             capture_output=True,text=True,timeout=t)
         return r.returncode, ((r.stdout or "")+(r.stderr or ""))[:120]
+    _gate_note=""
     try:
         import jack_verify_gate as v
         ok,msg=v.app_open_verified("com.google.android.youtube",2)
-        if not ok: return False, "app "+str(msg)
+        if not ok: _gate_note=" (gate: "+str(msg)[:60]+")"  # JACK_TUNE_YTFALLBACK: nicht mehr abbrechen, weiter zum direkten am-start-Fallback
     except Exception as e:
-        return False, "gate "+type(e).__name__
+        _gate_note=" (gate exc: "+type(e).__name__+")"
     time.sleep(0.4)
     enc=urllib.parse.quote(q)
     rc,out=ssh("su -c \"am start -a android.intent.action.VIEW -d 'https://www.youtube.com/results?search_query=%s' -n com.google.android.youtube/com.google.android.apps.youtube.app.WatchWhileActivity\""%enc)
@@ -249,7 +250,7 @@ def youtube_search(query):
     if rc!=0:
         ssh("su -c \"am start -a android.intent.action.VIEW -d 'https://www.youtube.com/results?search_query=%s'\""%enc)
     time.sleep(1.5)
-    return True, "youtube "+q
+    return True, "youtube "+q+_gate_note
 
 
 def _ssh_x(cmd, t=25):

@@ -49,6 +49,17 @@ def add_to_window(user_msg, jack_reply):
         pass  # JACK_TUNE_WIN1
 def _scrub_out(s):
     s=str(s or "")
+    # JACK_TUNE_NOOLLAMA_CLAIM: Ollama ist auf dem Honor hart verboten - jede Behauptung,
+    # JACK koenne/wuerde Ollama/lokale Modelle nutzen, ist eine Faehigkeits-Halluzination.
+    _oll_bad=("ollama ausf","ueber ollama","via ollama","mit ollama","lokale modelle","lokales modell","lokale llm","lokalen modell")
+    if any(x in s.lower() for x in _oll_bad):
+        import re as _reO
+        _parts=[x.strip() for x in _reO.split(r"(?<=[.!?])\s+", s) if x.strip()]
+        _keep=[x for x in _parts if not any(k in x.lower() for k in _oll_bad)]
+        if _keep and sum(len(x) for x in _keep)>=20:
+            s=" ".join(_keep)
+        else:
+            return "Ollama ist auf dem Honor aus. Frag konkreter, was ich fuer dich tun soll."
     bad=("SATZANFAENGE VERBOTEN","fun_facts","Investmentwohnung","WAS DU UEBER IHN","GELERNTE REGELN","Kein Assistent, kein Coach")
     if any(x in s for x in bad) or s.count("VERBOTEN")>=2:
         return "JACK. Kein Prompt-Dump. Frag konkret."
@@ -336,7 +347,15 @@ def _talk_to_gemini_impl(prompt):
                 if _kl:
                     system=system+chr(10)+"WERKZEUGE JETZT:"+chr(10)+_kl+chr(10)
             except Exception:
-                pass  # JACK_TUNE_KISTELIVE
+                _kl=None  # JACK_TUNE_KISTELIVE
+            # JACK_TUNE_NOFAKEACTION: erkennt Anfragen nach einer konkreten Messung/Aktion,
+            # fuer die es keinen Mission-Act gibt (Kiste hat nicht gegriffen) - erzwingt Ehrlichkeit
+            # statt einer erfundenen Zahl mit Zeitstempel (z.B. "Latenztest: 23ms").
+            if not _kl:
+                import re as _reAct
+                _actrx=_reAct.compile(r"kannst du.*(durchf[uü]hren|messen|testen|pr[uü]fen|starten)|f[uü]hr.*durch|^miss |^teste |internet.?messung|latenztest|speedtest|geschwindigkeitstest", _reAct.I)
+                if _actrx.search(prompt or ""):
+                    system=system+chr(10)+"WICHTIG: Fuer diese Anfrage hast du KEIN echtes Mission-Werkzeug. Sag ehrlich, dass du das jetzt technisch nicht messen/durchfuehren kannst. Erfinde KEINE Zahl, KEINEN Zeitstempel, KEIN Ergebnis. Sag stattdessen was dir fehlt."+chr(10)
             try:
                 import json as _plj, time as _plt
                 _pl={"ts":_plt.strftime("%Y-%m-%d %H:%M:%S"),"mark":"JACK_TUNE_PROMPTLOG",

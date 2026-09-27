@@ -196,7 +196,13 @@ def _heartbeat_sv_check():
             if os.path.isfile(_df):
                 continue  # JACK_TUNE_HBDOWN
             if jack_heartbeat.is_sleeping(name):
-                continue  # JACK_TUNE_PHASEA2
+                _hb_age = jack_heartbeat.age(name)
+                if _hb_age is not None and _hb_age < max_age:
+                    continue  # JACK_TUNE_PHASEA2
+                # JACK_TUNE_SLEEPCAP: Sleeping-Behauptung ist selbst-gemeldet und ungeprueft.
+                # Ist der letzte ECHTE Heartbeat schon aelter als max_age, koennte der Dienst
+                # VOR dem eigentlichen Schlaf abgestuerzt sein - dann trotzdem is_alive pruefen
+                # statt der Behauptung blind zu vertrauen.
             try:
                 _alive = jack_heartbeat.is_alive(name, max_age=max_age)
                 try:

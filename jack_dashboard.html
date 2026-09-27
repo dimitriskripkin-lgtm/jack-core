@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JACK Dashboard</title>
+<style>
+body{margin:0;background:#111;color:#eee;font-family:-apple-system,Helvetica,Arial,sans-serif;padding:20px;}
+h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 20px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.card{background:#1c1c1e;border-radius:14px;padding:14px;}
+.card p.label{font-size:12px;color:#999;margin:0 0 4px;}
+.card p.val{font-size:22px;font-weight:600;margin:0;}
+.list{background:#1c1c1e;border-radius:14px;padding:14px 16px;margin-bottom:12px;}
+.row{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #2c2c2e;font-size:14px;}
+.row:first-child{border-top:none;}
+.ok{color:#34d058;} .bad{color:#ff453a;}
+.why{background:#1c1c1e;border-radius:14px;padding:14px 16px;}
+.why p.label{font-size:12px;color:#999;margin:0 0 6px;}
+.why p.val{font-size:13px;line-height:1.6;margin:0;color:#ddd;}
+</style></head><body>
+<h1>JACK Dashboard</h1>
+<p class="stand">Stand: 27.09.2026 14:58:30</p>
+<div class="grid">
+<div class="card"><p class="label">Akku Honor</p><p class="val">48% DISCHARGING</p></div>
+<div class="card"><p class="label">Akku Xiaomi</p><p class="val">49% DISCHARGING</p></div>
+<div class="card"><p class="label">Missionen (Pending/Done/Fail)</p><p class="val">1 / 202 / 61</p></div>
+<div class="card"><p class="label">Erfolgsrate</p><p class="val">76.8%</p></div>
+</div>
+<div class="list">
+<div class="row"><span>MCP-Schnittstelle</span><span class="ok">Online</span></div>
+<div class="row"><span>Xiaomi SSH</span><span class="ok">Online</span></div>
+</div>
+<div class="why"><p class="label">Warum JACK das gerade tut</p><p class="val">sed_replace: fix OK 1x:         out_path = J + "/jack_ ->         out_path = J</p></div>
+</body></html>

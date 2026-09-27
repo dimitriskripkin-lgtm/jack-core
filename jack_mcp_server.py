@@ -96,16 +96,20 @@ def memory_recent(limit: int = 5) -> str:
 
 
 @app.tool()
-def create_mission(act: str, description: str, extra: str = "{}") -> str:
+def create_mission(act: str, description: str, extra: str = "{}", wait_seconds: int = 0) -> str:
     """Erstellt eine Mission in JACKs pending/-Ordner. act muss aus ALLOWED sein.
     extra: JSON-String mit zusaetzlichen Feldern z.B. {"file":"...", "old":"...", "new":"..."}.
+    wait_seconds (JACK_TUNE_WAITRESULT): wenn >0, wartet bis zu diese Anzahl Sekunden
+    (max 55) auf das Mission-Ergebnis und gibt es direkt im Feld 'result' zurueck,
+    statt dass der Aufrufer separat pollen/read_file() muss.
     Erlaubte acts: sed_replace, py_replace, compile_ok, sv_ok, hb_ok, fact, grep_count, file_exists, diag."""
     import json as _j, os as _os
     from datetime import datetime as _dt
     ALLOWED = {"shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none",
                "classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid",
                "no_secret","grep_count","line_check","hb_ok","file_exists","line_count",
-               "sed_replace","py_replace","file_create","file_delete","batch"}
+               "sed_replace","py_replace","file_create","file_delete","batch",
+               "open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render"}
     if act not in ALLOWED:
         return _j.dumps({"error": f"act nicht erlaubt: {act}", "allowed": sorted(ALLOWED)})
     try:
@@ -121,7 +125,26 @@ def create_mission(act: str, description: str, extra: str = "{}") -> str:
     path = _os.path.join(PENDING, mid + ".json")
     with open(path, "w", encoding="utf-8") as fp:
         _j.dump(mission, fp, ensure_ascii=False, indent=2)
-    return _j.dumps({"ok": True, "mission_id": mid, "act": act, "path": path})
+    result = {"ok": True, "mission_id": mid, "act": act, "path": path}
+    if wait_seconds and wait_seconds > 0:
+        import time as _tw
+        LOGP = "/data/data/com.termux/files/home/jack/missions/logs/" + mid + ".json"
+        _deadline = _tw.time() + min(int(wait_seconds), 55)
+        _found = False
+        while _tw.time() < _deadline:
+            if _os.path.isfile(LOGP):
+                try:
+                    with open(LOGP, encoding="utf-8") as _lf:
+                        result["result"] = _j.load(_lf)
+                    _found = True
+                except Exception as _e:
+                    result["result_error"] = str(_e)
+                    _found = True
+                break
+            _tw.sleep(1)
+        if not _found:
+            result["note"] = "noch nicht fertig nach " + str(wait_seconds) + "s"
+    return _j.dumps(result)
 
 
 @app.tool()
@@ -136,7 +159,8 @@ def mission_status() -> str:
     logs_dir = _os.path.join(base, "logs")
     recent = []
     if _os.path.isdir(logs_dir):
-        files = sorted(_os.listdir(logs_dir), reverse=True)[:5]
+        entries = [(f, _os.path.getmtime(_os.path.join(logs_dir, f))) for f in _os.listdir(logs_dir) if f.endswith(".json")]
+        files = [f for f,_ in sorted(entries, key=lambda x: x[1], reverse=True)[:5]]
         for fn in files:
             try:
                 with open(_os.path.join(logs_dir, fn), encoding="utf-8") as fp:
@@ -188,7 +212,7 @@ def list_files(path: str = "/storage/emulated/0/Download") -> str:
             return json.dumps({"error": "Pfad nicht erlaubt"})
         if not _oslf.path.isdir(full):
             return json.dumps({"error": "kein Ordner"})
-        names = sorted(_oslf.listdir(full))[:400]
+        names = sorted(_oslf.listdir(full))[:5000]  # JACK_TUNE_LISTCAP
         return json.dumps({"path": full, "n": len(names), "names": names}, ensure_ascii=False)
     except Exception as e:
         return json.dumps({"error": str(e)})
