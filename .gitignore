@@ -85,6 +85,10 @@ modding/
 # Runtime / Heartbeats
 .heartbeat_*
 *.heartbeat
+.sleep_until_*
+.proaktiv_*
+.mission_boost
+.xi_hb_down
 
 # Screenshots & Lern-Artefakte
 xiaomi_shot*
