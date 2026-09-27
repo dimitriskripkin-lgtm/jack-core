@@ -109,7 +109,7 @@ def create_mission(act: str, description: str, extra: str = "{}", wait_seconds: 
                "classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid",
                "no_secret","grep_count","line_check","hb_ok","file_exists","line_count",
                "sed_replace","py_replace","file_create","file_delete","batch",
-               "open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module"}
+               "open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal"}
     if act not in ALLOWED:
         return _j.dumps({"error": f"act nicht erlaubt: {act}", "allowed": sorted(ALLOWED)})
     try:

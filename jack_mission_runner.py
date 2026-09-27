@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -492,6 +492,67 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
                 return True,"reload_module: "+name+" frisch importiert (war noch nicht geladen)",""
         except Exception as e:
             return False,"reload_module: "+type(e).__name__+" "+str(e)[:150],""
+
+    if act=="propose_fix":
+        import json as _pj, os as _po, time as _pt, uuid as _pu
+        problem = m.get("problem","")
+        proposed_act = m.get("proposed_act","")
+        proposed_extra = m.get("proposed_extra","{}")
+        if not problem or not proposed_act:
+            return False,"propose_fix: problem und proposed_act erforderlich",""
+        pdir = J+"/missions/proposals/pending"
+        _po.makedirs(pdir, exist_ok=True)
+        pid = "prop_"+_pt.strftime("%Y%m%d_%H%M%S")+"_"+_pu.uuid4().hex[:6]
+        data = {"id":pid, "ts":_pt.strftime("%Y-%m-%d %H:%M:%S"), "problem":problem,
+                "proposed_act":proposed_act, "proposed_extra":proposed_extra, "status":"pending"}
+        with open(_po.path.join(pdir, pid+".json"), "w", encoding="utf-8") as f:
+            _pj.dump(data, f, ensure_ascii=False, indent=2)
+        return True, "propose_fix: "+pid+" angelegt: "+problem[:100], ""
+
+    if act=="list_proposals":
+        import json as _pj, os as _po
+        pdir = J+"/missions/proposals/pending"
+        items = []
+        if _po.path.isdir(pdir):
+            for fn in sorted(_po.listdir(pdir)):
+                if fn.endswith(".json"):
+                    try:
+                        with open(_po.path.join(pdir, fn), encoding="utf-8") as f:
+                            items.append(_pj.load(f))
+                    except Exception:
+                        pass
+        return True, "list_proposals: "+str(len(items))+" offen", _pj.dumps(items, ensure_ascii=False)
+
+    if act=="approve_proposal":
+        import json as _pj, os as _po, shutil as _psh
+        pid = m.get("proposal_id","")
+        pdir = J+"/missions/proposals/pending"
+        fp = _po.path.join(pdir, pid+".json")
+        if not _po.path.isfile(fp):
+            return False,"approve_proposal: nicht gefunden: "+pid,""
+        with open(fp, encoding="utf-8") as f:
+            prop = _pj.load(f)
+        inner_act = prop.get("proposed_act","")
+        if inner_act not in ALLOWED:
+            return False,"approve_proposal: proposed_act nicht (mehr) erlaubt: "+inner_act,""
+        try:
+            inner_extra = _pj.loads(prop.get("proposed_extra","{}") or "{}")
+        except Exception as e:
+            return False,"approve_proposal: proposed_extra ungueltig: "+str(e)[:80],""
+        inner_m = dict(inner_extra)
+        inner_m["act"] = inner_act
+        ok, note, out = run_act(inner_m)
+        done_dir = J+"/missions/proposals/"+("done" if ok else "failed")
+        _po.makedirs(done_dir, exist_ok=True)
+        prop["status"] = "applied" if ok else "failed"
+        prop["result_note"] = note
+        with open(_po.path.join(done_dir, pid+".json"), "w", encoding="utf-8") as f:
+            _pj.dump(prop, f, ensure_ascii=False, indent=2)
+        try:
+            _po.remove(fp)
+        except Exception:
+            pass
+        return ok, "approve_proposal: "+pid+" angewendet -> "+note, out
 
     if act=="fact":
         import jack_chat_router as c
