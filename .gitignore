@@ -102,6 +102,11 @@ jack_learned_rules.json
 # Secrets (kritisch - Leak-Vorfall 24.09.)
 .jack_mcp_token
 .jack_mcp_token.bak*
+
+# Ollama-Sitzungsflags (Laufzeit)
+.ollama_lock
+.ollama_lock.session
+.ollama_session
 *\~
 .focus_state
 

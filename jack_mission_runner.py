@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi","honor_heat_report","xiaomi_ollama_stop","xiaomi_ollama_status"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -216,14 +216,113 @@ def run_act(m):
             return False,"xiaomi_battery: "+str(e)[:100],""
 
     if act=="xiaomi_ollama_restart":
+        import subprocess, time as _tro, os as _oso
+        _svd="/data/data/com.termux/files/usr/var/service/ollama"
+        try:
+            r=subprocess.run(["ssh","xiaomi-jack","rm -f "+_svd+"/down; sv up "+_svd+" 2>&1; sv status "+_svd+" 2>&1"],capture_output=True,text=True,timeout=25)
+            _erreichbar=False
+            for _i in range(10):
+                _tro.sleep(2)
+                _pc=subprocess.run(["ssh","xiaomi-jack","curl","-s","-m","3","http://127.0.0.1:11434/api/tags"],capture_output=True,text=True,timeout=10)
+                if _pc.returncode==0 and _pc.stdout.strip().startswith("{"):
+                    _erreichbar=True
+                    break
+            _note="xiaomi_ollama_restart: "+("erreichbar (sv up)" if _erreichbar else "NICHT erreichbar nach sv up")
+            if _erreichbar:
+                _lk=J+"/.ollama_lock"
+                if _oso.path.isfile(_lk):
+                    try:
+                        _oso.rename(_lk,_lk+".session"); _note+=" (Lock fuer Sitzung aufgehoben)"
+                    except Exception:
+                        pass
+                try:
+                    _mins=int(m.get("auto_off_min",20) or 0)
+                except Exception:
+                    _mins=20
+                if _mins>0:
+                    _q=chr(34); _s=chr(39)
+                    _sid=str(int(_tro.time()))
+                    open(J+"/.ollama_session","w").write(_sid)
+                    _cmd=("sleep "+str(_mins*60)+"; [ "+_q+"$(cat "+J+"/.ollama_session 2>/dev/null)"+_q+" = "+_q+_sid+_q+" ] || exit 0; "
+                          "ssh xiaomi-jack "+_s+"touch "+_svd+"/down; sv down "+_svd+_s+"; "
+                          "if [ -f "+_lk+".session ] && [ ! -f "+_lk+" ]; then mv "+_lk+".session "+_lk+"; fi; rm -f "+J+"/.ollama_session")
+                    subprocess.Popen(["sh","-c",_cmd],start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+                    _note+=" (Auto-Aus in "+str(_mins)+" Min)"
+            else:
+                _note+=" | "+(r.stdout+r.stderr)[:200].replace(chr(10)," / ")
+            return _erreichbar,_note,""
+        except Exception as e:
+            return False,"xiaomi_ollama_restart: "+str(e)[:100],""
+
+    if act=="xiaomi_ollama_stop":
+        import subprocess, time as _tos, os as _oso
+        _svd="/data/data/com.termux/files/usr/var/service/ollama"
+        try:
+            r=subprocess.run(["ssh","xiaomi-jack","touch "+_svd+"/down; sv down "+_svd+" 2>&1; pkill -x llama-server; true"],capture_output=True,text=True,timeout=25)
+            _still=False
+            for _i in range(5):
+                _tos.sleep(2)
+                _c=subprocess.run(["ssh","xiaomi-jack","curl","-s","-m","3","http://127.0.0.1:11434/api/tags"],capture_output=True,text=True,timeout=10)
+                _still = _c.returncode==0 and _c.stdout.strip().startswith("{")
+                if not _still:
+                    break
+            if _still:
+                return False,"xiaomi_ollama_stop: Ollama antwortet noch nach sv down | "+(r.stdout+r.stderr)[:150].replace(chr(10)," / "),""
+            _lk=J+"/.ollama_lock"
+            try:
+                if _oso.path.isfile(_lk+".session") and not _oso.path.isfile(_lk):
+                    _oso.rename(_lk+".session",_lk)
+                elif not _oso.path.isfile(_lk):
+                    open(_lk,"w").write("Ollama default AUS (Standard, nach Sitzungsende wiederhergestellt)")
+                if _oso.path.isfile(J+"/.ollama_session"):
+                    _oso.remove(J+"/.ollama_session")
+            except Exception:
+                pass
+            return True,"xiaomi_ollama_stop: Ollama aus (sv down + down-Datei), Standard-Lock aktiv",""
+        except Exception as e:
+            return False,"xiaomi_ollama_stop: "+str(e)[:100],""
+
+    if act=="xiaomi_ollama_restart_v1":
         import subprocess, time as _tro
         try:
-            r=subprocess.run(["ssh","xiaomi-jack","su","-c","sv restart ollama_local 2>&1 || (pkill -f ollama; nohup ollama serve >/dev/null 2>&1 &)"],capture_output=True,text=True,timeout=20)
-            _tro.sleep(3)
+            r=subprocess.run(["ssh","xiaomi-jack","pkill -x ollama; sleep 1; setsid nohup ollama serve > $HOME/ollama_start.log 2>&1 < /dev/null &"],capture_output=True,text=True,timeout=20)
+            for _i in range(10):
+                _tro.sleep(2)
+                _pc=subprocess.run(["ssh","xiaomi-jack","curl","-s","-m","3","http://127.0.0.1:11434/api/tags"],capture_output=True,text=True,timeout=10)
+                if _pc.returncode==0 and _pc.stdout.strip().startswith("{"):
+                    break
             _chk=subprocess.run(["ssh","xiaomi-jack","curl","-s","-m","5","http://127.0.0.1:11434/api/tags"],capture_output=True,text=True,timeout=12)
             _erreichbar = _chk.returncode==0 and ("models" in (_chk.stdout or "") or _chk.stdout.strip().startswith("{"))
             _note = "xiaomi_ollama_restart: "+("erreichbar nach Neustart" if _erreichbar else "NICHT erreichbar nach Neustart-Versuch")
-            return _erreichbar, _note, (r.stdout[:150]+r.stderr[:100])
+            if _erreichbar:
+                import os as _oso
+                _lk=J+"/.ollama_lock"
+                if _oso.path.isfile(_lk):
+                    try:
+                        _oso.rename(_lk,_lk+".session"); _note+=" (Lock fuer Sitzung aufgehoben)"
+                    except Exception:
+                        pass
+                try:
+                    _mins=int(m.get("auto_off_min",20) or 0)
+                except Exception:
+                    _mins=20
+                if _mins>0:
+                    _q=chr(34); _s=chr(39)
+                    _sid=str(int(_tro.time()))
+                    open(J+"/.ollama_session","w").write(_sid)
+                    _cmd=("sleep "+str(_mins*60)+"; [ "+_q+"$(cat "+J+"/.ollama_session 2>/dev/null)"+_q+" = "+_q+_sid+_q+" ] || exit 0; "
+                          "ssh xiaomi-jack "+_s+"pkill -x ollama; pkill -x llama-server; true"+_s+"; "
+                          "if [ -f "+_lk+".session ] && [ ! -f "+_lk+" ]; then mv "+_lk+".session "+_lk+"; fi; rm -f "+J+"/.ollama_session")
+                    subprocess.Popen(["sh","-c",_cmd],start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+                    _note+=" (Auto-Aus in "+str(_mins)+" Min)"
+            _tail=""
+            if not _erreichbar:
+                try:
+                    _tl=subprocess.run(["ssh","xiaomi-jack","tail -6 $HOME/ollama_start.log 2>&1"],capture_output=True,text=True,timeout=10)
+                    _tail=" | LOG: "+(_tl.stdout or _tl.stderr)[:300].replace(chr(10)," / ")
+                except Exception:
+                    pass
+            return _erreichbar, _note+_tail, (r.stdout[:150]+r.stderr[:100])
         except Exception as e:
             return False,"xiaomi_ollama_restart: "+str(e)[:100],""
 
@@ -595,6 +694,83 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
             return True,"close_app_xiaomi: "+pkg+" geschlossen (force-stop)",""
         except Exception as e:
             return False,"close_app_xiaomi: "+str(e)[:100],""
+
+    if act=="honor_heat_report":
+        import subprocess, glob as _hg, json as _hj
+        rep = []
+        try:
+            r=subprocess.run(["termux-battery-status"],capture_output=True,text=True,timeout=8)
+            b=_hj.loads(r.stdout)
+            rep.append("AKKU: "+str(b.get("temperature","?"))+"C "+str(b.get("percentage","?"))+"% "+str(b.get("status","")))
+        except Exception as e:
+            rep.append("AKKU: Fehler "+type(e).__name__)
+        zones=[]
+        for zp in _hg.glob("/sys/class/thermal/thermal_zone*"):
+            try:
+                t=open(zp+"/type").read().strip()
+                v=float(open(zp+"/temp").read().strip())
+                if abs(v)>200: v=v/1000.0
+                if v<=120 and ("trip" not in t) and ("ibat" not in t) and ("lvl" not in t):
+                    zones.append((v,t))
+            except Exception:
+                pass
+        zones.sort(reverse=True)
+        if zones:
+            rep.append("THERMAL Top6: "+", ".join(t+"="+str(round(v,1)) for v,t in zones[:6]))
+        else:
+            rep.append("THERMAL: keine Zone lesbar")
+        procs=""
+        for cmd in (["ps","-eo","pid,pcpu,pmem,etime,args","--sort=-pcpu"],["top","-b","-n","1"],["ps","-A"]):
+            try:
+                r=subprocess.run(cmd,capture_output=True,text=True,timeout=10)
+                if r.returncode==0 and r.stdout.strip():
+                    procs=chr(10).join([ln[:110] for ln in r.stdout.splitlines()[:12]])
+                    break
+            except Exception:
+                continue
+        rep.append("PROZESSE (nur eigene UID sichtbar, CPU-sortiert):"+chr(10)+(procs or "nicht lesbar"))
+        try:
+            _pg=subprocess.run(["pgrep","-a","ollama"],capture_output=True,text=True,timeout=5)
+            rep.append("OLLAMA-PROZESSE auf Honor: "+((_pg.stdout or "").strip()[:200] or "keine"))
+        except Exception:
+            rep.append("OLLAMA-PROZESSE auf Honor: pgrep nicht verfuegbar")
+        return True,"honor_heat_report: ok",chr(10).join(rep)[:1800]
+
+    if act=="xiaomi_ollama_stop_v1":
+        import subprocess, time as _tos, os as _oso
+        try:
+            subprocess.run(["ssh","xiaomi-jack","pkill -x ollama; pkill -x llama-server; true"],capture_output=True,text=True,timeout=20)
+            _tos.sleep(2)
+            _c=subprocess.run(["ssh","xiaomi-jack","curl","-s","-m","4","http://127.0.0.1:11434/api/tags"],capture_output=True,text=True,timeout=12)
+            if _c.returncode==0 and _c.stdout.strip().startswith("{"):
+                return False,"xiaomi_ollama_stop: Ollama antwortet noch nach Stopp-Versuch",""
+            _lk=J+"/.ollama_lock"
+            try:
+                if _oso.path.isfile(_lk+".session") and not _oso.path.isfile(_lk):
+                    _oso.rename(_lk+".session",_lk)
+                elif not _oso.path.isfile(_lk):
+                    open(_lk,"w").write("Ollama default AUS (Standard, nach Sitzungsende wiederhergestellt)")
+                if _oso.path.isfile(J+"/.ollama_session"):
+                    _oso.remove(J+"/.ollama_session")
+            except Exception:
+                pass
+            return True,"xiaomi_ollama_stop: Ollama aus, Standard-Lock wieder aktiv",""
+        except Exception as e:
+            return False,"xiaomi_ollama_stop: "+str(e)[:100],""
+
+    if act=="xiaomi_ollama_status":
+        import subprocess
+        try:
+            _sv="/data/data/com.termux/files/usr/var/service"
+            cmd=("ps -eo pid,ppid,user,etime,args 2>/dev/null | grep -i '[o]llama' | cut -c1-150; "
+                 "echo ---SERVICES---; ls -1 "+_sv+" 2>&1 | head -20; "
+                 "echo ---DOWN---; ls "+_sv+"/*/down 2>&1 | head -5; "
+                 "echo ---BIN---; for b in ollama pkill sv setsid curl; do printf '%s=' $b; command -v $b || echo MISSING; done; "
+                 "echo ---API---; curl -s -m 3 http://127.0.0.1:11434/api/tags | cut -c1-80; echo")
+            r=subprocess.run(["ssh","xiaomi-jack",cmd],capture_output=True,text=True,timeout=25)
+            return True,"xiaomi_ollama_status: ok",(r.stdout+r.stderr)[:1500]
+        except Exception as e:
+            return False,"xiaomi_ollama_status: "+str(e)[:100],""
 
     if act=="fact":
         import jack_chat_router as c

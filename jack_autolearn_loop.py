@@ -304,6 +304,15 @@ def _proaktiv_check():
         _once("xiaomi_battery_low", pct < 15, f"Xiaomi-Akku niedrig: {pct}%")
     except Exception:
         pass
+    # Honor-Temperatur (JACK_TUNE_HONORHEAT): Meldung ab 45C, Entwarnung erst unter 42C
+    try:
+        _hr = subprocess.run(["termux-battery-status"], capture_output=True, text=True, timeout=10)
+        _ht = float(_pj.loads(_hr.stdout).get("temperature", 0))
+        _hm = B+"/.proaktiv_honor_heat"
+        _hcond = _ht >= 45 or (_ht >= 42 and _po.path.isfile(_hm))
+        _once("honor_heat", _hcond, f"Honor-Akku warm: {_ht}C - Laden/Chrome-Tabs pruefen")
+    except Exception:
+        pass
     # Fehlerrate letzte 20 Missionen
     try:
         logs_dir = B+"/missions/logs"
