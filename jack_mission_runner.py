@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi","honor_heat_report","xiaomi_ollama_stop","xiaomi_ollama_status"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi","honor_heat_report","xiaomi_ollama_stop","xiaomi_ollama_status","honor_ollama_disable"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -771,6 +771,29 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
             return True,"xiaomi_ollama_status: ok",(r.stdout+r.stderr)[:1500]
         except Exception as e:
             return False,"xiaomi_ollama_status: "+str(e)[:100],""
+
+    if act=="honor_ollama_disable":
+        import subprocess, time as _thd, os as _ohd
+        _svd="/data/data/com.termux/files/usr/var/service/ollama_local"
+        try:
+            if not _ohd.path.isdir(_svd):
+                return False,"honor_ollama_disable: Service-Ordner fehlt: "+_svd,""
+            open(_svd+"/down","a").close()
+            _r1=subprocess.run(["sv","down",_svd],capture_output=True,text=True,timeout=15)
+            _thd.sleep(2)
+            subprocess.run(["pkill","-x","ollama"],capture_output=True,text=True,timeout=10)
+            _thd.sleep(2)
+            _p1=subprocess.run(["pgrep","-a","ollama"],capture_output=True,text=True,timeout=5)
+            _p2=subprocess.run(["pgrep","-f","jack_ollama_guard"],capture_output=True,text=True,timeout=5)
+            _left=((_p1.stdout or "").strip()+" "+(_p2.stdout or "").strip()).strip()
+            _lk=J+"/.ollama_lock"
+            if not _ohd.path.isfile(_lk):
+                open(_lk,"w").write("Ollama default AUS (Standard)")
+            if _left:
+                return False,"honor_ollama_disable: noch aktiv: "+_left[:150],(_r1.stdout+_r1.stderr)[:150]
+            return True,"honor_ollama_disable: Honor-Ollama-Hybrid aus (sv down + down-Datei), keine ollama/guard-Prozesse mehr",(_r1.stdout+_r1.stderr)[:150]
+        except Exception as e:
+            return False,"honor_ollama_disable: "+str(e)[:100],""
 
     if act=="fact":
         import jack_chat_router as c
