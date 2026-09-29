@@ -228,6 +228,8 @@ def main():
             time.sleep(120)  # 2 Minuten warten nach Emergency
             continue
         
+        # JACK_TUNE_HBFIX: Herzschlag unabhaengig von Xiaomi-Erreichbarkeit, sonst falscher Rot-Alarm bei Xiaomi-Abwesenheit
+        import jack_heartbeat as _jhb; _jhb.beat("jack_cortex")
         # Xiaomi-Check (still, kein Error-Log)
         try:
             r = subprocess.run(["ssh","-o","BatchMode=yes","-o","ConnectTimeout=8","xiaomi-jack","true"], capture_output=True, timeout=20)
