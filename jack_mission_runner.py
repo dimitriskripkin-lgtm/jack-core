@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi","honor_heat_report","xiaomi_ollama_stop","xiaomi_ollama_status","honor_ollama_disable","graph_add_fact","graph_remove_fact"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi","honor_heat_report","xiaomi_ollama_stop","xiaomi_ollama_status","honor_ollama_disable","graph_add_fact","graph_remove_fact","was_ist_neu"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -881,6 +881,67 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         finally:
             c.close()
         return True,"graph_remove_fact: "+_rid+" samt Kanten entfernt",""
+
+    if act=="was_ist_neu":
+        import time as _wtm, os as _wos, glob as _wgl, sqlite3 as _wsq, datetime as _wdt, json as _wjs
+        try:
+            _std=float(m.get("stunden",10) or 10)
+        except Exception:
+            _std=10.0
+        _cutoff_epoch=_wtm.time()-_std*3600
+        _cutoff_dt=_wdt.datetime.now()-_wdt.timedelta(hours=_std)
+        rep=["ZEITRAUM: letzte "+str(_std)+" Std"]
+        # 1) Missions-Protokolle
+        try:
+            _logs=_wgl.glob(J+"/missions/logs/*.json")
+            _recent=[(p,_wos.path.getmtime(p)) for p in _logs if _wos.path.getmtime(p)>=_cutoff_epoch]
+            _recent.sort(key=lambda x:-x[1])
+            _ok=0; _fail=0; _samples=[]
+            for p,_ in _recent:
+                try:
+                    with open(p,encoding="utf-8") as f: _d=_wjs.load(f)
+                    if _d.get("ok"): _ok+=1
+                    else: _fail+=1
+                    if len(_samples)<6:
+                        _samples.append(_d.get("act","?")+": "+str(_d.get("note",""))[:70])
+                except Exception:
+                    pass
+            rep.append("MISSIONEN: "+str(len(_recent))+" gesamt ("+str(_ok)+" ok, "+str(_fail)+" fehlgeschlagen)")
+            if _samples:
+                rep.append("Beispiele: "+" | ".join(_samples))
+        except Exception as e:
+            rep.append("MISSIONEN: Fehler "+str(e)[:60])
+        # 2) Frische Graph-Fakten
+        try:
+            import jack_graph as _g
+            c=_g.con()
+            try:
+                rows=c.execute("SELECT id,wert,src FROM nodes WHERE ts>=? ORDER BY ts DESC LIMIT 10",(_cutoff_epoch,)).fetchall()
+            finally:
+                c.close()
+            rep.append("NEUE FAKTEN: "+str(len(rows)))
+            for rid,wert,src in rows[:8]:
+                rep.append("- "+rid+" = "+str(wert)[:80]+" (src="+src+")")
+        except Exception as e:
+            rep.append("FAKTEN: Fehler "+str(e)[:60])
+        # 3) Speicher-Episoden
+        try:
+            _mdb=J+"/jack_memory.db"
+            if _wos.path.isfile(_mdb):
+                c=_wsq.connect(_mdb,timeout=5)
+                try:
+                    rows=c.execute("SELECT cmd,intent,source,timestamp FROM memory WHERE timestamp>=? ORDER BY timestamp DESC LIMIT 8",
+                                   (_cutoff_dt.strftime("%Y-%m-%d %H:%M:%S"),)).fetchall()
+                finally:
+                    c.close()
+                rep.append("EPISODEN: "+str(len(rows)))
+                for cmd,intent,src,ts in rows[:6]:
+                    rep.append("- ["+str(intent)+"/"+str(src)+"] "+str(cmd)[:80])
+            else:
+                rep.append("EPISODEN: DB fehlt")
+        except Exception as e:
+            rep.append("EPISODEN: Fehler "+str(e)[:60])
+        return True,"was_ist_neu: ok","\n".join(rep)[:1800]
 
     if act=="fact":
         import jack_chat_router as c

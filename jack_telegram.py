@@ -1054,7 +1054,7 @@ def handle(text):
     try:  # JACK_TUNE_CHATGATE
         import jack_chat_router as _cr
         _lane=_cr.classify(text)
-        if _lane in ("FACT","EXPLAIN","DIAG"):
+        if _lane in ("FACT","EXPLAIN","DIAG","NEU"):
             _r=_cr.dispatch(text, send_keyboard)
             if _r is False:
                 return None

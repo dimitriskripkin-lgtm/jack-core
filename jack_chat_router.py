@@ -14,6 +14,8 @@ def classify(text):
     t=norm(text)
     if not t:
         return "TALK"
+    if any(k in t for k in ("aufgefallen","was ist neu","was hat sich veraendert","was hat sich getan","letzten stunden","letzte stunden")):
+        return "NEU"
     fact=("ist zustand" in t) or t in ("status","/status") or ("kiste" in t and "steht" in t) or t.startswith("wie steht")
     diag=any(k in t for k in ("essenz","schau dich","selbst sehen","eigenen code","eigener code","kompletten code","anomalie","nicht erreichbar","graceful","xiaomi offline","murks","guck dir")) or (any(k in t for k in ("analysier","fehler","verbesser","schau mal")) and any(k in t for k in ("code","modul","datei","log","dienst",".py")))  # JACK_TUNE_GATE1
     expl=("overmind" in t or "deadman" in t) and not fact and not diag
@@ -431,6 +433,8 @@ def talk_scrub(s):
     return raw
 def dispatch(text, send_keyboard=None):
     lane=classify(text)
+    if lane=="NEU":
+        return neu_report(10)
     if lane=="FACT":
         return fact_report()
     if lane=="EXPLAIN":
@@ -467,6 +471,40 @@ def strip_lane(text):
         if t.lstrip().startswith(tag):
             return t.lstrip()[len(tag):].lstrip(" \n")
     return t
+def neu_report(stunden=10):
+    import time as _ntm, os as _nos, glob as _ngl, sqlite3 as _nsq, datetime as _ndt, json as _njs
+    _cutoff_epoch=_ntm.time()-stunden*3600
+    _cutoff_dt=_ndt.datetime.now()-_ndt.timedelta(hours=stunden)
+    rep=["Letzte "+str(stunden)+" Std:"]
+    try:
+        _logs=_ngl.glob(J+"/missions/logs/*.json")
+        _recent=[p for p in _logs if _nos.path.getmtime(p)>=_cutoff_epoch]
+        _ok=0; _fail=0
+        for p in _recent:
+            try:
+                with open(p,encoding="utf-8") as f: _d=_njs.load(f)
+                if _d.get("ok"): _ok+=1
+                else: _fail+=1
+            except Exception:
+                pass
+        rep.append(str(len(_recent))+" Missionen ("+str(_ok)+" ok, "+str(_fail)+" fehlgeschlagen)")
+    except Exception:
+        pass
+    try:
+        import jack_graph as _g
+        c=_g.con()
+        try:
+            rows=c.execute("SELECT id,wert FROM nodes WHERE ts>=? ORDER BY ts DESC LIMIT 5",(_cutoff_epoch,)).fetchall()
+        finally:
+            c.close()
+        if rows:
+            rep.append("Neue Fakten: "+", ".join(r[0]+"="+str(r[1])[:40] for r in rows))
+    except Exception:
+        pass
+    if len(rep)==1:
+        rep.append("Nichts Nennenswertes.")
+    return " | ".join(rep)
+
 def fact_report():
     import json, subprocess
     subprocess.run(["python3",J+"/jack_health.py"],capture_output=True,timeout=20)
@@ -479,6 +517,8 @@ def fact_report():
     a=["Ist-Zustand:","SSH Xiaomi: "+str(h.get("ssh_xiaomi")),"Focus "+str(t.get("focus_sleep_s"))+"s, Genesis "+str(t.get("genesis_skip"))+", Idle "+str(t.get("autolearn_idle_s"))+"s","Marks: "+", ".join((k+":ja" if v else k+":nein") for k,v in m.items()),"Beats: "+", ".join(k+" "+str(v)+"s" for k,v in hb.items()),"Git-Push: "+_g+"."]  # JACK_TUNE_GITDYN
     return chr(10).join(a)
 def dispatch_lane(lane, text):
+    if lane=="NEU":
+        return neu_report(10)
     if lane=="FACT":
         return fact_report()
     if lane=="EXPLAIN":
