@@ -637,7 +637,7 @@ def _proaktiv_loop():
                 pct = d.get("pct", d.get("percentage", 100))
                 _st = str(d.get("status") or "")
                 if float(pct) < 20 and _st != "CHARGING":
-                    notify(f"Akku bei {pct}%. Laden oder Ollama pausieren?")  # JACK_TUNE_AUTOBAT
+                    notify(f"Akku bei {pct}%. Laden empfohlen.")  # JACK_TUNE_AUTOBAT
             except Exception as _le:
                 _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         except Exception as _e:

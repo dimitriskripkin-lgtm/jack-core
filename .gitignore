@@ -107,6 +107,7 @@ jack_learned_rules.json
 .ollama_lock
 .ollama_lock.session
 .ollama_session
+graph_backups/
 *\~
 .focus_state
 

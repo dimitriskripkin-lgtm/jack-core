@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi","honor_heat_report","xiaomi_ollama_stop","xiaomi_ollama_status","honor_ollama_disable"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi","honor_heat_report","xiaomi_ollama_stop","xiaomi_ollama_status","honor_ollama_disable","graph_add_fact","graph_remove_fact"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -794,6 +794,93 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
             return True,"honor_ollama_disable: Honor-Ollama-Hybrid aus (sv down + down-Datei), keine ollama/guard-Prozesse mehr",(_r1.stdout+_r1.stderr)[:150]
         except Exception as e:
             return False,"honor_ollama_disable: "+str(e)[:100],""
+
+    if act=="graph_add_fact":
+        import re as _gre, sqlite3 as _gsq, os as _gos, time as _gtm, glob as _ggl
+        try:
+            import jack_graph as _g
+        except Exception as e:
+            return False,"graph_add_fact: jack_graph nicht ladbar: "+str(e)[:80],""
+        typ=(m.get("typ") or "fakt").strip()
+        name=(m.get("name") or "").strip()
+        wert=(m.get("wert") or "").strip()
+        von=(m.get("von") or "person:dima").strip()
+        rel=(m.get("rel") or "hat").strip()
+        confirm=bool(m.get("confirm"))
+        overwrite=bool(m.get("overwrite"))
+        if typ not in _g.TYPS:
+            return False,"graph_add_fact: typ ungueltig (erlaubt: "+",".join(_g.TYPS)+")",""
+        if rel not in _g.RELS:
+            return False,"graph_add_fact: rel ungueltig (erlaubt: "+",".join(_g.RELS)+")",""
+        if not name or not wert:
+            return False,"graph_add_fact: name und wert erforderlich",""
+        if len(name)>60 or len(wert)>200:
+            return False,"graph_add_fact: name max 60, wert max 200 Zeichen",""
+        _low=(name+" "+wert).lower()
+        if any(k in _low for k in ("token","passwort","password","secret","bearer","api_key","apikey")) or _gre.search(r"[A-Za-z0-9+/=_-]{30,}",name+" "+wert):
+            return False,"graph_add_fact: abgelehnt (sieht nach Geheimnis aus)",""
+        if _g._is_suspicious(name) or _g._is_suspicious(wert):
+            return False,"graph_add_fact: abgelehnt (Halluzinations-Filter)",""
+        _nid=_g.nid(typ,name)
+        c=_g.con()
+        try:
+            ex=c.execute("SELECT wert,src FROM nodes WHERE id=?",(_nid,)).fetchone()
+            vn=c.execute("SELECT 1 FROM nodes WHERE id=?",(von,)).fetchone()
+        finally:
+            c.close()
+        if not vn:
+            return False,"graph_add_fact: Ausgangsknoten existiert nicht: "+von,""
+        if ex and ex[1]!="claude_mcp" and not overwrite:
+            return False,"graph_add_fact: "+_nid+" existiert (src="+str(ex[1])+") - nicht ueberschrieben, overwrite nur mit Dimas Wort",""
+        plan=_nid+" (wert="+wert+") + Kante "+von+" -"+rel+"-> "+_nid
+        if not confirm:
+            return True,"graph_add_fact VORSCHAU (nichts geschrieben): "+plan+" | schreiben mit confirm=true",""
+        bdir=J+"/graph_backups"
+        try:
+            _gos.makedirs(bdir,exist_ok=True)
+            _bp=bdir+"/jack_graph_"+_gtm.strftime("%Y%m%d_%H%M%S")+".db"
+            _s=_gsq.connect(_g.DB,timeout=5); _d=_gsq.connect(_bp); _s.backup(_d); _d.close(); _s.close()
+            for _f in sorted(_ggl.glob(bdir+"/jack_graph_*.db"))[:-5]:
+                try:
+                    _gos.remove(_f)
+                except Exception:
+                    pass
+        except Exception as e:
+            return False,"graph_add_fact: Backup fehlgeschlagen, nichts geschrieben: "+str(e)[:80],""
+        r1=_g.put_node(typ,name,wert,"claude_mcp")
+        if not r1:
+            return False,"graph_add_fact: put_node lehnte ab (Filter)",""
+        _g.put_edge(von,rel,r1,"claude_mcp")
+        c=_g.con()
+        try:
+            ck=c.execute("SELECT 1 FROM edges WHERE a=? AND rel=? AND b=?",(von,rel,r1)).fetchone()
+        finally:
+            c.close()
+        return bool(ck),"graph_add_fact: geschrieben: "+plan+(" | Kante ok" if ck else " | KANTE FEHLT"),""
+
+    if act=="graph_remove_fact":
+        try:
+            import jack_graph as _g
+        except Exception as e:
+            return False,"graph_remove_fact: jack_graph nicht ladbar: "+str(e)[:80],""
+        _rid=(m.get("node_id") or "").strip()
+        if not _rid:
+            return False,"graph_remove_fact: node_id erforderlich",""
+        c=_g.con()
+        try:
+            ex=c.execute("SELECT src,wert FROM nodes WHERE id=?",(_rid,)).fetchone()
+            if not ex:
+                return False,"graph_remove_fact: Knoten nicht gefunden: "+_rid,""
+            if ex[0]!="claude_mcp":
+                return False,"graph_remove_fact: nur eigene Eintraege (src=claude_mcp) loeschbar, hier src="+str(ex[0]),""
+            if not m.get("confirm"):
+                return True,"graph_remove_fact VORSCHAU: wuerde "+_rid+" (wert="+str(ex[1])[:60]+") samt Kanten loeschen | mit confirm=true",""
+            c.execute("DELETE FROM edges WHERE a=? OR b=?",(_rid,_rid))
+            c.execute("DELETE FROM nodes WHERE id=?",(_rid,))
+            c.commit()
+        finally:
+            c.close()
+        return True,"graph_remove_fact: "+_rid+" samt Kanten entfernt",""
 
     if act=="fact":
         import jack_chat_router as c
