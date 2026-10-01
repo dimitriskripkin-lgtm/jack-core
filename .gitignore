@@ -102,6 +102,21 @@ jack_learned_rules.json
 # Secrets (kritisch - Leak-Vorfall 24.09.)
 .jack_mcp_token
 .jack_mcp_token.bak*
+# Laufzeit-Daten, nie Quellcode (nachtraeglich entfernt per git rm --cached, 01.10.2026)
+missions/pending/
+missions/proposals/
+exports/
+harvest_dumps/
+ui_learn/
+*.log.old
+chrome_screen*.txt
+current_screen.txt
+after_*tap*.txt
+vision_test*.png
+vision_test*.jpg
+xiaomi_shot*.png
+xiaomi_shot*.jpg
+
 
 # Ollama-Sitzungsflags (Laufzeit)
 .ollama_lock
