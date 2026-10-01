@@ -1,9 +1,0 @@
-{
-  "id": "prop_20260927_211618_929b99",
-  "ts": "2026-09-27 21:16:18",
-  "problem": "Testfall: Xiaomi-Erreichbarkeit erneut pruefen als Demo des Freigabe-Systems",
-  "proposed_act": "xiaomi_ssh_check",
-  "proposed_extra": "{}",
-  "status": "applied",
-  "result_note": "xiaomi_ssh_check: erreichbar in 0.17s"
-}

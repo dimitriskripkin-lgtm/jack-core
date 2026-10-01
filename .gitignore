@@ -108,6 +108,8 @@ missions/proposals/
 exports/
 harvest_dumps/
 ui_learn/
+missions/archive/
+missions/archive_fail/
 *.log.old
 chrome_screen*.txt
 current_screen.txt
