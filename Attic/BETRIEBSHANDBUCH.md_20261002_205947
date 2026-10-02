@@ -1,0 +1,313 @@
+# JACK — BETRIEBSHANDBUCH
+
+Angelegt 02.10.2026. Ziel: jedes wirklich verdrahtete Modul verstehen und nachschlagbar machen —
+Zweck, Abhängigkeiten, Aufrufer, Eigenheiten. Waisen (unverdrahtete Module, siehe Modulkarte)
+bekommen nur einen Einzeiler, keine Tiefenanalyse. Wächst Sitzung für Sitzung.
+
+Methode: von den Dienst-Einstiegspunkten aus nach Zentralität sortiert, nicht alphabetisch.
+
+---
+
+# JACK — BETRIEBSHANDBUCH
+
+Angelegt 02.10.2026. Ziel: jedes wirklich verdrahtete Modul verstehen und nachschlagbar machen —
+Zweck, Abhängigkeiten, Aufrufer, Eigenheiten. Waisen (unverdrahtete Module, siehe Modulkarte)
+bekommen nur einen Einzeiler, keine Tiefenanalyse. Wächst Sitzung für Sitzung.
+
+Methode: von den Dienst-Einstiegspunkten aus nach Zentralität sortiert, nicht alphabetisch.
+Reihenfolge und Fortschritt: siehe FORTSCHRITT.md im selben Ordner.
+
+---
+
+## 1. jack_mission_runner.py (1227 Zeilen)
+
+**Zweck:** Die Ausführungs-Engine. Nimmt eine Mission (ein JSON mit `act` + Parametern) aus
+`missions/pending/`, prüft den Act gegen eine feste Erlaubnisliste, führt ihn aus, schreibt
+das Ergebnis weg. Herzstück fast aller Acts, die diese Woche gebaut wurden (Xiaomi-Steuerung,
+Self-Tooling, Graph-Schreibzugriff, Diagnose).
+
+**Dienst:** `jack_missions` (via `loop()`, Dauerschleife, Standard-Poll 30s, mit `.mission_boost`
+auf 1s beschleunigbar).
+
+**Kernstruktur:**
+- `ALLOWED` — feste Menge erlaubter Act-Namen (Stand 02.10.: 39 Acts). Muss synchron mit der
+  zweiten Whitelist in `jack_mcp_server.py` gehalten werden (Pruefskript: `jack_whitelist_guard.py`).
+- `run_act(m)` — der Dispatcher, eine lange Kette von `if act==...: ... return ok,note,out`.
+  Jeder Zweig gibt sofort zurück, kein Fallthrough-Risiko.
+- `sed_replace`/`py_replace` — Backup (`.fix.bak`), Ersetzung, bei `.py`-Dateien Pflicht-Kompiliercheck,
+  optionaler `verify_act` danach. Jeder Fehlschlag löst automatisches Rollback aus.
+- **Zwei parallele Freigabe-Pipelines, gefunden 02.10.:**
+  1. **Alt:** `_run_fix_shadow()` — nur aktiv, wenn eine Mission `"staged": true` oder `"shadow": true`
+     mitgibt. Schreibt nach `shadow/`, verifiziert, legt `pending_approvals.json` an. Genutzt von
+     `jack_cmd_handler.py`, `jack_mission_gen.py`, `jack_mission_pull.py`, `jack_schema.py`, `jack_stand.py`
+     (noch nicht einzeln geprüft — eigenes Kapitel folgt).
+  2. **Neu (27.-28.09.):** `propose_fix`/`list_proposals`/`preview_proposal`/`approve_proposal` —
+     schreibt nach `missions/proposals/pending/`, von Autolearn und Claude genutzt, Telegram-Befehle
+     `/vorschlaege`, `/vorschau`, `/freigeben`.
+  Beide kennen sich nicht. Nicht als Bug, aber als Klärungspunkt: sollen sie zusammengeführt werden,
+  oder bleiben es bewusst zwei verschiedene Zwecke (schnelle Einzel-Freigabe vs. groessere, mehrfach
+  verifizierte Patches)? Offene Frage an Dima.
+- `one(path)` — verarbeitet genau eine Missionsdatei: Dedup-Check (schon in done/fail?), ruft
+  `run_act`, wertet `expect` (PASS/FAIL-Erwartung) aus, schreibt Log nach `missions/logs/`, verschiebt
+  nach `done/` oder `fail/`. Bei `fail/` zusätzlich `jack_deadletter.bump()`.
+  **Wichtig:** schreibt JEDES Ergebnis zusätzlich als Zeile in `jack_memory.db`
+  (`JACK_TUNE_MCPKANAL`) — dadurch kann Claude über `memory_recent`/`memory_search` auch
+  Missionsergebnisse lesen, nicht nur über `mission_status`.
+- `run_queue(maxn=20)` — verarbeitet Missionen eine nach der anderen. **Historischer Bug, seit
+  27.09. gefixt (`JACK_TUNE_QUEUENOFAIL`):** ein Fehlschlag wird gemerkt (`rc=1`), aber die
+  Schleife läuft weiter, statt abzubrechen.
+- `loop(poll=30, maxn=200)` — die Dauerschleife. Schreibt Herzschlag, prüft `missions/STOP`
+  (Kill-Switch, bleibt bewusst offen laut Zettel), lädt **bei jedem Zyklus** `jack_mission_pull.py`
+  per `importlib.reload()` neu und ruft `pull()`/`push_status()` — ein eingebautes Dauer-Hot-Reload
+  für genau dieses eine Modul, unabhängig vom allgemeinen `reload_module`-Act. Noch nicht geklärt,
+  was `jack_mission_pull` genau synchronisiert — eigenes Kapitel.
+
+**Bekannte Eigenheiten/Altlasten:**
+- `xiaomi_ollama_restart_v1` und `xiaomi_ollama_stop_v1` sind stillgelegte Vorgänger-Versionen
+  (28.09. durch `sv up`/`sv down`-Varianten ersetzt), noch im Code, aber aus `ALLOWED` entfernt —
+  toter Code, kein Risiko, aber Aufräumkandidat.
+- `sv_restart` auf den eigenen Dienst (`jack_missions`) läuft bewusst verzögert im Hintergrund
+  (`JACK_TUNE_SELFRESTART_SAFE`), sonst Deadlock (gefunden 27.09.).
+
+**Offene Fragen für später:** Was macht `jack_mission_pull.py` genau? Was ist `jack_deadletter.py`?
+Wie hängen `jack_cmd_handler.py`/`jack_mission_gen.py`/`jack_schema.py`/`jack_stand.py` mit dem
+Shadow-Pfad zusammen?
+
+
+---
+
+## 2. jack_telegram.py (1367 Zeilen, größte Datei)
+
+**Zweck:** Haupteinstieg für Dima. Long-Polling gegen die Telegram-API, Nachrichten entgegennehmen,
+interpretieren, antworten. Kein sauberer Router — ein über die Zeit gewachsener Befehlsinterpreter
+mit Dutzenden Spezialfällen, der an weit über zehn andere Module delegiert.
+
+**Dienst:** `jack_telegram`.
+
+**Grobstruktur von `handle(text)`** (über 900 Zeilen, Reihenfolge ist Priorität):
+1. `/find <ziel>` — Bildschirm-Element suchen (eigener Thread, `jack_vision`+`jack_grid_vision`).
+2. `[[PLAN:...]]`-Block im Text → `jack_planner`+`jack_schema` (validiertes Mehrschritt-Vorhaben).
+3. `jack_exec.extrahiere(text)` — erkennt eingebettete Shell-Befehle im Nutzertext selbst,
+   zeigt Ausführen/Abbrechen-Knopf (`PENDING_EXEC`).
+4. Freitext "schreib eine datei..." → `jack_write.propose()`, Bestätigungs-Knopf (`PENDING_WRITE`).
+5. Lange Kette fester Slash-Befehle (Tabelle unten).
+6. Fällt keiner: Übergabe an `jack_chat_router.classify()`/`dispatch()` — FACT/EXPLAIN/DIAG/NEU-Lanes.
+7. Deep-Navigation-Vorschläge (`jack_intent_lookup`), dann `jack_ui_nav`.
+8. **Freitext-Heuristiken für Xiaomi-Steuerung** (Maps/YouTube/Spotify/Chrome) — eigene Regex-Treffer,
+   rufen `jack_ui_type` **direkt** auf. Siehe Fund unten.
+9. `jack_intent_apps.try_app_launch()` — App direkt starten.
+10. Letzter Fallback: Gemini/Groq-Aufruf (`jack_chat_router.dispatch` → `jack_talk.talk_to_gemini`),
+    mit `[[EXEC:...]]`-Tag-Erkennung in der Antwort → wieder Ausführen/Abbrechen-Knopf.
+
+**Wichtiger Architektur-Fund: drei unabhängige Freigabe-/Bestätigungs-Oberflächen im Gesamtsystem,
+die sich nicht kennen:**
+1. `shadow/` + `pending_approvals.json` (siehe Kapitel 1, genutzt von `jack_cmd_handler.py` u.a.)
+2. `missions/proposals/` (`propose_fix`/`approve_proposal`, diese Woche gebaut, Telegram `/vorschlaege`)
+3. **Hier, Kapitel 2:** `PENDING_EXEC`/`PENDING_WRITE` — Inline-Bestätigungsknöpfe direkt im Chat,
+   für von der KI selbst vorgeschlagene Shell-Befehle oder Dateischreibvorgänge. Reagiert über
+   `handle_callback()` auf Knopfdruck, nicht über die Mission-Warteschlange.
+Noch nicht geklärt, ob das bewusst getrennte Zwecke sind oder zusammengeführt werden sollte.
+
+**Zweiter wichtiger Fund: doppelte Codepfade für Xiaomi-App-Steuerung.** Die MCP-Acts
+(`chrome_search_xiaomi`, `maps_nav_xiaomi`, `spotify_play_xiaomi`, `youtube_*_xiaomi`, Kapitel 1)
+rufen dieselben `jack_ui_type`-Funktionen auf wie die Freitext-Regex-Treffer **hier** in
+`jack_telegram.py` (Schritt 8) — nur dass Letztere synchron, direkt, ohne Mission-Queue laufen.
+Zwei getrennte Wege zum selben Ziel, nie bewusst vereinheitlicht.
+
+**Vollständige Slash-Befehlsliste** (✅ = echt implementiert, 🚧 = Attrappe/Stub, ↗ = delegiert an eigenes Modul):
+| Befehl | Status | Delegiert an / Notiz |
+|---|---|---|
+| `/find` | ✅ | `jack_vision`, `jack_grid_vision` |
+| `/vision` | ✅ | (noch nicht einzeln geprüft) |
+| `/harvest` | ✅ | eigener Thread, braucht Chrome im Vordergrund |
+| `/agent` | 🚧 | reine Textantwort, kein echter Agent |
+| `/auto` | 🚧 | reine Textantwort |
+| `/ssh` | ✅ | `jack_ui_agent.run_ssh_agent` |
+| `/code` | 🚧 | "braucht jack_coder Integration" |
+| `/cc` | ✅ | Alias, piped direkt zu Gemini |
+| `/db_trace` | ✅ | **neue DB gefunden:** `jack_outcomes.db`, Tabelle `outcomes` — noch nicht in der
+  Drei-Küchen-Übersicht, eigenes Kapitel/Klärung nötig |
+| `/rag` | ✅ | `jack_memory.search_similar()` |
+| `/verbessere` | 🚧 | "braucht jack_coder Integration" |
+| `/lernen` | ✅ | (noch nicht einzeln geprüft) |
+| `/vorschlaege`, `/vorschau`, `/freigeben` | ✅ | diese Woche gebaut, Kapitel 1 |
+| `/mission` | ✅ | (noch nicht einzeln geprüft) |
+| `/budget` | ✅ | `jack_budget.status()` |
+| `/appmap` | ✅ | `jack_intent_apps.MAP` |
+| `/explore`, `/explore_deep` | ✅ | `jack_explorer(_deep)` |
+| alles andere mit `/` | — | "Unbekannter Befehl" |
+
+**Weitere Mechanik:**
+- `_einzelinstanz()` — Lock-Datei mit PID-Lebendigkeitsprüfung (`os.kill(pid,0)` + `/proc/<pid>/cmdline`
+  enthält "jack_telegram"), verhindert Doppel-Bots sauberer als eine reine Lock-Datei ohne Prüfung.
+- `main()`-Schleife: `get_updates()` long-poll → Foto (eigener Thread, Gemini-Vision-Call direkt,
+  nicht über die drei Küchen) → Voice (`jack_voice_handler`) → Text → `handle()`.
+- Jedes Ergebnis geht zusätzlich in `jack_talk.add_to_window()` — ein Gesprächsfenster, getrennt von
+  `jack_memory.db`'s `memory`-Tabelle (Kapitel zu `jack_talk.py` folgt).
+
+**Offene Fragen für später:** Was ist `jack_outcomes.db` genau, und warum existiert es getrennt von
+den drei bekannten Speichern? Was tun `jack_exec.py`, `jack_write.py`, `jack_planner.py`,
+`jack_screen_mapper.py`, `jack_ui_agent.py`, `jack_intent_lookup.py`, `jack_ui_nav.py`,
+`jack_voice_handler.py` im Detail? Sollen die vier Stub-Befehle (`/agent`,`/auto`,`/code`,`/verbessere`)
+fertiggebaut oder entfernt werden?
+
+
+---
+
+## 3. jack_autonomous.py (728 Zeilen, Wächter-Logik)
+
+**Zweck:** Die eigentliche Logik hinter dem Dienst `jack_waechter` (der Dateiname passt nicht zum
+Dienstnamen — historisch gewachsen, bewusst so benannt laut Projektnotizen). Prüft zyklisch, ob
+alle Dienste und das Xiaomi leben, startet Tote neu, meldet Auffälligkeiten per Telegram.
+
+**Wichtigster Fund: der Prozess startet beim Hochfahren ZUSÄTZLICH acht Hintergrund-Threads
+im selben Prozess** (`start_consolidated()`, läuft unbedingt vor der Hauptschleife):
+`_autolearn_loop`, `_publisher_loop`, `_missions_loop`, `_scout_loop`, `_monitor_loop`,
+`_sanity_loop`, `_lerner_loop`, `_proaktiv_loop`.
+
+**Geklärt, welche davon echte Dopplungen zu den separaten runit-Diensten sind:**
+- `_autolearn_loop` — **tot**, frühes `return` mit Markierung `JACK_TUNE_D2ONE`
+  ("Lernen nur Dienst, nicht Thread"). Bewusst stillgelegt, Code darunter unerreichbar.
+  Keine Dopplung mit dem echten `jack_autolearn`-Dienst.
+- `_publisher_loop` — **läuft wirklich**, ruft alle 180s `jack_publish.push()` auf.
+  **Mögliche echte Dopplung** mit dem separaten `jack_publisher`-Dienst — beide könnten git-Pushes
+  auslösen, auf unterschiedlichem Takt. Noch nicht geklärt, ob das Absicht oder Altlast ist.
+  Eigenes Kapitel zu `jack_publish.py` vs. was der `jack_publisher`-Dienst tatsächlich ausführt nötig.
+- `_missions_loop` — **läuft wirklich**, nutzt `jack_missions.py` (dispatch_once/recover_stale,
+  deutsche Status-Wörter: "fertig", "blockiert", "fehler", "wartet_freigabe", "verschoben") —
+  ein **komplett anderes, älteres Mission-System** als `jack_mission_runner.py` (Kapitel 1),
+  das diese Woche fast ausschließlich benutzt wurde. "wartet_freigabe" deutet darauf hin, dass
+  dies der Ort ist, an dem die Shadow-Freigabe-Pipeline (Kapitel 1/2, `pending_approvals.json`)
+  tatsächlich beheimatet ist. **Noch nicht live geprüft, ob beide Systeme gleichzeitig Missionen
+  verarbeiten oder ob eins faktisch inaktiv ist** (z. B. weil `jack_missions.py`s eigene
+  Eingangsquelle nie befüllt wird). Wichtigster offener Punkt der ganzen Kartierung bisher.
+- `_proaktiv_loop` — **läuft wirklich**, aber **keine Dopplung** mit der proaktiven Kognition aus
+  `jack_autolearn_loop.py` (26./27.09. gebaut). Andere Zuständigkeit: Morgengruß 6-9 Uhr
+  (`jack_chains.run('morgen_briefing')`, max 1x/Tag) und eine einfache Akku-Warnung unter 20%
+  (`JACK_TUNE_AUTOBAT` — **bestätigt derselbe Text, den wir am 29.09. von der Ollama-Erwähnung
+  befreit haben, läuft also wirklich im echten Pfad**).
+- `_scout_loop`, `_monitor_loop`, `_sanity_loop`, `_lerner_loop` — noch nicht einzeln geprüft.
+
+**Die eigentliche Wächter-Schleife (`main()`):** nutzt eine `jack_queue.TaskQueue` (RAM-bewusst,
+`min_ram_mb=800`) statt einer einfachen `while True`-Schleife, reiht `cycle`, `_maybe_audit`,
+`_maybe_self_improve`, `_maybe_self_audit`, `_maybe_ingest_schedule`, DB-Optimierung, Xiaomi-Explore
+und einen Shadow-Autofixer (nur unter 55°C, nur wenn Xiaomi per SSH erreichbar) ein.
+
+**`cycle()`** — der Kernvergleich: merkt sich den letzten Zustand (`jack_waechter_state.json`),
+vergleicht mit jetzt, meldet nur **Zustandswechsel** (Dienst war tot → neu gestartet, Xiaomi war da
+→ jetzt weg, Fehlerzahl gestiegen), nicht jeden Zyklus neu. Xiaomi-Abwesenheit wird höchstens alle
+3 Stunden gemeldet (`.xi_hb_down`-Marker, `JACK_TUNE_CYCL3H`) — das erklärt, warum die
+Xiaomi-Meldung heute nicht bei jedem Check wiederkam.
+
+**`_heartbeat_sv_check()`** — der eigentliche "Herzschlag tot → Dienst neu starten"-Mechanismus
+(Phase A/A2/Sleepcap aus den älteren Übergabeprotokollen, hier erstmals im Code selbst bestätigt).
+Prüft `jack_telegram`, `jack_cortex`, `jack_publisher`, `jack_autolearn` gegen `jack_tune.json`-Werte
+oder Festwert-Fallback. **`jack_missions` steht nicht in dieser Liste** — der frisch gefixte
+`jack_cortex`-Herzschlag-Bug (29.09.) lag in einer anderen Datei (`jack_cortex.py` selbst), nicht hier.
+
+**Offene Fragen für später:** Läuft `jack_missions.py` (im Wächter-Thread) wirklich parallel zum
+`jack_missions`-Dienst, oder ist eine Quelle faktisch tot? Ist `_publisher_loop` eine echte Dopplung
+oder ergänzt sie den Dienst bewusst? Was tun `jack_scout`, `jack_monitor`, `jack_sanity`, `jack_lerner`
+im Detail? Was ist `jack_queue.TaskQueue` genau (RAM-Drosselung)?
+
+
+---
+
+## 4. jack_talk.py (643 Zeilen, Gespräch/LLM-Anbindung)
+
+**Zweck:** Baut den eigentlichen Prompt für die Sprach-KI zusammen und ruft sie auf. Wird von
+`jack_telegram.py` als letzter Fallback genutzt (Kapitel 2, Schritt 10), wenn kein Befehl und keine
+Chat-Router-Lane gegriffen hat.
+
+**Modellaufteilung, hier im Code bestätigt (nicht nur in alten Notizen):** Persönliche Gespräche
+("wer bin ich", "was denkst du", "kumpel", ...) laufen über Groq (`jack_groq_bridge`) wegen besserer
+Persona-Treue; Status-/Technik-Anfragen ("zustand", "status", "tune", "health") nehmen einen anderen
+Pfad. Der genaue Verzweigungspunkt zwischen beiden ist nicht vollständig nachvollzogen (eine
+Bedingung mit doppelter Verneinung) — für später vormerken, nicht als sicher hinschreiben.
+
+**`_scrub_out(s)`** — Nachbearbeitung JEDER Antwort, bevor sie rausgeht. Zwei bekannte Filter:
+- `JACK_TUNE_NOOLLAMA_CLAIM` (26.09. gebaut) — erkennt Ollama-Behauptungen, schneidet nur den
+  betroffenen Satz raus (nicht die ganze Antwort), Totalersatz nur wenn nichts Sinnvolles übrig bleibt.
+- Ein **"Log-Ausrede"-Filter** (`JACK_TUNE_SCRUB4`) — erkennt Formulierungen wie "müsste im Log
+  stehen" und ersetzt sie durch "Das steht in keinem Log. Ich rate nicht." Bisher nirgends
+  dokumentiert gewesen, faktisch ein weiterer Anti-Halluzinations-Filter neben
+  `JACK_TUNE_NOFAKEACTION` (Zeile 351, noch nicht im Detail gelesen).
+- Dazu ein Prompt-Leak-Filter: enthält die Antwort interne Regel-Stichworte
+  ("SATZANFAENGE VERBOTEN" u. ä.), wird sie komplett verworfen.
+
+**`ist_zustand()`** — liefert den Text, den auch `jack_mission_runner.py`s `fact`-Act prüft
+(Kapitel 1: `"SSH" in out and "Akku" not in out`). Bemerkenswert: **prüft den Git-Push-Status nicht
+live, sondern liest nur, ob der Quelltext von `jack_publish.py` die Zeichenkette
+"git push origin main" enthält** — ein Text-Grep auf den eigenen Code, keine echte Prüfung ob der
+letzte Push geklappt hat. Ruft dafür extra `jack_health.py` als Subprozess auf und liest dessen
+Ergebnis aus `jack_health_now.json` (eigenes Kapitel offen).
+
+**Weitere Bausteine:**
+- `add_to_window()`/`get_window_ctx()` — ein kurzes Gesprächsfenster (letzte paar Nachrichten),
+  getrennt von `jack_memory.db`.
+- `get_embedding()` + `jack_vecdb.search_mem()` — Vektor-Ähnlichkeitssuche fürs Gedächtnis;
+  fällt bei leerem Ergebnis auf eine FTS5-Volltextsuche über `memory_fts` zurück
+  (`PHASE 3.4`, Kommentar nennt explizit "Ollama-Sperre" als Grund — die Embedding-Funktion
+  hing früher wohl an Ollama).
+- `talk_to_ollama()` — existiert als Funktion, obwohl Ollama auf dem Honor hart verboten ist.
+  Vermutlich Altlast aus einer Zeit vor dem Verbot, aufrufbar aber (hoffentlich) unbenutzt — noch
+  nicht geprüft, ob irgendwas sie wirklich aufruft.
+- Graph-Einbindung (`jack_graph.prompt_block()`) nur wenn der Prompt sich erkennbar auf eine Person
+  bezieht (Namensabgleich gegen Graph-Knoten oder Schlüsselwörter) — spart Tokens, wenn's nicht nötig ist.
+- System-Prompt beginnt bewusst mit Verboten ("Erfinde KEINE Fakten", "Zähle NIEMALS Fakten auf"),
+  nicht am Ende — Kommentar verweist auf eine frühere Erkenntnis, dass Verbote am Ende weniger wirken.
+
+**Offene Fragen für später:** Genauer Verzweigungspunkt Groq-vs-Gemini. Was prüft
+`JACK_TUNE_NOFAKEACTION` genau (Zeile 351)? Wird `talk_to_ollama()` von irgendwo noch aufgerufen?
+Was ist `jack_health.py`/`jack_health_now.json` im Detail?
+
+
+---
+
+## 5. jack_chat_router.py (565 Zeilen, Lane-Klassifikation)
+
+**Zweck:** Entscheidet, ob eine Nachricht eine Fakten-/Status-Anfrage (FACT), eine Diagnose (DIAG),
+eine Erklärung (EXPLAIN), eine Zeitfrage (NEU, diese Woche gebaut) oder normales Gespräch (TALK) ist,
+und beantwortet die ersten vier Fälle **ohne** einen LLM-Aufruf — schnell, billig, deterministisch.
+
+**`classify(text)`** — reine Schlüsselwort-Erkennung, keine KI. Reihenfolge ist Priorität: NEU zuerst
+geprüft (diese Woche ergänzt), dann FACT/EXPLAIN/DIAG, sonst TALK.
+
+**`_tools(text)` — die "Kiste"** (140 Zeilen, der Begriff aus älteren Notizen ist hiermit erstmals
+im Code verortet): ein handgeschriebener Sensor-Dispatcher. Erkennt Schlüsselwörter wie "temperatur",
+"akku", "knoten zeigen" und ruft dafür gezielt `dumpsys battery` (per SSH auf Xiaomi oder lokal auf
+Honor), Graph-Abfragen o. ä. auf. "komplette kiste"/"zeig mir alles" löst mehrere Einzelabfragen
+hintereinander aus und fasst sie zusammen. Das ist die Quelle der Ehrlichkeits-Garantie hinter
+`JACK_TUNE_NOFAKEACTION` (Kapitel 4) — ein Mess-Wunsch ohne passenden Kiste-Treffer bekommt die
+Ehrlichkeits-Anweisung statt einer Antwort.
+
+**Weiterer wichtiger Fund: ein zweiter, unabhängiger Weg, Fakten in den Graph zu schreiben.**
+`_is_save_fakt()`/`_do_save_fakt()` in `talk_local()` erkennen Freitext-Merkbefehle direkt im Chat
+(z. B. "merk dir: ...") und schreiben **ohne Umweg über eine KI** in den Graph. Das läuft komplett
+getrennt von `graph_add_fact` (Kapitel 1, diese Woche für Claude gebaut). **Zwei Schreibwege in
+denselben Speicher, die sich nicht kennen** — ähnliches Muster wie die drei Freigabe-Pipelines.
+
+**Korrektur-Erkennung (`JACK_TUNE_LERN1`/`LERN2`):** merkt sich die letzte Nachricht
+(`reports/last_msg.json`) und erkennt, wenn Dima sich innerhalb von 2 Minuten selbst korrigiert
+(gemeinsame Schlüsselwörter oder explizite Formulierungen wie "hoer auf", "falsch") — schreibt das
+als Paar nach `reports/korrekturen.jsonl`. Eine Lernsignal-Erfassung, getrennt von
+`jack_learned_rules.md` und `jack_lerner.py` (beide noch eigene Kapitel).
+
+**`dispatch(text, send_keyboard)`** — der zentrale Umschalter: NEU → `neu_report()` (diese Woche
+gebaut), FACT → `fact_report()`, EXPLAIN → delegiert an `jack_selfsee.explain()`, DIAG → delegiert
+an `jack_selfsee` (mit einer **weiteren**, eigenständigen Bestätigungs-Datei `.selfsee_pending` plus
+Ausführen/Abbrechen-Knopf — dieselbe Familie wie `PENDING_EXEC`/`PENDING_WRITE` aus Kapitel 2, aber
+eigener Code). Sonst `talk_local()`, und erst wenn das auch nichts liefert: `None` zurück an
+`jack_telegram.py`, das dann den LLM-Fallback zieht.
+
+**Gesamtbild der Freigabe-/Bestätigungs-Mechanismen nach fünf Kapiteln:** mindestens fünf eigenständige
+Varianten (Shadow+pending_approvals, Self-Tooling-Proposals, PENDING_EXEC, PENDING_WRITE,
+selfsee_pending), dazu zwei eigenständige Graph-Schreibwege (`_do_save_fakt`, `graph_add_fact`).
+Keine Dopplung ist für sich ein Bug — aber die Summe ist ein klarer Vereinheitlichungs-Kandidat,
+sobald die Kartierung fertig ist.
+
+**Offene Fragen für später:** Was ist `jack_selfsee.py` genau (EXPLAIN/DIAG-Logik, Overmind/Deadman)?
+Was ist `jack_learned_rules.md` vs. `reports/korrekturen.jsonl` — führt eins ins andere?
+
+
+---
