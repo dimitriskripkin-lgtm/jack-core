@@ -29,6 +29,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 19. [jack_graph.py](BETRIEBSHANDBUCH/19_graph.md) — Graph-Kueche
 20. [jack_groq_bridge.py](BETRIEBSHANDBUCH/20_groq_bridge.md) — Groq-Ruf
 21. [jack_health.py](BETRIEBSHANDBUCH/21_health.md) — Health, bat_fresh
+22. [jack_gemini_bridge.py](BETRIEBSHANDBUCH/22_gemini_bridge.md) — Gemini-Ruf
+23. [jack_memory.py](BETRIEBSHANDBUCH/23_memory.md) — Episoden, FTS
+24. [jack_vision_selector.py](BETRIEBSHANDBUCH/24_vision_selector.md) — Text-Tap Xiaomi
+25. [jack_xiaomi_unlock.py](BETRIEBSHANDBUCH/25_xiaomi_unlock.md) — Wake plus Swipe
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
