@@ -153,6 +153,15 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 143. [jack_faehigkeiten.py](BETRIEBSHANDBUCH/143_faehigkeiten.md) — Liste
 144. [jack_gemini_cache.py](BETRIEBSHANDBUCH/144_gemini_cache.md) — Token
 jack_briefing_cron.py fehlt.
+145. [jack_grid_vision.py](BETRIEBSHANDBUCH/145_grid_vision.md) — Gitter
+146. [jack_harvest_lernen.py](BETRIEBSHANDBUCH/146_harvest_lernen.md) — Fakten aus Chats
+147. [jack_install.py](BETRIEBSHANDBUCH/147_install.md) — Install
+148. [jack_lokal.py](BETRIEBSHANDBUCH/148_lokal.md) — lokal mit Gitter
+149. [jack_loop.py](BETRIEBSHANDBUCH/149_loop.md) — Schleife
+150. [jack_math.py](BETRIEBSHANDBUCH/150_math.md) — Rechnen
+151. [jack_monitor.py](BETRIEBSHANDBUCH/151_monitor.md) — Scan
+152. [jack_outcome_tracker.py](BETRIEBSHANDBUCH/152_outcome.md) — Ergebnis
+jack_net_discover.py fehlt. jack_persona.py fehlt, Persona ist kern.md.
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
