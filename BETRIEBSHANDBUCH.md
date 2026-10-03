@@ -57,6 +57,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 47. [jack_explorer.py](BETRIEBSHANDBUCH/47_explorer.md) — App-Liste Xiaomi
 48. [jack_config.py](BETRIEBSHANDBUCH/48_config.md) — config.ini
 49. [jack_context_compress.py](BETRIEBSHANDBUCH/49_context_compress.md) — Top-Fakten
+50. [jack_audit.py](BETRIEBSHANDBUCH/50_audit.md) — Gesundheits-Check
+51. [jack_autodoc.py](BETRIEBSHANDBUCH/51_autodoc.md) — Docstrings staged
+52. [jack_ast_gate.py](BETRIEBSHANDBUCH/52_ast_gate.md) — AST vor Lauf
+53. [jack_context_ingest.py](BETRIEBSHANDBUCH/53_context_ingest.md) — Exporte nach Memory
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
