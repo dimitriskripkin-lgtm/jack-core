@@ -53,6 +53,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 43. [jack_circuit_breaker.py](BETRIEBSHANDBUCH/43_circuit_breaker.md) — 3 Fehler, 30 min
 44. [jack_critic.py](BETRIEBSHANDBUCH/44_critic.md) — verbotene Muster
 45. [jack_delta.py](BETRIEBSHANDBUCH/45_delta.md) — nur Aenderungen
+46. [jack_error_to_rule.py](BETRIEBSHANDBUCH/46_error_to_rule.md) — Fehler werden Regeln
+47. [jack_explorer.py](BETRIEBSHANDBUCH/47_explorer.md) — App-Liste Xiaomi
+48. [jack_config.py](BETRIEBSHANDBUCH/48_config.md) — config.ini
+49. [jack_context_compress.py](BETRIEBSHANDBUCH/49_context_compress.md) — Top-Fakten
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
