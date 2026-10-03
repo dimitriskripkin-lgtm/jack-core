@@ -217,6 +217,21 @@ Fehlen auch: jack_identity.py, jack_main.py.
 203. [jack_queue_gate.py](BETRIEBSHANDBUCH/203_queue_gate.md)
 204. [jack_quota.py](BETRIEBSHANDBUCH/204_quota.md)
 205. [jack_qwen_client.py](BETRIEBSHANDBUCH/205_qwen_client.md)
+206. [jack_reflexion.py](BETRIEBSHANDBUCH/206_reflexion.md)
+207. [jack_sanity.py](BETRIEBSHANDBUCH/207_sanity.md)
+208. [jack_scheduler.py](BETRIEBSHANDBUCH/208_scheduler.md)
+209. [jack_score_avg.py](BETRIEBSHANDBUCH/209_score_avg.md)
+210. [jack_scout.py](BETRIEBSHANDBUCH/210_scout.md)
+211. [jack_selftest.py](BETRIEBSHANDBUCH/211_selftest.md)
+212. [jack_skill_builder.py](BETRIEBSHANDBUCH/212_skill_builder.md)
+213. [jack_skills_db.py](BETRIEBSHANDBUCH/213_skills_db.md)
+214. [jack_state.py](BETRIEBSHANDBUCH/214_state.md)
+215. [jack_traceback.py](BETRIEBSHANDBUCH/215_traceback.md)
+216. [jack_ui_agent.py](BETRIEBSHANDBUCH/216_ui_agent.md)
+217. [jack_vinted_radar.py](BETRIEBSHANDBUCH/217_vinted_radar.md)
+218. [jack_voice_chat_live.py](BETRIEBSHANDBUCH/218_voice_chat_live.md)
+219. [jack_voice_el.py](BETRIEBSHANDBUCH/219_voice_el.md)
+220. [jack_voice_live.py](BETRIEBSHANDBUCH/220_voice_live.md)
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
