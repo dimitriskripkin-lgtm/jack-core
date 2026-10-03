@@ -110,6 +110,9 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 100. [jack_ui_nav.py](BETRIEBSHANDBUCH/100_ui_nav.md) — Tasten
 101. [jack_verify_gate.py](BETRIEBSHANDBUCH/101_verify_gate.md) — dreimal pruefen
 102. [jack_talk_contract.py](BETRIEBSHANDBUCH/102_talk_contract.md) — Talk-Proben
+103. [jack_skill_lib.py](BETRIEBSHANDBUCH/103_skill_lib.md) — Skills-DB
+104. [jack_mission_queue.py](BETRIEBSHANDBUCH/104_mission_queue.md) — naechste Mission
+105. [jack_logging.py](BETRIEBSHANDBUCH/105_logging.md) — zweiter Logger
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
