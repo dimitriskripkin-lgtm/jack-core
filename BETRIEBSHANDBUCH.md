@@ -17,6 +17,14 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 7. [jack_autolearn_loop.py](BETRIEBSHANDBUCH/07_autolearn_loop.md) — Hintergrund-Kognition, Skills, proaktive Beobachtung
 8. [jack_intent.py](BETRIEBSHANDBUCH/08_intent.md) — Autonomie-Level-System (numerisches Gate, 6. Freigabe-Variante)
 9. [jack_missions.py](BETRIEBSHANDBUCH/09_missions_alt.md) — altes Mission-System, AUFGELOEST: Warteschlange praktisch immer leer
+10. [jack_exec.py](BETRIEBSHANDBUCH/10_exec.md) — Freitext-EXEC, Outcomes, Denylist
+11. [jack_oracle.py](BETRIEBSHANDBUCH/11_oracle.md) — alter GitHub-Befehlskanal, eigenes Gate
+12. [jack_cmd_handler.py](BETRIEBSHANDBUCH/12_cmd_handler.md) — Slash, shadow/pending_approvals
+13. [jack_coder.py](BETRIEBSHANDBUCH/13_coder.md) — Werkstatt, HALIZA, kein wartet_freigabe
+14. [jack_write.py](BETRIEBSHANDBUCH/14_write.md) — Werkstatt-Schreiben, Critic
+15. [jack_planner.py](BETRIEBSHANDBUCH/15_planner.md) — Plan-Schritte Xiaomi
+16. [jack_selfsee.py](BETRIEBSHANDBUCH/16_selfsee.md) — DIAG, .selfsee_pending
+17. [jack_ui_type.py](BETRIEBSHANDBUCH/17_ui_type.md) — Xiaomi-UI, zwei Tueren
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
