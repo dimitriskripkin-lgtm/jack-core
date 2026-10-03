@@ -72,3 +72,11 @@ den drei bekannten Speichern? Was tun `jack_exec.py`, `jack_write.py`, `jack_pla
 `jack_screen_mapper.py`, `jack_ui_agent.py`, `jack_intent_lookup.py`, `jack_ui_nav.py`,
 `jack_voice_handler.py` im Detail? Sollen die vier Stub-Befehle (`/agent`,`/auto`,`/code`,`/verbessere`)
 fertiggebaut oder entfernt werden?
+
+**Nachtrag (Kapitel 6, Fund beim Kartieren von `jack_android.py`):** Im Befehlsinterpreter läuft
+noch früher als hier dokumentiert ein Aufruf `jack_cmd_handler.handle(_rt, text, send)` — dasselbe
+Modul, das in Kapitel 1 als Nutzer der alten Shadow-Freigabe-Pipeline auftauchte. Was dieser Aufruf
+genau tut und ob er Vorrang vor den oben gelisteten Slash-Befehlen hat, noch nicht geprüft — eigenes
+Kapitel zu `jack_cmd_handler.py` nötig. Außerdem aufgelöst: `/vision <frage>` ruft tatsächlich den
+vollen autonomen UI-Agenten auf (`jack_android.run()`, Kapitel 6) — die Fähigkeit hinter den
+Stub-Befehlen `/agent`/`/auto` existiert also, nur unter anderem Namen erreichbar.

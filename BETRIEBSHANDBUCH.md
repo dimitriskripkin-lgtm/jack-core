@@ -13,6 +13,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 3. [jack_autonomous.py](BETRIEBSHANDBUCH/03_autonomous.md) — Wächter-Logik, 8 interne Threads
 4. [jack_talk.py](BETRIEBSHANDBUCH/04_talk.md) — Prompt-Bau, LLM-Anbindung
 5. [jack_chat_router.py](BETRIEBSHANDBUCH/05_chat_router.md) — Lane-Klassifikation, "Kiste"
+6. [jack_android.py](BETRIEBSHANDBUCH/06_android.md) — UI-Automatisierung, autonomer Vision-Agent
+7. [jack_autolearn_loop.py](BETRIEBSHANDBUCH/07_autolearn_loop.md) — Hintergrund-Kognition, Skills, proaktive Beobachtung
+8. [jack_intent.py](BETRIEBSHANDBUCH/08_intent.md) — Autonomie-Level-System (numerisches Gate, 6. Freigabe-Variante)
+9. [jack_missions.py](BETRIEBSHANDBUCH/09_missions_alt.md) — altes Mission-System, AUFGELOEST: Warteschlange praktisch immer leer
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
