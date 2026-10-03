@@ -187,6 +187,21 @@ Fehlen auch: jack_identity.py, jack_main.py.
 173. [jack_xiaomi_think.py](BETRIEBSHANDBUCH/173_xiaomi_think.md) — Denken
 174. [jack_xiaomi_web.py](BETRIEBSHANDBUCH/174_xiaomi_web.md) — Web
 175. [jack_yt_hybrid.py](BETRIEBSHANDBUCH/175_yt_hybrid.md) — RVX
+176. [jack_accessibility_listener.py](BETRIEBSHANDBUCH/176_accessibility_listener.md) — hoert Barrierefreiheits-Erei
+177. [jack_audit_run.py](BETRIEBSHANDBUCH/177_audit_run.md) — startet den Audit.
+178. [jack_callback_handler.py](BETRIEBSHANDBUCH/178_callback_handler.md) — Telegram-Knoepfe. Speichern 
+179. [jack_focus_monitor.py](BETRIEBSHANDBUCH/179_focus_monitor.md) — schaut, welche App vorne ist
+180. [jack_heat_protection.py](BETRIEBSHANDBUCH/180_heat_protection.md) — Waerme-Gitter. Werte OK, weg
+181. [jack_intent_lookup.py](BETRIEBSHANDBUCH/181_intent_lookup.md) — sucht eine Absicht nach.
+182. [jack_intent_parser.py](BETRIEBSHANDBUCH/182_intent_parser.md) — zerlegt den Satz in eine Abs
+183. [jack_karte.py](BETRIEBSHANDBUCH/183_karte.md) — Karte. Ob sie live gelesen w
+184. [jack_keyboards.py](BETRIEBSHANDBUCH/184_keyboards.md) — Telegram-Tastaturen.
+185. [jack_lerner.py](BETRIEBSHANDBUCH/185_lerner.md) — Lerner. Journal war leer im 
+186. [jack_live_bridge.py](BETRIEBSHANDBUCH/186_live_bridge.md) — Bruecke live. Ziel hinter de
+187. [jack_memory_pruning.py](BETRIEBSHANDBUCH/187_memory_pruning.md) — schneidet altes Gedaechtnis.
+188. [jack_memory_tree.py](BETRIEBSHANDBUCH/188_memory_tree.md) — Baum ueber dem Gedaechtnis.
+189. [jack_mission_gen.py](BETRIEBSHANDBUCH/189_mission_gen.md) — erzeugt Missionen.
+190. [jack_mission_prioritizer.py](BETRIEBSHANDBUCH/190_mission_prioritizer.md) — sortiert Missionen nach Wich
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
