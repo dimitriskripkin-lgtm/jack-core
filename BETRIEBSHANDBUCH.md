@@ -162,6 +162,12 @@ jack_briefing_cron.py fehlt.
 151. [jack_monitor.py](BETRIEBSHANDBUCH/151_monitor.md) — Scan
 152. [jack_outcome_tracker.py](BETRIEBSHANDBUCH/152_outcome.md) — Ergebnis
 jack_net_discover.py fehlt. jack_persona.py fehlt, Persona ist kern.md.
+153. [jack_subagent.py](BETRIEBSHANDBUCH/153_subagent.md) — Thread
+154. [jack_talk_contract.py](BETRIEBSHANDBUCH/154_talk_contract.md) — Proben
+155. [jack_thermal.py](BETRIEBSHANDBUCH/155_thermal.md) — Hitze
+156. [jack_ui_type.py](BETRIEBSHANDBUCH/156_ui_type.md) — tippen
+157. [jack_verify_gate.py](BETRIEBSHANDBUCH/157_verify_gate.md) — n mal OK
+Fehlen: jack_pull.py, jack_seal.py, jack_seal_night.py, jack_spotify.py, jack_watchdog.py.
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
