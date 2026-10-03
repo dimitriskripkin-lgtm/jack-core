@@ -45,6 +45,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 35. [jack_approval.py](BETRIEBSHANDBUCH/35_approval.md) — Pfad-Gatter
 36. [jack_log.py](BETRIEBSHANDBUCH/36_log.md) — gemeinsamer Logger
 37. [jack_vecdb.py](BETRIEBSHANDBUCH/37_vecdb.md) — Vektor-Suche
+38. [jack_screen_mapper.py](BETRIEBSHANDBUCH/38_screen_mapper.md) — UI-Signaturen
+39. [jack_budget.py](BETRIEBSHANDBUCH/39_budget.md) — 300/40, 3 Euro
+40. [jack_episoden.py](BETRIEBSHANDBUCH/40_episoden.md) — Momente
+41. [jack_degraded.py](BETRIEBSHANDBUCH/41_degraded.md) — Xiaomi-Flagge
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,

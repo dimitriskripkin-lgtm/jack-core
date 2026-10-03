@@ -1209,7 +1209,7 @@ def loop(poll=30, maxn=200):
     while True:
         _hb()
         if os.path.isfile(STOP):
-            print("STOP-FILE"); time.sleep(poll); continue  # JACK_TUNE_STOPSLEEP
+            print("STOP-FILE"); open(V+"/jack_missions/down","a").close(); os._exit(0)  # JACK_TUNE_STOPKILL
         try:
             import importlib as _il, jack_mission_pull as _jp
             _il.reload(_jp)
@@ -1221,7 +1221,7 @@ def loop(poll=30, maxn=200):
         if pending_files():
             rc=run_queue(maxn=maxn)
             if rc!=0: print("QUEUE-FAIL rc", rc)  # JACK_TUNE_QSTAY
-        time.sleep(_poll_now(poll))
+        time.sleep(1)  # JACK_TUNE_FASTLOOP
 if __name__=="__main__":
     mode=sys.argv[1] if len(sys.argv)>1 else "once"
     sys.exit(loop() if mode=="loop" else run_queue())
