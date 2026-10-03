@@ -33,6 +33,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 23. [jack_memory.py](BETRIEBSHANDBUCH/23_memory.md) — Episoden, FTS
 24. [jack_vision_selector.py](BETRIEBSHANDBUCH/24_vision_selector.md) — Text-Tap Xiaomi
 25. [jack_xiaomi_unlock.py](BETRIEBSHANDBUCH/25_xiaomi_unlock.md) — Wake plus Swipe
+26. [jack_mcp_server.py](BETRIEBSHANDBUCH/26_mcp_server.md) — MCP-Tuer, Token fail-open
+27. [jack_heat_protection.py](BETRIEBSHANDBUCH/27_heat.md) — 55/65/75
+28. [jack_callback_handler.py](BETRIEBSHANDBUCH/28_callback.md) — PENDING_EXEC im RAM
+29. [jack_voice_handler.py](BETRIEBSHANDBUCH/29_voice.md) — Telegram-Sprache
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
