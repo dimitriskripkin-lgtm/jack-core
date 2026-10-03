@@ -49,6 +49,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 39. [jack_budget.py](BETRIEBSHANDBUCH/39_budget.md) — 300/40, 3 Euro
 40. [jack_episoden.py](BETRIEBSHANDBUCH/40_episoden.md) — Momente
 41. [jack_degraded.py](BETRIEBSHANDBUCH/41_degraded.md) — Xiaomi-Flagge
+42. [jack_chains.py](BETRIEBSHANDBUCH/42_chains.md) — feste Ketten
+43. [jack_circuit_breaker.py](BETRIEBSHANDBUCH/43_circuit_breaker.md) — 3 Fehler, 30 min
+44. [jack_critic.py](BETRIEBSHANDBUCH/44_critic.md) — verbotene Muster
+45. [jack_delta.py](BETRIEBSHANDBUCH/45_delta.md) — nur Aenderungen
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
