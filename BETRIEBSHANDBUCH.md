@@ -94,6 +94,12 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 84. [jack_ui_elements.py](BETRIEBSHANDBUCH/84_ui_elements.md) — Experiment
 85. [jack_vision_once.py](BETRIEBSHANDBUCH/85_vision_once.md) — ein Bild
 86. [Schwanz](BETRIEBSHANDBUCH/86_rest.md) — restliche Köpfe
+87. [jack_claude.py](BETRIEBSHANDBUCH/87_claude.md) — Claude read-only
+88. [jack_testbed.py](BETRIEBSHANDBUCH/88_testbed.md) — Kern-Test
+89. [jack_vinted_radar.py](BETRIEBSHANDBUCH/89_vinted.md) — eigener Bot
+90. [jack_stand.py](BETRIEBSHANDBUCH/90_stand.md) — Ist-Zustand
+91. [jack_thermal_guard.py](BETRIEBSHANDBUCH/91_thermal_guard.md) — vor schweren Jobs
+92. [jack_sensors.py](BETRIEBSHANDBUCH/92_sensors.md) — Sinne
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
