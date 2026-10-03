@@ -83,6 +83,17 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 73. [jack_skill_self_creation.py](BETRIEBSHANDBUCH/73_skill_self_creation.md) — Kopf duenn
 74. [jack_stress.py](BETRIEBSHANDBUCH/74_stress.md) — Gates hart
 75. [jack_ui.py](BETRIEBSHANDBUCH/75_ui.md) — UI-Helfer
+76. [jack_publish.py](BETRIEBSHANDBUCH/76_publish.md) — oeffentlicher Kontext
+77. [jack_briefing.py](BETRIEBSHANDBUCH/77_briefing.md) — 07:55
+78. [jack_heartbeat.py](BETRIEBSHANDBUCH/78_heartbeat.md) — Lebenszeichen
+79. [jack_voraussetzung.py](BETRIEBSHANDBUCH/79_voraussetzung.md) — vor der Aktion
+80. [jack_loop.py](BETRIEBSHANDBUCH/80_loop.md) — kleine Schleife
+81. [jack_voice_router.py](BETRIEBSHANDBUCH/81_voice_router.md) — Sprache
+82. [jack_xiaomi_think.py](BETRIEBSHANDBUCH/82_xiaomi_think.md) — Denken auf Xiaomi
+83. [jack_subagent.py](BETRIEBSHANDBUCH/83_subagent.md) — Nebenlaeufer
+84. [jack_ui_elements.py](BETRIEBSHANDBUCH/84_ui_elements.md) — Experiment
+85. [jack_vision_once.py](BETRIEBSHANDBUCH/85_vision_once.md) — ein Bild
+86. [Schwanz](BETRIEBSHANDBUCH/86_rest.md) — restliche Köpfe
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
