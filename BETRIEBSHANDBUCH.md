@@ -133,6 +133,16 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 123. [jack_inbox.py](BETRIEBSHANDBUCH/123_inbox.md) — Eingang
 124. [jack_dep_map.py](BETRIEBSHANDBUCH/124_dep_map.md) — Import-Graph
 125. [jack_intent_apps.py](BETRIEBSHANDBUCH/125_intent_apps.md) — App ohne Modell
+126. [jack_aufraeumen.py](BETRIEBSHANDBUCH/126_aufraeumen.md) — loescht nie
+127. [jack_auto_ingest.py](BETRIEBSHANDBUCH/127_auto_ingest.md) — exports
+128. [jack_bug_fixer.py](BETRIEBSHANDBUCH/128_bug_fixer.md) — Fixer
+129. [jack_code_writer.py](BETRIEBSHANDBUCH/129_code_writer.md) — Schreiber
+130. [jack_curiosity.py](BETRIEBSHANDBUCH/130_curiosity.md) — Neugier
+131. [jack_gedanken.py](BETRIEBSHANDBUCH/131_gedanken.md) — warum
+132. [jack_harvest.py](BETRIEBSHANDBUCH/132_harvest.md) — Chrome-Screenshot
+133. [jack_hb_alarm.py](BETRIEBSHANDBUCH/133_hb_alarm.md) — 3 und 3h
+134. [jack_health_monitor.py](BETRIEBSHANDBUCH/134_health_monitor.md) — nach Freigabe
+135. [jack_improve.py](BETRIEBSHANDBUCH/135_improve.md) — achter Weg
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
