@@ -25,6 +25,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 15. [jack_planner.py](BETRIEBSHANDBUCH/15_planner.md) — Plan-Schritte Xiaomi
 16. [jack_selfsee.py](BETRIEBSHANDBUCH/16_selfsee.md) — DIAG, .selfsee_pending
 17. [jack_ui_type.py](BETRIEBSHANDBUCH/17_ui_type.md) — Xiaomi-UI, zwei Tueren
+18. [jack_outcome_tracker.py](BETRIEBSHANDBUCH/18_outcome_tracker.md) — jack_outcomes.db
+19. [jack_graph.py](BETRIEBSHANDBUCH/19_graph.md) — Graph-Kueche
+20. [jack_groq_bridge.py](BETRIEBSHANDBUCH/20_groq_bridge.md) — Groq-Ruf
+21. [jack_health.py](BETRIEBSHANDBUCH/21_health.md) — Health, bat_fresh
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
