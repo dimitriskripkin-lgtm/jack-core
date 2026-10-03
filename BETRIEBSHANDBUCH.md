@@ -242,6 +242,7 @@ Fehlen auch: jack_identity.py, jack_main.py.
 228. [jack_xiaomi_inspector.py](BETRIEBSHANDBUCH/228_xiaomi_inspector.md)
 229. [jack_yt_sido.py](BETRIEBSHANDBUCH/229_yt_sido.md)
 Repo-Luecke 03.10. zu. 197 jack_*.py haben einen Namen im Handbuch.
+230. [Zweitpass scharf](BETRIEBSHANDBUCH/230_zweitpass_scharf.md) — loeschen, lernen, Ollama-Datei
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
