@@ -11,7 +11,7 @@ Das hier ist ein laufendes, produktives Ein-Personen-System, kein aufgeräumtes 
 Einstiegspunkte: `jack_mcp_server.py` (MCP für externe KIs), `jack_mission_runner.py` (Ausführung
 benannter Acts), `jack_autonomous.py` (Wächter), `jack_chat_router.py` (Gespräch). CI läuft bei
 jedem Push. Wer die Architektur wirklich verstehen will: `BETRIEBSHANDBUCH.md` ist der Einstieg —
-17 Kapitel fertig, Stand 03.10.2026.
+Alle 197 jack_*.py-Module sind erfasst (230 Kapitel), Stand 03.10.2026.
 
 ## Stand 03.10.2026
 
@@ -47,7 +47,7 @@ Honor = Gehirn. Xiaomi = Muskel, SSH-Alias `xiaomi-jack`, nur benannte Acts.
 ## Ollama-Politik (28.09.2026)
 
 Standard aus. Honor komplett aus. Xiaomi nur pro Sitzung mit Auto-Aus-Timer.
-Details: `ZETTEL_20260928_OLLAMA.md`.
+Details: `ZETTEL_20260928_OLLAMA.md`. Der Honor-Hybrid (`jack_ollama_guard.py`) ist seit 03.10.2026 komplett entfernt, nicht nur deaktiviert.
 
 ## Was JACK nicht tut
 
