@@ -232,6 +232,16 @@ Fehlen auch: jack_identity.py, jack_main.py.
 218. [jack_voice_chat_live.py](BETRIEBSHANDBUCH/218_voice_chat_live.md)
 219. [jack_voice_el.py](BETRIEBSHANDBUCH/219_voice_el.md)
 220. [jack_voice_live.py](BETRIEBSHANDBUCH/220_voice_live.md)
+221. [jack_voice_processor.py](BETRIEBSHANDBUCH/221_voice_processor.md)
+222. [jack_web_ingest.py](BETRIEBSHANDBUCH/222_web_ingest.md)
+223. [jack_whisper_async.py](BETRIEBSHANDBUCH/223_whisper_async.md)
+224. [jack_whitelist_guard.py](BETRIEBSHANDBUCH/224_whitelist_guard.md)
+225. [jack_wissen_ernte.py](BETRIEBSHANDBUCH/225_wissen_ernte.md)
+226. [jack_wissen_tief.py](BETRIEBSHANDBUCH/226_wissen_tief.md)
+227. [jack_workers.py](BETRIEBSHANDBUCH/227_workers.md)
+228. [jack_xiaomi_inspector.py](BETRIEBSHANDBUCH/228_xiaomi_inspector.md)
+229. [jack_yt_sido.py](BETRIEBSHANDBUCH/229_yt_sido.md)
+Repo-Luecke 03.10. zu. 197 jack_*.py haben einen Namen im Handbuch.
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
