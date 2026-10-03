@@ -118,6 +118,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 108. [Naechste Schnitte](BETRIEBSHANDBUCH/108_naechste.md) — nicht entschieden
 109. [Gegenzeichnung](BETRIEBSHANDBUCH/109_gegenzeichnung.md) — Kern 15:54
 110. [Waechter-Neustart](BETRIEBSHANDBUCH/110_waechter_neustart.md) — sv up ohne down-Datei
+111. [Publisher-Loop](BETRIEBSHANDBUCH/111_publisher_loop.md) — 180s
+112. [Autolearn-Takt](BETRIEBSHANDBUCH/112_autolearn_rate.md) — 6h
+113. [Talk-Kopf](BETRIEBSHANDBUCH/113_talk_kopf.md) — Version dreimal
+114. [Router](BETRIEBSHANDBUCH/114_router.md) — eine Leitung
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
