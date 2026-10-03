@@ -122,6 +122,7 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 112. [Autolearn-Takt](BETRIEBSHANDBUCH/112_autolearn_rate.md) — 6h
 113. [Talk-Kopf](BETRIEBSHANDBUCH/113_talk_kopf.md) — Version dreimal
 114. [Router](BETRIEBSHANDBUCH/114_router.md) — eine Leitung
+115. [Zweitpass](BETRIEBSHANDBUCH/115_zweitpass.md) — Kern zu
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
