@@ -76,6 +76,13 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 66. [jack_explorer_deep.py](BETRIEBSHANDBUCH/66_explorer_deep.md) — Dialog
 67. [jack_radar.py](BETRIEBSHANDBUCH/67_radar.md) — eigene DB
 68. [jack_ui_read.py](BETRIEBSHANDBUCH/68_ui_read.md) — Doku tippen
+69. [jack_approval_digest.py](BETRIEBSHANDBUCH/69_approval_digest.md) — eine Nachricht
+70. [jack_schema.py](BETRIEBSHANDBUCH/70_schema.md) — Missions-Schema
+71. [jack_screen_tracker.py](BETRIEBSHANDBUCH/71_screen_tracker.md) — XML, keine Vision
+72. [jack_semantic_analyzer.py](BETRIEBSHANDBUCH/72_semantic_analyzer.md) — Review staged
+73. [jack_skill_self_creation.py](BETRIEBSHANDBUCH/73_skill_self_creation.md) — Kopf duenn
+74. [jack_stress.py](BETRIEBSHANDBUCH/74_stress.md) — Gates hart
+75. [jack_ui.py](BETRIEBSHANDBUCH/75_ui.md) — UI-Helfer
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
