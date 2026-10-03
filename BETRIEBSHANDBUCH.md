@@ -105,6 +105,11 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 95. [jack_adb_heal.py](BETRIEBSHANDBUCH/95_adb_heal.md) — ADB wieder an
 96. [jack_graceful.py](BETRIEBSHANDBUCH/96_graceful.md) — Pause wenn offline
 97. [jack_talk_trainer.py](BETRIEBSHANDBUCH/97_talk_trainer.md) — Persona-Schreiber
+98. [jack_monitor.py](BETRIEBSHANDBUCH/98_monitor.md) — /scan
+99. [jack_ui_session.py](BETRIEBSHANDBUCH/99_ui_session.md) — Vordergrund
+100. [jack_ui_nav.py](BETRIEBSHANDBUCH/100_ui_nav.md) — Tasten
+101. [jack_verify_gate.py](BETRIEBSHANDBUCH/101_verify_gate.md) — dreimal pruefen
+102. [jack_talk_contract.py](BETRIEBSHANDBUCH/102_talk_contract.md) — Talk-Proben
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
