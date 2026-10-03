@@ -143,6 +143,16 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 133. [jack_hb_alarm.py](BETRIEBSHANDBUCH/133_hb_alarm.md) — 3 und 3h
 134. [jack_health_monitor.py](BETRIEBSHANDBUCH/134_health_monitor.md) — nach Freigabe
 135. [jack_improve.py](BETRIEBSHANDBUCH/135_improve.md) — achter Weg
+136. [jack_budget_status.py](BETRIEBSHANDBUCH/136_budget_status.md) — nur lesen
+137. [jack_calltest.py](BETRIEBSHANDBUCH/137_calltest.md) — Aufruf da
+138. [jack_changelog.py](BETRIEBSHANDBUCH/138_changelog.md) — Git zu Mission
+139. [jack_cmd_crawler.py](BETRIEBSHANDBUCH/139_cmd_crawler.md) — Xiaomi nur lesen
+140. [jack_code_analyzer.py](BETRIEBSHANDBUCH/140_code_analyzer.md) — CHECK
+141. [jack_errors_status.py](BETRIEBSHANDBUCH/141_errors_status.md) — nur lesen
+142. [jack_exec_parser.py](BETRIEBSHANDBUCH/142_exec_parser.md) — neunter Weg
+143. [jack_faehigkeiten.py](BETRIEBSHANDBUCH/143_faehigkeiten.md) — Liste
+144. [jack_gemini_cache.py](BETRIEBSHANDBUCH/144_gemini_cache.md) — Token
+jack_briefing_cron.py fehlt.
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
