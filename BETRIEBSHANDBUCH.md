@@ -37,6 +37,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 27. [jack_heat_protection.py](BETRIEBSHANDBUCH/27_heat.md) — 55/65/75
 28. [jack_callback_handler.py](BETRIEBSHANDBUCH/28_callback.md) — PENDING_EXEC im RAM
 29. [jack_voice_handler.py](BETRIEBSHANDBUCH/29_voice.md) — Telegram-Sprache
+30. [jack_overmind_client.py](BETRIEBSHANDBUCH/30_overmind.md) — Whitelist, 180s
+31. [jack_react.py](BETRIEBSHANDBUCH/31_react.md) — Fehleranalyse
+32. [jack_db_queue.py](BETRIEBSHANDBUCH/32_db_queue.md) — ein Schreiber
+33. [jack_focus_monitor.py](BETRIEBSHANDBUCH/33_focus.md) — Vordergrund
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
