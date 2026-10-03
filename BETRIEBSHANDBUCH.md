@@ -41,6 +41,10 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 31. [jack_react.py](BETRIEBSHANDBUCH/31_react.md) — Fehleranalyse
 32. [jack_db_queue.py](BETRIEBSHANDBUCH/32_db_queue.md) — ein Schreiber
 33. [jack_focus_monitor.py](BETRIEBSHANDBUCH/33_focus.md) — Vordergrund
+34. [jack_cortex.py](BETRIEBSHANDBUCH/34_cortex.md) — Xiaomi-Steuerung
+35. [jack_approval.py](BETRIEBSHANDBUCH/35_approval.md) — Pfad-Gatter
+36. [jack_log.py](BETRIEBSHANDBUCH/36_log.md) — gemeinsamer Logger
+37. [jack_vecdb.py](BETRIEBSHANDBUCH/37_vecdb.md) — Vektor-Suche
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
