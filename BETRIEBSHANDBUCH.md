@@ -115,6 +115,7 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 105. [jack_logging.py](BETRIEBSHANDBUCH/105_logging.md) — zweiter Logger
 106. [jack_voice_handler.py](BETRIEBSHANDBUCH/106_voice_handler.md) — Sprache rein
 107. [jack_self_improve.py](BETRIEBSHANDBUCH/107_self_improve.md) — stiller Fixmann, unbewiesen
+108. [Naechste Schnitte](BETRIEBSHANDBUCH/108_naechste.md) — nicht entschieden
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
