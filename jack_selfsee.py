@@ -140,6 +140,18 @@ def _fix_ui():
     t=t.replace(', "interessiert"','')
     open(EX,"w",encoding="utf-8").write(t)
     return True
+def _compile_or_rollback(bak):
+    rc, out = sh(["python3","-m","py_compile", TG], t=20)
+    if rc == 0:
+        return True, ""
+    if os.path.isfile(bak):
+        try:
+            import shutil
+            shutil.copy2(bak, TG)
+            return False, "COMPILE FAIL, Rollback aus Backup: "+out[:120]
+        except Exception as e:
+            return False, "COMPILE FAIL und Rollback fehlgeschlagen: "+str(e)[:80]
+    return False, "COMPILE FAIL, kein Backup: "+out[:120]
 def execute(act=None):
     if not act and not os.path.isfile(PEND):
         return "Nichts offen."
@@ -154,11 +166,35 @@ def execute(act=None):
         ok=m["ov_h"]<0.2
         return ("Fix hat gegriffen." if ok else "Fix hat nicht gegriffen.")+" Overmind "+str(m["ov_h"])+"h. SSH "+m["ssh"]+"."
     if act=="fix_send":
+        bak=TG+".send.bak"
+        if not os.path.isfile(bak):
+            try:
+                import shutil
+                shutil.copy2(TG, bak)
+            except Exception as e:
+                return "ABBRUCH fix_send: Backup fehlgeschlagen, nichts geschrieben. "+str(e)[:80]
         n=_fix_send()
-        return "Fix hat gegriffen. send(chat_id) entfernt: "+str(n)+" Stellen. Bot-Prozess nutzt die Datei beim naechsten Restart."
+        if not n:
+            return "Fix hat nicht gegriffen. send(chat_id) nicht gefunden. Datei unveraendert."
+        okc, why=_compile_or_rollback(bak)
+        if not okc:
+            return "FEHLER Selfsee fix_send: "+why
+        return "Fix hat gegriffen. send(chat_id) entfernt: "+str(n)+" Stellen. py_compile OK. Bot-Prozess nutzt die Datei beim naechsten Restart."
     if act=="chat_gate":
+        bak=TG+".gate.bak"
+        if not os.path.isfile(bak):
+            try:
+                import shutil
+                shutil.copy2(TG, bak)
+            except Exception as e:
+                return "ABBRUCH chat_gate: Backup fehlgeschlagen, nichts geschrieben. "+str(e)[:80]
         ok=_chat_gate()
-        return "Fix hat gegriffen. FACT/DIAG vor Deep-Nav." if ok else "Fix hat nicht gegriffen. Marker Deep-Nav nicht gefunden."
+        if not ok:
+            return "Fix hat nicht gegriffen. Marker Deep-Nav nicht gefunden."
+        okc, why=_compile_or_rollback(bak)
+        if not okc:
+            return "FEHLER Selfsee chat_gate: "+why
+        return "Fix hat gegriffen. FACT/DIAG vor Deep-Nav. py_compile OK."
     if act=="fix_ui":
         ok=_fix_ui()
         return "Fix hat gegriffen. interessiert raus." if ok else "Fix hat nicht gegriffen. Schon weg."
