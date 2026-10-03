@@ -68,6 +68,14 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 58. [jack_publisher_loop.py](BETRIEBSHANDBUCH/58_publisher_loop.md) — context.md alle 3 min
 59. [jack_skills.py](BETRIEBSHANDBUCH/59_skills.md) — Bausteine
 60. [jack_tuev3.py](BETRIEBSHANDBUCH/60_tuev3.md) — Funktionstest
+61. [jack_activity_logger.py](BETRIEBSHANDBUCH/61_activity_logger.md) — Events
+62. [jack_autofixer_shadow.py](BETRIEBSHANDBUCH/62_autofixer_shadow.md) — Shadow-Fix
+63. [jack_bugfix_loop.py](BETRIEBSHANDBUCH/63_bugfix_loop.md) — Fix plus Freigabe
+64. [jack_corr.py](BETRIEBSHANDBUCH/64_corr.md) — Kennung
+65. [jack_db_optimizer.py](BETRIEBSHANDBUCH/65_db_optimizer.md) — WAL
+66. [jack_explorer_deep.py](BETRIEBSHANDBUCH/66_explorer_deep.md) — Dialog
+67. [jack_radar.py](BETRIEBSHANDBUCH/67_radar.md) — eigene DB
+68. [jack_ui_read.py](BETRIEBSHANDBUCH/68_ui_read.md) — Doku tippen
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
