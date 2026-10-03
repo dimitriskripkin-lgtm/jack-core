@@ -123,6 +123,16 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 113. [Talk-Kopf](BETRIEBSHANDBUCH/113_talk_kopf.md) — Version dreimal
 114. [Router](BETRIEBSHANDBUCH/114_router.md) — eine Leitung
 115. [Zweitpass](BETRIEBSHANDBUCH/115_zweitpass.md) — Kern zu
+116. [jack_agent.py](BETRIEBSHANDBUCH/116_agent.md) — nur Werkstatt
+117. [jack_freigabe.py](BETRIEBSHANDBUCH/117_freigabe.md) — siebter Weg
+118. [jack_guard.py](BETRIEBSHANDBUCH/118_guard.md) — RAM
+119. [jack_haliza.py](BETRIEBSHANDBUCH/119_haliza.md) — vor dem Patch
+120. [jack_ghost.py](BETRIEBSHANDBUCH/120_ghost.md) — UI-Dump
+121. [jack_deadletter.py](BETRIEBSHANDBUCH/121_deadletter.md) — nach 3
+122. [jack_hey.py](BETRIEBSHANDBUCH/122_hey.md) — Sprache
+123. [jack_inbox.py](BETRIEBSHANDBUCH/123_inbox.md) — Eingang
+124. [jack_dep_map.py](BETRIEBSHANDBUCH/124_dep_map.md) — Import-Graph
+125. [jack_intent_apps.py](BETRIEBSHANDBUCH/125_intent_apps.md) — App ohne Modell
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
