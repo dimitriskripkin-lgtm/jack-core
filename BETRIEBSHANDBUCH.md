@@ -61,6 +61,13 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 51. [jack_autodoc.py](BETRIEBSHANDBUCH/51_autodoc.md) — Docstrings staged
 52. [jack_ast_gate.py](BETRIEBSHANDBUCH/52_ast_gate.md) — AST vor Lauf
 53. [jack_context_ingest.py](BETRIEBSHANDBUCH/53_context_ingest.md) — Exporte nach Memory
+54. [jack_self_audit.py](BETRIEBSHANDBUCH/54_self_audit.md) — SYSTEM_STATE
+55. [jack_thermal.py](BETRIEBSHANDBUCH/55_thermal.md) — Hitze-Anzeige
+56. [jack_skill_trainer.py](BETRIEBSHANDBUCH/56_skill_trainer.md) — 3 Skills am Tag
+57. [jack_snapshot.py](BETRIEBSHANDBUCH/57_snapshot.md) — Zustand
+58. [jack_publisher_loop.py](BETRIEBSHANDBUCH/58_publisher_loop.md) — context.md alle 3 min
+59. [jack_skills.py](BETRIEBSHANDBUCH/59_skills.md) — Bausteine
+60. [jack_tuev3.py](BETRIEBSHANDBUCH/60_tuev3.md) — Funktionstest
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
