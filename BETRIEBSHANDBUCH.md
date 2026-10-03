@@ -168,6 +168,15 @@ jack_net_discover.py fehlt. jack_persona.py fehlt, Persona ist kern.md.
 156. [jack_ui_type.py](BETRIEBSHANDBUCH/156_ui_type.md) — tippen
 157. [jack_verify_gate.py](BETRIEBSHANDBUCH/157_verify_gate.md) — n mal OK
 Fehlen: jack_pull.py, jack_seal.py, jack_seal_night.py, jack_spotify.py, jack_watchdog.py.
+158. [jack_android.py](BETRIEBSHANDBUCH/158_android.md) — Xiaomi
+159. [jack_missions.py](BETRIEBSHANDBUCH/159_missions.md) — Liste
+160. [jack_publish.py](BETRIEBSHANDBUCH/160_publish.md) — ohne Secrets
+161. [jack_skill_trainer.py](BETRIEBSHANDBUCH/161_skill_trainer.md) — 3 am Tag
+162. [jack_skills.py](BETRIEBSHANDBUCH/162_skills.md) — Bausteine
+163. [jack_vecdb.py](BETRIEBSHANDBUCH/163_vecdb.md) — Vektoren
+164. [jack_voice_router.py](BETRIEBSHANDBUCH/164_voice_router.md) — Stimme
+165. [jack_xiaomi_unlock.py](BETRIEBSHANDBUCH/165_xiaomi_unlock.md) — Wake und Wisch
+Fehlen auch: jack_identity.py, jack_main.py.
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
