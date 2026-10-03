@@ -117,6 +117,7 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 107. [jack_self_improve.py](BETRIEBSHANDBUCH/107_self_improve.md) — stiller Fixmann, unbewiesen
 108. [Naechste Schnitte](BETRIEBSHANDBUCH/108_naechste.md) — nicht entschieden
 109. [Gegenzeichnung](BETRIEBSHANDBUCH/109_gegenzeichnung.md) — Kern 15:54
+110. [Waechter-Neustart](BETRIEBSHANDBUCH/110_waechter_neustart.md) — sv up ohne down-Datei
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
