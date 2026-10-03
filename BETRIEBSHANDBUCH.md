@@ -177,6 +177,16 @@ Fehlen: jack_pull.py, jack_seal.py, jack_seal_night.py, jack_spotify.py, jack_wa
 164. [jack_voice_router.py](BETRIEBSHANDBUCH/164_voice_router.md) — Stimme
 165. [jack_xiaomi_unlock.py](BETRIEBSHANDBUCH/165_xiaomi_unlock.md) — Wake und Wisch
 Fehlen auch: jack_identity.py, jack_main.py.
+166. [jack_ui_nav.py](BETRIEBSHANDBUCH/166_ui_nav.md) — Tasten
+167. [jack_ui_session.py](BETRIEBSHANDBUCH/167_ui_session.md) — erst lesen
+168. [jack_ui_read.py](BETRIEBSHANDBUCH/168_ui_read.md) — Doku
+169. [jack_ui_elements.py](BETRIEBSHANDBUCH/169_ui_elements.md) — Ziel
+170. [jack_vision_once.py](BETRIEBSHANDBUCH/170_vision_once.md) — ein Bild
+171. [jack_vision_selector.py](BETRIEBSHANDBUCH/171_vision_selector.md) — frischer Dump
+172. [jack_voraussetzung.py](BETRIEBSHANDBUCH/172_voraussetzung.md) — vor dem Fail
+173. [jack_xiaomi_think.py](BETRIEBSHANDBUCH/173_xiaomi_think.md) — Denken
+174. [jack_xiaomi_web.py](BETRIEBSHANDBUCH/174_xiaomi_web.md) — Web
+175. [jack_yt_hybrid.py](BETRIEBSHANDBUCH/175_yt_hybrid.md) — RVX
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
