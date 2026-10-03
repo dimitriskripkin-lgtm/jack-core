@@ -202,6 +202,21 @@ Fehlen auch: jack_identity.py, jack_main.py.
 188. [jack_memory_tree.py](BETRIEBSHANDBUCH/188_memory_tree.md) — Baum ueber dem Gedaechtnis.
 189. [jack_mission_gen.py](BETRIEBSHANDBUCH/189_mission_gen.md) — erzeugt Missionen.
 190. [jack_mission_prioritizer.py](BETRIEBSHANDBUCH/190_mission_prioritizer.md) — sortiert Missionen nach Wich
+191. [jack_mission_pull.py](BETRIEBSHANDBUCH/191_mission_pull.md)
+192. [jack_nav_learn.py](BETRIEBSHANDBUCH/192_nav_learn.md)
+193. [jack_navi.py](BETRIEBSHANDBUCH/193_navi.md)
+194. [jack_observer.py](BETRIEBSHANDBUCH/194_observer.md)
+195. [jack_ollama_gate.py](BETRIEBSHANDBUCH/195_ollama_gate.md)
+196. [jack_ollama_guard.py](BETRIEBSHANDBUCH/196_ollama_guard.md)
+197. [jack_operator.py](BETRIEBSHANDBUCH/197_operator.md)
+198. [jack_orchestrator.py](BETRIEBSHANDBUCH/198_orchestrator.md)
+199. [jack_overmind_client.py](BETRIEBSHANDBUCH/199_overmind_client.md)
+200. [jack_patch.py](BETRIEBSHANDBUCH/200_patch.md)
+201. [jack_patch_memory.py](BETRIEBSHANDBUCH/201_patch_memory.md)
+202. [jack_personality.py](BETRIEBSHANDBUCH/202_personality.md)
+203. [jack_queue_gate.py](BETRIEBSHANDBUCH/203_queue_gate.md)
+204. [jack_quota.py](BETRIEBSHANDBUCH/204_quota.md)
+205. [jack_qwen_client.py](BETRIEBSHANDBUCH/205_qwen_client.md)
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
