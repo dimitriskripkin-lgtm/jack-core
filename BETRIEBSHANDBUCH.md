@@ -100,6 +100,11 @@ Waisen (unverdrahtete Module, siehe Modulkarte) bekommen nur einen Einzeiler, ke
 90. [jack_stand.py](BETRIEBSHANDBUCH/90_stand.md) — Ist-Zustand
 91. [jack_thermal_guard.py](BETRIEBSHANDBUCH/91_thermal_guard.md) — vor schweren Jobs
 92. [jack_sensors.py](BETRIEBSHANDBUCH/92_sensors.md) — Sinne
+93. [jack_xiaomi_web.py](BETRIEBSHANDBUCH/93_xiaomi_web.md) — Web auf Xiaomi
+94. [jack_yt_hybrid.py](BETRIEBSHANDBUCH/94_yt_hybrid.md) — YouTube
+95. [jack_adb_heal.py](BETRIEBSHANDBUCH/95_adb_heal.md) — ADB wieder an
+96. [jack_graceful.py](BETRIEBSHANDBUCH/96_graceful.md) — Pause wenn offline
+97. [jack_talk_trainer.py](BETRIEBSHANDBUCH/97_talk_trainer.md) — Persona-Schreiber
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
