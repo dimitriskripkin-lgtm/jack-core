@@ -2,6 +2,15 @@
 MODULE_VERSION = 1
 import os, sys, json, time, urllib.request, urllib.parse, subprocess
 _PERSONA_PATH=os.path.expanduser("~/jack/jack_persona_kern.md")  # JACK_TUNE_BUGE
+
+def acts_liste():
+    """JACK_TUNE_TGACTS Telegram liest dieselbe Liste wie Runner und MCP."""
+    try:
+        import jack_acts
+        return ", ".join(jack_acts.names())
+    except Exception as e:
+        return "acts_weg: " + str(e)[:80]
+
 try:
     _PERSONA=open(_PERSONA_PATH,encoding="utf-8").read().strip()
 except Exception:
