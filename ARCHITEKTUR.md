@@ -3,7 +3,7 @@
 ## Was JACK ist
 Persoenliche KI-Betriebsschicht auf zwei Android-Geraeten (Termux).
 Honor Magic8 Pro = Gehirn/Host. Xiaomi 11T Pro = Arm/Executor via SSH.
-Kontrolle-first: jede Abhaengigkeit austauschbar und abschaltbar, nicht nie Cloud. Exit-Vehicle fuer Unabhaengigkeit.
+Kontrolle-first: jede Abhaengigkeit austauschbar und abschaltbar, nicht nie Cloud. Exit-Vehicle fuer Unabhaengigkeit. Kein Letta: keine KI schreibt Gedaechtnis oder Code selbst um, nur ueber die eine Freigabe-Tuer. Gedaechtnis bleibt klein: Kommando-Logs werden nie automatisch Fakt.
 
 ## Die 7 Schichten (von unten)
 1. FUNDAMENT: Termux nativ, Magisk (Root Xiaomi), SSH-Ruecken (10.234.166.131:8022,
