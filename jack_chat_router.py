@@ -271,6 +271,16 @@ def _tools(text):
             return "Was ich ueber dich habe:\n" + "\n".join(lines)  # JACK_TUNE_LESBAR
         except Exception as e:
             return "Graph: "+str(e)[:60]
+    # JACK_TUNE_READDOOR_CALL: letzter Versuch ueber die eine Lese-Tuer (Graph->Memory->Identity),
+    # bevor an das normale Gespraech uebergeben wird. Rein additiv, aendert keinen Treffer oben.
+    try:
+        import jack_read_door as _rd
+        _hits = _rd.lesen(text)
+        if _hits:
+            _lines=["%s: %s"%(h.get("name",""),h.get("wert","")) for h in _hits]
+            return "Gefunden ("+_hits[0].get("quelle","?")+"):\n"+"\n".join(_lines)
+    except Exception:
+        pass
     return None  # JACK_TUNE_TOOLIST
 
 def kiste_fuer_prompt(text):
