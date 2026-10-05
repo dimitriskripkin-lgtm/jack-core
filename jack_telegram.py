@@ -824,6 +824,14 @@ def handle(text):
                 return f'NICHT GEFUNDEN: "{_element}" auf Screen {pkg}/{act}'
         except Exception as e:
             return 'Find-Fehler: ' + str(e)[:100]
+    if _rt.startswith('/acts'):
+        try:
+            import jack_acts as _ja
+            _n = sorted(_ja.names())
+            return 'ACTS (' + str(len(_n)) + '): ' + ', '.join(_n)
+        except Exception as _e:
+            return 'acts_liste Fehler: ' + str(_e)[:150]
+
     if _rt.startswith('/vorschlaege') or _rt.startswith('/vorschläge'):
         import json as _tj, os as _to
         pdir = "/data/data/com.termux/files/home/jack/missions/proposals/pending"

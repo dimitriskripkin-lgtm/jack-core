@@ -97,3 +97,22 @@ das Modell ist der austauschbare Motor. Das erlaubt spaeter auch ein staerkeres
 lokales Modell (z.B. 70B auf dedizierter Hardware) einzustecken, ohne dass JACK
 etwas ueber sich selbst neu lernen muss -- er weiss es bereits, nur die Stimme,
 die es ausspricht, waere eine andere.
+
+## KEIN LETTA-PRINZIP (festgeschrieben 05.10.2026)
+
+Keine KI (Claude, Grok, Qwen) schreibt ihr eigenes Gedaechtnis oder den eigenen
+Code autonom um. Jede Aenderung an Code oder dauerhaftem Gedaechtnis (Graph)
+laeuft ausschliesslich ueber die eine Freigabe-Tuer: propose_fix -> /vorschlaege
+-> /freigeben -> approve_proposal. Keine zweite, versteckte Abkuerzung, egal wie
+klein die Aenderung erscheint. Das unterscheidet JACK bewusst von Letta/MemGPT-
+Ansaetzen, bei denen das Modell direkt in sein eigenes Gedaechtnis schreibt.
+
+## GEDAECHTNIS-BLEIBT-KLEIN-PRINZIP (festgeschrieben 05.10.2026)
+
+Kommando-Logs (jack_exec-Ausgaben, Fehlerprotokolle, Ausfuehrungs-Historie) sind
+Betriebsdaten, keine Fakten. Sie werden NIE automatisch zu Graph- oder Memory-
+Eintraegen hochgestuft. Ein Fakt kommt nur ueber graph_add_fact oder eine explizit
+dafuer gebaute Funktion in den Graph, nie als Nebenprodukt eines Logs. Grund:
+ein Dateisuch-Vergleich hat in einer eigenen Messung reine Logdurchsuchung
+geschlagen -- JACKs Gedaechtnis soll klein und sauber bleiben, nicht zum
+zweiten Logspeicher werden.
