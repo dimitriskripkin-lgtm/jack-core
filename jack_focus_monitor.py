@@ -17,6 +17,11 @@ def main():
     letzter = open(STATE).read().strip() if os.path.exists(STATE) else ""
     print("FOCUS-MONITOR aktiv. Stop: touch ~/jack/.focus_stop")
     while True:
+        try:
+            import jack_heartbeat
+            jack_heartbeat.beat("jack_focus_monitor")  # JACK_TUNE_FOCUSB
+        except Exception:
+            pass
         if os.path.exists(STOP):
             print("Stop-Datei - Ende."); return
         f = fokus()
