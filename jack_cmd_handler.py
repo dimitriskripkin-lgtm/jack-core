@@ -56,7 +56,7 @@ def handle(rt: str, text: str, send) -> str:
             J = "/data/data/com.termux/files/home/jack"
             APPROVALS = os.path.join(J, "pending_approvals.json")
             if not os.path.exists(APPROVALS):
-                return "Keine ausstehenden Freigaben."
+                return "Keine ausstehenden Freigaben. Echte Tür: /vorschlaege"  # JACK_TUNE_ONEPATH
             approvals = json.load(open(APPROVALS))
             mission_id = rt.split("_",1)[1]
             match = [a for a in approvals if a.get("id") == mission_id]
@@ -104,7 +104,7 @@ def handle(rt: str, text: str, send) -> str:
         try:
             entries=json.load(open(APPROVALS)) if os.path.exists(APPROVALS) else []
             if not entries:
-                return "Keine Approvals pending."
+                return "Keine Approvals pending. Echte Tür: /vorschlaege"  # JACK_TUNE_ONEPATH
             results=[]
             for entry in list(entries):
                 eid=entry.get("id","?")

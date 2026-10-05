@@ -210,5 +210,5 @@ def follow(text):
         except Exception: pass
         return "Ok, beendet. Kein Fix."
     if os.path.isfile(PEND) and any(k in t for k in ("ausfuehren","ausfuhren","mach","ok","ja")):
-        return execute(None)
+        return "Nicht hier. /vorschlaege, dann /freigeben. Selfsee fuehrt nicht mehr selbst aus."  # JACK_TUNE_ONEPATH
     return None

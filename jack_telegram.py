@@ -357,6 +357,14 @@ def handle(text):
     _cmd=jack_exec.extrahiere(text)
     if _cmd:
         PENDING_EXEC.clear(); PENDING_EXEC['cmd']=_cmd
+        try:  # JACK_TUNE_ONEPATH
+            import json as _pj, time as _pt, os as _po
+            _pid='prop_exec_%d'%int(_pt.time())
+            _pdir='/data/data/com.termux/files/home/jack/missions/proposals/pending'
+            _po.makedirs(_pdir, exist_ok=True)
+            open(_pdir+'/'+_pid+'.json','w').write(_pj.dumps({'id':_pid,'problem':'Befehl aus Chat, Knopf bleibt','proposed_act':'noch_nicht','proposed_extra':_pj.dumps({'cmd':_cmd[:400]}),'status':'pending'}))
+        except Exception:
+            pass
         _prev=_cmd if len(_cmd)<800 else _cmd[:800]+' ...'
         send_keyboard('BEFEHL:'+chr(10)+_prev, [[('🟢 Ausführen','run_exec'),('🔴 Abbrechen','cancel_exec')]])
         return None

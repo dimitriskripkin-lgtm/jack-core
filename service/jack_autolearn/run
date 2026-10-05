@@ -1,3 +1,4 @@
 #!/data/data/com.termux/files/usr/bin/sh
+exec 2>&1
 cd /data/data/com.termux/files/home/jack
 exec python3 jack_autolearn_loop.py

@@ -9,7 +9,7 @@ D=J+"/missions/done"
 F=J+"/missions/fail"
 L=J+"/missions/logs"
 STOP=J+"/missions/STOP"
-ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi","honor_heat_report","xiaomi_ollama_stop","xiaomi_ollama_status","honor_ollama_disable","graph_add_fact","graph_remove_fact","was_ist_neu"])
+ALLOWED=set(["shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none","classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid","no_secret","grep_count","line_check","hb_ok","file_exists","line_count","sed_replace","py_replace","file_create","file_delete","batch","open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi","honor_heat_report","xiaomi_ollama_stop","xiaomi_ollama_status","honor_ollama_disable","graph_add_fact","graph_remove_fact","was_ist_neu","exec_proposed","write_proposed"])
 def sh(cmd,t=8):
     try:
         r=subprocess.run(cmd,capture_output=True,text=True,timeout=min(60,int(t) if t else 60))
@@ -694,6 +694,24 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
             return True,"close_app_xiaomi: "+pkg+" geschlossen (force-stop)",""
         except Exception as e:
             return False,"close_app_xiaomi: "+str(e)[:100],""
+
+    if act=="write_proposed":
+        import jack_write as _jw
+        _fn = m.get("filename","")
+        _ct = m.get("content","")
+        if not _fn:
+            return False,"write_proposed: kein filename",""
+        _ok,_msg = _jw.commit_write(_fn,_ct)
+        return _ok, "write_proposed: "+str(_msg)[:150], str(_msg)
+
+    if act=="exec_proposed":
+        import jack_exec as _je
+        _cmd = m.get("cmd","")
+        if not _cmd:
+            return False,"exec_proposed: kein cmd",""
+        _out = _je.run(_cmd)
+        _ok = _out.startswith("rc=0")
+        return _ok, "exec_proposed: "+_out[:150], _out
 
     if act=="honor_heat_report":
         import subprocess, glob as _hg, json as _hj

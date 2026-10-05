@@ -4,24 +4,27 @@ def handle(callback_data, callback_id):
     import jack_telegram as tg
     """Verarbeitet Inline-Button-Klicks."""
     if callback_data == 'run_exec':
+        # JACK_TUNE_ONEPATH2: fuehrt nicht mehr direkt aus, schreibt Vorschlag
         c=tg.PENDING_EXEC.get('cmd')
         if not c:
             tg.answer_callback(callback_id,'Nichts offen'); return
-        tg.answer_callback(callback_id,'Laeuft...')
-        tg.send('Fuehre aus...')
-        def _r(cmd=c):
-            out=jack_exec.run(cmd)
-            tg.PENDING_EXEC.clear()
-            tg.send(out)
-            if not out.startswith('rc=0') and not out.startswith('BLOCKIERT'):
-                try:
-                    import jack_react
-                    tg.send('Analysiere Fehler...')
-                    tg.send('VORSCHLAG:' + chr(10) + str(jack_react.analysiere(cmd, out))[:1500])
-                except Exception as _e:
-                    tg.send('Analyse-Fehler: ' + str(_e)[:120])
-        import threading as _th
-        _th.Thread(target=_r, daemon=True).start()
+        tg.answer_callback(callback_id,'Vorschlag geschrieben')
+        tg.PENDING_EXEC.clear()
+        try:
+            import json as _j, os as _o, time as _t, uuid as _u
+            J=_o.path.expanduser('~/jack')
+            pdir=J+'/missions/proposals/pending'
+            _o.makedirs(pdir, exist_ok=True)
+            pid='prop_'+_t.strftime('%Y%m%d_%H%M%S')+'_'+_u.uuid4().hex[:6]
+            data={'id':pid,'ts':_t.strftime('%Y-%m-%d %H:%M:%S'),
+                  'problem':'Telegram Befehls-Knopf: '+c[:100],
+                  'proposed_act':'exec_proposed','proposed_extra':_j.dumps({'cmd':c},ensure_ascii=False),
+                  'status':'pending'}
+            with open(_o.path.join(pdir,pid+'.json'),'w',encoding='utf-8') as f:
+                _j.dump(data,f,ensure_ascii=False,indent=2)
+            tg.send('Nicht direkt ausgefuehrt. Vorschlag '+pid+' wartet.' + chr(10) + '/vorschau '+pid+' dann /freigeben '+pid)
+        except Exception as _e:
+            tg.send('Vorschlag-Fehler: '+str(_e)[:150])
         return
     if callback_data == 'cancel_exec':
         tg.PENDING_EXEC.clear()
@@ -29,16 +32,28 @@ def handle(callback_data, callback_id):
         tg.send('Befehl verworfen.')
         return
     if callback_data.startswith("confirm_write:"):
+        # JACK_TUNE_ONEPATH3: schreibt nicht mehr direkt, legt Vorschlag an
         fn=callback_data[14:]
         if tg.PENDING_WRITE and tg.PENDING_WRITE.get("filename")==fn:
             try:
-                ok,msg=jack_write.commit_write(tg.PENDING_WRITE["filename"],tg.PENDING_WRITE["content"])
+                import json as _j, os as _o, time as _t, uuid as _u
+                J=_o.path.expanduser('~/jack')
+                pdir=J+'/missions/proposals/pending'
+                _o.makedirs(pdir, exist_ok=True)
+                pid='prop_'+_t.strftime('%Y%m%d_%H%M%S')+'_'+_u.uuid4().hex[:6]
+                data={'id':pid,'ts':_t.strftime('%Y-%m-%d %H:%M:%S'),
+                      'problem':'Telegram Datei-Schreiben: '+fn,
+                      'proposed_act':'write_proposed',
+                      'proposed_extra':_j.dumps({'filename':fn,'content':tg.PENDING_WRITE.get('content','')},ensure_ascii=False),
+                      'status':'pending'}
+                with open(_o.path.join(pdir,pid+'.json'),'w',encoding='utf-8') as f:
+                    _j.dump(data,f,ensure_ascii=False,indent=2)
                 tg.PENDING_WRITE.clear()
-                tg.answer_callback(callback_id,"Gespeichert" if ok else "Fehler")
-                tg.send("✅ "+msg if ok else "❌ "+msg)
+                tg.answer_callback(callback_id,"Vorschlag geschrieben")
+                tg.send("Nicht direkt geschrieben. Vorschlag "+pid+" wartet." + chr(10) + "/vorschau "+pid+" dann /freigeben "+pid)
             except Exception as e:
                 tg.answer_callback(callback_id,"Fehler")
-                tg.send("Fehler beim Schreiben: "+str(e)[:100])
+                tg.send("Vorschlag-Fehler: "+str(e)[:120])
         else:
             tg.answer_callback(callback_id,"Kein Vorschlag offen")
         return
