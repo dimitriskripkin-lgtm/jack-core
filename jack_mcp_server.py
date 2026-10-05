@@ -105,11 +105,8 @@ def create_mission(act: str, description: str, extra: str = "{}", wait_seconds: 
     Erlaubte acts: sed_replace, py_replace, compile_ok, sv_ok, hb_ok, fact, grep_count, file_exists, diag."""
     import json as _j, os as _os
     from datetime import datetime as _dt
-    ALLOWED = {"shadow_report","talk_contract","fact","diag","no_chrome_src","ui_none",
-               "classify_is","compile_ok","explain_ok","sv_ok","mtime_fresh","json_valid",
-               "no_secret","grep_count","line_check","hb_ok","file_exists","line_count",
-               "sed_replace","py_replace","file_create","file_delete","batch",
-               "open_url_xiaomi","xiaomi_battery","xiaomi_ollama_restart","xiaomi_ssh_check","create_demo_file","spotify_play_xiaomi","chrome_search_xiaomi","maps_nav_xiaomi","maps_open_xiaomi","youtube_search_xiaomi","youtube_play_xiaomi","sv_restart","dashboard_render","reload_module","propose_fix","list_proposals","approve_proposal","preview_proposal","close_app_xiaomi","honor_heat_report","xiaomi_ollama_stop","xiaomi_ollama_status","honor_ollama_disable","graph_add_fact","graph_remove_fact","was_ist_neu","exec_proposed","write_proposed"}
+    import jack_acts as _acts  # JACK_TUNE_ACTS
+    ALLOWED = set(_acts.names())
     if act not in ALLOWED:
         return _j.dumps({"error": f"act nicht erlaubt: {act}", "allowed": sorted(ALLOWED)})
     try:
@@ -247,11 +244,10 @@ def describe_system() -> str:
             {"name": "read_file", "zugriff": "lesend", "beschreibung": "Datei in JACK_HOME lesen, Secrets gesperrt"},
             {"name": "create_mission", "zugriff": "schreibend", "beschreibung": "Mission queuen, wird automatisch ausgefuehrt"},
         ],
-        "schreib_acts_erlaubt": ["sed_replace", "py_replace", "compile_ok", "sv_ok", "hb_ok",
-                                  "fact", "grep_count", "file_exists", "diag"],
+        "schreib_acts_erlaubt": sorted(n for n,a in __import__("jack_acts").ACTS.items() if a.get("freigabe")),
         "grenzen": [
-            "Kein freies exec — nur die ALLOWED-Liste an Acts",
-            "Dienst-Neustarts nach Code-Aenderungen kann keine KI selbst ausloesen (kein Mission-Act dafuer)",
+            "Kein freies exec — nur jack_acts",
+            "sv_restart ist ein Act",
             "SQLite-Datenbanken (Graph) nicht per Text-Ersetzung aenderbar — nur Dateien",
             "Secrets (config.ini, Tokens, .ssh) per read_file gesperrt",
         ],
