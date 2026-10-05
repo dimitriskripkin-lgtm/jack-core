@@ -275,7 +275,10 @@ def _tools(text):
     # bevor an das normale Gespraech uebergeben wird. Rein additiv, aendert keinen Treffer oben.
     try:
         import jack_read_door as _rd
-        _hits = _rd.lesen(text)
+        _stopw = {"wie","heisst","heißt","wo","wohne","wohnt","was","wer","ist","sind","meine","mein","ich","du","der","die","das","den","dem","und","oder","hast","hat","kennst","weisst","weißt"}
+        _tw = [w for w in norm(text).split() if w not in _stopw and len(w)>2]
+        _q = " ".join(_tw) if _tw else text
+        _hits = _rd.lesen(_q)
         if _hits:
             _lines=["%s: %s"%(h.get("name",""),h.get("wert","")) for h in _hits]
             return "Gefunden ("+_hits[0].get("quelle","?")+"):\n"+"\n".join(_lines)
