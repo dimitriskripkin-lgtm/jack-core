@@ -257,7 +257,16 @@ def describe_system() -> str:
     return json.dumps(info, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
-    import uvicorn
+    import uvicorn, threading, time
+    def _hb():
+        while True:
+            try:
+                import jack_heartbeat
+                jack_heartbeat.beat("jack_mcp")  # JACK_TUNE_MCPHB
+            except Exception:
+                pass
+            time.sleep(30)
+    threading.Thread(target=_hb, daemon=True).start()
     print("JACK MCP Server startet auf Port 8000 (mit Bearer-Token-Auth)...")
     print("Tools: graph_list_nodes, graph_read_node, graph_search, memory_search, memory_recent, create_mission")
     _asgi = app.streamable_http_app(host="0.0.0.0")
