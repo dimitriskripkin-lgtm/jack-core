@@ -33,6 +33,16 @@ def _get_xiaomi_ip():
         return jack_config.get_param("NETWORK", "xiaomi_ip")
 
 
+def ssh(cmd, timeout=8):
+    """JACK_TUNE_XIGATE Weg ist ein Zustand."""
+    try:
+        r = run_shell(cmd, as_root=False, timeout=timeout)
+        if r.get("success"):
+            return {"ok": True, "lage": "OK", "out": (r.get("stdout") or "")[:1500]}
+        return {"ok": False, "lage": "TEMPORAER_WEG", "out": (r.get("stderr") or "")[:400]}
+    except Exception as e:
+        return {"ok": False, "lage": "TEMPORAER_WEG", "out": str(e)[:200]}
+
 def run_shell(cmd, as_root=True, timeout=15):
     ip = _get_xiaomi_ip()
     full_cmd = f"su -c '{cmd}'" if as_root else cmd
