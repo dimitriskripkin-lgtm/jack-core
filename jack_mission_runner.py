@@ -339,16 +339,13 @@ def run_act(m):
             return False,"xiaomi_ollama_restart: "+str(e)[:100],""
 
     if act=="xiaomi_ssh_check":
-        import subprocess, time as _tm2
+        import jack_xiaomi as _jx, time as _tm2
         t0=_tm2.time()
-        try:
-            r=subprocess.run(["ssh","-o","ConnectTimeout=5","xiaomi-jack","echo","ok"],capture_output=True,text=True,timeout=10)
-            dt=round(_tm2.time()-t0,2)
-            if r.returncode==0 and "ok" in r.stdout:
-                return True,"xiaomi_ssh_check: erreichbar in "+str(dt)+"s",""
-            return False,"xiaomi_ssh_check: nicht erreichbar: "+r.stderr[:80],""
-        except Exception as e:
-            return False,"xiaomi_ssh_check: "+str(e)[:100],""
+        r=_jx.ssh("echo ok", timeout=10)
+        dt=round(_tm2.time()-t0,2)
+        if r.get("ok") and "ok" in r.get("out",""):
+            return True,"xiaomi_ssh_check: erreichbar in "+str(dt)+"s (ueber jack_xiaomi.ssh)",""
+        return False,"xiaomi_ssh_check: "+r.get("lage","?")+": "+r.get("out","")[:80],""
 
     if act=="create_demo_file":
         import os, re
