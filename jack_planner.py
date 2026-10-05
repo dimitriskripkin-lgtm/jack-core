@@ -26,12 +26,21 @@ def step_open_app(p):
     return 'App '+p['paket']+' geoeffnet'
 
 def step_keyevent(p):
-    _ssh("su -c 'input keyevent "+str(p['keycode'])+"'")
-    return 'keyevent '+str(p['keycode'])
+    code=p.get('keycode', p.get('code', 0))
+    _ssh("su -c 'input keyevent "+str(code)+"'")
+    return 'keyevent '+str(code)
+
+def step_intent(p):
+    action=str(p.get('action',''))
+    if not action or any(c not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._' for c in action):
+        return 'FEHLER: action'
+    _ssh("su -c 'am start -a "+action+"'")
+    return 'intent '+action
 
 def step_wait(p):
-    time.sleep(float(p['seconds']))
-    return 'Gewartet '+str(p['seconds'])+'s'
+    sec=float(p.get('seconds', p.get('s', 1)))
+    time.sleep(sec)
+    return 'Gewartet '+str(sec)+'s'
 
 def step_ui_check(p):
     import jack_ghost as jg
@@ -82,7 +91,7 @@ def step_chrome_search(p):
 
 STEPS={'exec':step_exec,'tap':step_tap,'find_and_tap':step_find_and_tap,
     'open_app':step_open_app,'keyevent':step_keyevent,'wait':step_wait,
-    'ui_check':step_ui_check,'home':step_home,
+    'ui_check':step_ui_check,'home':step_home,'intent':step_intent,
     'input_text':step_input_text,'ui_text':step_ui_text,'chrome_search':step_chrome_search}
 
 def run_plan(plan,send_fn=None):

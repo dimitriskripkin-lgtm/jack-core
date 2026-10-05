@@ -351,13 +351,15 @@ def handle(text):
         _pjson=text[text.find(']]',_pi)+2:_pj].strip()
         def _runplan(pn=_pname,pj=_pjson):
             try:
-                import json,importlib,jack_planner,jack_schema
-                plan,err=jack_schema.validate(pj)
-                if not plan:
-                    send('PLAN UNGUELTIG: '+err); return
+                import json,importlib,jack_planner
+                plan=json.loads(pj)
+                if isinstance(plan, str):
+                    plan=json.loads(plan)
+                if not isinstance(plan, dict) or not isinstance(plan.get('steps'), list):
+                    send('PLAN UNGUELTIG: steps fehlen'); return
                 importlib.reload(jack_planner)
                 plan['name']=pn
-                jack_planner.run_plan(plan,send)
+                jack_planner.run_plan(plan,send)  # JACK_TUNE_PLANJSON
             except Exception as e:
                 send('Plan-Fehler: '+str(e)[:200])
         import threading as _th
