@@ -49,6 +49,16 @@ def step_ui_check(p):
     if tr: return 'GEFUNDEN: '+p['text']+' bei ('+str(tr[0]['x'])+','+str(tr[0]['y'])+')'
     return 'NICHT_DA: '+p['text']
 
+def step_swipe(p):
+    nums=[]
+    for k,d in (('x1',540),('y1',1700),('x2',540),('y2',500),('ms',220)):
+        n=int(p.get(k,d))
+        if n<0 or n>4000:
+            return 'FEHLER: ausserhalb'
+        nums.append(n)
+    _ssh("su -c 'input swipe %d %d %d %d %d'"%tuple(nums))
+    return 'swipe %s'%nums
+
 def step_home(p):
     import jack_ghost as jg
     jg.tap_xiaomi(540,2310)
@@ -91,7 +101,7 @@ def step_chrome_search(p):
 
 STEPS={'exec':step_exec,'tap':step_tap,'find_and_tap':step_find_and_tap,
     'open_app':step_open_app,'keyevent':step_keyevent,'wait':step_wait,
-    'ui_check':step_ui_check,'home':step_home,'intent':step_intent,
+    'ui_check':step_ui_check,'home':step_home,'intent':step_intent,'swipe':step_swipe,
     'input_text':step_input_text,'ui_text':step_ui_text,'chrome_search':step_chrome_search}
 
 def run_plan(plan,send_fn=None):
