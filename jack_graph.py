@@ -18,6 +18,8 @@ def con():
     c.execute("CREATE TABLE IF NOT EXISTS nodes(id TEXT PRIMARY KEY,typ TEXT,name TEXT,wert TEXT,src TEXT,ts REAL)")
     c.execute("CREATE TABLE IF NOT EXISTS edges(id INTEGER PRIMARY KEY,a TEXT,rel TEXT,b TEXT,src TEXT,ts REAL)")
     c.execute("CREATE UNIQUE INDEX IF NOT EXISTS euniq ON edges(a,rel,b)")
+    try: c.execute("ALTER TABLE edges ADD COLUMN gueltig_bis REAL")
+    except Exception: pass
     return c
 def put_node(typ,name,wert="",src="seed"):
     import jack_corr as _jc; _jc.audit("put_node","jack_graph.db",str(typ)+":"+str(name),"jack_graph")
@@ -39,12 +41,15 @@ def _is_suspicious(text):
     low = (text or "").lower()
     return any(s in low for s in SUSPICIOUS)
 
-def put_edge(a,rel,b,src="seed"):
+def put_edge(a,rel,b,src="seed",gueltig_bis=None):
     import jack_corr as _jc; _jc.audit("put_edge","jack_graph.db",str(a)+"->"+str(b),"jack_graph")
     if rel not in RELS: return
     c=con(); t=time.time()
-    c.execute("INSERT OR IGNORE INTO edges(a,rel,b,src,ts) VALUES(?,?,?,?,?)",(a,rel,b,src,t))
+    c.execute("INSERT OR IGNORE INTO edges(a,rel,b,src,ts,gueltig_bis) VALUES(?,?,?,?,?,?)",(a,rel,b,src,t,gueltig_bis))
     c.commit(); c.close()
+def edge_ist_gueltig(gueltig_bis):
+    if gueltig_bis is None: return True
+    return time.time() < gueltig_bis
 def seed():
     d=put_node("person","Dima","owner", "seed")
     j=put_node("geraet","JACK","lebens-os honor+xiaomi","seed")

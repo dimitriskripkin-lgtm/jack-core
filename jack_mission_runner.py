@@ -106,6 +106,10 @@ def run_act(m):
         old=m.get("old",""); new=m.get("new","")
         if not old:
             return False,"fix: old fehlt",""
+        import hashlib as _hl  # JACK_TUNE_HASHCHECK
+        for _k,_v in (("sha256_old",old),("sha256_new",new)):
+            if m.get(_k) and _hl.sha256(_v.encode("utf-8")).hexdigest()!=str(m.get(_k)).lower():
+                return False,"fix: "+_k+" passt nicht - Transport beschaedigt, nichts geschrieben",""
         content=open(fp,errors="ignore").read()
 
         if m.get("staged") or m.get("shadow"):
@@ -168,8 +172,15 @@ def run_act(m):
         if os.path.exists(fp):
             return False,"file_create: Datei existiert schon, nutze sed_replace/py_replace",""
         content=m.get("content","")
+        import hashlib as _hl  # JACK_TUNE_HASHCHECK
+        _want=str(m.get("sha256","")).lower()
+        if _want and _hl.sha256(content.encode("utf-8")).hexdigest()!=_want:
+            return False,"file_create: sha256 passt nicht - Transport beschaedigt, nichts geschrieben",""
         os.makedirs(os.path.dirname(fp),exist_ok=True)
-        open(fp,"w").write(content)
+        open(fp,"w",encoding="utf-8").write(content)
+        if _want and _hl.sha256(open(fp,"rb").read()).hexdigest()!=_want:
+            os.remove(fp)
+            return False,"file_create: sha256 nach Schreiben falsch - Datei entfernt",""
         if fp.endswith(".py"):
             rc,out=sh(["python3","-m","py_compile",fp],t=10)
             if rc!=0:
@@ -826,6 +837,11 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         rel=(m.get("rel") or "hat").strip()
         confirm=bool(m.get("confirm"))
         overwrite=bool(m.get("overwrite"))
+        gueltig_tage=m.get("gueltig_tage")
+        _gbis=None
+        if gueltig_tage not in (None,""):
+            try: _gbis=_gtm.time()+float(gueltig_tage)*86400
+            except Exception: return False,"graph_add_fact: gueltig_tage muss eine Zahl sein",""
         if typ not in _g.TYPS:
             return False,"graph_add_fact: typ ungueltig (erlaubt: "+",".join(_g.TYPS)+")",""
         if rel not in _g.RELS:
@@ -850,7 +866,7 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
             return False,"graph_add_fact: Ausgangsknoten existiert nicht: "+von,""
         if ex and ex[1]!="claude_mcp" and not overwrite:
             return False,"graph_add_fact: "+_nid+" existiert (src="+str(ex[1])+") - nicht ueberschrieben, overwrite nur mit Dimas Wort",""
-        plan=_nid+" (wert="+wert+") + Kante "+von+" -"+rel+"-> "+_nid
+        plan=_nid+" (wert="+wert+") + Kante "+von+" -"+rel+"-> "+_nid+(" (gueltig "+str(gueltig_tage)+" Tage)" if _gbis else "")
         if not confirm:
             return True,"graph_add_fact VORSCHAU (nichts geschrieben): "+plan+" | schreiben mit confirm=true",""
         bdir=J+"/graph_backups"
@@ -868,7 +884,7 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         r1=_g.put_node(typ,name,wert,"claude_mcp")
         if not r1:
             return False,"graph_add_fact: put_node lehnte ab (Filter)",""
-        _g.put_edge(von,rel,r1,"claude_mcp")
+        _g.put_edge(von,rel,r1,"claude_mcp",_gbis)
         c=_g.con()
         try:
             ck=c.execute("SELECT 1 FROM edges WHERE a=? AND rel=? AND b=?",(von,rel,r1)).fetchone()
