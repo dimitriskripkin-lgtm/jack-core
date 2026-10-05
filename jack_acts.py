@@ -52,6 +52,8 @@ ACTS = {
 "youtube_play_xiaomi": {"freigabe": True, "xiaomi": True, "text": "YouTube Xiaomi"},
 "xiaomi_ollama_restart": {"freigabe": True, "xiaomi": True, "text": "Xiaomi-Ollama an"},
 "xiaomi_ollama_stop": {"freigabe": True, "xiaomi": True, "text": "Xiaomi-Ollama aus"},
+"plan_try": {"freigabe": True, "xiaomi": True, "text": "UI-Plan auf Xiaomi testen (ohne exec)"},
+"skill_confirm": {"freigabe": True, "xiaomi": False, "text": "Skill nach Dimas Bestaetigung speichern"},
 }
 
 def names():

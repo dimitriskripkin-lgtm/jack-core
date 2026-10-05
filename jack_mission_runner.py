@@ -338,6 +338,67 @@ def run_act(m):
         except Exception as e:
             return False,"xiaomi_ollama_restart: "+str(e)[:100],""
 
+    if act in ("plan_try","skill_confirm"):  # JACK_TUNE_PLANTRY
+        import os, re as _re, json as _js, time as _tm
+        _LAST=J+"/skills_try/last_plan.json"
+        if act=="skill_confirm":
+            name=str(m.get("name","")).strip()
+            if not _re.match(r"^[a-z0-9_]{3,40}$",name):
+                return False,"skill_confirm: name nur a-z0-9_ (3-40)",""
+            if not os.path.exists(_LAST):
+                return False,"skill_confirm: kein letzter Plan",""
+            plan=_js.load(open(_LAST)); plan["name"]=name
+            import jack_skill_lib as _sk
+            ok_dima=bool(m.get("passt"))
+            if ok_dima and not _sk.get(name):
+                _sk.save(name,plan,str(m.get("beschreibung",""))[:200])
+            if _sk.get(name): _sk.record_run(name,ok_dima)
+            s=_sk.get(name)
+            if not s: return True,"skill_confirm: nicht gespeichert (passt=nein)",""
+            return True,"skill_confirm: "+name+" ["+s["state"]+"] "+str(s["successes"])+"/"+str(s["executions"])+" bestaetigt",""
+        plan=m.get("plan")
+        if isinstance(plan,str):
+            try: plan=_js.loads(plan)
+            except Exception: return False,"plan_try: plan kein JSON",""
+        steps=(plan or {}).get("steps") or []
+        if not steps or len(steps)>15:
+            return False,"plan_try: 1-15 steps noetig",""
+        SAFE={"open_app","intent","find_and_tap","ui_check","ui_text","input_text","keyevent","wait","home","back"}
+        for st in steps:
+            t=st.get("type","")
+            if t not in SAFE: return False,"plan_try: Schritt verboten: "+t,""
+            if t=="open_app" and not _re.match(r"^[A-Za-z0-9_.]+$",str(st.get("paket",""))): return False,"plan_try: paket ungueltig",""
+            if t=="intent" and not _re.match(r"^[A-Za-z0-9_.]+$",str(st.get("action",""))): return False,"plan_try: action ungueltig",""
+            if t=="input_text" and not _re.match(r"^[A-Za-z0-9 .,:\-]{1,80}$",str(st.get("text",""))): return False,"plan_try: text nur einfache Zeichen",""
+            if t=="keyevent" and not str(st.get("keycode","")).isdigit(): return False,"plan_try: keycode Zahl",""
+            if t=="wait" and not (0<float(st.get("seconds",0))<=10): return False,"plan_try: wait 0-10s",""
+        import jack_planner as _pl, importlib; importlib.reload(_pl)
+        res=[]; allok=True
+        for i,st in enumerate(steps):
+            t=st["type"]
+            try:
+                if t=="intent":
+                    import jack_tun as _tun
+                    r=_tun.intent(st["action"],st.get("data",""))
+                    if not r.get("ok"):
+                        r=_pl._ssh("su -c 'am start -a "+st["action"]+"'"); r={"ok":r.returncode==0,"out":(r.stdout+r.stderr)[:120]}
+                    r=("OK " if r.get("ok") else "FEHLER ")+str(r.get("out",""))[:80]
+                elif t=="home": r=_pl.step_keyevent({"keycode":3})
+                elif t=="back": r=_pl.step_keyevent({"keycode":4})
+                else: r=str(_pl.STEPS[t](st))
+            except Exception as e:
+                r="FEHLER: "+str(e)[:100]
+            bad=("FEHLER" in r) or ("NICHT_GEFUNDEN" in r) or ("NICHT_DA" in r)
+            if bad: allok=False
+            res.append(str(i+1)+" "+t+": "+r[:120])
+            if bad and st.get("abort_on_fail",True): break
+            _tm.sleep(float(st.get("delay",1.0)))
+        try: screen=str(_pl.step_ui_text({}))[:400]
+        except Exception as e: screen="?"+str(e)[:60]
+        os.makedirs(J+"/skills_try",exist_ok=True)
+        _js.dump(plan,open(_LAST,"w"),ensure_ascii=False)
+        return allok,"plan_try "+("OK" if allok else "FAIL")+" | "+" | ".join(res)+" || BILDSCHIRM: "+screen,""
+
     if act=="xiaomi_ssh_check":
         import jack_xiaomi as _jx, time as _tm2
         t0=_tm2.time()
