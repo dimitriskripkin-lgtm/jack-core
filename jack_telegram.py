@@ -178,7 +178,7 @@ MENU["befehle"] = {
         ("/explore_deep","Deep Explore","/explore_deep com.miui.gallery"),
         ("/appmap","App-Map anzeigen","/appmap"),
         ("/agent","UI-Agent starten","/agent öffne Einstellungen"),
-        ("/ssh","SSH-Agent Xiaomi","/ssh uptime"),
+        ("/ssh","zu, kein Rohbefehl","/ssh"),
         ("/code","Code schreiben","/code akku script"),
         ("/run","Letzten Code ausführen","/run"),
         ("/werkstatt","Werkstatt anzeigen","/werkstatt"),
@@ -394,11 +394,7 @@ def handle(text):
             return None
         pass
     if text.strip().startswith('/ssh '):
-        cmds=[c.strip() for c in text.strip()[5:].split(',') if c.strip()]
-        if not cmds: return 'Bitte Befehle angeben: /ssh ls, python3 --version, free -m'
-        import jack_ui_agent,threading
-        threading.Thread(target=jack_ui_agent.run_ssh_agent,args=(cmds,send),daemon=True).start()
-        return 'SSH-Agent gestartet: '+', '.join(cmds)
+        return 'Zu. /ssh schickt nichts mehr roh an das Xiaomi.'  # JACK_TUNE_SSHZU
     if text.strip().startswith('/agent '):
         ziel=text.strip()[7:].strip()
         import jack_ui_agent,threading
@@ -773,14 +769,7 @@ def handle(text):
         _ziel = text.strip()[5:].strip() or "optimiere jack"
         return 'AUTO gestartet: ' + _ziel + chr(10) + 'Status: In Entwicklung'
     if _rt.startswith('/ssh'):
-        _cmd = text.strip()[4:].strip()
-        if not _cmd:
-            return 'Syntax: /ssh <befehl>'
-        try:
-            import jack_exec
-            return jack_exec.run('ssh xiaomi-jack "' + _cmd + '"', timeout=30)
-        except Exception as e:
-            return 'SSH-Fehler: ' + str(e)[:100]
+        return 'Zu. /ssh schickt nichts mehr roh an das Xiaomi.'  # JACK_TUNE_SSHZU
     if _rt.startswith('/code'):
         _desc = text.strip()[5:].strip()
         if not _desc:
@@ -1016,7 +1005,7 @@ def handle(text):
 
     _NUTZUNG = {
         '/rag': 'Nutzung: /rag <suchbegriff>\nBeispiel: /rag KEYCODE_BACK',
-        '/ssh': 'Nutzung: /ssh <befehl>\nBeispiel: /ssh uptime',
+        '/ssh': 'Zu. Kein Rohbefehl mehr ans Xiaomi.',
         '/agent': 'Nutzung: /agent <ziel>\nBeispiel: /agent oeffne die Einstellungen',
         '/find': 'Nutzung: /find <was>\nBeispiel: /find Suchleiste',
         '/vision': 'Nutzung: /vision <frage>\nBeispiel: /vision was siehst du',
