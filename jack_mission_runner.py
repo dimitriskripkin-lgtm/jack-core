@@ -338,6 +338,46 @@ def run_act(m):
         except Exception as e:
             return False,"xiaomi_ollama_restart: "+str(e)[:100],""
 
+    if act=="skill_run":  # JACK_TUNE_AUTONOMIE_1 Stufe 2: nur VERIFIED, keine Rueckfrage noetig
+        import jack_skill_lib as _sk2, jack_planner as _pl2, importlib, time as _tm3
+        name=str(m.get("name","")).strip()
+        s=_sk2.get(name)
+        if not s:
+            return False,"skill_run: unbekannter Skill "+name,""
+        if s["state"]!="VERIFIED":
+            return False,"skill_run: "+name+" ist nicht VERIFIED (Stand: "+s["state"]+", "+str(s["successes"])+"/"+str(s["executions"])+") - Stufe 2 nur fuer verifizierte Skills",""
+        steps=s["plan"].get("steps") or []
+        _ok,_why=_pl2.validate_safe(steps)
+        if not _ok:
+            return False,"skill_run: "+name+" erneut geprueft, abgelehnt: "+_why,""
+        importlib.reload(_pl2)
+        res=[]; allok=True
+        for i,st in enumerate(steps):
+            t=st["type"]
+            try:
+                if t=="intent":
+                    import jack_tun as _tun2
+                    r=_tun2.intent(st["action"],st.get("data",""))
+                    if not r.get("ok"):
+                        r=_pl2._ssh("su -c 'am start -a "+st["action"]+"'"); r={"ok":r.returncode==0,"out":(r.stdout+r.stderr)[:120]}  # JACK_TUNE_SKILLRUN_SUFIX gleicher Fallback wie plan_try
+                    r=("OK " if r.get("ok") else "FEHLER ")+str(r.get("out",""))[:60]
+                elif t=="unlock":
+                    import jack_xiaomi_unlock as _xu2
+                    try: r="OK "+str(_xu2.ensure_unlocked())
+                    except Exception as e: r="FEHLER "+str(e)[:60]
+                elif t=="home": r=_pl2.step_keyevent({"keycode":3})
+                elif t=="back": r=_pl2.step_keyevent({"keycode":4})
+                else: r=str(_pl2.STEPS[t](st))
+            except Exception as e:
+                r="FEHLER: "+str(e)[:80]
+            bad=("FEHLER" in r) or ("NICHT_GEFUNDEN" in r)
+            if bad: allok=False
+            res.append(str(i+1)+" "+t+": "+r[:80])
+            if bad: break
+            _tm3.sleep(float(st.get("delay",1.0)))
+        _sk2.record_run(name,allok)  # JACK_TUNE_AUTONOMIE_1: autonome Laeufe zaehlen technisch, ohne Dimas Bestaetigung
+        return allok,"skill_run "+name+" "+("OK" if allok else "FAIL")+" | "+" | ".join(res),""
+
     if act in ("plan_try","skill_confirm"):  # JACK_TUNE_PLANTRY
         import os, re as _re, json as _js, time as _tm
         _LAST=J+"/skills_try/last_plan.json"
@@ -345,13 +385,16 @@ def run_act(m):
             name=str(m.get("name","")).strip()
             if not _re.match(r"^[a-z0-9_]{3,40}$",name):
                 return False,"skill_confirm: name nur a-z0-9_ (3-40)",""
-            if not os.path.exists(_LAST):
-                return False,"skill_confirm: kein letzter Plan",""
-            plan=_js.load(open(_LAST)); plan["name"]=name
+            _NAMED=J+"/skills_try/last_plan__"+name+".json"  # JACK_TUNE_SKILLFIX pro Name, nicht geteilt
+            _src=_NAMED if os.path.exists(_NAMED) else _LAST
+            if not os.path.exists(_src):
+                return False,"skill_confirm: kein letzter Plan fuer "+name,""
+            plan=_js.load(open(_src)); plan["name"]=name
             import jack_skill_lib as _sk
             ok_dima=bool(m.get("passt"))
-            if ok_dima and not _sk.get(name):
-                _sk.save(name,plan,str(m.get("beschreibung",""))[:200])
+            _ex=_sk.get(name)
+            if ok_dima and (not _ex or _js.dumps(_ex.get("plan"),sort_keys=True)!=_js.dumps(plan,sort_keys=True)):
+                _sk.save(name,plan,str(m.get("beschreibung","")) or (_ex or {}).get("description",""))  # JACK_TUNE_SKILLFIX2: nur speichern/zuruecksetzen wenn Plan sich wirklich geaendert hat
             if _sk.get(name): _sk.record_run(name,ok_dima)
             s=_sk.get(name)
             if not s: return True,"skill_confirm: nicht gespeichert (passt=nein)",""
@@ -363,16 +406,9 @@ def run_act(m):
         steps=(plan or {}).get("steps") or []
         if not steps or len(steps)>15:
             return False,"plan_try: 1-15 steps noetig",""
-        SAFE={"open_app","intent","find_and_tap","ui_check","ui_text","input_text","keyevent","wait","home","back","unlock"}  # JACK_TUNE_UNLOCK
-        for st in steps:
-            t=st.get("type","")
-            if t=="unlock": pass
-            elif t not in SAFE: return False,"plan_try: Schritt verboten: "+t,""  # JACK_TUNE_UNLOCK2
-            if t=="open_app" and not _re.match(r"^[A-Za-z0-9_.]+$",str(st.get("paket",""))): return False,"plan_try: paket ungueltig",""
-            if t=="intent" and not _re.match(r"^[A-Za-z0-9_.]+$",str(st.get("action",""))): return False,"plan_try: action ungueltig",""
-            if t=="input_text" and not _re.match(r"^[A-Za-z0-9 .,:\-]{1,80}$",str(st.get("text",""))): return False,"plan_try: text nur einfache Zeichen",""
-            if t=="keyevent" and not str(st.get("keycode","")).isdigit(): return False,"plan_try: keycode Zahl",""
-            if t=="wait" and not (0<float(st.get("seconds",0))<=10): return False,"plan_try: wait 0-10s",""
+        import jack_planner as _plv  # JACK_TUNE_PLANGATE_UNIFY gemeinsame Pruefung statt eigener Kopie
+        _ok,_why=_plv.validate_safe(steps)
+        if not _ok: return False,"plan_try: "+_why,""
         import jack_planner as _pl, importlib; importlib.reload(_pl)
         res=[]; allok=True
         for i,st in enumerate(steps):
@@ -401,6 +437,10 @@ def run_act(m):
         except Exception as e: screen="?"+str(e)[:60]
         os.makedirs(J+"/skills_try",exist_ok=True)
         _js.dump(plan,open(_LAST,"w"),ensure_ascii=False)
+        try:
+            _pname=_re.sub(r"[^a-z0-9_]","",str(plan.get("name","")).lower())
+            if _pname: _js.dump(plan,open(J+"/skills_try/last_plan__"+_pname+".json","w"),ensure_ascii=False)
+        except Exception: pass  # JACK_TUNE_SKILLFIX pro Name sichern
         return allok,"plan_try "+("OK" if allok else "FAIL")+" | "+" | ".join(res)+" || BILDSCHIRM: "+screen,""
 
     if act=="xiaomi_ssh_check":

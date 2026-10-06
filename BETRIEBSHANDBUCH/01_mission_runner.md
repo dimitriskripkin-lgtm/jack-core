@@ -76,6 +76,37 @@ auf 1s beschleunigbar).
 - `xiaomi_ssh_check` nimmt optional `ip` entgegen, um eine konkrete Kandidaten-IP gezielt zu testen,
   unabhaengig vom Cache (JACK_TUNE_IPOVERRIDE).
 
+**Update 06.10.2026, Abend — drei echte Bugs in der Skill-Werkstatt gefunden und behoben:**
+1. `skill_confirm` (`JACK_TUNE_SKILLFIX`) speicherte den Plan nur beim ALLERERSTEN Mal fuer einen
+   Skillnamen. Bei Block-Bestaetigungen mehrerer Skills nacheinander (mehrere `plan_try` dann
+   mehrere `skill_confirm` in Folge) hing jede Bestaetigung am zuletzt gelaufenen Plan - eine
+   geteilte Cache-Datei (`last_plan.json`) ohne Namensbezug. Ergebnis: Skills konnten unter ihrem
+   Namen einen komplett anderen Plan gespeichert haben. Fix: pro-Name-Cache-Datei
+   (`skills_try/last_plan__<name>.json`), Plan wird bei jeder Bestaetigung neu geprueft und nur bei
+   echter Aenderung neu gespeichert (sonst zaehlt record_run einfach weiter hoch,
+   `JACK_TUNE_SKILLFIX2` - ein erster Versuch des Fixes hatte den Zaehler bei JEDER Bestaetigung
+   faelschlich auf 0 zurueckgesetzt, selbst ohne Planaenderung - sofort gefunden und korrigiert).
+2. `skill_run` (Stufe-2-Act, `JACK_TUNE_AUTONOMIE_1`) fehlte der `su`-Rueckfallweg fuer `intent`-
+   Schritte. **Wichtiger Fund:** `jack_tun.intent()` OHNE `su`-Wrapper schlaegt auf diesem Geraet
+   fuer System-Settings-Intents zuverlaessig fehl (Android wirft
+   `java.lang.reflect.InvocationTargetException`), OBWOHL die SSH-Verbindung schon als root laeuft.
+   `plan_try` hat das die ganze Zeit durch einen eingebauten Fallback (`su -c 'am start ...'`)
+   verdeckt - jeder vermeintliche `jack_tun.intent()`-Erfolg lief in Wahrheit ueber diesen
+   Fallback. **Jede Stelle im Code, die `jack_tun.intent()` ohne diesen Fallback direkt aufruft,
+   hat wahrscheinlich dasselbe Problem.** Fix: `JACK_TUNE_SKILLRUN_SUFIX` - identischer Fallback
+   jetzt auch in `skill_run`.
+3. Neun der zwoelf heute gebauten Skills waren von Fund 1 betroffen (Block-Bestaetigungen) und
+   wurden einzeln neu aufgebaut und bestaetigt. Nur `bluetooth_seite` und `termux_app_details`
+   (einzeln bestaetigt) waren nie betroffen.
+
+**Autonomiestufen (neu, Dimas Wort 06.10.2026):** Eigene, kleine Stufe NUR fuer Skills, bewusst
+getrennt vom bestehenden `jack_intent.py`-Autonomie-System (das bleibt bei seinen 4 festen Ketten).
+Stufe 0: Claude probiert, Dima bestaetigt jeden Lauf. Stufe 1: Claude probiert, prueft selbst per
+`xiaomi_screenshot`, fragt nur bei Zweifel. **Stufe 2 (`skill_run`, live bewiesen an `wlan_seite`):**
+ein VERIFIED-Skill (3/3 bestaetigte Laeufe) darf ohne jede Rueckfrage ausgefuehrt werden - aber
+`skill_run` prueft den gespeicherten Plan bei JEDEM Lauf erneut gegen `jack_planner.validate_safe()`,
+nicht nur beim Speichern. **Neue, unverifizierte Skills bauen bleibt immer Stufe 1, nie Stufe 2.**
+
 **Offene Fragen für später:** Was macht `jack_mission_pull.py` genau? Was ist `jack_deadletter.py`?
 Wie hängen `jack_cmd_handler.py`/`jack_mission_gen.py`/`jack_schema.py`/`jack_stand.py` mit dem
 Shadow-Pfad zusammen?
