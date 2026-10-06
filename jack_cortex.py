@@ -53,16 +53,34 @@ def _ssh_ok(ip):
     except Exception:
         return False
     # JACK_TUNE_R01IP
+def _sync_ssh_config(ip):  # JACK_TUNE_SSHSYNC einziger Ort, der ~/.ssh/config fuer xiaomi-jack schreibt
+    try:
+        cfgp=os.path.expanduser('~/.ssh/config')
+        L=open(cfgp).read().splitlines(True)
+        for i,l in enumerate(L):
+            if l.strip()=='Host xiaomi-jack':
+                for j in range(i+1,min(i+9,len(L))):
+                    if L[j].strip().startswith('HostName'):
+                        if L[j].strip()!='HostName '+ip:
+                            L[j]='    HostName '+ip+chr(10)
+                            open(cfgp,'w').write(''.join(L))
+                        return
+                break
+    except Exception as _le:
+        _jlog and _jlog.fehler("cortex","sshsync",_le)
+
 def find_xiaomi():
     cache_file = os.path.expanduser("~/jack/.last_xiaomi_ip")
     known = jack_config.get_param('NETWORK', 'xiaomi_ip')
     if _ssh_ok(known):
         with open(cache_file,"w") as f: f.write(known)
+        _sync_ssh_config(known)
         return known
     if os.path.exists(cache_file):
         try:
             cached = open(cache_file).read().strip()
             if cached and cached != known and _ssh_ok(cached):
+                _sync_ssh_config(cached)
                 return cached
         except Exception as _le:
             _jlog and _jlog.fehler("cortex","unbenannt",_le)
@@ -77,17 +95,7 @@ def find_xiaomi():
         if _ssh_ok(ip):
             with open(cache_file,"w") as f: f.write(ip)
             log_status(f"[Cortex] Xiaomi auf neuer IP gefunden: {ip}")
-            try:
-                cfgp=os.path.expanduser('~/.ssh/config')
-                L=open(cfgp).read().splitlines(True)
-                for i,l in enumerate(L):
-                    if l.strip()=='Host xiaomi-jack':
-                        for j in range(i+1,min(i+9,len(L))):
-                            if L[j].strip().startswith('HostName'):
-                                L[j]='    HostName '+ip+chr(10); break
-                        break
-                open(cfgp,'w').write(''.join(L))
-            except Exception: pass
+            _sync_ssh_config(ip)
             return ip
     return known
 XIAOMI_LAST_STATE = None

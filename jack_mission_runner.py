@@ -363,10 +363,11 @@ def run_act(m):
         steps=(plan or {}).get("steps") or []
         if not steps or len(steps)>15:
             return False,"plan_try: 1-15 steps noetig",""
-        SAFE={"open_app","intent","find_and_tap","ui_check","ui_text","input_text","keyevent","wait","home","back"}
+        SAFE={"open_app","intent","find_and_tap","ui_check","ui_text","input_text","keyevent","wait","home","back","unlock"}  # JACK_TUNE_UNLOCK
         for st in steps:
             t=st.get("type","")
-            if t not in SAFE: return False,"plan_try: Schritt verboten: "+t,""
+            if t=="unlock": pass
+            elif t not in SAFE: return False,"plan_try: Schritt verboten: "+t,""  # JACK_TUNE_UNLOCK2
             if t=="open_app" and not _re.match(r"^[A-Za-z0-9_.]+$",str(st.get("paket",""))): return False,"plan_try: paket ungueltig",""
             if t=="intent" and not _re.match(r"^[A-Za-z0-9_.]+$",str(st.get("action",""))): return False,"plan_try: action ungueltig",""
             if t=="input_text" and not _re.match(r"^[A-Za-z0-9 .,:\-]{1,80}$",str(st.get("text",""))): return False,"plan_try: text nur einfache Zeichen",""
@@ -383,6 +384,9 @@ def run_act(m):
                     if not r.get("ok"):
                         r=_pl._ssh("su -c 'am start -a "+st["action"]+"'"); r={"ok":r.returncode==0,"out":(r.stdout+r.stderr)[:120]}
                     r=("OK " if r.get("ok") else "FEHLER ")+str(r.get("out",""))[:80]
+                elif t=="unlock":
+                    import jack_xiaomi_unlock as _un
+                    r="OK "+str(_un.ensure_unlocked())
                 elif t=="home": r=_pl.step_keyevent({"keycode":3})
                 elif t=="back": r=_pl.step_keyevent({"keycode":4})
                 else: r=str(_pl.STEPS[t](st))
@@ -400,8 +404,21 @@ def run_act(m):
         return allok,"plan_try "+("OK" if allok else "FAIL")+" | "+" | ".join(res)+" || BILDSCHIRM: "+screen,""
 
     if act=="xiaomi_ssh_check":
-        import jack_xiaomi as _jx, time as _tm2
+        import jack_xiaomi as _jx, time as _tm2, re as _rip, subprocess as _spc, os as _osc
+        _ip=str(m.get("ip","")).strip()
         t0=_tm2.time()
+        if _ip:  # JACK_TUNE_IPOVERRIDE manueller Test einer Kandidaten-IP
+            if not _rip.match(r"^[0-9]{1,3}(\.[0-9]{1,3}){3}$",_ip):
+                return False,"xiaomi_ssh_check: ip ungueltig",""
+            _key=_osc.path.expanduser("~/.ssh/id_jack")
+            try:
+                r2=_spc.run(["ssh","-i",_key,"-o","BatchMode=yes","-o","StrictHostKeyChecking=accept-new","-o","UserKnownHostsFile=/dev/null","-o","ConnectTimeout=6","-p","8022","root@"+_ip,"echo ok"],capture_output=True,text=True,timeout=10)
+                dt=round(_tm2.time()-t0,2)
+                if r2.returncode==0 and "ok" in (r2.stdout or ""):
+                    return True,"xiaomi_ssh_check(ip="+_ip+"): erreichbar in "+str(dt)+"s",""
+                return False,"xiaomi_ssh_check(ip="+_ip+"): "+((r2.stderr or r2.stdout or "")[:120]),""
+            except Exception as e:
+                return False,"xiaomi_ssh_check(ip="+_ip+"): "+str(e)[:120],""
         r=_jx.ssh("echo ok", timeout=10)
         dt=round(_tm2.time()-t0,2)
         if r.get("ok") and "ok" in r.get("out",""):
@@ -810,7 +827,7 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         procs=""
         for cmd in (["ps","-eo","pid,pcpu,pmem,etime,args","--sort=-pcpu"],["top","-b","-n","1"],["ps","-A"]):
             try:
-                r=subprocess.run(cmd,capture_output=True,text=True,timeout=10)
+                r=_sp.run(cmd,capture_output=True,text=True,timeout=10)
                 if r.returncode==0 and r.stdout.strip():
                     procs=chr(10).join([ln[:110] for ln in r.stdout.splitlines()[:12]])
                     break
@@ -1041,6 +1058,20 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         out=c.fact_report() if hasattr(c,"fact_report") else __import__("jack_talk").ist_zustand()
         ok=("SSH" in out) and ("Akku" not in out) and ("CHARGING" not in out)
         return ok,"fact",out[:800]
+    if act=="honor_net_scan":  # JACK_TUNE_NETSCAN read-only, keine Nutzereingabe im Kommando
+        import subprocess as _sp
+        out=[]
+        try:
+            out.append("== arp ==\n"+open("/proc/net/arp").read()[:600])
+        except Exception as e:
+            out.append("== arp == FEHLER "+str(e)[:100])
+        for label,cmd in (("wifi_ip",["getprop","dhcp.wlan0.ipaddress"]),("wifi_gw",["getprop","dhcp.wlan0.gateway"]),("wifi_ssid",["getprop","wifi.interface"])):
+            try:
+                r=_sp.run(cmd,capture_output=True,text=True,timeout=8)
+                out.append("== "+label+" ==\n"+(r.stdout or r.stderr or "")[:200])
+            except Exception as e:
+                out.append("== "+label+" == FEHLER "+str(e)[:100])
+        return True,"honor_net_scan","\n".join(out)[:1800]
     if act=="diag":
         import jack_selfsee as s
         out=s.handle(m.get("text") or "analysiere")

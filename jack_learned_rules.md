@@ -1,5 +1,5 @@
 # GELERNTE REGELN (automatisch aus Fehlern)
 
-Stand: 05.10.2026 23:55
+Stand: 06.10.2026 14:24
 
 Keine offenen Fehler - keine Regeln gelernt.

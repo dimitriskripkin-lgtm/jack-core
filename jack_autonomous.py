@@ -710,8 +710,11 @@ def _lerner_loop():
 
 def start_consolidated():
     _th.Thread(target=_autolearn_loop,daemon=True,name="autolearn").start()
-    _th.Thread(target=_publisher_loop,daemon=True,name="publisher").start()
-    _th.Thread(target=_missions_loop,daemon=True,name="missions").start()
+    # JACK_TUNE_DEADTHREADS 06.10.2026: publisher und missions-Thread entfernt.
+    # publisher: Dublette zum eigenstaendigen jack_publisher-Dienst (identische push()-Funktion alle 180s).
+    # missions: altes jack_missions.py-System, niemand fuettert mehr neue Eintraege in jack_missions.db,
+    #   lief seit Wochen leer mit. jack_missions.py selbst bleibt (Telegram-Status-Befehl liest uebersicht()),
+    #   nur der Ausfuehr-Thread ist weg. jack_oracle.py bleibt unberuehrt (wird anderswo noch gebraucht).
     _th.Thread(target=_scout_loop,daemon=True,name="scout").start()
     _th.Thread(target=_monitor_loop,daemon=True,name="monitor").start()
     _th.Thread(target=_sanity_loop,daemon=True,name="sanity").start()
