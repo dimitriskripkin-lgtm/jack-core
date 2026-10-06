@@ -59,6 +59,23 @@ auf 1s beschleunigbar).
 - `sv_restart` auf den eigenen Dienst (`jack_missions`) läuft bewusst verzögert im Hintergrund
   (`JACK_TUNE_SELFRESTART_SAFE`), sonst Deadlock (gefunden 27.09.).
 
+**Neu seit 06.10.2026, Skill-Werkstatt und Diagnose:**
+- `plan_try`/`skill_confirm` (`JACK_TUNE_PLANTRY`) - fuehrt einen UI-Plan auf dem Xiaomi aus
+  (erlaubte Schritte: open_app, intent, find_and_tap, ui_check, ui_text, input_text, keyevent,
+  wait, home, back, unlock - bewusst OHNE exec und rohe tap-Koordinaten). Speichert einen Skill
+  erst nach Dimas Bestaetigung (`skill_confirm`, nicht automatisch bei `jack_outcome`), ueber
+  `jack_skill_lib` mit Stufen CANDIDATE -> TESTING (1 Erfolg) -> VERIFIED (3 Erfolge). `unlock`-Schritt
+  nutzt `jack_xiaomi_unlock.ensure_unlocked()` (kein PIN).
+- `xiaomi_screenshot` (`JACK_TUNE_VISION`) - echter Screenshot via `jack_vision.get_screen_b64()`,
+  als Base64-Text in `skills_try/last_screen.b64` geschrieben, dann per `read_file` geholt und
+  lokal dekodiert - Claude sieht den Bildschirm wirklich, nicht nur den `ui_text`-Baum. Kein
+  Gemini-Call, kein Budget-Verbrauch.
+- `honor_net_scan` (`JACK_TUNE_NETSCAN`) - read-only Netzdiagnose auf dem Honor selbst. **Wichtiger
+  Fund:** `ip neigh`, `/proc/net/arp` und `getprop` sind auf diesem Root-freien Honor alle drei
+  mit "Permission denied" verboten - das ist eine harte Geraetegrenze, kein Bug.
+- `xiaomi_ssh_check` nimmt optional `ip` entgegen, um eine konkrete Kandidaten-IP gezielt zu testen,
+  unabhaengig vom Cache (JACK_TUNE_IPOVERRIDE).
+
 **Offene Fragen für später:** Was macht `jack_mission_pull.py` genau? Was ist `jack_deadletter.py`?
 Wie hängen `jack_cmd_handler.py`/`jack_mission_gen.py`/`jack_schema.py`/`jack_stand.py` mit dem
 Shadow-Pfad zusammen?

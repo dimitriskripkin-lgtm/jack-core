@@ -1058,6 +1058,20 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         out=c.fact_report() if hasattr(c,"fact_report") else __import__("jack_talk").ist_zustand()
         ok=("SSH" in out) and ("Akku" not in out) and ("CHARGING" not in out)
         return ok,"fact",out[:800]
+    if act=="xiaomi_screenshot":  # JACK_TUNE_VISION Screenshot als Base64-Datei fuer read_file
+        import os as _osv, jack_xiaomi_unlock as _xu
+        try: _xu.ensure_unlocked()
+        except Exception: pass
+        try:
+            import jack_vision as _vi
+            b64=_vi.get_screen_b64(max_px=900, quality=70)
+            outp=J+"/skills_try/last_screen.b64"
+            _osv.makedirs(J+"/skills_try",exist_ok=True)
+            open(outp,"w").write(b64)
+            return True,"xiaomi_screenshot: "+str(len(b64))+" Zeichen Base64 geschrieben nach skills_try/last_screen.b64",""
+        except Exception as e:
+            return False,"xiaomi_screenshot: "+str(e)[:150],""
+
     if act=="honor_net_scan":  # JACK_TUNE_NETSCAN read-only, keine Nutzereingabe im Kommando
         import subprocess as _sp
         out=[]
@@ -1292,7 +1306,7 @@ def one(path):
         _conn = _sq.connect(_mdb)
         _mid = str(_uuid.uuid4())
         _ts = _dtm.now().isoformat()[:19]
-        _summ = ("ok" if rec.get("ok") else "fail")+": "+str(rec.get("raw_ok",""))[:200]
+        _summ = ("ok" if rec.get("ok") else "fail")+": "+str(rec.get("act",""))+": "+str(rec.get("note",""))[:180]  # JACK_TUNE_PLAYBACK echter Inhalt statt leerem raw_ok
         _conn.execute(
             "INSERT INTO memory (id, cmd, result, intent, time, timestamp, source, kontext_typ) VALUES (?,?,?,?,?,?,?,?)",
             (_mid, rec.get("id",""), _summ, "mission_result", _ts, _ts, "jack_mission_runner", "mission"))

@@ -4,10 +4,11 @@
 Dienstnamen — historisch gewachsen, bewusst so benannt laut Projektnotizen). Prüft zyklisch, ob
 alle Dienste und das Xiaomi leben, startet Tote neu, meldet Auffälligkeiten per Telegram.
 
-**Wichtigster Fund: der Prozess startet beim Hochfahren ZUSÄTZLICH acht Hintergrund-Threads
+**Fund (seit 06.10. korrigiert): der Prozess startete beim Hochfahren ZUSÄTZLICH acht Hintergrund-Threads
 im selben Prozess** (`start_consolidated()`, läuft unbedingt vor der Hauptschleife):
 `_autolearn_loop`, `_publisher_loop`, `_missions_loop`, `_scout_loop`, `_monitor_loop`,
-`_sanity_loop`, `_lerner_loop`, `_proaktiv_loop`.
+`_sanity_loop`, `_lerner_loop`, `_proaktiv_loop`. **Seit 06.10. nur noch sechs** - die beiden
+toten (`_publisher_loop`, `_missions_loop`) sind raus, siehe Update unten.
 
 **Geklärt, welche davon echte Dopplungen zu den separaten runit-Diensten sind:**
 - `_autolearn_loop` — **tot**, frühes `return` mit Markierung `JACK_TUNE_D2ONE`
@@ -49,7 +50,13 @@ Prüft `jack_telegram`, `jack_cortex`, `jack_publisher`, `jack_autolearn` gegen 
 oder Festwert-Fallback. **`jack_missions` steht nicht in dieser Liste** — der frisch gefixte
 `jack_cortex`-Herzschlag-Bug (29.09.) lag in einer anderen Datei (`jack_cortex.py` selbst), nicht hier.
 
-**Offene Fragen für später:** Läuft `jack_missions.py` (im Wächter-Thread) wirklich parallel zum
-`jack_missions`-Dienst, oder ist eine Quelle faktisch tot? Ist `_publisher_loop` eine echte Dopplung
-oder ergänzt sie den Dienst bewusst? Was tun `jack_scout`, `jack_monitor`, `jack_sanity`, `jack_lerner`
+**GELOEST 06.10.2026** (`JACK_TUNE_DEADTHREADS`, live gemessen): `_missions_loop` fuetterte sich
+aus `jack_missions.db`, die seit Wochen niemand mehr beschreibt - toter Thread, lief nur fuer nichts
+mit. `_publisher_loop` war eine echte Dopplung zum `jack_publisher`-Dienst (identische
+`jack_publish.push()` alle 180s). Beide Thread-Starts aus `start_consolidated()` entfernt (jetzt
+6 statt 8 Threads). `jack_missions.py` und `jack_oracle.py` selbst bleiben unberuehrt - ersteres
+wird noch von einem Telegram-Status-Befehl gelesen, letzteres von jack_stress.py/jack_cortex.py
+gebraucht. Backup: `Attic/jack_autonomous.py.bak_20261006_deadthreads`.
+
+**Offene Fragen für später:** Was tun `jack_scout`, `jack_monitor`, `jack_sanity`, `jack_lerner`
 im Detail? Was ist `jack_queue.TaskQueue` genau (RAM-Drosselung)?

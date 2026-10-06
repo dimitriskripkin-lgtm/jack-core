@@ -243,16 +243,24 @@ Fehlen auch: jack_identity.py, jack_main.py.
 229. [jack_yt_sido.py](BETRIEBSHANDBUCH/229_yt_sido.md)
 Repo-Luecke 03.10. zu. 197 jack_*.py haben einen Namen im Handbuch.
 230. [Zweitpass scharf](BETRIEBSHANDBUCH/230_zweitpass_scharf.md) — loeschen, lernen, Ollama-Datei
+231. [jack_tun.py](BETRIEBSHANDBUCH/231_tun_cleartask.md) — Intent-Bruecke, CLEARTASK-Fix (06.10.)
 
 ## Wichtigste Funde bisher, über alle Kapitel hinweg
 - **Mindestens fünf unabhängige Freigabe-/Bestätigungs-Mechanismen** im Gesamtsystem (Shadow+pending_approvals,
   Self-Tooling-Proposals, PENDING_EXEC, PENDING_WRITE, selfsee_pending) — kennen sich nicht, nie vereinheitlicht.
 - **Zwei unabhängige Wege, Fakten in den Graph zu schreiben** (`_do_save_fakt` im Chat, `graph_add_fact` als Act).
-- **Zwei mögliche parallele Mission-Systeme**: `jack_mission_runner.py` (diese Woche, MCP-Acts) und ein
-  älteres `jack_missions.py` (deutsche Status-Wörter), Letzteres läuft als interner Thread im Wächter —
-  noch nicht live geprüft, ob beide wirklich gleichzeitig aktiv sind. **Wichtigster offener Punkt.**
-- Doppelte Codepfade für Xiaomi-App-Steuerung (MCP-Act vs. Freitext-Regex direkt in jack_telegram.py).
-- Mögliche doppelte Publisher-Aktivität (`_publisher_loop`-Thread im Wächter vs. `jack_publisher`-Dienst).
+- **GELOEST 06.10.2026** (JACK_TUNE_DEADTHREADS): Zwei parallele Mission-Systeme bestaetigt real -
+  `jack_missions.py`-Thread im Waechter lief seit Wochen leer mit (niemand fuettert jack_missions.db
+  mehr), Thread-Start entfernt. jack_missions.py selbst bleibt (Telegram-Status-Befehl /missions_alt
+  liest uebersicht()), nur der Ausfuehr-Thread ist weg. jack_oracle.py bleibt (wird anderswo gebraucht).
+- Doppelte Codepfade für Xiaomi-App-Steuerung (MCP-Act vs. Freitext-Regex direkt in jack_telegram.py) -
+  weiterhin offen.
+- **GELOEST 06.10.2026** (JACK_TUNE_DEADTHREADS): `_publisher_loop`-Thread im Waechter war echte
+  Dopplung zum `jack_publisher`-Dienst (identische push()-Funktion alle 180s) - Thread-Start entfernt.
+- **NEU 06.10.2026**: Ein zweiter, komplett ungefilterter Plan-Ausfuehrungsweg existiert in
+  jack_telegram.py: `[[PLAN:...]]`-Syntax (Zeile ~347) ruft jack_planner.run_plan() direkt auf,
+  OHNE Act-Whitelist und ohne den exec-Schritt-Filter, den plan_try (Kapitel 1) hat. Noch nicht
+  gehaertet. Naechster Kandidat fuer die Haertungs-Reihe.
 - Eine bisher undokumentierte vierte Datenbank: `jack_outcomes.db`.
 
 ## Technische Lehre aus dem Bau dieses Handbuchs selbst (02.10.2026)
@@ -263,3 +271,15 @@ Schritt und reißt dieses Limit schnell — Fehlschläge wurden dabei lange **ni
 Werkzeug-Fehler (`json.dumps` ohne `ensure_ascii=False`) deutsche Sonderzeichen auf das Dreifache
 auf. Lösung: viele kleine, einzeln verifizierte Dateien statt einer wachsenden großen.
 **Für jeden Schreibvorgang gilt ab jetzt: roh gegenlesen, nicht nur `ok: true` vertrauen.**
+
+## Update 06.10.2026 (Claude, Honor-Live-Session)
+Vier neue Module/Erweiterungen seit dem letzten Stand dieses Index, siehe eigene Kapitel:
+- `jack_tun.py` bekam CLEARTASK-Fix (Kapitel 231) - Android liess vorherige Settings-Seite haengen.
+- `jack_mission_runner.py`: neue Acts `plan_try`/`skill_confirm` (Skill-Werkstatt mit Dima als
+  Pruefer), `honor_net_scan` (read-only Netzdiagnose, `ip neigh` scheitert ohne Root - siehe
+  Kapitel 1), `xiaomi_screenshot` (echter Screenshot als Base64-Datei fuer read_file, kein
+  Gemini-Umweg, kein Budget-Verbrauch), `xiaomi_ssh_check` mit optionalem `ip`-Override.
+- `jack_cortex.py`: `find_xiaomi()` synct `~/.ssh/config` jetzt in JEDEM Erfolgszweig
+  (vorher nur im arp-scan-Zweig, der auf Root-freiem Honor nie laufen konnte) - Kapitel 34.
+- `jack_autonomous.py`: zwei tote Threads entfernt (`_missions_loop`, `_publisher_loop`) - Kapitel 3.
+Alle vier live bewiesen, Backups im Attic, committed als `2a7cb2d2`.

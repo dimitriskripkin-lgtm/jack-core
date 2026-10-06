@@ -55,6 +55,7 @@ ACTS = {
 "plan_try": {"freigabe": True, "xiaomi": True, "text": "UI-Plan auf Xiaomi testen (ohne exec)"},
 "skill_confirm": {"freigabe": True, "xiaomi": False, "text": "Skill nach Dimas Bestaetigung speichern"},
 "honor_net_scan": {"freigabe": True, "xiaomi": False, "text": "Honor Netzwerk-Diagnose (ip neigh/addr/route), read-only"},
+"xiaomi_screenshot": {"freigabe": True, "xiaomi": True, "text": "Screenshot des Xiaomi als Base64-Datei fuer read_file (Vision)"},
 }
 
 def names():

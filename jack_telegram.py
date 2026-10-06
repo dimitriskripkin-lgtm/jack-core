@@ -358,6 +358,9 @@ def handle(text):
                 if not isinstance(plan, dict) or not isinstance(plan.get('steps'), list):
                     send('PLAN UNGUELTIG: steps fehlen'); return
                 importlib.reload(jack_planner)
+                _ok,_why=jack_planner.validate_safe(plan.get('steps'))  # JACK_TUNE_PLANGATE
+                if not _ok:
+                    send('PLAN ABGELEHNT: '+_why); return
                 plan['name']=pn
                 jack_planner.run_plan(plan,send)  # JACK_TUNE_PLANJSON
             except Exception as e:

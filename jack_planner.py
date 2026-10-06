@@ -145,3 +145,18 @@ def run_plan(plan,send_fn=None):
     except Exception as _oe:
         if send_fn: send_fn('Fertig: '+name)
     return results
+
+def validate_safe(steps):  # JACK_TUNE_PLANGATE gemeinsamer Filter, von plan_try UND [[PLAN:]] genutzt
+    import re as _rvs
+    SAFE={"open_app","intent","find_and_tap","ui_check","ui_text","input_text","keyevent","wait","home","back","unlock"}
+    if not isinstance(steps,list) or not steps or len(steps)>15:
+        return False,"1-15 steps noetig"
+    for st in steps:
+        t=st.get("type","")
+        if t not in SAFE: return False,"Schritt verboten: "+t
+        if t=="open_app" and not _rvs.match(r"^[A-Za-z0-9_.]+$",str(st.get("paket",""))): return False,"paket ungueltig"
+        if t=="intent" and not _rvs.match(r"^[A-Za-z0-9_.]+$",str(st.get("action",""))): return False,"action ungueltig"
+        if t=="input_text" and not _rvs.match(r"^[A-Za-z0-9 .,:\-]{1,80}$",str(st.get("text",""))): return False,"text nur einfache Zeichen"
+        if t=="keyevent" and not str(st.get("keycode","")).isdigit(): return False,"keycode Zahl"
+        if t=="wait" and not (0<float(st.get("seconds",0) or 0)<=10): return False,"wait 0-10s"
+    return True,"ok"
