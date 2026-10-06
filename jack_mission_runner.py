@@ -210,9 +210,10 @@ def run_act(m):
         if not re.match(r"^https?://[a-zA-Z0-9._\-/?=&%#]+$", url):
             return False,"open_url_xiaomi: ungueltige URL",""
         try:
-            r=subprocess.run(["ssh","xiaomi-jack","su","-c","am start -a android.intent.action.VIEW -d \'"+url+"\'"],capture_output=True,text=True,timeout=15)
-            if r.returncode!=0:
-                return False,"open_url_xiaomi: SSH/am-Fehler: "+r.stderr[:100],""
+            import jack_xiaomi as _jx
+            r=_jx.ssh("am start -a android.intent.action.VIEW -d '"+url+"'", timeout=15)  # JACK_TUNE_SSHROOT
+            if not r.get("ok"):
+                return False,"open_url_xiaomi: "+r.get("out","")[:100],""
             return True,"open_url_xiaomi: geoeffnet: "+url,""
         except Exception as e:
             return False,"open_url_xiaomi: "+str(e)[:100],""
@@ -814,10 +815,12 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         if not pkg or "." not in pkg:
             return False,"close_app_xiaomi: ungueltiges package/App-Name: "+str(pkg),""
         try:
-            r=subprocess.run(["ssh","xiaomi-jack","su","-c","am force-stop "+pkg],
-                              capture_output=True,text=True,timeout=15)
-            if r.returncode!=0:
-                return False,"close_app_xiaomi: rc="+str(r.returncode)+" "+(r.stderr or r.stdout)[:120],""
+            if any(c in pkg for c in " ;|&`$"):
+                return False,"close_app_xiaomi: paket ungueltig",""
+            import jack_xiaomi as _jx
+            r=_jx.ssh("am force-stop "+pkg, timeout=15)  # JACK_TUNE_SSHROOT
+            if not r.get("ok"):
+                return False,"close_app_xiaomi: "+r.get("out","")[:120],""
             return True,"close_app_xiaomi: "+pkg+" geschlossen (force-stop)",""
         except Exception as e:
             return False,"close_app_xiaomi: "+str(e)[:100],""
