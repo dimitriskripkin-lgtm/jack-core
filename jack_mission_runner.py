@@ -459,10 +459,10 @@ def run_act(m):
                 return False,"xiaomi_ssh_check(ip="+_ip+"): "+((r2.stderr or r2.stdout or "")[:120]),""
             except Exception as e:
                 return False,"xiaomi_ssh_check(ip="+_ip+"): "+str(e)[:120],""
-        r=_jx.ssh("echo ok", timeout=10)
+        r=_jx.ssh("id -u", timeout=10)  # JACK_TUNE_SSHROOT
         dt=round(_tm2.time()-t0,2)
-        if r.get("ok") and "ok" in r.get("out",""):
-            return True,"xiaomi_ssh_check: erreichbar in "+str(dt)+"s (ueber jack_xiaomi.ssh)",""
+        if r.get("ok") and "0" in r.get("out",""):
+            return True,"xiaomi_ssh_check: erreichbar in "+str(dt)+"s uid="+r.get("out","").replace(chr(10)," ")[:30],""
         return False,"xiaomi_ssh_check: "+r.get("lage","?")+": "+r.get("out","")[:80],""
 
     if act=="create_demo_file":

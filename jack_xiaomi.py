@@ -36,7 +36,7 @@ def _get_xiaomi_ip():
 def ssh(cmd, timeout=8):
     """JACK_TUNE_XIGATE Weg ist ein Zustand."""
     try:
-        r = run_shell(cmd, as_root=False, timeout=timeout)
+        r = run_shell(cmd, as_root=True, timeout=timeout)  # JACK_TUNE_SSHROOT offizieller Weg ist Root
         if r.get("success"):
             return {"ok": True, "lage": "OK", "out": (r.get("stdout") or "")[:1500]}
         return {"ok": False, "lage": "TEMPORAER_WEG", "out": (r.get("stderr") or "")[:400]}
@@ -45,7 +45,12 @@ def ssh(cmd, timeout=8):
 
 def run_shell(cmd, as_root=True, timeout=15):
     ip = _get_xiaomi_ip()
-    full_cmd = f"su -c '{cmd}'" if as_root else cmd
+    full_cmd = cmd
+    if as_root and not cmd.startswith("su "):
+        safe = cmd.replace("'", "'\"'\"'")
+        full_cmd = "su -c '" + safe + "'"  # JACK_TUNE_SSHROOT
+    elif not as_root:
+        full_cmd = cmd
 
     try:
         result = subprocess.run(
