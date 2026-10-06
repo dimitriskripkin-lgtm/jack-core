@@ -221,6 +221,10 @@ def run_act(m):
     if act=="xiaomi_lage":
         import jack_xiaomi as _jx
         return True,"xiaomi_lage: ok",_jx.lage()
+    if act=="sandbox_probe":
+        import jack_sandbox as _sb
+        ok, out = _sb.probe()
+        return ok, "sandbox_probe: " + ("ok" if ok else "fail"), out
     if act=="xiaomi_battery":
         import subprocess
         try:
