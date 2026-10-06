@@ -218,6 +218,9 @@ def run_act(m):
         except Exception as e:
             return False,"open_url_xiaomi: "+str(e)[:100],""
 
+    if act=="xiaomi_lage":
+        import jack_xiaomi as _jx
+        return True,"xiaomi_lage: ok",_jx.lage()
     if act=="xiaomi_battery":
         import subprocess
         try:

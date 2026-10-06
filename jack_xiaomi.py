@@ -43,6 +43,53 @@ def ssh(cmd, timeout=8):
     except Exception as e:
         return {"ok": False, "lage": "TEMPORAER_WEG", "out": str(e)[:200]}
 
+
+def lage():
+    """JACK_TUNE_LAGE Akku ohne Root, WLAN und Speicher mit Root."""
+    import json as _json
+    bat = run_shell("termux-battery-status", as_root=False, timeout=12)
+    pct = temp = "?"
+    if bat.get("success"):
+        try:
+            b = _json.loads(bat.get("stdout") or "{}")
+            pct = str(b.get("percentage", "?"))
+            temp = str(b.get("temperature", "?"))
+        except Exception:
+            pct = (bat.get("stdout") or "")[:40]
+    wifi = ssh("dumpsys wifi | grep -m1 'Wi-Fi is'", timeout=12)
+    speicher = ssh("df -h /data | tail -1", timeout=12)
+    w = (wifi.get("out") or "WLAN unbekannt").replace("Wi-Fi is ", "")[:40]
+    s = (speicher.get("out") or "Speicher unbekannt")[:80]
+    return "Xiaomi Lage: Akku " + pct + "% " + temp + "C, WLAN " + w + ", Speicher " + s
+
+def _nummer(raw):
+    n = "".join(ch for ch in str(raw) if ch.isdigit() or ch == "+")
+    if len(n) < 3 or len(n) > 16:
+        return ""
+    return n
+
+def wahl(nummer):
+    """Oeffnet die Waehlscheibe. Waehlt nicht."""
+    n = _nummer(nummer)
+    if not n:
+        return "Nummer ungueltig."
+    r = ssh("am start -a android.intent.action.DIAL -d tel:" + n, timeout=12)
+    if r.get("ok"):
+        return "Waehlscheibe offen fuer " + n + ". Nicht gewaehlt."
+    return "Wahl fehlgeschlagen: " + (r.get("out") or "")[:80]
+
+def sms_vorbereiten(nummer, text):
+    """Oeffnet die Nachricht. Schickt nicht."""
+    n = _nummer(nummer)
+    body = " ".join(str(text or "").split())[:140]
+    body = "".join(ch for ch in body if ch.isalnum() or ch in " .,:-")
+    if not n or not body:
+        return "Nummer oder Text fehlt."
+    r = ssh("am start -a android.intent.action.SENDTO -d sms:" + n + " --es sms_body '" + body + "'", timeout=12)
+    if r.get("ok"):
+        return "Nachricht vorbereitet an " + n + ". Nicht abgeschickt."
+    return "Nachricht fehlgeschlagen: " + (r.get("out") or "")[:80]
+
 def run_shell(cmd, as_root=True, timeout=15):
     ip = _get_xiaomi_ip()
     full_cmd = cmd

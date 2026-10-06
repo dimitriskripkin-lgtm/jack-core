@@ -395,6 +395,18 @@ def handle(text):
         pass
     if text.strip().startswith('/ssh '):
         return 'Zu. /ssh schickt nichts mehr roh an das Xiaomi.'  # JACK_TUNE_SSHZU
+    if _rt.startswith('/lage'):
+        import jack_xiaomi as _jx
+        return _jx.lage()  # JACK_TUNE_LAGE
+    if _rt.startswith('/ruf'):
+        import jack_xiaomi as _jx
+        return _jx.wahl(text.strip()[4:].strip())  # JACK_TUNE_WAHL oeffnet nur
+    if _rt.startswith('/sms'):
+        import jack_xiaomi as _jx
+        _rest = text.strip()[4:].strip().split(' ', 1)
+        if len(_rest) < 2:
+            return 'Syntax: /sms <nummer> <text>'
+        return _jx.sms_vorbereiten(_rest[0], _rest[1])  # JACK_TUNE_SMSVOR kein Versand
     if text.strip().startswith('/agent '):
         ziel=text.strip()[7:].strip()
         import jack_ui_agent,threading

@@ -26,6 +26,7 @@ ACTS = {
 "honor_heat_report": {"freigabe": False, "xiaomi": False, "text": "Honor-Waerme lesen"},
 "xiaomi_ssh_check": {"freigabe": False, "xiaomi": True, "text": "Xiaomi nur anpingen"},
 "xiaomi_battery": {"freigabe": False, "xiaomi": True, "text": "Xiaomi-Akku lesen"},
+"xiaomi_lage": {"freigabe": False, "xiaomi": True, "text": "Akku WLAN Speicher in einem Rutsch"},
 "xiaomi_ollama_status": {"freigabe": False, "xiaomi": True, "text": "Xiaomi-Ollama Status"},
 "file_create": {"freigabe": True, "xiaomi": False, "text": "Datei anlegen"},
 "file_delete": {"freigabe": True, "xiaomi": False, "text": "Datei loeschen"},
