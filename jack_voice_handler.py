@@ -11,9 +11,10 @@ def _voice_mem(heard, ans):
         pass
 def get_voice(api, token, file_id, out_path):
     url=api+"/getFile?file_id="+file_id
-    with urllib.request.urlopen(url) as res:
+    with urllib.request.urlopen(url, timeout=20) as res:  # JACK_TUNE_VOICETO
         path=json.loads(res.read())["result"]["file_path"]
-    urllib.request.urlretrieve("https://api.telegram.org/file/bot"+token+"/"+path, out_path)
+    with urllib.request.urlopen("https://api.telegram.org/file/bot"+token+"/"+path, timeout=30) as _r, open(out_path, "wb") as _f:
+        _f.write(_r.read())
 def send_voice(api, chat_id, file_path):
     if not file_path: return
     subprocess.run(["curl","-s","-X","POST",api+"/sendVoice","-F","chat_id="+str(chat_id),"-F","voice=@"+file_path],timeout=30)

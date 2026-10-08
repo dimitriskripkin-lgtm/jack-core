@@ -1,3 +1,5 @@
+> **KI-SESSION? STOPP. Zuerst `00_START_HIER.md` lesen (MCP: start_hier()). Danach erst arbeiten.**
+
 # ENTWICKLER-REGELN (verbindlich fuer jede KI-Session)
 
 1. BOT-RESTART PFLICHT: Nach JEDER Aenderung an jack_telegram.py,

@@ -1,3 +1,5 @@
+> **ARCHIV / evtl. veraltet. Verbindlich ist `00_START_HIER.md`.**
+
 JACK Honor-Wahrheit 2026-09-02
 
 Honor = Gehirn. Xiaomi = Muskel, SSH xiaomi-jack.

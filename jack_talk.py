@@ -109,7 +109,8 @@ def get_embedding(text):
         return None
 
 def _xiaomi_ollama():
-    host="10.229.239.131"
+    import subprocess  # JACK_TUNE_SPFIX
+    host="10.176.117.131"
     try:
         g=subprocess.run(["ssh","-G","xiaomi-jack"],capture_output=True,text=True,timeout=5)
         for ln in (g.stdout or "").splitlines():
@@ -525,13 +526,7 @@ def _talk_to_gemini_impl(prompt):
         except Exception as _ge:
             return 'Talk: Groq tot, Ollama gesperrt. '+str(_ge)[:80]
 
-if __name__ == '__main__':
-    if len(sys.argv) < 2: run_voice_loop()
-    else:
-        u = sys.argv[1]
-        r = talk_to_gemini(u)
-        print(r)
-        auto_save_to_memory(u, r)
+# JACK_TUNE_MAINEND: main-Guard steht am Dateiende
 
 
 def build_final_prompt(user_query, persona_text, id_ctx, mem_ctx, hist_ctx, live_ctx, timestamp_str):
@@ -640,4 +635,13 @@ def talk_to_gemini(*args, **kwargs):
             else:
                 args = (llm_text,)
     return _talk_to_gemini_impl(*args, **kwargs)
+
+
+if __name__ == '__main__':  # JACK_TUNE_MAINEND
+    if len(sys.argv) < 2: run_voice_loop()
+    else:
+        u = sys.argv[1]
+        r = talk_to_gemini(u)
+        print(r)
+        auto_save_to_memory(u, r)
 

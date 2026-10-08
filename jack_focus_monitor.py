@@ -25,6 +25,8 @@ def main():
         if os.path.exists(STOP):
             print("Stop-Datei - Ende."); return
         f = fokus()
+        if not f:
+            time.sleep(45)  # JACK_TUNE_FOCUSBACKOFF: Xiaomi weg -> seltener pollen (Waerme/Funk)
         if f and f != letzter:
             # Activity-Logger: Screen-Wechsel automatisch loggen (Qwen 21.08.)
             try:

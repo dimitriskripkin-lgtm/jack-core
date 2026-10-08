@@ -1,3 +1,5 @@
+> **KI-SESSION? STOPP. Zuerst `00_START_HIER.md` lesen (MCP: start_hier()). Danach erst arbeiten.**
+
 # JACK AGENTS.md — Verhaltens-Verfassung
 # Wird automatisch von Claude Code, Codex, Cursor gelesen.
 # Stand: 2026-07-13

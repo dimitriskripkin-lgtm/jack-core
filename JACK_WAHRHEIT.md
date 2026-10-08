@@ -1,3 +1,5 @@
+> **ARCHIV / evtl. veraltet. Verbindlich ist `00_START_HIER.md`.**
+
 # JACK Wahrheit 2026-09-23
 
 Honor = Gehirn. Xiaomi 11T Pro = Muskel.

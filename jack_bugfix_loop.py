@@ -90,7 +90,7 @@ def wende_fix_an(datei, fix_text):
 
 def teste_fix(datei):
     """py_compile + Selftest als Regression-Check."""
-    r = subprocess.run(['python3','-m','py_compile',datei], capture_output=True)
+    r = subprocess.run(['python3','-m','py_compile',datei], capture_output=True, timeout=30)  # JACK_TUNE_SPTO
     if r.returncode != 0:
         return False, 'Syntax-Fehler: ' + r.stderr.decode()[:200]
     # Selftest

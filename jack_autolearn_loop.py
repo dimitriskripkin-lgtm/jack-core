@@ -327,6 +327,7 @@ def _proaktiv_check():
                 pass
         rate = fails/len(files) if files else 0
         _fail_cond = rate > 0.5 and len(files)>=10
+        _do = _po  # JACK_TUNE_DOFIX: _do war undefiniert (NameError)
         _once("fail_spike", _fail_cond, f"Fehlerrate hoch: {fails}/{len(files)} der letzten Missionen fehlgeschlagen")
         if _fail_cond and not _do.path.isfile(B+"/.proaktiv_fail_spike_proposed"):
             try:

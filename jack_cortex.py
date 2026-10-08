@@ -97,6 +97,49 @@ def find_xiaomi():
             log_status(f"[Cortex] Xiaomi auf neuer IP gefunden: {ip}")
             _sync_ssh_config(ip)
             return ip
+    # JACK_TUNE_XISCAN: ip neigh ist ohne Root leer -> eigene /24-Netze per TCP 8022 absuchen
+    try:
+        import socket as _so, re as _re
+        from concurrent.futures import ThreadPoolExecutor as _TP
+        import time as _tm
+        if _tm.time() - getattr(find_xiaomi, "_xiscan_t", 0) < 60:
+            return known
+        find_xiaomi._xiscan_t = _tm.time()
+        def _src(_t):
+            _s=_so.socket(_so.AF_INET,_so.SOCK_DGRAM)
+            try:
+                _s.connect((_t,9)); return _s.getsockname()[0]
+            except Exception:
+                return None
+            finally:
+                _s.close()
+        _dflt=_src("8.8.8.8")
+        _pre=[]
+        _gen=[f"10.{a}.{b}" for a in range(256) for b in range(256)]
+        _gen+=[f"172.{a}.{b}" for a in range(16,32) for b in range(256)]
+        _gen+=[f"192.168.{b}" for b in range(256)]
+        for _g in _gen:
+            _sv=_src(_g+".1")
+            if _sv and _sv != _dflt and not _sv.startswith("127."):
+                _pp=".".join(_sv.split(".")[:3])
+                if _pp not in _pre:
+                    _pre.append(_pp)
+        def _port(_ip):
+            try:
+                _s=_so.create_connection((_ip,8022),timeout=0.6); _s.close(); return _ip
+            except Exception:
+                return None
+        for _p in _pre[:3]:
+            with _TP(max_workers=48) as _ex:
+                _hits=[h for h in _ex.map(_port,[f"{_p}.{i}" for i in range(1,255)]) if h]
+            for _ip in _hits:
+                if _ip != known and _ssh_ok(_ip):
+                    with open(cache_file,"w") as f: f.write(_ip)
+                    log_status(f"[Cortex] Xiaomi per Subnetz-Scan gefunden: {_ip}")
+                    _sync_ssh_config(_ip)
+                    return _ip
+    except Exception as _se:
+        _jlog and _jlog.fehler("cortex","xiscan",_se)
     return known
 XIAOMI_LAST_STATE = None
 XIAOMI_PENDING = None

@@ -11,7 +11,7 @@ H = os.path.expanduser("~/jack")
 XIP, XPORT = __import__("jack_config").get_param("NETWORK","xiaomi_ip"), 8022
 
 def _dienste():
-    r = subprocess.run("sv status jack_cortex jack_telegram jack_waechter", shell=True, capture_output=True, text=True)
+    r = subprocess.run("sv status jack_cortex jack_telegram jack_waechter", shell=True, capture_output=True, text=True, timeout=15)  # JACK_TUNE_SPTO
     ls = [l for l in r.stdout.strip().split("\n") if l]
     run = sum(1 for l in ls if l.startswith("run:"))
     out = ["Dienste:        %d/3 laufen%s" % (run, "" if run==3 else "  <-- PRUEFEN!")]

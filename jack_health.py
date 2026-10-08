@@ -96,12 +96,7 @@ def main():
     print(json.dumps({k: health[k] for k in ("ts", "ssh_xiaomi", "heartbeats", "tune", "marks")}, ensure_ascii=False))
     return 0 if health["ssh_xiaomi"] == "OK" else 1
 
-if __name__ == "__main__":
-    import sys as _s
-    if "--daily" in _s.argv:
-        print(tagesbericht())
-        raise SystemExit(0)
-    raise SystemExit(main())
+# JACK_TUNE_MAINEND: main-Guard steht am Dateiende
 
 # ---------------------------------------------------------------
 # JACK_TUNE_DAILY — Tagesbericht: was hat sich VERAENDERT
@@ -275,5 +270,13 @@ def tagesbericht(speichern=True):
             pass
 
     return "\n".join(z)
+
+
+if __name__ == "__main__":  # JACK_TUNE_MAINEND
+    import sys as _s
+    if "--daily" in _s.argv:
+        print(tagesbericht())
+        raise SystemExit(0)
+    raise SystemExit(main())
 
 

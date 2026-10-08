@@ -61,8 +61,11 @@ def toast(msg):
 
 def _adb(cmd):
     import subprocess
-    r = subprocess.run(f'adb -s 127.0.0.1:5555 shell {cmd}',
-                      shell=True, capture_output=True, text=True)
+    try:  # JACK_TUNE_SPTO
+        r = subprocess.run(f'adb -s 127.0.0.1:5555 shell {cmd}',
+                          shell=True, capture_output=True, text=True, timeout=25)
+    except subprocess.TimeoutExpired:
+        return "", "adb timeout", 124
     return r.stdout.strip(), r.stderr.strip(), r.returncode
 
 def adb_setup():

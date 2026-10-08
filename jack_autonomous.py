@@ -9,6 +9,7 @@ try:
 except Exception:
     _jlog = None
 H=os.path.expanduser("~/jack")
+J=H  # JACK_TUNE_JFIX: J war undefiniert (NameError)
 STATE=os.path.join(H,".waechter_state")
 EDB=os.path.join(H,"jack_errors.db")
 SEC=os.path.expanduser("~/.jack_secrets")
@@ -254,7 +255,9 @@ def _heartbeat_sv_check():
                 import configparser as _cp, os as _os
                 cfg = _cp.ConfigParser()
                 cfg.read(_os.path.expanduser('~/jack/config.ini'))
-                ohost = cfg.get('xiaomi', 'ip', fallback='10.229.239.131')
+                _lf = _os.path.expanduser('~/jack/.last_xiaomi_ip')  # JACK_TUNE_XIDYN
+                _lip = open(_lf).read().strip() if _os.path.exists(_lf) else '10.176.117.131'
+                ohost = cfg.get('xiaomi', 'ip', fallback=_lip)
                 _ur.urlopen(f'http://{ohost}:11434/api/tags', timeout=5)
                 _heat_ollama_guard()
         except Exception as _oe:
@@ -287,10 +290,11 @@ def _adb_heal_if_needed():
             ["adb", "devices"], capture_output=True, text=True, timeout=8
         )
         text = (r.stdout or "") + (r.stderr or "")
+        # JACK_TUNE_ADBIPFREE: IP kommt per DHCP, daher jedes Netzwerk-adb-Geraet (host:port) im Zustand "device" gelten lassen
         ok = any(
-            "10.229.239.131" in ln and ln.split()[1] == "device"
+            ln.split()[1] == "device" and ":" in ln.split()[0]
             for ln in text.splitlines()
-            if "10.229.239.131" in ln and len(ln.split()) >= 2
+            if len(ln.split()) >= 2
         )
         if ok:
             return

@@ -27,7 +27,7 @@ import subprocess, time, threading, os, logging
 JACK      = "/data/data/com.termux/files/home/jack"
 SVC       = "/data/data/com.termux/files/usr/var/service/ollama"
 def _ollama_url():
-    host="10.229.239.131"
+    host="10.176.117.131"
     try:
         g=subprocess.run(["ssh","-G","xiaomi-jack"],capture_output=True,text=True,timeout=5)
         for ln in (g.stdout or "").splitlines():

@@ -328,6 +328,23 @@ def handle(text):
     import jack_exec  # FIX-UNBOUND (Qwen 22.08.): Import oben, sonst UnboundLocalError
     if not text:
         return None
+    if str(text).strip().lower().startswith("/vorschlaege"):  # JACK_TUNE_VORSCHLAGFRUEH
+        try:
+            import json as _tj, os as _to
+            pdir = "/data/data/com.termux/files/home/jack/missions/proposals/pending"
+            items = []
+            if _to.path.isdir(pdir):
+                for fn in sorted(_to.listdir(pdir)):
+                    if fn.endswith(".json"):
+                        items.append(_tj.load(open(_to.path.join(pdir, fn), encoding="utf-8")))
+            if not items:
+                return "VORSCHLAEGE: keine offen"
+            lines = ["VORSCHLAEGE (%d offen):" % len(items)]
+            for it in items[:5]:
+                lines.append("- %s: %s" % (it.get("id","?"), str(it.get("problem",""))[:120]))
+            return chr(10).join(lines)
+        except Exception as e:
+            return "VORSCHLAEGE Fehler: " + str(e)[:120]
     if text.startswith("/find "):
         target = text[6:].strip()
         send(f'🔍 Suche "{target}" auf dem Screen...')
@@ -395,18 +412,18 @@ def handle(text):
         pass
     if text.strip().startswith('/ssh '):
         return 'Zu. /ssh schickt nichts mehr roh an das Xiaomi.'  # JACK_TUNE_SSHZU
-    if _rt.startswith('/lage'):
+    if text.strip().startswith('/lage'):
         import jack_xiaomi as _jx
         return _jx.lage()  # JACK_TUNE_LAGE
-    if _rt.startswith('/ruf'):
+    if text.strip().startswith('/ruf'):
         import jack_xiaomi as _jx
         return _jx.wahl(text.strip()[4:].strip())  # JACK_TUNE_WAHL oeffnet nur
-    if _rt.startswith('/sms'):
+    if text.strip().startswith('/sms'):
         import jack_xiaomi as _jx
         _rest = text.strip()[4:].strip().split(' ', 1)
         if len(_rest) < 2:
             return 'Syntax: /sms <nummer> <text>'
-        return _jx.sms_vorbereiten(_rest[0], _rest[1])  # JACK_TUNE_SMSVOR kein Versand
+        return _jx.sms_vorbereiten(_rest[0], _rest[1])  # JACK_TUNE_SMSVOR kein Versand — JACK_TUNE_RTFIX
     if text.strip().startswith('/agent '):
         ziel=text.strip()[7:].strip()
         import jack_ui_agent,threading
@@ -575,8 +592,7 @@ def handle(text):
             ) % repr(url)
             import jack_exec
             out = jack_exec.run(cmd, timeout=40)
-            send(
-                chat_id,
+            send(  # JACK_TUNE_FORSCHEFIX: send nimmt nur 1 Argument
                 "Forschung gestartet: " + topic + "\\nChrome/Suche auf Xiaomi.\\n"
                 "Stoppen: /kill\\n\\n" + str(out)[:800],
             )
@@ -912,6 +928,26 @@ def handle(text):
                     break
         return f"FREIGEGEBEN: {pid} eingereicht, wird noch verarbeitet - prüf gleich mit /vorschlaege nach"
 
+    if _rt.startswith('/ablehnen '):  # JACK_TUNE_ABLEHNEN
+        import os as _to, time as _tt
+        pid = text.strip()[len('/ablehnen '):].strip()
+        if not pid:
+            return "ABLEHNEN: bitte /ablehnen <id> mit der Vorschlags-ID"
+        pdir = "/data/data/com.termux/files/home/jack/missions/proposals/pending"
+        fp = _to.path.join(pdir, pid + ".json")
+        if not _to.path.isfile(fp):
+            return f"ABLEHNEN: {pid} nicht gefunden"
+        pending_dir = "/data/data/com.termux/files/home/jack/missions/pending"
+        _to.makedirs(pending_dir, exist_ok=True)
+        mid = "m_reject_" + _tt.strftime("%Y%m%d_%H%M%S")
+        import json as _tj
+        mission = {"id": mid, "act": "file_delete", "src": "telegram",
+                   "ts": _tt.strftime("%Y-%m-%dT%H:%M:%S"), "description": "Telegram-Ablehnung",
+                   "file": fp}
+        with open(_to.path.join(pending_dir, mid + ".json"), "w", encoding="utf-8") as f:
+            _tj.dump(mission, f, ensure_ascii=False, indent=2)
+        return f"ABGELEHNT: {pid} wird entfernt, pruef gleich mit /vorschlaege nach"
+
     if _rt.startswith('/mission'):
         _aufgabe = text.strip()[8:].strip() or "pruefe logs"
         try:
@@ -1195,26 +1231,38 @@ def handle(text):
         def timeout_handler(signum, frame):
             raise TimeoutError("LLM-Timeout nach 15s")
         
-        signal.signal(signal.SIGALRM, timeout_handler)
         import jack_chat_router as _cr
-        resp=_cr.dispatch(text, send_keyboard)
+        import threading as _th
+        _box = {}
+        def _slow():
+            try:
+                _r = _cr.dispatch(text, send_keyboard)
+                if _r is None:
+                    _r = _jt.talk_to_gemini(text)  # JACK_TUNE_ISTPLAIN
+                _box["r"] = _r
+            except Exception as _e:
+                _box["r"] = "Antwortfehler: " + str(_e)[:80]
+        _t = _th.Thread(target=_slow, daemon=True)
+        _t.start()
+        _t.join(15)  # JACK_TUNE_TALKWACHE
+        if _t.is_alive():
+            return "Satz angekommen. Antwort hat zu lang gebraucht."
+        resp = _box.get("r")
         if resp is False:
             return None
-        if resp is None:
-            resp = _jt.talk_to_gemini(text)  # JACK_TUNE_ISTPLAIN
-            try:
-                import jack_chat_router as _cr2
-                if resp:
-                    resp=_cr2.strip_lane_tags(_cr2.apply_lane(resp, text))  # JACK_TUNE_LANESTRIP
-            except Exception:
-                pass
-            if resp and "Ausfuehren oder beenden" in resp:
-                send_keyboard(resp, [[("🟢 Ausführen","selfsee_go"),("🔴 Abbrechen","selfsee_no")]])
-                resp=None
-        signal.alarm(0)
+        try:
+            import jack_chat_router as _cr2
+            if resp:
+                resp=_cr2.strip_lane_tags(_cr2.apply_lane(resp, text))  # JACK_TUNE_LANESTRIP
+        except Exception:
+            pass
+        if resp and "Ausfuehren oder beenden" in resp:
+            send_keyboard(resp, [[("🟢 Ausführen","selfsee_go"),("🔴 Abbrechen","selfsee_no")]])
+            resp=None
+        signal.alarm(0)  # JACK_TUNE_DEADCODE2
         
         if not resp:
-            return None
+            return "Keine Antwort. Der Satz ist angekommen."
         
         # EXEC-Parser inline
         cmd = None
@@ -1390,6 +1438,10 @@ def main():
                             _jt.add_to_window(text, reply)
                         except Exception: pass
         except Exception as e:
+            try:
+                send("TELEGRAM-FEHLER (JACK_TUNE_SICHTBAR): " + repr(e)[:300])
+            except Exception:
+                pass
             time.sleep(2)
         import jack_heartbeat; jack_heartbeat.beat('jack_telegram')
         time.sleep(1)

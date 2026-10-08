@@ -54,7 +54,7 @@ def is_remote_alive(host, port, timeout=5):
 
 def is_xiaomi_alive():
     import subprocess
-    host, port = "10.229.239.131", 8022
+    host, port = "10.176.117.131", 8022
     try:
         g = subprocess.run(["ssh","-G","xiaomi-jack"], capture_output=True, text=True, timeout=5)
         for ln in (g.stdout or "").splitlines():

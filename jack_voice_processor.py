@@ -102,6 +102,7 @@ def _DEAD_ORIGINAL_process_voice_message(ogg_path):
     
     # Intent-Routing: direkte Befehle ohne Gemini-Umweg
     tlow = text.lower()
+    import sys  # JACK_TUNE_SYSFIX
     sys.path.insert(0, os.path.expanduser("~/jack"))
     from kortex_memory import add_memory, search_memory
 

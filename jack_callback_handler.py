@@ -2,6 +2,7 @@
 MODULE_VERSION = 1
 def handle(callback_data, callback_id):
     import jack_telegram as tg
+    import os  # JACK_TUNE_OSFIX: os vor lokalem import in handle() benutzt (UnboundLocalError)
     """Verarbeitet Inline-Button-Klicks."""
     if callback_data == 'run_exec':
         # JACK_TUNE_ONEPATH2: fuehrt nicht mehr direkt aus, schreibt Vorschlag

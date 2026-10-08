@@ -181,7 +181,7 @@ def cycle():
     push_result(uuid,cmd,result,"ok")
     _telegram_send("Oracle [" + orig_cmd + "]:" + chr(10) + result[:2000])
 
-if __name__=="__main__":
+if False:  # JACK_TUNE_MAINEND: alte Hauptschleife stillgelegt, die echte steht am Dateiende
     print("JACK Oracle laeuft. Polling alle 60s...")
     while True:
         try: cycle()
@@ -228,3 +228,14 @@ SKRIPT_ALLOW = {
     "jack_wissen_tief.py",
     "jack_karte.py",
 }
+
+# JACK_TUNE_MAINEND: Hauptschleife steht am Dateiende, sonst werden _py_skript_ok und SKRIPT_ALLOW nie definiert
+if __name__=="__main__":
+    print("JACK Oracle laeuft. Polling alle 60s...")
+    while True:
+        try: cycle()
+        except Exception as e:
+            try:
+                import jack_log; jack_log.log_decision("ORACLE-FEHLER",str(e)[:100])
+            except Exception as _le: _jlog and _jlog.fehler("oracle","unbenannt",_le)
+        time.sleep(60)

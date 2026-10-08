@@ -1,3 +1,5 @@
+> **KI-SESSION? STOPP. Zuerst `00_START_HIER.md` lesen (MCP: start_hier()). Danach erst arbeiten.**
+
 # JACK — Just Autonomous Command Kit
 
 Ein Lebens-OS auf zwei Android-Handys. Honor denkt und speichert, Xiaomi führt aus.

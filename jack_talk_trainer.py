@@ -81,7 +81,7 @@ def _check_persona_size():
     if os.path.exists(kern):
         size=os.path.getsize(kern)
         if size > MAX_PERSONA_KB*1024:
-            log.warn(f"Persona-Kern zu groß: {size//1024}KB — trainer pausiert")
+            _log(f"Persona-Kern zu groß: {size//1024}KB — trainer pausiert")
             return False
     return True
 

@@ -73,7 +73,7 @@ def freigabe(nr):
         return "BLOCKIERT: Quelldatei hat sich seit dem Vorschlag geaendert. Verwirf ihn und lass neu erzeugen."
     if _sha(vorschlag) != m.get("proposal_sha256"):
         return "BLOCKIERT: Vorschlagsdatei wurde manipuliert."
-    r = subprocess.run(["python3","-m","py_compile",vorschlag], capture_output=True, text=True)
+    r = subprocess.run(["python3","-m","py_compile",vorschlag], capture_output=True, text=True, timeout=30)  # JACK_TUNE_SPTO
     if r.returncode != 0:
         return "BLOCKIERT: Vorschlag kompiliert nicht: " + r.stderr[:200]
     os.makedirs(BACKUP, exist_ok=True)
@@ -82,7 +82,7 @@ def freigabe(nr):
     tmp = quelle + ".neu"
     shutil.copy2(vorschlag, tmp)
     os.replace(tmp, quelle)
-    pruef = subprocess.run(["python3","-m","py_compile",quelle], capture_output=True, text=True)
+    pruef = subprocess.run(["python3","-m","py_compile",quelle], capture_output=True, text=True, timeout=30)  # JACK_TUNE_SPTO
     if pruef.returncode != 0:
         shutil.copy2(bak, quelle)
         return "ROLLBACK: nach Anwendung defekt, Original wiederhergestellt."

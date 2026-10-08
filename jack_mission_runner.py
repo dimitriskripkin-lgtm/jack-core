@@ -874,6 +874,7 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
             rep.append("THERMAL Top6: "+", ".join(t+"="+str(round(v,1)) for v,t in zones[:6]))
         else:
             rep.append("THERMAL: keine Zone lesbar")
+        import subprocess as _sp  # JACK_TUNE_SPFIX2
         procs=""
         for cmd in (["ps","-eo","pid,pcpu,pmem,etime,args","--sort=-pcpu"],["top","-b","-n","1"],["ps","-A"]):
             try:
@@ -1390,21 +1391,28 @@ def _hb():
     except Exception:
         pass
 BOOST_FILE=J+"/.mission_boost"  # JACK_TUNE_BOOST
+def _boost_on():  # JACK_TUNE_BOOSTTTL: Boost schaltet sich nach 15 Min selbst ab (Datei zu alt = aus)
+    try:
+        return (time.time()-os.path.getmtime(BOOST_FILE)) < 900
+    except Exception:
+        return False
 def _poll_now(default_poll):
-    return 1 if os.path.exists(BOOST_FILE) else default_poll
+    return 1 if _boost_on() else default_poll
 
 def loop(poll=30, maxn=200):
     while True:
         _hb()
         if os.path.isfile(STOP):
             print("STOP-FILE"); open(V+"/jack_missions/down","a").close(); os._exit(0)  # JACK_TUNE_STOPKILL
-        try:
-            import importlib as _il, jack_mission_pull as _jp
-            _il.reload(_jp)
-            print(_jp.pull())
-            print(_jp.push_status())
-        except Exception as _e:
-            print("PULL-SKIP",type(_e).__name__)
+        if time.time()-globals().get("_LAST_PULL",0) >= _poll_now(poll):  # JACK_TUNE_PULLTHROTTLE: Git im Poll-Takt (30s, Boost 1s) laut Betriebshandbuch 01; lokale Queue-Pruefung bleibt 1s
+            globals()["_LAST_PULL"]=time.time()
+            try:
+                import importlib as _il, jack_mission_pull as _jp
+                _il.reload(_jp)
+                print(_jp.pull())
+                print(_jp.push_status())
+            except Exception as _e:
+                print("PULL-SKIP",type(_e).__name__)
         # JACK_TUNE_BRIDGEHOOK
         if pending_files():
             rc=run_queue(maxn=maxn)

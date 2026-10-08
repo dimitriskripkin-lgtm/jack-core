@@ -29,7 +29,77 @@ JACK_HOME = "/data/data/com.termux/files/home/jack"
 GRAPH_DB = os.path.join(JACK_HOME, "jack_graph.db")
 MEMORY_DB = os.path.join(JACK_HOME, "jack_memory.db")
 
-app = MCPServer("jack-server")
+try:  # JACK_TUNE_HBGATE
+    import jack_handbuch_gate as _hg
+    app = MCPServer("jack-server", instructions=_hg.INSTRUCTIONS)
+except Exception:
+    app = MCPServer("jack-server")
+
+@app.tool()
+def start_hier(wer: str = "") -> str:
+    """RUFE DAS ZUERST AUF. Liefert den Pflichtzettel 00_START_HIER.md (Wahrheitsrangfolge, Pflichtablauf, eiserne Regeln, Schalter) plus Tagesquittung. Mit wer=claude|grok|gemini kommt dein Buero dazu. Pflicht vor jeder Aenderung."""
+    import jack_handbuch_gate as _h
+    t = _h.start_text()
+    if wer:
+        try:
+            import json as _js, jack_arbeitsplatz as _ap  # JACK_TUNE_ARBEITSPLATZ
+            t += "\n\n=== DEIN BUERO ===\n" + _js.dumps(_ap.buero(wer), ensure_ascii=False)[:6000]
+            try:
+                import jack_kanal as _k2
+                t += "\n\nKANAL: %d ungelesene Nachrichten (ap_lese holt sie)." % _k2.ungelesen(wer)
+            except Exception:
+                pass
+        except Exception as _e:
+            t += "\n\n(Buero nicht lesbar: %s)" % type(_e).__name__
+    return t
+
+@app.tool()
+def buero(wer: str) -> str:
+    """Dein Arbeitsplatz-Buero (claude|grok|gemini|dima): Regeln, offene Punkte, Eingang, Journal, Roadmap, Dateiliste."""
+    import json as _js, jack_arbeitsplatz as _ap
+    return _js.dumps(_ap.buero(wer), ensure_ascii=False)
+
+@app.tool()
+def ap_notiz(wer: str, pfad: str, text: str, modus: str = "anhaengen") -> str:
+    """Schreibt in den Arbeitsplatz. pfad: BUEROS/<wer>/<datei> oder gemeinsam/<datei>. modus anhaengen|ersetzen. Fremdes Buero nur eingang.md anhaengen."""
+    import json as _js, jack_arbeitsplatz as _ap
+    return _js.dumps(_ap.schreiben(wer, pfad, text, modus), ensure_ascii=False)
+
+@app.tool()
+def ap_journal(wer: str, text: str) -> str:
+    """Journal-Eintrag ins eigene Buero (Session-Ende-Pflicht)."""
+    import json as _js, jack_arbeitsplatz as _ap
+    return _js.dumps(_ap.journal(wer, text), ensure_ascii=False)
+
+@app.tool()
+def ap_post(wer: str, an: str, typ: str, text: str, re_id: int = 0) -> str:
+    """Kanal-Post an eine andere KI (claude|grok|gemini|dima|alle). typ: frage|aufgabe|antwort|info|entscheidung|fertig. Rundengrenze 10 ohne Dima."""
+    import jack_kanal as _k  # JACK_TUNE_KANAL
+    return _k.post(wer, an, typ, text, re_id)
+
+@app.tool()
+def ap_lese(wer: str, seit_id: int = -1) -> str:
+    """Neue Kanal-Post fuer dich holen (setzt deinen Lese-Cursor) plus aktuelle Reservierungen."""
+    import jack_kanal as _k
+    return _k.lese(wer, seit_id)
+
+@app.tool()
+def ap_claim(wer: str, ziel: str, aktion: str = "claim") -> str:
+    """Modul/Aufgabe reservieren (60 Min): aktion claim|frei|verlaengern. Fremde Reservierung nicht anfassen."""
+    import jack_kanal as _k
+    return _k.claim(wer, ziel, aktion)
+
+@app.tool()
+def handbuch_index(suche: str = "") -> str:
+    """Inhaltsverzeichnis des Betriebshandbuchs (Kapitel | Modul | Zweck). suche filtert nach Text."""
+    import jack_handbuch_gate as _h
+    return _h.index(suche)
+
+@app.tool()
+def handbuch_kapitel(name: str) -> str:
+    """Liest das Betriebshandbuch-Kapitel eines Moduls, z.B. 'jack_mission_runner.py' oder '01_mission_runner.md'. Pflicht vor dem Patchen dieses Moduls."""
+    import jack_handbuch_gate as _h
+    return _h.kapitel(name)
 
 @app.tool()
 def graph_list_nodes(limit: int = 200) -> str:
@@ -97,7 +167,7 @@ def memory_recent(limit: int = 5) -> str:
 
 @app.tool()
 def create_mission(act: str, description: str, extra: str = "{}", wait_seconds: int = 0) -> str:
-    """Erstellt eine Mission in JACKs pending/-Ordner. act muss aus ALLOWED sein.
+    """PFLICHT: erst start_hier() aufrufen. Schreibende Acts verlangen extra.quittung (steht in der Ablehnung). Erstellt eine Mission in JACKs pending/-Ordner. act muss aus ALLOWED sein.
     extra: JSON-String mit zusaetzlichen Feldern z.B. {"file":"...", "old":"...", "new":"..."}.
     wait_seconds (JACK_TUNE_WAITRESULT): wenn >0, wartet bis zu diese Anzahl Sekunden
     (max 55) auf das Mission-Ergebnis und gibt es direkt im Feld 'result' zurueck,
@@ -113,6 +183,13 @@ def create_mission(act: str, description: str, extra: str = "{}", wait_seconds: 
         extra_d = _j.loads(extra) if extra.strip() else {}
     except Exception as e:
         return _j.dumps({"error": f"extra kein gueltiges JSON: {e}"})
+    try:  # JACK_TUNE_HBGATE: Handbuch-Pflicht (fail-open)
+        import jack_handbuch_gate as _hg2
+        _gate = _hg2.gate(act, extra_d)
+        if _gate:
+            return _j.dumps(_gate, ensure_ascii=False)
+    except Exception:
+        pass
     PENDING = "/data/data/com.termux/files/home/jack/missions/pending"
     ts = _dt.now().strftime("%Y%m%d_%H%M%S")
     mid = f"m_{act}_{ts}"
@@ -232,6 +309,7 @@ def graph_list_edges(limit: int = 30) -> str:
 def describe_system() -> str:
     """Selbstbeschreibung fuer neue KIs: Tools, Grenzen, aktuelle Freigaben. Kein Onboarding-Dokument noetig."""
     info = {
+        "PFLICHT_ZUERST": "start_hier() aufrufen und lesen. Vor Modul-Aenderung handbuch_kapitel(modul). Schreibende create_mission brauchen extra.quittung. Honor-Live-Datei ist Wahrheit.",
         "system": "JACK",
         "beschreibung": "Autonomes Reparatur- und Programmiersystem auf zwei Android-Phones (Honor=Gehirn, Xiaomi=Muskel)",
         "tools": [

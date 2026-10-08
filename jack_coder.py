@@ -84,7 +84,7 @@ def run_code(filename, timeout=10):
     risk = assess_risk(code)
     if risk:
         return False, f"AUSFUEHRUNG BLOCKIERT - gefaehrliches Muster: {risk!r}"
-    r = subprocess.run(["python3", "-m", "py_compile", path], capture_output=True, text=True)
+    r = subprocess.run(["python3", "-m", "py_compile", path], capture_output=True, text=True, timeout=30)  # JACK_TUNE_SPTO
     if r.returncode != 0:
         return False, f"SyntaxError: {r.stderr.strip()[:300]}"
     try:
