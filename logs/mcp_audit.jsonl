@@ -1,0 +1,39 @@
+{"ts": "2026-10-08T18:19:00", "rolle": "legacy", "tool": "create_mission", "act": "sv_ok", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T18:19:02", "rolle": "legacy", "tool": "read_file", "act": "", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T18:19:07", "rolle": "legacy", "tool": "read_file", "act": "", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T18:19:19", "rolle": "legacy", "tool": "create_mission", "act": "py_replace", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T18:19:20", "rolle": "legacy", "tool": "create_mission", "act": "py_replace", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T18:19:21", "rolle": "legacy", "tool": "create_mission", "act": "file_create", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T18:19:22", "rolle": "legacy", "tool": "create_mission", "act": "file_create", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T18:20:27", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T18:25:27", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T18:30:27", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T18:35:27", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T18:40:27", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T18:45:27", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T18:50:27", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T18:55:28", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T19:00:28", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T19:05:28", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T19:10:28", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T19:15:28", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T19:20:28", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T19:25:28", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T19:30:28", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T19:33:42", "rolle": "nachtlauf", "tool": "start_hier", "act": "", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:34:05", "rolle": "legacy", "tool": "read_file", "act": "", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:34:10", "rolle": "legacy", "tool": "read_file", "act": "", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:34:30", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T19:35:28", "rolle": "?", "tool": "-", "act": "", "urteil": "NEIN", "note": "ungueltiger Token"}
+{"ts": "2026-10-08T19:39:17", "rolle": "legacy", "tool": "create_mission", "act": "py_replace", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:17", "rolle": "legacy", "tool": "create_mission", "act": "py_replace", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:19", "rolle": "legacy", "tool": "create_mission", "act": "ro_scan", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:21", "rolle": "legacy", "tool": "create_mission", "act": "git_publish", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:30", "rolle": "legacy", "tool": "read_file", "act": "", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:30", "rolle": "legacy", "tool": "create_mission", "act": "file_create", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:31", "rolle": "legacy", "tool": "create_mission", "act": "file_create", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:32", "rolle": "legacy", "tool": "create_mission", "act": "file_delete", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:33", "rolle": "legacy", "tool": "create_mission", "act": "file_delete", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:34", "rolle": "legacy", "tool": "create_mission", "act": "py_replace", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:35", "rolle": "legacy", "tool": "create_mission", "act": "py_replace", "urteil": "ja", "note": ""}
+{"ts": "2026-10-08T19:39:36", "rolle": "legacy", "tool": "create_mission", "act": "git_publish", "urteil": "ja", "note": ""}

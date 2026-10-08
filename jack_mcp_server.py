@@ -355,5 +355,12 @@ if __name__ == "__main__":
     print("JACK MCP Server startet auf Port 8000 (mit Bearer-Token-Auth)...")
     print("Tools: graph_list_nodes, graph_read_node, graph_search, memory_search, memory_recent, create_mission")
     _asgi = app.streamable_http_app(host="0.0.0.0")
-    _asgi.add_middleware(_JackAuthMiddleware)  # JACK_TUNE_MCPAUTH
+    try:  # JACK_TUNE_MCPROLES: Rollen-Token; Notausschalter: Datei .mcp_roles_off
+        if os.path.exists(JACK_HOME + "/.mcp_roles_off"):
+            raise RuntimeError("Notausschalter .mcp_roles_off")
+        import jack_mcp_auth as _ja
+        _asgi.add_middleware(_ja.RoleMiddleware)
+    except Exception as _e:
+        print("Rollen-Auth aus, alter Token-Check:", _e)
+        _asgi.add_middleware(_JackAuthMiddleware)  # JACK_TUNE_MCPAUTH
     uvicorn.run(_asgi, host="127.0.0.1", port=8000, log_level="warning")

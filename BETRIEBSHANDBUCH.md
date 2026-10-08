@@ -291,4 +291,5 @@ Alle vier live bewiesen, Backups im Attic, committed als `2a7cb2d2`.
 - [245 Telemetrie](BETRIEBSHANDBUCH/245_telemetrie.md)
 - [246 Ausduennung](BETRIEBSHANDBUCH/246_ausduennung.md)
 - [247 Neu seit 07.10. Ueberblick](BETRIEBSHANDBUCH/247_neu_seit_0710.md)
+- [248 MCP-Rollen-Zugang](BETRIEBSHANDBUCH/248_mcp_rollen_zugang.md)
 - Modulkarte (generiert): MODULKARTE.md
