@@ -1178,6 +1178,53 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         out=s.explain("overmind") or ""
         ok=("overmind" in out.lower()) and ("3" in out)
         return ok,"explain",out[:300]
+    if act=="git_publish":  # JACK_TUNE_GITPUB Stufe S: Commit+Push nur nach sauberem Scan, nie force, nur master, STOP-Schalter
+        import os as _o, re as _re, json as _j, time as _t
+        def _gp_audit(_ok,_note):
+            try:
+                _o.makedirs(J+"/ARBEITSPLATZ/gemeinsam",exist_ok=True)
+                with open(J+"/ARBEITSPLATZ/gemeinsam/ro_audit.jsonl","a") as _f:
+                    _f.write(_j.dumps({"ts":_t.strftime("%Y-%m-%d %H:%M:%S"),"act":"git_publish","args":{"msg":str(m.get("msg"))[:60],"dry":str(m.get("dry"))},"ok":_ok,"note":str(_note)[:80]},ensure_ascii=False)+"\n")
+            except Exception:
+                pass
+        try:
+            if _o.path.exists(J+"/.git_push_stop"):
+                _gp_audit(False,"STOP"); return False,"git_publish: gesperrt (~/jack/.git_push_stop existiert - Dima-Schalter)",""
+            _msg=str(m.get("msg") or "").strip()
+            if (not _msg) or len(_msg)>120 or not _re.match(r"^[A-Za-z0-9 .,:;_()/+\-äöüÄÖÜß#]+$",_msg):
+                _gp_audit(False,"msg"); return False,"git_publish: msg fehlt/zu lang/ungueltige Zeichen",""
+            _dry=str(m.get("dry","")).lower() in ("1","true","ja","yes")
+            _br=sh(["git","-C",J,"rev-parse","--abbrev-ref","HEAD"],t=10)[1].strip()
+            if _br!="master":
+                _gp_audit(False,"branch "+_br); return False,"git_publish: nur Branch master (ist: "+_br[:30]+")",""
+            sh(["git","-C",J,"add","-A"],t=40)
+            _st=[x for x in sh(["git","-C",J,"diff","--cached","--name-only"],t=30)[1].splitlines() if x.strip()]
+            if not _st:
+                _gp_audit(True,"nichts"); return True,"git_publish: nichts zu tun","keine Aenderungen"
+            _BAD=_re.compile(r"(^|/)(config\.ini|\.ssh|\.env|id_rsa|id_ed25519)|token|secret|passw|\.(db|sqlite|key|pem)$|^(service|Attic|skills_try|ARBEITSPLATZ)/",_re.I)
+            _PATG=_re.compile(r"(gh"+"p_|github"+"_pat_|sk-[A-Za-z0-9]{20}|AIza[0-9A-Za-z_-]{20}|Bearer [A-Za-z0-9._-]{20})")
+            _bad=[x for x in _st if _BAD.search(x)]
+            _hits=[]
+            for _f in _st:
+                _p=J+"/"+_f
+                try:
+                    if _o.path.isfile(_p) and _o.path.getsize(_p)<2000000 and _PATG.search(open(_p,errors="ignore").read()): _hits.append(_f)
+                except Exception: pass
+            if _bad or _hits:
+                sh(["git","-C",J,"reset","-q"],t=20)
+                _gp_audit(False,"gesperrt"); return False,"git_publish: ABBRUCH, nichts committet","VERBOTEN: "+", ".join(_bad[:10])+"\nGEHEIMNIS-TREFFER: "+", ".join(_hits[:10])
+            if _dry:
+                sh(["git","-C",J,"reset","-q"],t=20)
+                _gp_audit(True,"dry"); return True,"git_publish dry: "+str(len(_st))+" Dateien wuerden committet","\n".join(_st[:40])
+            _rc,_o1=sh(["git","-C",J,"commit","-q","-m",_msg],t=40)
+            if _rc!=0:
+                _gp_audit(False,"commit"); return False,"git_publish: commit fehlgeschlagen",_o1[-400:]
+            _rc,_o2=sh(["git","-C",J,"push","origin","master"],t=60)
+            _gp_audit(_rc==0,"push rc="+str(_rc))
+            return (_rc==0),"git_publish: "+str(len(_st))+" Dateien, push "+("ok" if _rc==0 else "FEHLER"),_o2[-600:]
+        except Exception as _e:
+            _gp_audit(False,str(_e)); return False,"git_publish: "+str(_e)[:100],""
+
     if act in ("ro_log_tail","ro_git","ro_scan","ro_pyflakes","ro_ps"):  # JACK_TUNE_RO Stufe R: nur lesen, feste Befehle, kein exec
         import os as _o, re as _re, json as _j, time as _t
         _HOME=_o.environ.get("HOME","/data/data/com.termux/files/home")

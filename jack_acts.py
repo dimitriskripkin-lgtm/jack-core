@@ -12,6 +12,7 @@ ACTS = {
 "ro_scan": {"freigabe": False, "xiaomi": False, "text": "Geheimnis-Scan nur Namen (Stufe R)"},
 "ro_pyflakes": {"freigabe": False, "xiaomi": False, "text": "pyflakes einer Datei (Stufe R)"},
 "ro_ps": {"freigabe": False, "xiaomi": False, "text": "Prozessliste lesen (Stufe R)"},
+"git_publish": {"freigabe": False, "xiaomi": False, "text": "Commit+Push nach sauberem Scan (Stufe S)"},
 "hb_ok": {"freigabe": False, "xiaomi": False, "text": "Herzschlag lesen"},
 "mtime_fresh": {"freigabe": False, "xiaomi": False, "text": "Datei-Alter lesen"},
 "json_valid": {"freigabe": False, "xiaomi": False, "text": "JSON pruefen"},

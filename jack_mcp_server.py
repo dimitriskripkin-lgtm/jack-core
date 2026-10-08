@@ -47,6 +47,13 @@ def start_hier(wer: str = "") -> str:
             try:
                 import jack_kanal as _k2
                 t += "\n\nKANAL: %d ungelesene Nachrichten (ap_lese holt sie)." % _k2.ungelesen(wer)
+                try:  # JACK_TUNE_AUFTRAEGE
+                    _af = "/data/data/com.termux/files/home/jack/ARBEITSPLATZ/gemeinsam/auftraege.md"
+                    import os as _os2
+                    if _os2.path.exists(_af):
+                        t += "\n\n=== AUFTRAEGE (gemeinsam/auftraege.md, Regeln: auftrag_regeln.md) ===\n" + open(_af, errors="ignore").read()[-2500:]
+                except Exception:
+                    pass
             except Exception:
                 pass
         except Exception as _e:

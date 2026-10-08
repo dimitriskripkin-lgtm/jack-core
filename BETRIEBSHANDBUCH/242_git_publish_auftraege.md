@@ -1,0 +1,7 @@
+# 242 Stufe S git_publish + Auftrags-Schnittstelle (08.10.2026, Dima: "Wollen wir machen... Schnittstelle am Arbeitsplatz")
+## git_publish (Marker JACK_TUNE_GITPUB, jack_mission_runner.py)
+Extra: msg (Pflicht, max 120 Zeichen, nur sachliche Zeichen), dry (1 = nur zeigen). Ablauf: STOP-Schalter ~/jack/.git_push_stop (Dima legt ihn an = Push gesperrt) -> nur Branch master -> git add -A (gitignore gilt) -> Verbotsliste (config.ini, .ssh, .env, token/secret/passw im Namen, *.db/sqlite/key/pem, service/, Attic/, skills_try/, ARBEITSPLATZ/) und Geheimnis-Muster im Inhalt: bei Treffer ABBRUCH mit git reset, nichts committet -> commit -> git push origin master (nie force). Jeder Aufruf in ARBEITSPLATZ/gemeinsam/ro_audit.jsonl. Schreibend, daher Handbuch-Gate (quittung).
+## Auftrags-Schnittstelle (JACK_TUNE_AUFTRAEGE)
+gemeinsam/auftraege.md (Liste OFFEN/ERLEDIGT/FEHLER) und gemeinsam/auftrag_regeln.md (Ablauf, Erlaubt/Verboten, Budget, Vertrauen). start_hier(wer=...) haengt die Auftraege an. Eine geplante Cloud-Sitzung arbeitet sie ab und berichtet in gemeinsam/morgenbericht.md. Sicherheitskern-Dateien sind fuer den Nachtlauf tabu.
+## Voraussetzung Cloud-Sitzung
+Die Sitzung braucht Zugang zum MCP. Belegt (Doku code.claude.com/docs/en/cloud-environments): Variablen pro Cloud-Environment, in der Sitzung als $KEY, auch fuer Routinen. Alle Nutzer des Environments koennen sie lesen; auf Pro/Max geht alternativ ein API-Credential, das der Proxy fuer den Host anhaengt, die Sitzung sieht den Wert nie. Header-Token fuer eigene MCP-Connectoren: nicht belegt.
