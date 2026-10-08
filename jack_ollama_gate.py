@@ -27,7 +27,11 @@ import subprocess, time, threading, os, logging
 JACK      = "/data/data/com.termux/files/home/jack"
 SVC       = "/data/data/com.termux/files/usr/var/service/ollama"
 def _ollama_url():
-    host="10.176.117.131"
+    host=""
+    try:
+        host=open(os.path.expanduser("~/jack/.last_xiaomi_ip")).read().strip()  # JACK_TUNE_GATEWAY
+    except Exception:
+        pass
     try:
         g=subprocess.run(["ssh","-G","xiaomi-jack"],capture_output=True,text=True,timeout=5)
         for ln in (g.stdout or "").splitlines():

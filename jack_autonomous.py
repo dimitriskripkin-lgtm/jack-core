@@ -256,7 +256,7 @@ def _heartbeat_sv_check():
                 cfg = _cp.ConfigParser()
                 cfg.read(_os.path.expanduser('~/jack/config.ini'))
                 _lf = _os.path.expanduser('~/jack/.last_xiaomi_ip')  # JACK_TUNE_XIDYN
-                _lip = open(_lf).read().strip() if _os.path.exists(_lf) else '10.176.117.131'
+                _lip = open(_lf).read().strip() if _os.path.exists(_lf) else ''  # JACK_TUNE_GATEWAY keine feste IP
                 ohost = cfg.get('xiaomi', 'ip', fallback=_lip)
                 _ur.urlopen(f'http://{ohost}:11434/api/tags', timeout=5)
                 _heat_ollama_guard()
