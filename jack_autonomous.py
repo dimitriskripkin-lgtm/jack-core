@@ -756,6 +756,11 @@ def start_consolidated():
     _th.Thread(target=_lerner_loop,daemon=True,name="lerner").start()
 
     _th.Thread(target=_proaktiv_loop,daemon=True,name="proaktiv").start()
+    try:
+        import jack_telemetry as _jt  # JACK_TUNE_TELEMETRIE
+        _th.Thread(target=_jt.loop, daemon=True, name="telemetrie").start()
+    except Exception as _te:
+        _jlog and _jlog.fehler("autonomous", "telemetrie", _te)
     print("[Konsolidiert] Autolearn+Publisher+Missionen als Threads gestartet")
 
 if __name__=="__main__":
