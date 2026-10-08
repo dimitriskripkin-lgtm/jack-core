@@ -1,5 +1,7 @@
 # 243 Lade-Alarm (08.10.2026, Dima: Punkt 2) und Cloud-Token-Weg
 ## Lade-Alarm (JACK_TUNE_LADEALARM, jack_autonomous._proaktiv_loop)
 Honor-Akku unter 40 % und nicht ladend: einmalige Vorwarnung "erst ans Ladegeraet" (max. alle 6 h). Unter 20 %: bisherige Warnung, aber Takt 10 Min statt 30. Quelle jack_health_now.json (max 15 Min alt). Grenze: ein Alarm laedt kein Handy; wenn niemand da ist (Nachtschicht), hilft nur die Vorwarnung vor dem Losfahren.
-## Token fuer Cloud-Nachtlauf
-Token liegt nur in ~/jack/.jack_mcp_token (nie ausgeben). Dima kopiert ihn per termux-clipboard-set in die Zwischenablage (ohne Anzeige) und traegt ihn im claude.ai/code Cloud-Environment als Variable JACK_MCP_TOKEN ein (plus JACK_MCP_URL). Netzwerk-Allowlist des Environments muss mcp.jack-mcp-cloudflare.bid und github.com erlauben.
+## Cloud-Nachtlauf (Stand 08.10.2026, ersetzt die erste Fassung)
+Umgebung JACK-Nacht in claude.ai/code. Der Token liegt als Netzwerk-Secret fuer mcp.jack-mcp-cloudflare.bid; der Proxy der Sitzung setzt den Authorization-Header selbst, die Sitzung sieht den Wert nie. Variable JACK_MCP_URL. Die Routine 'JACK Nachtlauf' (taeglich 03:00, Sonnet) spricht den Server per curl/JSON-RPC an. Regeln: ARBEITSPLATZ/gemeinsam/auftrag_regeln.md (Stufe A2).
+## Lade-Ton (JACK_TUNE_LADETON, 08.10. 16:30)
+Unter 15 % und nicht am Ladegeraet: zusaetzlich zur Telegram-Meldung Vibration (800 ms) und Sprachausgabe 'Akku X Prozent. Bitte laden.' alle 2 Minuten, hoechstens 5 Mal pro Entladung (Zaehler wird bei Laden oder ab 25 % zurueckgesetzt), danach wieder nur Telegram alle 10 Min. Ist jack_health_now.json aelter als 15 Min, liest der Alarm den Akku direkt per termux-battery-status (Timeout 10 s). Grenze bleibt: Ist niemand beim Handy, hilft nur die Vorwarnung.

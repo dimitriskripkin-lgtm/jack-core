@@ -620,6 +620,19 @@ def _proaktiv_loop():
     _t2.sleep(300)  # 5min nach Start warten
     _last_moin = 0
     _lowf = [False]; _w40 = [0.0]  # JACK_TUNE_LADEALARM
+    _tz = [0]  # JACK_TUNE_LADETON Anzahl Ton-Meldungen pro Entladung
+
+    def _ladeton(_p):
+        import subprocess as _sp
+        try:
+            _sp.run(["termux-vibrate", "-d", "800", "-f"], capture_output=True, timeout=5)
+        except Exception as _le:
+            _jlog and _jlog.fehler("autonomous", "ladeton", _le)
+        try:
+            _sp.run(["termux-tts-speak", "-l", "de", "Akku " + str(int(float(_p))) + " Prozent. Bitte laden."], capture_output=True, timeout=20)
+        except Exception as _le:
+            _jlog and _jlog.fehler("autonomous", "ladeton", _le)
+
     while True:
         try:
             _h = _dt2.datetime.now().hour
@@ -639,12 +652,24 @@ def _proaktiv_loop():
                 d={}
                 if _os2.path.isfile(_hn) and (_t2b.time()-_os2.path.getmtime(_hn))<=900:
                     d=(_j2.loads(open(_hn,encoding="utf-8").read()).get("bat") or {})
+                if not d:  # JACK_TUNE_LADETON Health-Datei zu alt: Akku direkt lesen
+                    try:
+                        import subprocess as _sp0
+                        _o = _sp0.run(["termux-battery-status"], capture_output=True, text=True, timeout=10).stdout
+                        d = _j2.loads(_o or "{}")
+                    except Exception as _le:
+                        _jlog and _jlog.fehler("autonomous", "ladeton-bat", _le)
                 pct = d.get("pct", d.get("percentage", 100))
                 _st = str(d.get("status") or "")
                 _lowf[0] = False
+                if _st == "CHARGING" or float(pct) >= 25:
+                    _tz[0] = 0
                 if float(pct) < 20 and _st != "CHARGING":
                     _lowf[0] = True  # JACK_TUNE_LADEALARM: unter 20 % alle 10 Min statt 30
                     notify(f"Akku bei {pct}%. Laden empfohlen.")  # JACK_TUNE_AUTOBAT
+                    if float(pct) < 15 and _tz[0] < 5:
+                        _tz[0] += 1
+                        _ladeton(pct)
                 elif float(pct) < 40 and _st != "CHARGING" and _t2b.time() - _w40[0] > 21600:
                     _w40[0] = _t2b.time()
                     notify(f"Akku bei {pct}%. Wenn du gleich losfaehrst: erst ans Ladegeraet.")
@@ -653,7 +678,7 @@ def _proaktiv_loop():
         except Exception as _e:
             try: import jack_log; jack_log.log_decision("PROAKTIV-ERR", str(_e)[:80])
             except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
-        _t2.sleep(600 if _lowf[0] else 1800)  # alle 30min, bei Akku<20 alle 10 Min (LADEALARM)
+        _t2.sleep(120 if (_lowf[0] and 0 < _tz[0] < 5) else (600 if _lowf[0] else 1800))  # LADEALARM/LADETON: Ton-Phase alle 2 Min
 
 def _lerner_stop():
     """Not-Aus per Datei. Anlegen stoppt, loeschen erlaubt wieder."""
