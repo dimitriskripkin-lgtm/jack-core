@@ -103,11 +103,26 @@ def _br_note(verbindung_ok):
         _BR["until"] = _tm.time() + 30
 
 
+def _quick_ip():
+    """JACK_TUNE_XIQUICK gecachte IP ohne Vorab-Check."""
+    try:
+        return jack_config.get_param("NETWORK", "xiaomi_ip") or ""
+    except Exception:
+        return ""
+
+
+def _ssh_ein(ip, full_cmd, timeout):
+    return subprocess.run(
+        ["ssh"] + SSH_OPTS + ["-p", str(XIAOMI_SSH_PORT), f"root@{ip}", full_cmd],
+        capture_output=True, text=True, timeout=timeout
+    )
+
+
 def run_shell(cmd, as_root=True, timeout=15):
     import time as _tm2
     if _tm2.time() < _BR["until"]:
         return {"success": False, "stdout": "", "stderr": "Xiaomi weg (Schutz 30 s)", "returncode": -2}
-    ip = _get_xiaomi_ip()
+    ip = _quick_ip() or _get_xiaomi_ip()  # JACK_TUNE_XIQUICK
     full_cmd = cmd
     if as_root and not cmd.startswith("su "):
         safe = cmd.replace("'", "'\"'\"'")
@@ -116,10 +131,11 @@ def run_shell(cmd, as_root=True, timeout=15):
         full_cmd = cmd
 
     try:
-        result = subprocess.run(
-            ["ssh"] + SSH_OPTS + ["-p", str(XIAOMI_SSH_PORT), f"root@{ip}", full_cmd],
-            capture_output=True, text=True, timeout=timeout
-        )
+        result = _ssh_ein(ip, full_cmd, timeout)
+        if result.returncode == 255:
+            _neu = _get_xiaomi_ip()
+            if _neu and _neu != ip:
+                result = _ssh_ein(_neu, full_cmd, timeout)
         _br_note(result.returncode != 255)
         return {
             "success": result.returncode == 0,
