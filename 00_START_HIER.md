@@ -1,7 +1,7 @@
 # 00 START HIER — Pflichtzettel für JEDE KI (Claude, Grok, Gemini, Qwen, ...)
 
 Du bist eine neue Session ohne Gedächtnis. Das ist normal. Dieser Zettel ersetzt das Gedächtnis.
-Lies ihn ganz (3 Minuten), BEVOR du irgendetwas änderst, baust oder "drosselst". Stand 07.10.2026.
+Lies ihn ganz (3 Minuten), BEVOR du irgendetwas änderst, baust oder "drosselst". Stand 08.10.2026.
 
 ## 1. Wahrheitsrangfolge (bei Widerspruch gewinnt die höhere Zeile)
 1. Die LIVE-Datei auf dem Honor (MCP `read_file`). Honor ist Wahrheit, GitHub kann stale sein.
@@ -92,6 +92,17 @@ Dima setzt die Prioritäten. Unsichere Annahmen kennzeichnen statt behaupten.
 
 ## 10. Arbeitsplatz (gemeinsames Büro)
 Ordner ARBEITSPLATZ/ auf der Honor. Rufe start_hier(wer="claude"|"grok"|"gemini") bzw. buero(wer) auf: du bekommst Regeln, offene Punkte, Eingang, Journal, Roadmap. Notizen mit ap_notiz, Session-Ende mit ap_journal. Fremde Büros nur an eingang.md anhängen. Kanal: ap_lese holt Post, ap_post schreibt (Rundengrenze 10 ohne Dima, Notaus missions/STOP), ap_claim reserviert Module vor dem Patchen (Kapitel 235). Details: Handbuch-Kapitel 234.
+
+## 11. Neu seit 08.10.2026 (zuerst lesen, wenn du lange weg warst)
+- Aufgeraeumt: ~200 Dinge und 19 tote Module nach Attic/ (Kap. 246). Karte aller Module: MODULKARTE.md. Gesamtueberblick: Kap. 247.
+- Xiaomi-Zugriff NUR ueber jack_xiaomi.run_shell (Schutzschalter + Schnellpfad, Kap. 244). Keine neuen eigenen ssh-Aufrufe bauen.
+- Telemetrie laeuft: telemetry/telemetrie_JJJJ-MM.jsonl, alle 5 Min Temperaturen, Akku, RAM, Last, Top-Prozesse beider Handys (Kap. 245). Stop: Datei .telemetry_stop. Nie ins Repo.
+- Lade-Ton: Akku unter 15 Prozent und nicht am Laden -> Vibration + Ansage (JACK_TUNE_LADETON, Kap. 243).
+- Cloud-Nachtlauf: Routine 'JACK Nachtlauf' 03:00 MESZ liest ARBEITSPLATZ/gemeinsam/auftraege.md, schreibt morgenbericht.md. Regeln: auftrag_regeln.md (Stufe A und A2).
+- Dienst jack_qwen (jack_qwen_client.py) laeuft ebenfalls, nicht loeschen.
+- Token-Rotation steht aus (eine Token pro KI-Rolle). Token nie ausgeben.
+- Logs werden nie automatisch zu Fakten. Auswertungen nur als Vorschlag.
+- Grosse Datei lesen: read_file einzeln, nie parallel (vermischt Antworten), Feld 'path' der Antwort pruefen.
 
 ## 9. Session-Ende-Pflicht
 Was geändert wurde, in die Betriebshandbuch-Kapitel eintragen. Offene Punkte nennen. Neue Schalter in Abschnitt 5 aufnehmen.

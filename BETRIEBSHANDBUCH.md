@@ -283,3 +283,12 @@ Vier neue Module/Erweiterungen seit dem letzten Stand dieses Index, siehe eigene
   (vorher nur im arp-scan-Zweig, der auf Root-freiem Honor nie laufen konnte) - Kapitel 34.
 - `jack_autonomous.py`: zwei tote Threads entfernt (`_missions_loop`, `_publisher_loop`) - Kapitel 3.
 Alle vier live bewiesen, Backups im Attic, committed als `2a7cb2d2`.
+
+## Stand 08.10.2026 (Kapitel 241-247)
+- [241 Stufe R + Nachtlauf](BETRIEBSHANDBUCH/241_stufe_r_lese_acts.md)
+- [243 Ladealarm + Cloud-Nachtlauf](BETRIEBSHANDBUCH/243_ladealarm_cloudzugang.md)
+- [244 Xiaomi-Gateway](BETRIEBSHANDBUCH/244_xiaomi_gateway.md)
+- [245 Telemetrie](BETRIEBSHANDBUCH/245_telemetrie.md)
+- [246 Ausduennung](BETRIEBSHANDBUCH/246_ausduennung.md)
+- [247 Neu seit 07.10. Ueberblick](BETRIEBSHANDBUCH/247_neu_seit_0710.md)
+- Modulkarte (generiert): MODULKARTE.md
