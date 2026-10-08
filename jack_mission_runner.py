@@ -1178,6 +1178,75 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         out=s.explain("overmind") or ""
         ok=("overmind" in out.lower()) and ("3" in out)
         return ok,"explain",out[:300]
+    if act in ("ro_log_tail","ro_git","ro_scan","ro_pyflakes","ro_ps"):  # JACK_TUNE_RO Stufe R: nur lesen, feste Befehle, kein exec
+        import os as _o, re as _re, json as _j, time as _t
+        _HOME=_o.environ.get("HOME","/data/data/com.termux/files/home")
+        def _ro_audit(_ok,_note):
+            try:
+                _o.makedirs(J+"/ARBEITSPLATZ/gemeinsam",exist_ok=True)
+                _a={k:str(v)[:60] for k,v in m.items() if k in ("service","n","file")}
+                with open(J+"/ARBEITSPLATZ/gemeinsam/ro_audit.jsonl","a") as _f:
+                    _f.write(_j.dumps({"ts":_t.strftime("%Y-%m-%d %H:%M:%S"),"act":act,"args":_a,"ok":_ok,"note":str(_note)[:80]},ensure_ascii=False)+"\n")
+            except Exception:
+                pass
+        def _scrub(_s):
+            _s=_re.sub(r"(gh"+"p_|github"+"_pat_)[A-Za-z0-9_]{10,}","[GEHEIM]",_s)
+            _s=_re.sub(r"sk-[A-Za-z0-9]{20,}","[GEHEIM]",_s)
+            _s=_re.sub(r"AIza[0-9A-Za-z_-]{20,}","[GEHEIM]",_s)
+            _s=_re.sub(r"(?i)(bearer\s+)[A-Za-z0-9._-]{16,}",r"\1[GEHEIM]",_s)
+            _s=_re.sub(r"(?i)((?:token|password|passwd|secret|api_?key)\s*[=:]\s*)\S{6,}",r"\1[GEHEIM]",_s)
+            return _s
+        _PAT=_re.compile(r"(gh"+"p_|github"+"_pat_|sk-[A-Za-z0-9]{20}|AIza[0-9A-Za-z_-]{20}|Bearer [A-Za-z0-9._-]{20})")
+        try:
+            if act=="ro_log_tail":
+                _svc=str(m.get("service") or "jack_telegram")
+                if not _re.match(r"^(jack_[a-z0-9_]{1,40}|cloudflared)$",_svc):
+                    _ro_audit(False,"service"); return False,"ro_log_tail: Dienstname ungueltig",""
+                _n=max(1,min(150,int(m.get("n",40))))
+                _c=[J+"/"+_svc.replace("jack_","")+".log","/data/data/com.termux/files/usr/var/log/sv/"+_svc+"/current",_HOME+"/logs/"+_svc+"/current",_HOME+"/logs/"+_svc+".log",J+"/logs/"+_svc+".log",J+"/"+_svc+".log",J+"/logs/"+_svc+"/current"]
+                _fp=next((x for x in _c if _o.path.isfile(x)),None)
+                if not _fp:
+                    import glob as _gl
+                    _short=_svc.replace("jack_","")
+                    _g=[]
+                    for _pt in (J+"/logs/*",J+"/*.log",_HOME+"/logs/*",_HOME+"/*.log","/data/data/com.termux/files/usr/var/log/sv/*"):
+                        _g+=[x for x in _gl.glob(_pt) if _short in _o.path.basename(x).lower()]
+                    _ro_audit(False,"kein log"); return False,"ro_log_tail: kein Log fuer "+_svc+"; aehnliche: "+(", ".join(x.replace(_HOME,"~") for x in _g[:10]) or "keine"),"\n".join(_c)
+                _rc,_o2=sh(["tail","-n",str(_n),_fp],t=8)
+                _out=_scrub(_o2)[-3500:]
+                _ro_audit(True,_fp); return True,"ro_log_tail "+_svc+" ("+_fp.replace(_HOME,"~")+")",_out
+            if act=="ro_git":
+                _o1=sh(["git","-C",J,"status","-sb"],t=15)[1]
+                _o2=sh(["git","-C",J,"log","--oneline","-n","5"],t=15)[1]
+                _o3=sh(["git","-C",J,"remote","get-url","origin"],t=8)[1]
+                _lines=_o1.splitlines()
+                _out="BRANCH: "+(_lines[0] if _lines else "?")+"\nGEAENDERT/NEU: "+str(max(0,len(_lines)-1))+"\n"+"\n".join(_lines[1:41])+"\n--- LOG ---\n"+_o2
+                _ro_audit(True,"git"); return True,"ro_git: ok",_scrub(_out)[:3500]
+            if act=="ro_scan":
+                _fl=sh(["git","-C",J,"ls-files","-o","-m","--exclude-standard"],t=30)[1].splitlines()
+                _hits=[];_other=[]
+                for _f in _fl[:400]:
+                    _p=J+"/"+_f
+                    if not _f.endswith((".py",".md")) and len(_other)<25: _other.append(_f)
+                    try:
+                        if _o.path.isfile(_p) and _o.path.getsize(_p)<2000000:
+                            if _PAT.search(open(_p,errors="ignore").read()): _hits.append(_f)
+                    except Exception: pass
+                _out="DATEIEN (neu/geaendert, ohne gitignore): "+str(len(_fl))+"\nGEHEIMNIS-TREFFER (nur Namen): "+(", ".join(_hits[:20]) or "keine")+"\nNICHT-py/md: "+(", ".join(_other) or "keine")
+                _ro_audit(not _hits,"scan"); return (not _hits),"ro_scan: "+("sauber" if not _hits else "TREFFER"),_out[:3000]
+            if act=="ro_pyflakes":
+                _f=str(m.get("file") or "")
+                if (not _re.match(r"^[A-Za-z0-9_]{1,60}\.py$",_f)) or not _o.path.isfile(J+"/"+_f):
+                    _ro_audit(False,"datei"); return False,"ro_pyflakes: Dateiname ungueltig/fehlt (nur ~/jack/<name>.py)",""
+                _rc,_o2=sh(["python3","-m","pyflakes",J+"/"+_f],t=40)
+                _ro_audit(True,_f); return True,"ro_pyflakes "+_f+": "+("sauber" if not _o2.strip() else str(len(_o2.splitlines()))+" Meldungen"),_scrub(_o2.replace(J+"/",""))[:3000]
+            if act=="ro_ps":
+                _rc,_o2=sh(["ps","-eo","pid,etime,args"],t=10)
+                _ls=[l[:110] for l in _o2.splitlines() if _re.search(r"jack|ssh|ollama|cloudflared|runsv|python",l,_re.I)]
+                _ro_audit(True,"ps"); return True,"ro_ps: "+str(len(_ls))+" Prozesse","\n".join(_scrub(l) for l in _ls[:30])
+        except Exception as _e:
+            _ro_audit(False,str(_e)); return False,"ro: "+str(_e)[:100],""
+
     if act=="sv_ok":
         name=m.get("service") or m.get("svc") or m.get("name") or "jack_telegram"
         rc,o=sh(["sv","status", "/data/data/com.termux/files/usr/var/service/"+name],t=8)
