@@ -265,8 +265,9 @@ def read_file(path: str, lines: int = 100, plain: bool = False) -> str:
         ok_root = any(full == r or full.startswith(r + _osrf.sep) for r in roots)
         if not ok_root:
             return json.dumps({"error": "Pfad nicht in JACK_HOME oder internem Speicher"})
-        blocked = {"config.ini", ".jack_mcp_token"}
-        if _osrf.path.basename(full) in blocked or "/.ssh/" in full:
+        _bn = _osrf.path.basename(full).lower()  # JACK_TUNE_SECRETBLOCK
+        blocked = {"config.ini", ".jack_mcp_token", ".jack_mcp_tokens", ".netrc", ".env", ".git-credentials"}
+        if _bn in blocked or any(_w in _bn for _w in ("token", "secret", "credential", "passw")) or "/.ssh/" in full:
             return json.dumps({"error": "Datei gesperrt (Secrets)"})
         if not _osrf.path.isfile(full):
             return json.dumps({"error": f"Datei nicht gefunden: {full}"})

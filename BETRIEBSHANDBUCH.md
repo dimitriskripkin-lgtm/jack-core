@@ -292,4 +292,5 @@ Alle vier live bewiesen, Backups im Attic, committed als `2a7cb2d2`.
 - [246 Ausduennung](BETRIEBSHANDBUCH/246_ausduennung.md)
 - [247 Neu seit 07.10. Ueberblick](BETRIEBSHANDBUCH/247_neu_seit_0710.md)
 - [248 MCP-Rollen-Zugang](BETRIEBSHANDBUCH/248_mcp_rollen_zugang.md)
+- [249 Tiefenanalyse 09.10.2026](BETRIEBSHANDBUCH/249_tiefenanalyse_20261009.md)
 - Modulkarte (generiert): MODULKARTE.md

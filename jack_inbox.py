@@ -56,6 +56,10 @@ def poll_inbox(send_fn=None):
             try: open(os.path.expanduser('~/.jack_inbox_ts'),'w').write(str(ts))
             except Exception: pass
             plan=d.get('plan')
+            _ex=[s for s in ((plan or {}).get('steps') or []) if isinstance(s,dict) and str(s.get('type',''))=='exec']  # JACK_TUNE_INBOXGATE
+            if plan and send_fn and _ex:
+                send_fn('INBOX-PLAN '+str(plan.get('name','?'))[:40]+': '+str(len(_ex))+' Shell-Schritte, NICHT ausgefuehrt (Freigabe noetig).')
+                return
             if plan and send_fn:
                 import jack_planner,importlib
                 importlib.reload(jack_planner)

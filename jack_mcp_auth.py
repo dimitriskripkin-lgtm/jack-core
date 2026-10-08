@@ -18,11 +18,17 @@ ROLES = ("claude", "nachtlauf", "gemini", "grok")
 
 READ_ACTS_PREFIX = ("ro_",)
 READ_ACTS = {"diag", "file_exists", "compile_ok", "sv_ok"}
-NIGHT_DENY = {"sv_restart", "reload_module", "git_publish", "file_delete", "batch"}
+NIGHT_DENY = {"sv_restart", "reload_module", "git_publish", "file_delete", "batch",
+              "propose_fix", "approve_proposal", "exec_proposed", "write_proposed",
+              "plan_try", "skill_confirm"}  # JACK_TUNE_NIGHTDENY2: keine Selbstfreigabe/Shell
 CORE_FILES = ("jack_acts.py", "jack_mission_runner.py", "jack_mcp_server.py",
               "jack_handbuch_gate.py", "jack_kanal.py", "jack_arbeitsplatz.py", "jack_mcp_auth.py")
 WER_OK = {"claude": {"claude"}, "nachtlauf": {"claude"}, "gemini": {"gemini"},
           "grok": {"grok"}, "legacy": None}
+
+SECRET_WORDS = ("token", "secret", "credential", "passw")  # JACK_TUNE_SECRETBLOCK
+SECRET_NAMES = {"config.ini", ".netrc", ".env", ".git-credentials"}
+FULL_ROLES = ("claude", "legacy")
 
 _cache = {"t": 0.0, "m": {}}
 _fails = {}
@@ -72,8 +78,27 @@ def audit(role, tool, act, verdict, note=""):
     except Exception:
         pass
 
+def _path_check(role, name, args):
+    """Geheimnis-Dateien fuer alle sperren, Nicht-Voll-Rollen nur JACK_HOME (gleiche Aufloesung wie der Server)."""
+    if name not in ("read_file", "list_files"):
+        return True, ""
+    a = args if isinstance(args, dict) else {}
+    p = str(a.get("path") or ("/storage/emulated/0/Download" if name == "list_files" else ""))
+    full = os.path.realpath(p if p.startswith("/") else os.path.join(J, p))
+    bn = os.path.basename(full).lower()
+    if name == "read_file" and (bn in SECRET_NAMES or any(w in bn for w in SECRET_WORDS) or "/.ssh/" in full):
+        return False, "Geheimnis-Datei gesperrt"
+    if role not in FULL_ROLES:
+        jr = os.path.realpath(J)
+        if not (full == jr or full.startswith(jr + os.sep)):
+            return False, "Rolle darf nur JACK_HOME lesen"
+    return True, ""
+
 def check_call(role, name, args):
     """-> (ok, grund). Prueft ein tools/call. Keine Inhalte werden geloggt."""
+    ok, why = _path_check(role, name, args)
+    if not ok:
+        return False, why
     if role in ("legacy", "claude") and name != "create_mission":
         return True, ""
     wer_ok = WER_OK.get(role)
@@ -95,6 +120,8 @@ def check_call(role, name, args):
         ex = str((args or {}).get("extra", ""))
         if any(c in ex for c in CORE_FILES):
             return False, "Sicherheitskern gesperrt"
+        if ".." in ex:
+            return False, "Pfad mit .. gesperrt"
         return True, ""
     return False, "unbekannte Rolle"
 
@@ -114,16 +141,18 @@ class RoleMiddleware:
             return await self.app(scope, receive, send)
         hdr = {k.decode().lower(): v.decode() for k, v in scope["headers"]}
         ip = hdr.get("cf-connecting-ip") or (scope.get("client") or ["?"])[0]
-        now = time.time()
-        recent = [t for t in _fails.get(ip, []) if now - t < 60]
-        if len(recent) >= 10:
-            return await self._deny(send, 429, "zu viele Fehlversuche")
         if not load_tokens():
             audit("-", "-", "", "NEIN", "keine Tokens konfiguriert")
             return await self._deny(send, 503, "keine Tokens konfiguriert")
         role = role_for(hdr.get("authorization", ""))
-        if not role:
+        if not role:  # Sperre trifft nur ungueltige Tokens, gueltige kommen immer durch
+            now = time.time()
+            recent = [t for t in _fails.get(ip, []) if now - t < 60]
+            if len(recent) >= 10:
+                return await self._deny(send, 429, "zu viele Fehlversuche")
             recent.append(now); _fails[ip] = recent
+            if len(_fails) > 500:
+                _fails.clear()
             audit("?", "-", "", "NEIN", "ungueltiger Token")
             return await self._deny(send, 401, "unauthorized")
         if scope["method"] != "POST":

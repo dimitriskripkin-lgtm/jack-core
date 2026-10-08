@@ -1379,6 +1379,11 @@ def main():
                 msg = u.get('message', {})
                 text = msg.get('text', '')
                 chat_id = msg.get('chat', {}).get('id')
+                if chat_id is not None and str(chat_id) != str(CHAT_ID):  # JACK_TUNE_ONLYDIMA
+                    try:
+                        import jack_log as _jlf; _jlf.log_decision("TG-FREMD", "Nachricht fremder chat_id ignoriert")
+                    except Exception: pass
+                    continue
                 if 'photo' in msg and chat_id:
                     file_id = msg['photo'][-1]['file_id']
                     caption = msg.get('caption','Was siehst du? Analysiere auf Deutsch.')
