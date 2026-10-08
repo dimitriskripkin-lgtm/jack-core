@@ -90,7 +90,23 @@ def sms_vorbereiten(nummer, text):
         return "Nachricht vorbereitet an " + n + ". Nicht abgeschickt."
     return "Nachricht fehlgeschlagen: " + (r.get("out") or "")[:80]
 
+_BR = {"fails": 0, "until": 0.0}  # JACK_TUNE_XIBREAKER
+
+
+def _br_note(verbindung_ok):
+    import time as _tm
+    if verbindung_ok:
+        _BR["fails"] = 0
+        return
+    _BR["fails"] += 1
+    if _BR["fails"] >= 2:
+        _BR["until"] = _tm.time() + 30
+
+
 def run_shell(cmd, as_root=True, timeout=15):
+    import time as _tm2
+    if _tm2.time() < _BR["until"]:
+        return {"success": False, "stdout": "", "stderr": "Xiaomi weg (Schutz 30 s)", "returncode": -2}
     ip = _get_xiaomi_ip()
     full_cmd = cmd
     if as_root and not cmd.startswith("su "):
@@ -104,6 +120,7 @@ def run_shell(cmd, as_root=True, timeout=15):
             ["ssh"] + SSH_OPTS + ["-p", str(XIAOMI_SSH_PORT), f"root@{ip}", full_cmd],
             capture_output=True, text=True, timeout=timeout
         )
+        _br_note(result.returncode != 255)
         return {
             "success": result.returncode == 0,
             "stdout": result.stdout.strip(),
@@ -111,6 +128,7 @@ def run_shell(cmd, as_root=True, timeout=15):
             "returncode": result.returncode
         }
     except subprocess.TimeoutExpired:
+        _br_note(False)
         return {"success": False, "stdout": "", "stderr": "Timeout", "returncode": -1}
     except Exception as e:
         return {"success": False, "stdout": "", "stderr": str(e), "returncode": -1}

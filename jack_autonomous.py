@@ -619,6 +619,7 @@ def _proaktiv_loop():
     import time as _t2, datetime as _dt2
     _t2.sleep(300)  # 5min nach Start warten
     _last_moin = 0
+    _lowf = [False]; _w40 = [0.0]  # JACK_TUNE_LADEALARM
     while True:
         try:
             _h = _dt2.datetime.now().hour
@@ -640,14 +641,19 @@ def _proaktiv_loop():
                     d=(_j2.loads(open(_hn,encoding="utf-8").read()).get("bat") or {})
                 pct = d.get("pct", d.get("percentage", 100))
                 _st = str(d.get("status") or "")
+                _lowf[0] = False
                 if float(pct) < 20 and _st != "CHARGING":
+                    _lowf[0] = True  # JACK_TUNE_LADEALARM: unter 20 % alle 10 Min statt 30
                     notify(f"Akku bei {pct}%. Laden empfohlen.")  # JACK_TUNE_AUTOBAT
+                elif float(pct) < 40 and _st != "CHARGING" and _t2b.time() - _w40[0] > 21600:
+                    _w40[0] = _t2b.time()
+                    notify(f"Akku bei {pct}%. Wenn du gleich losfaehrst: erst ans Ladegeraet.")
             except Exception as _le:
                 _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         except Exception as _e:
             try: import jack_log; jack_log.log_decision("PROAKTIV-ERR", str(_e)[:80])
             except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
-        _t2.sleep(1800)  # alle 30min
+        _t2.sleep(600 if _lowf[0] else 1800)  # alle 30min, bei Akku<20 alle 10 Min (LADEALARM)
 
 def _lerner_stop():
     """Not-Aus per Datei. Anlegen stoppt, loeschen erlaubt wieder."""

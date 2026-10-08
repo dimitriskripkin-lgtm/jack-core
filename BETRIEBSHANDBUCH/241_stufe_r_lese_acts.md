@@ -12,3 +12,6 @@ Alle Ausgaben laufen durch _scrub (Token/Key-Muster -> [GEHEIM]) und sind gekuer
 Kein Lesen von config.ini/.ssh/Token, kein Schreiben, kein Push/Commit (Stufe S, braucht Dima-Freigabe), keine Shell. Pro-KI-Token und Token-Rotation stehen weiter aus (nur Dima).
 ## Getestet (live, 08.10.)
 ro_git, ro_scan (nach Fix sauber), ro_ps, ro_pyflakes(jack_kanal.py sauber), ro_log_tail cloudflared ok, ungueltiger Dienstname '../etc/passwd' abgelehnt.
+
+## Nachtrag A-004 (Nachtlauf 08./09.10., Claude)
+A-001-Befund bestaetigt: jack_missions und jack_focus_monitor schreiben aktuell kein eigenes Log. Geprueft wurden alle Kandidatenpfade von ro_log_tail (usr/var/log/sv/<dienst>/current, ~/logs/<dienst>/current, ~/jack/<name>.log) - keiner existiert fuer diese zwei Dienste. Kein Code geaendert, nur Lese-Acts verwendet.

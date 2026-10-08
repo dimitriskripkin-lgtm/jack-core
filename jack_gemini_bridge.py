@@ -68,13 +68,9 @@ def collect_status(mit_xiaomi=False):
     # Xiaomi nur wenn explizit benoetigt
     if mit_xiaomi:
         try:
-            import jack_config as _jc
-            _xip = _jc.get_param("NETWORK","xiaomi_ip")
-            _r = subprocess.run(["ssh","-i",os.path.expanduser("~/.ssh/id_jack"),
-                "-o","BatchMode=yes","-o","StrictHostKeyChecking=no",
-                "-o","ConnectTimeout=3","-p","8022",f"root@{_xip}","true"],
-                capture_output=True,timeout=6)
-            status["xiaomi_reachable"] = _r.returncode == 0
+            import jack_xiaomi as _jx  # JACK_TUNE_GATEWAY
+            _r = _jx.run_shell("true", as_root=False, timeout=6)
+            status["xiaomi_reachable"] = bool(_r.get("success"))
         except Exception:
             status["xiaomi_reachable"] = False
     else:
@@ -220,7 +216,7 @@ def ask_gemini(question, status=None):
         "MARKER-VERBOT (absolut): Erzeuge NIEMALS selbststaendig [[WRITE, [[EXEC oder [[PLAN Bloecke. Diese Kanaele sind Dima und Claude vorbehalten. "
         "Rede wie jemand der gerade wirklich nachdenkt - nicht wie ein System das Status meldet. "
         "Wenn er tiefer gehen will: mehr Bedeutung geben nicht mehr Fakten aufzaehlen. "
-        "TECHNISCH: Honor Magic8 Pro Host, Xiaomi 11T Pro Slave SSH 10.229.239.131:8022. Gemini=Denkwerkzeug, du BIST JACK."
+        "TECHNISCH: Honor Magic8 Pro Host, Xiaomi 11T Pro Slave (SSH-Alias xiaomi-jack, Port 8022, IP wechselt). Gemini=Denkwerkzeug, du BIST JACK."
     )
     content = f"SYSTEM-STATUS:\n{json.dumps(status, indent=2)}\n\nFRAGE: {question}" if status else question
     payload = {

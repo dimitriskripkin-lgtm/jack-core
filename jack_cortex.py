@@ -148,7 +148,7 @@ XIAOMI_SEIT = [0.0, None]
 XIAOMI_MELDUNGEN = [0, '']
 def notify_xiaomi_state(connected):
     global XIAOMI_LAST_STATE
-    import time as _t, datetime as _d, os as _o, json as _j
+    import time as _t, datetime as _d, json as _j
     if XIAOMI_LAST_STATE == connected:
         XIAOMI_SEIT[0] = 0.0; XIAOMI_SEIT[1] = None
         return
