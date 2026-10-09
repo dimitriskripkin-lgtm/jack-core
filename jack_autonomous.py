@@ -506,6 +506,7 @@ from jack_log import get_logger
 log = get_logger("jack_autonomous")
 
 def _autolearn_loop():
+    """DEAD CODE seit 09.10., siehe Handbuch: Schleife nach return unerreichbar."""
     return  # JACK_TUNE_D2ONE — Lernen nur Dienst, nicht Thread
     while True:
         try:

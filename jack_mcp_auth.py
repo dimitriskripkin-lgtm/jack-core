@@ -42,6 +42,45 @@ CHATGPT_NOWRITE = tuple(CORE_FILES) + ("jack_mcp_oauth.py", "jack_exec.py", "jac
 CHATGPT_RESTART = {"jack_autolearn", "jack_cortex", "jack_focus_monitor", "jack_missions", "jack_publisher", "jack_waechter"}
 _rs_last = {}
 
+_PUSH_DIR = os.path.expanduser("~/jack")
+_push_last = [0.0]
+
+
+def _chatgpt_push_ok(args):  # JACK_TUNE_CHATGPT_S2B: git_publish, die ersten 5 Pushes nur mit Claude-Freigabedatei
+    try:
+        d = json.loads(str((args or {}).get("extra", "")))
+    except Exception:
+        return False, "extra kein JSON"
+    if not isinstance(d, dict) or not str(d.get("msg", "")).strip():
+        return False, "msg fehlt"
+    if str(d.get("dry", "")).lower() in ("1", "true", "ja", "yes"):
+        return True, ""
+    if not str(d.get("quittung", "")).strip():
+        return True, ""  # Gate lehnt ohne Quittung ab; gezaehlt wird nur der ausfuehrende Aufruf
+    fz = os.path.join(_PUSH_DIR, ".chatgpt_push_freigabe")
+    cf = os.path.join(_PUSH_DIR, ".chatgpt_push_n")
+    try:
+        n = int(open(cf).read().strip() or 0)
+    except Exception:
+        n = 0
+    now = time.time()
+    if now - _push_last[0] < 120:
+        return False, "Push-Sperre: 2 Minuten zwischen Pushes"
+    if n < 5:
+        if not os.path.exists(fz):
+            return False, "Push %d von 5: Freigabe durch Claude fehlt" % (n + 1)
+        try:
+            os.remove(fz)
+        except Exception:
+            return False, "Freigabe nicht verbrauchbar"
+    try:
+        open(cf, "w").write(str(n + 1))
+    except Exception:
+        return False, "Push-Zaehler nicht schreibbar"
+    _push_last[0] = now
+    return True, ""
+
+
 def _chatgpt_restart_ok(args):
     try:
         d = json.loads(str((args or {}).get("extra", "")))
@@ -180,6 +219,8 @@ def check_call(role, name, args):
             return _chatgpt_write_ok(args)
         if act == "sv_restart":  # JACK_TUNE_CHATGPT_S2A
             return _chatgpt_restart_ok(args)
+        if act == "git_publish":  # JACK_TUNE_CHATGPT_S2B
+            return _chatgpt_push_ok(args)
         return False, "Act nur ueber Vier-Augen (Claude)"
     if role in ("grok", "gemini"):
         if act in READ_ACTS or act.startswith(READ_ACTS_PREFIX):
