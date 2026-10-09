@@ -152,12 +152,18 @@ def embed_lokal(text):  # JACK_TUNE_EMBLOKAL
 
 # aehnlicher_knoten entfernt 22.09.2026 — fakt_vec-Tabelle existiert nicht (JACK_TUNE_EMBLOKAL)
 
-def _ensure_facts_230923():
+def _ensure_facts_230923():  # JACK_TUNE_SEEDONCE: nur anlegen, nie ueberschreiben (Korrekturen bleiben)
     try:
-        i = put_node("fakt", "kaffee_nacht", "trinkt nachts gerne Kaffee", src="telegram_fix")
+        def _ex(t, n):
+            _c = con()
+            try:
+                return _c.execute("select 1 from nodes where id=?", (nid(t, n),)).fetchone() is not None
+            finally:
+                _c.close()
+        i = None if _ex("fakt", "kaffee_nacht") else put_node("fakt", "kaffee_nacht", "trinkt nachts gerne Kaffee", src="telegram_fix")
         if i:
             put_edge("person:dima", "hat", i, src="telegram_fix")
-        j = put_node("fakt", "spiel", "Starlight auf PS5", src="telegram_fix")
+        j = None if _ex("fakt", "spiel") else put_node("fakt", "spiel", "Starlight auf PS5", src="telegram_fix")
         if j:
             put_edge("person:dima", "hat", j, src="telegram_fix")
     except Exception:
