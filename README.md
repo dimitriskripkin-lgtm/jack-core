@@ -7,6 +7,8 @@ Gebaut von Dima, LKW-Fahrer, ein Daumen, Termux — kein Studium, keine Ausbildu
 
 GitHub ist der Spiegel. Honor ist die Wahrheit.
 
+> **Aktueller Ist-Zustand: [STAND_20261009.md](STAND_20261009.md)** (09.10.2026, Handbuch bis Kapitel 264). Die Stand-Angaben weiter unten (03.10.) sind aelter.
+
 ## Hinweis zur Repo-Struktur
 
 Das hier ist ein laufendes, produktives Ein-Personen-System, kein aufgeräumtes Lehrbuch-Repo.
