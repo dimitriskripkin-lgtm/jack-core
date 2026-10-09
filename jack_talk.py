@@ -25,9 +25,9 @@ def add_to_window(user_msg, jack_reply):
     global _ROLLING_WINDOW
     _jr=str(jack_reply or "")
     _um=str(user_msg or "")
-    if _um.lstrip().startswith("/") or _jr.startswith("Kiste jetzt") or "JACK_TUNE_KISTE" in _jr or _jr.startswith("Das steht in keinem Log") or _jr.startswith("MISSION:") or _jr.startswith("JACK Scan") or "DONE_ALL" in _jr or len(_jr)>400:
+    if _um.lstrip().startswith("/") or _jr.startswith("Kiste jetzt") or "JACK_TUNE_KISTE" in _jr or _jr.startswith("Das steht in keinem Log") or _jr.startswith("MISSION:") or _jr.startswith("JACK Scan") or "DONE_ALL" in _jr or len(_jr)>3000:  # JACK_TUNE_FADEN:
         return  # JACK_TUNE_WIN3
-    _ROLLING_WINDOW.append((str(user_msg)[:200], str(jack_reply)[:220]))
+    _ROLLING_WINDOW.append((str(user_msg)[:240], str(jack_reply)[:700]))
     if len(_ROLLING_WINDOW) > 8:
         _ROLLING_WINDOW = _ROLLING_WINDOW[-8:]
     try:
@@ -38,7 +38,7 @@ def add_to_window(user_msg, jack_reply):
         if os.path.exists(wp):
             with open(wp, 'r', encoding='utf-8', errors='replace') as f:
                 rows = f.read().splitlines()
-        rows.append(_jw.dumps({'u':str(user_msg)[:200],'j':str(jack_reply)[:220]},ensure_ascii=False))
+        rows.append(_jw.dumps({'u':str(user_msg)[:240],'j':str(jack_reply)[:700]},ensure_ascii=False))
         if len(rows) > 8:
             rows = rows[-8:]
         tmp = wp + '.tmp'
@@ -371,7 +371,7 @@ def _talk_to_gemini_impl(prompt):
                 open("/data/data/com.termux/files/home/jack/reports/promptlog.jsonl","a").write(_plj.dumps(_pl,ensure_ascii=False)+"\n")
             except Exception:
                 pass  # JACK_TUNE_PROMPTLOG
-            _w=get_window_ctx(); _v1='JACK_TUNE_VERSATZ1'; _ws=((_w or '')[-(1300-len(prompt)):] if len(prompt)<1300 else ''); _um=(('Frueherer Verlauf (nur Kontext, NICHT beantworten):\n'+_ws+'\n\nDIMA JETZT (nur hierauf antworten): '+prompt) if _ws and '(keiner)' not in _ws else prompt)[-1500:]; _r=_scrub_out(_gq.ask_groq(system, _um))  # JACK_TUNE_WIN1
+            _w=get_window_ctx(); _v1='JACK_TUNE_VERSATZ1'; _ws=((_w or '')[-(2400-len(prompt)):] if len(prompt)<2400 else ''); _um=(('Frueherer Verlauf (nur Kontext, NICHT beantworten):\n'+_ws+'\n\nDIMA JETZT (nur hierauf antworten): '+prompt) if _ws and '(keiner)' not in _ws else prompt)[-2800:]; _r=_scrub_out(_gq.ask_groq(system, _um))  # JACK_TUNE_WIN1
             if _r.startswith("[Groq Limit]") or _r.startswith("[Groq Fehler]"):
                 return talk_to_ollama(prompt, [])  # JACK_TUNE_G2O
             try: auto_save_to_memory(prompt, _r)

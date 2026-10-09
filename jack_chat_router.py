@@ -431,13 +431,14 @@ def talk_local(text):
     _free = _re.match(
         r'^(ich habe|ich hab|ich bin|ich mag|ich liebe|meine? .+ ist|meine? .+ heisst|meine? .+ heißt)\b',
         low)
-    if _free and len(raw.split()) >= 3:
+    if _free and len(raw.split()) >= 3 and "?" not in raw and "," not in raw:  # JACK_TUNE_FAKTFILTER
         try:
             import jack_graph as _g
-            _ents = raw.strip(" .").split(None, 4)
-            _name = " ".join(_ents[2:4]).strip()[:48] if len(_ents) >= 3 else raw[len(_free.group()):].strip()[:48]
-            _wert = " ".join(_ents[4:]).strip()[:80] if len(_ents) >= 5 else "ja"
-            if _name:
+            _rs = raw.strip(" .")
+            _m2 = _re.match(r'^meine?\s+(.+?)\s+(?:ist|heisst|heißt)\s+(.+)$', _rs, _re.I)
+            _name = _m2.group(1).strip()[:48] if _m2 else ""
+            _wert = _m2.group(2).strip()[:80] if _m2 else ""
+            if _name and _wert and len(_name.split()) <= 3:
                 nid = _g.put_node("fakt", _name, _wert, "chat")
                 did = _g.put_node("person", "Dima", "owner", "chat")
                 _g.put_edge(did, "hat", nid, "chat")
