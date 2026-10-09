@@ -23,8 +23,11 @@ def parse_and_prepare(resp, PENDING_EXEC, send_keyboard):
                 
         PENDING_EXEC.clear()
         PENDING_EXEC['cmd'] = _cmd
-        _prev = _cmd if len(_cmd) < 800 else _cmd[:800] + ' ...'
-        send_keyboard('VORSCHLAG:' + chr(10) + _prev, [[('🟢 Ausführen', 'run_exec'), ('🔴 Abbrechen', 'cancel_exec')]])
+        if len(_cmd) >= 800:  # JACK_TUNE_EXECLEN: lange Befehle nie halb sichtbar bestaetigen
+            PENDING_EXEC.clear()
+            send_keyboard('BEFEHL ABGELEHNT: %d Zeichen, Vorschau waere unvollstaendig. Bitte kuerzer.' % len(_cmd), [[('🔴 Schliessen', 'cancel_exec')]])
+        else:
+            send_keyboard('VORSCHLAG:' + chr(10) + _cmd, [[('🟢 Ausführen', 'run_exec'), ('🔴 Abbrechen', 'cancel_exec')]])
         
         # Tag aus Antwort entfernen
         resp = re.sub(r'\[\[EXEC(?:UTE)?:.*?\]\]', '', resp).strip()

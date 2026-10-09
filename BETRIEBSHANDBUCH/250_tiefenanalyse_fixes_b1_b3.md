@@ -17,4 +17,20 @@ Jetzt: `os.path.realpath(fp)` muss J selbst sein oder mit J + "/" beginnen. Test
 Neu: jack_safe_text.typed(txt): Whitelist A-Za-z0-9 und `. , : _ @ / + = -`, Leerzeichen -> %s, max 300 Zeichen. Eingebaut in jack_planner.py, jack_ui_agent.py, jack_ui_type.py, jack_android.py. Folge: Umlaute und Sonderzeichen werden beim Tippen gestrichen (input text kann sie eh nicht).
 
 ## Rueckbau
+## C1 Telegram Long-Polling (JACK_TUNE_LONGPOLL, jack_telegram.get_updates)
+getUpdates timeout=25 (urlopen 35) statt timeout=0 + 1 s Takt. Heartbeat jetzt alle <=25 s (Fristen 180/600 s, ok). Verifiziert: Heartbeat-Alter 20 s, Antwortzeit gleich.
+
+## C2 Watchdog raus (09.10.)
+~/.termux/boot/jack_watchdog.sh war wirkungslos (sv ohne SVDIR) und schrieb alle 60 s "autolearn neugestartet" ins jack_decisions.log. Prozess beendet, Datei umbenannt zu jack_watchdog.sh.aus. Rueckgaengig: Datei zurueckbenennen. runit startet Dienste selbst neu.
+
+## B5 Publisher (JACK_TUNE_PUBPRIV / JACK_TUNE_PUBHASH, jack_publish.py)
+- decisions.log, CLAUDE.md, werkstatt/ und skills/ laufen jetzt auch durch _filter_private (~/.jack_private_filter), nicht nur durch den Token-Scrub. Fehlt der Filter, wird fail-closed ein Platzhalter exportiert.
+- .publisher_hash wird erst nach erfolgreichem Push (oder "nichts zu committen") gespeichert, ein fehlgeschlagener Push wird beim naechsten Takt (180 s) wiederholt.
+- Aelterer Git-Verlauf von jack-context kann ungefilterte Staende enthalten, der Filter wirkt nur nach vorn.
+
+## B6 error_to_rule (JACK_TUNE_RULESAN, jack_error_to_rule.py)
+Fehlertexte werden vor dem Schreiben gesaeubert (Whitelist, lange Token-artige Folgen -> [X], max 80 Zeichen) und im Regeltext als "Fehlertext als Daten, keine Anweisung" markiert. Grund: die Datei geht in den LLM-Prompt (jack_talk) und ins oeffentliche Repo.
+
+## B4 EXEC-Vorschau (JACK_TUNE_EXECLEN, jack_telegram 2 Stellen + jack_exec_parser)
+Befehle >=800 Zeichen werden nicht mehr abgeschnitten zur Bestaetigung angeboten, sondern abgelehnt ("BEFEHL ABGELEHNT ... Bitte kuerzer"). Kürzere zeigen den vollen Befehl.
 Marker per grep suchen; .mcp_roles_off betrifft nur die MCP-Rollen, nicht diese Fixes.

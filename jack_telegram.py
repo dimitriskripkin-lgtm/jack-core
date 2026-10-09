@@ -309,9 +309,9 @@ def handle_callback(callback_data, callback_id):
     return _jcb.handle(callback_data, callback_id)
 
 def get_updates(offset=0):
-    url = f"{API}/getUpdates?timeout=0&offset={offset}"
+    url = f"{API}/getUpdates?timeout=25&offset={offset}"  # JACK_TUNE_LONGPOLL
     try:
-        with urllib.request.urlopen(url, timeout=5) as res:
+        with urllib.request.urlopen(url, timeout=35) as res:
             return json.loads(res.read())['result']
     except Exception: return []
 
@@ -396,8 +396,11 @@ def handle(text):
             open(_pdir+'/'+_pid+'.json','w').write(_pj.dumps({'id':_pid,'problem':'Befehl aus Chat, Knopf bleibt','proposed_act':'noch_nicht','proposed_extra':_pj.dumps({'cmd':_cmd[:400]}),'status':'pending'}))
         except Exception:
             pass
-        _prev=_cmd if len(_cmd)<800 else _cmd[:800]+' ...'
-        send_keyboard('BEFEHL:'+chr(10)+_prev, [[('🟢 Ausführen','run_exec'),('🔴 Abbrechen','cancel_exec')]])
+        if len(_cmd) >= 800:  # JACK_TUNE_EXECLEN
+            PENDING_EXEC.clear()
+            send_keyboard('BEFEHL ABGELEHNT: %d Zeichen, Vorschau waere unvollstaendig. Bitte kuerzer.' % len(_cmd), [[('🔴 Schliessen','cancel_exec')]])
+        else:
+            send_keyboard('BEFEHL:'+chr(10)+_cmd, [[('🟢 Ausführen','run_exec'),('🔴 Abbrechen','cancel_exec')]])
         return None
     _t=text.lower()
     if any(w in _t for w in ['schreib eine datei','erstell eine datei','mach eine datei','schreib datei']):
@@ -1287,8 +1290,11 @@ def handle(text):
             
             PENDING_EXEC.clear()
             PENDING_EXEC['cmd'] = cmd
-            preview = cmd if len(cmd) < 800 else cmd[:800] + ' ...'
-            send_keyboard('VORSCHLAG:' + chr(10) + preview, [[(' Ausführen', 'run_exec'), (' Abbrechen', 'cancel_exec')]])
+            if len(cmd) >= 800:  # JACK_TUNE_EXECLEN
+                PENDING_EXEC.clear()
+                send_keyboard('BEFEHL ABGELEHNT: %d Zeichen, Vorschau waere unvollstaendig. Bitte kuerzer.' % len(cmd), [[(' Schliessen', 'cancel_exec')]])
+            else:
+                send_keyboard('VORSCHLAG:' + chr(10) + cmd, [[(' Ausführen', 'run_exec'), (' Abbrechen', 'cancel_exec')]])
             
             # Tag entfernen
             import re

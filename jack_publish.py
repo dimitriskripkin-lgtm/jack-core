@@ -42,7 +42,7 @@ def _copytree_scrub(src, dst):
     for fn in os.listdir(src):
         sp=os.path.join(src,fn)
         if os.path.isfile(sp) and fn.rsplit(".",1)[-1] in ("py","txt","md","log","json"):
-            try: open(os.path.join(dst,fn),"w").write(scrub(open(sp,encoding="utf-8",errors="ignore").read()))
+            try: open(os.path.join(dst,fn),"w").write(_filter_private(scrub(open(sp,encoding="utf-8",errors="ignore").read())))  # JACK_TUNE_PUBPRIV
             except Exception as _e:
                 import jack_log; jack_log.log_decision('SILENT-FAIL jack_publish', str(_e)[:120])
 
@@ -61,9 +61,9 @@ def build():
     open(f"{OUT}/context.md","w").write(text)
     _copytree_scrub(os.path.expanduser("~/jack_werkstatt"), f"{OUT}/werkstatt")
     _copytree_scrub(os.path.expanduser("~/jack_skills"), f"{OUT}/skills")
-    try: open(f"{OUT}/decisions.log","w").write(scrub(open(f"{H}/jack_decisions.log").read()))
+    try: open(f"{OUT}/decisions.log","w").write(_filter_private(scrub(open(f"{H}/jack_decisions.log").read())))  # JACK_TUNE_PUBPRIV
     except Exception: pass
-    try: open(f"{OUT}/CLAUDE.md","w").write(scrub(open(f"{H}/CLAUDE.md").read()))
+    try: open(f"{OUT}/CLAUDE.md","w").write(_filter_private(scrub(open(f"{H}/CLAUDE.md").read())))  # JACK_TUNE_PUBPRIV
     except Exception: pass
     open(f"{OUT}/module_list.txt","w").write(sh(f"ls -la {H}/*.py"))
     return text
@@ -80,9 +80,8 @@ def push():  # JACK_TUNE_CRIT002
                 _st=_os.stat(_p); _h.update(str(_st.st_mtime_ns).encode()+str(_st.st_size).encode())
         _sig=_h.hexdigest(); _old=open(_hp).read().strip() if _os.path.isfile(_hp) else ""
         if _sig==_old: return "SKIP-UNCHANGED"  # JACK_TUNE_HASH
-        open(_hp,"w").write(_sig)
     except Exception:
-        pass
+        _sig=None; _hp=None  # JACK_TUNE_PUBHASH: Hash erst nach erfolgreichem Push speichern
     build()
     import subprocess, os
     OUT = os.path.expanduser("~/jack-context")
@@ -91,9 +90,11 @@ def push():  # JACK_TUNE_CRIT002
         shell=True, capture_output=True, text=True, cwd=OUT, timeout=30
     )
     if r.returncode == 0:
+        if _sig and _hp: open(_hp,"w").write(_sig)
         import jack_log; jack_log.log_decision("PUBLISHER-PUSH", "OK")
         return "GEPUSHT"
     elif "nothing to commit" in r.stdout + r.stderr:
+        if _sig and _hp: open(_hp,"w").write(_sig)
         return "NICHTS NEU"
     else:
         import jack_log; jack_log.log_decision("PUBLISHER-FEHLER", r.stderr[:100])
