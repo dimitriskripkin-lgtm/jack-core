@@ -71,6 +71,14 @@ def reindex(max_logs=300):
                     c.execute("insert or replace into seen values(?,?)", (p, 0))
                 except Exception:
                     pass
+        try:  # JACK_TUNE_SUCHEFAKT
+            gc = sqlite3.connect(os.path.join(H, "jack_graph.db"), timeout=5)
+            c.execute("delete from docs where quelle='fakt'")
+            for nm, w in gc.execute("select name, wert from nodes where typ='fakt'"):
+                c.execute("insert into docs values(?,?,?)", ("fakt", nm, _clean("%s: %s" % (nm, w))))
+            gc.close()
+        except Exception:
+            pass
         dl = os.path.join(H, "jack_decisions.log")
         if os.path.exists(dl):
             c.execute("delete from docs where quelle='entscheidung'")

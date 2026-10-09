@@ -7,3 +7,4 @@ jack_muster.py (JACK_TUNE_MUSTER). Telegram /muster [Tage] (Standard 14, max 60)
 - Nur Vorschlag. Nichts wird gespeichert, nichts wird zum Fakt.
 - Befund 09.10. (14 Tage, 1985 Missionen): sv_restart 13x 'timeout' (offen: pruefen ob Neustart trotzdem klappt), ro_log_tail 50 % Fehler (kein Log fuer Dienste ohne log/run, siehe Kap. 251), file_create Pfad-Tabu 14x, py_replace Anker nicht gefunden 3x.
 - Tipps erweitern: _HINTS in jack_muster.py.
+- Fix 09.10. (JACK_TUNE_SVFORCE, jack_mission_runner sv_restart): die 13 'timeout'-Meldungen waren alle jack_mcp (alter Prozess beendete sich nicht innerhalb der 7 s von sv restart, 'got TERM'). Jetzt sv -w 10 force-restart (KILL nach Wartezeit). Test 09.10. 13:46: jack_mcp-Neustart sauber, Prozess nach 42877 s Laufzeit ohne Timeout ersetzt. Hinweis: MCP-Sitzung bricht beim jack_mcp-Neustart ab, danach init.sh.

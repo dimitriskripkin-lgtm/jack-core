@@ -600,7 +600,7 @@ def run_act(m):
             except Exception as e:
                 return False,"sv_restart: "+str(e)[:100],""
         try:
-            r=subprocess.run(["sv","restart",V+"/"+svc],capture_output=True,text=True,timeout=15)
+            r=subprocess.run(["sv","-w","10","force-restart",V+"/"+svc],capture_output=True,text=True,timeout=20)  # JACK_TUNE_SVFORCE
             out=(r.stdout or "")+(r.stderr or "")
             if r.returncode!=0:
                 return False,"sv_restart: rc="+str(r.returncode)+" "+out[:150],""
