@@ -1,4 +1,4 @@
-# JACK_TUNE_SUCHE: Volltextsuche (SQLite FTS5) ueber Handbuch, Arbeitsplatz, Entscheidungen, Missions-Logs. Nur lesen, kein LLM.
+# JACK_TUNE_SUCHE: Volltextsuche (Zyklus-Test) (SQLite FTS5) ueber Handbuch, Arbeitsplatz, Entscheidungen, Missions-Logs. Nur lesen, kein LLM.
 import os, re, json, sqlite3, time, glob, threading
 H = os.path.expanduser("~/jack")
 DB = os.path.join(H, "jack_suche.db")
