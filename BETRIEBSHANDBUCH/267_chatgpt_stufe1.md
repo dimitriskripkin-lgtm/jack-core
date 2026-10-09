@@ -23,5 +23,8 @@ sv_restart fuer Rolle chatgpt, nur Dienste jack_autolearn, jack_cortex, jack_foc
 ## Fehler 2a-Sperre (09.10. 19:17, behoben 19:30)
 Der erste Zusatztest (jack_focus_monitor) scheiterte an der 5-Minuten-Sperre OHNE Neustart: Das Handbuch-Gate braucht zwei Aufrufe (erst Ablehnung, dann mit extra.quittung). Meine Sperre startete schon beim ersten, abgelehnten Aufruf und blockte den zweiten. Fix: Sperre zaehlt nur Aufrufe mit nicht leerer Quittung (die tatsaechlich ausfuehrenden). Test reports/t_s2a2.py (11 Faelle). ChatGPT hat korrekt gehandelt: nicht erneut versucht, Fehler wortlich zitiert, PID-Vergleich als Beleg.
 
+## Luecke geschlossen (09.10. 19:45)
+.jack_oauth.json (Client-Secret + Token-Hashes) war ueber read_file lesbar, weil der Dateiname kein token/secret enthaelt. Jetzt in SECRET_NAMES (gilt fuer alle Rollen, auch relative Pfade). Test reports/t_secret.py.
+
 ## Offen
 Live-Test ueber echte ChatGPT-Verbindung (ein erlaubter Patch, ein verbotener exec, diag). Auswertung der Probezeit fuer gezielte Erweiterung.
