@@ -282,6 +282,19 @@ def _heartbeat_sv_check():
 
 
 
+_FEHLER_LETZT = {}
+def _lg_fehler(name, e):  # JACK_TUNE_LOOPLOG: stille Fehler in Endlosschleifen sichtbar (max 1x pro 30 min und Name)
+    try:
+        import time as _lt
+        _n = _lt.time()
+        if _n - _FEHLER_LETZT.get(name, 0) < 1800:
+            return
+        _FEHLER_LETZT[name] = _n
+        import jack_log as _ljl
+        _ljl.log_decision("LOOP-ERR " + name, repr(e)[:100])
+    except Exception:
+        pass
+
 def _adb_heal_if_needed():
     """ADB_HEAL_HOOK: wenn SSH ok und adb nicht device -> jack_adb_heal.py"""
     try:
@@ -393,40 +406,40 @@ def main():
         import jack_heartbeat; jack_heartbeat.beat("jack_waechter")
         try:
             import importlib,jack_mission_gen as _jmg; importlib.reload(_jmg); _jmg.run()
-        except Exception: pass
+        except Exception as _le9: _lg_fehler('mission_gen', _le9)
         try:
             import jack_talk_trainer as _jtt; _jtt.run()
-        except Exception: pass
+        except Exception as _le9: _lg_fehler('talk_trainer', _le9)
         try:
             import importlib,jack_code_analyzer as _jca; importlib.reload(_jca); _jca.run()
-        except Exception: pass
+        except Exception as _le9: _lg_fehler('code_analyzer', _le9)
         try:
             import importlib,jack_semantic_analyzer as _jsa; importlib.reload(_jsa); _jsa.run()
-        except Exception: pass
+        except Exception as _le9: _lg_fehler('semantic_analyzer', _le9)
         try:
             import jack_autodoc as _jad2; _jad2.run()
-        except Exception: pass
+        except Exception as _le9: _lg_fehler('autodoc', _le9)
         try:
             import importlib,jack_dep_map as _jdm; importlib.reload(_jdm); _jdm.run()
-        except Exception: pass
+        except Exception as _le9: _lg_fehler('dep_map', _le9)
         try:
             import jack_mission_prioritizer as _jmp; _jmp.run()
-        except Exception: pass
+        except Exception as _le9: _lg_fehler('mission_prioritizer', _le9)
         try:
             import importlib,jack_changelog as _jcl; importlib.reload(_jcl); _jcl.run()
-        except Exception: pass
+        except Exception as _le9: _lg_fehler('changelog', _le9)
         try:
             import jack_health_monitor as _jhm; _jhm.run()
-        except Exception: pass
+        except Exception as _le9: _lg_fehler('health_monitor', _le9)
         try:
             import jack_approval_digest as _jad; _jad.run()
-        except Exception: pass
+        except Exception as _le9: _lg_fehler('approval_digest', _le9)
         _adb_heal_if_needed()
         _heartbeat_sv_check()
         try:
             import jack_score_avg as _jsa; _jsa.tick()
-        except Exception:
-            pass
+        except Exception as _le9:
+            _lg_fehler('score_avg', _le9)
         import jack_heartbeat; jack_heartbeat.beat('jack_waechter')
         # JACK_TUNE_ROLLTICK — Kernmodule alle 1800s auf Kompilierbarkeit pruefen
         try:

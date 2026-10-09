@@ -21,5 +21,19 @@ SSH: authorized_keys unveraendert seit 09.07., zwei Schluessel (Xiaomi-lokal, Ho
 ## Titan-Heartbeat (laeuft noch)
 Dienst "titan" (run-Skript "TITAN ALPHA CORE"): alle 60 s termux-location und termux-battery-status, Senden "NODE_ALPHA|BATT|LOC-Provider" per nc unverschluesselt an 152.53.229.148:8888 ("OMEGA"). Antwort heute: HTTP 400. Kostet Akku (GPS-Abfrage jede Minute) und sendet Daten an eine externe IP. Entscheidung Dima: abschalten oder behalten.
 
+## Port-Inventur Honor (09.10. 04:20, aus dem Code, Sockets sind auf der Honor nicht lesbar)
+jack_mcp_server bindet uvicorn an 127.0.0.1:8000 (Zugang von aussen nur ueber den Cloudflare-Tunnel mit Rollen-Token), kortex_controller 127.0.0.1:5005, sshd 8022 (Schluessel). Kein Listener auf 0.0.0.0 im Live-Code gefunden.
+
+## Weitere Xiaomi-Befunde (09.10. 05:05, nur gelesen)
+- Magisk 30.7 mit Zygisk + Shamiko. Verified Boot gruen, Bootloader gesperrt (ro.boot.flash.locked=1). Build test-keys (Custom/Zertifiziert egal, ro.debuggable=0, ro.secure=1).
+- ADB ueber TCP (service.adb.tcp.port=5555), aber ro.adb.secure=1 (Anmeldung noetig). 8 autorisierte ADB-Schluessel in /data/misc/adb/adb_keys (zuletzt geaendert 07.10.). Empfehlung: in den Entwickleroptionen "USB-Debugging-Autorisierungen widerrufen" und nur die eigenen Geraete neu zulassen.
+- Bedienungshilfen aktiv: com.example.magictranslator.service.MyAccessibilityService (App translate.speech.text.translation.voicetranslator, Play-Store, seit 2022, Update 22.09.). Ein Bedienungshilfen-Dienst kann Bildschirminhalte mitlesen (Banking-/Trading-Apps liegen auf dem Geraet). Empfehlung: Dienst ausschalten oder App entfernen, JACK braucht ihn nicht (nutzt Root/ADB).
+- WLAN-IP aktuell 172.29.165.131 (DHCP), SSH-Alias xiaomi-jack loest das auf. Zeitzone Europe/Berlin.
+- bridge.py (HTTP Port 5000) und sensor_daemon.py (Juni) per cron @reboot vorgesehen, aber crond ist down, Port 5000 nicht offen = inaktiv.
+- Termux: 276 Pakete, 32 pip-Pakete, runit nur titan aktiv.
+
+## Wachposten-Idee (Skill-Vorschlag)
+Neuer Lese-Act xiaomi_ports: per SSH netstat, Alarm in Telegram, wenn ein Prozess aus {python, node, nc, cloudflared, php} auf 0.0.0.0 lauscht, der nicht auf einer Erlaubnisliste steht (Erlaubnis: sshd 8022, adbd 5555). Als Telemetrie-Erweiterung alle 5 min moeglich. Wuerde den Vorfall oben nach hoechstens 5 min melden. Bau erst nach Dima-Go.
+
 ## Lehre
 Quick-Tunnel nie auf Dienste mit Shell-Zugriff ohne Anmeldung. Regel: jeder Listener auf 0.0.0.0 braucht Token oder wird auf 127.0.0.1 gebunden. Naechster Schritt: Port-Inventur auch auf der Honor.

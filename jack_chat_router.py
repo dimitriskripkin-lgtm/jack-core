@@ -518,6 +518,12 @@ def neu_report(stunden=10):
             rep.append("Neue Fakten: "+", ".join(r[0]+"="+str(r[1])[:40] for r in rows))
     except Exception:
         pass
+    try:
+        import jack_selbstmodell as _sm  # JACK_TUNE_SELBSTMODELL
+        _s = _sm.aenderungen(stunden)
+        if _s: rep.append(_s)
+    except Exception:
+        pass
     if len(rep)==1:
         rep.append("Nichts Nennenswertes.")
     return " | ".join(rep)

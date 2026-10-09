@@ -28,6 +28,9 @@ getUpdates timeout=25 (urlopen 35) statt timeout=0 + 1 s Takt. Heartbeat jetzt a
 - .publisher_hash wird erst nach erfolgreichem Push (oder "nichts zu committen") gespeichert, ein fehlgeschlagener Push wird beim naechsten Takt (180 s) wiederholt.
 - Aelterer Git-Verlauf von jack-context kann ungefilterte Staende enthalten, der Filter wirkt nur nach vorn.
 
+## C5 Stille Fehler im Waechter (JACK_TUNE_LOOPLOG, jack_autonomous.py)
+Elf Modul-Aufrufe in der Waechter-Hauptschleife (mission_gen, talk_trainer, code_analyzer, semantic_analyzer, autodoc, dep_map, mission_prioritizer, changelog, health_monitor, approval_digest, score_avg) hatten `except Exception: pass`. Jetzt `_lg_fehler(name, e)`: Eintrag "LOOP-ERR <name>" in jack_decisions.log, hoechstens einmal pro 30 min und Modul. Auswerten: `grep LOOP-ERR ~/jack/jack_decisions.log | tail`. Waechter neu gestartet, laeuft. Weitere ~12 stille excepts in Schleifen von jack_autonomous bleiben (kleine Dateilese-Fallbacks).
+
 ## C3 jack_qwen abgeschaltet (09.10. 03:56, Dima per sv down + Datei "down")
 Dienst holte alle 300 s einen Snapshot nach qwen_snapshot.json, kein Modul liest die Datei. Zusatz: jack_qwen_client rief alle 5 min MCP mit dem alten (rotierten) Token auf = der periodische "ungueltiger Token" im Audit. Nach dem Stopp verschwunden (04:00 geprueft).
 Rueckgaengig: rm $PREFIX/var/service/jack_qwen/down; sv up $PREFIX/var/service/jack_qwen.
