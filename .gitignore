@@ -215,3 +215,7 @@ telemetry/
 .xiaomi_breaker.json
 .xiaomi_ports_state.json
 .logrot_stamp
+
+.jack_oauth.json
+.jack_oauth.json.tmp
+.oauth_off
