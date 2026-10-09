@@ -71,7 +71,7 @@ def step_input_text(p):
     time.sleep(0.3)
     _ssh('su -c "input keyevent 28 28"')
     time.sleep(0.3)
-    safe=txt.replace(' ','%s').replace('&','and').replace('?','')
+    safe=__import__('jack_safe_text').typed(txt)  # JACK_TUNE_SAFETEXT
     _ssh('su -c "input text '+safe+'"')
     time.sleep(0.3)
     return 'Eingabe: '+txt[:40]

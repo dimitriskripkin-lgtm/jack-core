@@ -55,7 +55,7 @@ def clear_and_type(text, package="com.android.chrome"):
         _ssh("su -c 'input keyevent 67'")
     time.sleep(0.2)
     # type (escape single quotes)
-    safe=text.replace("'","")
+    safe=__import__('jack_safe_text').typed(text)  # JACK_TUNE_SAFETEXT
     rc,_=_ssh("su -c \"input text '%s'\"" % safe)
     time.sleep(0.3)
     # ENTER

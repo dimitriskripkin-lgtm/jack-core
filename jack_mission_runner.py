@@ -100,7 +100,7 @@ def run_act(m):
         import os, shutil, subprocess
         HOME=os.environ.get("HOME","/data/data/com.termux/files/home")
         fp=m.get("file","").replace("~",HOME)
-        if not fp.startswith(J):
+        if not (os.path.realpath(fp)==J or os.path.realpath(fp).startswith(J+os.sep)):  # JACK_TUNE_REALPATH
             return False,"fix: Pfad-Tabu",""
         if not os.path.exists(fp):
             return False,"fix: Datei fehlt "+fp,""
@@ -168,7 +168,7 @@ def run_act(m):
         import os
         HOME=os.environ.get("HOME","/data/data/com.termux/files/home")
         fp=m.get("file","").replace("~",HOME)
-        if not fp.startswith(J):
+        if not (os.path.realpath(fp)==J or os.path.realpath(fp).startswith(J+os.sep)):  # JACK_TUNE_REALPATH
             return False,"file_create: Pfad-Tabu",""
         if os.path.exists(fp):
             return False,"file_create: Datei existiert schon, nutze sed_replace/py_replace",""
@@ -193,7 +193,7 @@ def run_act(m):
         import os, shutil, time as _t
         HOME=os.environ.get("HOME","/data/data/com.termux/files/home")
         fp=m.get("file","").replace("~",HOME)
-        if not fp.startswith(J):
+        if not (os.path.realpath(fp)==J or os.path.realpath(fp).startswith(J+os.sep)):  # JACK_TUNE_REALPATH
             return False,"file_delete: Pfad-Tabu",""
         if not os.path.exists(fp):
             return False,"file_delete: Datei existiert nicht",""
@@ -760,6 +760,13 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
     if act=="approve_proposal":
         import json as _pj, os as _po, shutil as _psh
         pid = m.get("proposal_id","")
+        try:
+            import jack_dima_sig as _dsig
+            _sig_ok = _dsig.verify(m.get("id",""), pid, m.get("dima_sig",""))
+        except Exception:
+            _sig_ok = False
+        if not _sig_ok:  # JACK_TUNE_DIMASIG
+            return False,"approve_proposal: nur mit Dima-Freigabe (Telegram /freigeben)",""
         pdir = J+"/missions/proposals/pending"
         fp = _po.path.join(pdir, pid+".json")
         if not _po.path.isfile(fp):

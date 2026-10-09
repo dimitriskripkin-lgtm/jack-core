@@ -123,7 +123,7 @@ def swipe(x1, y1, x2, y2, ms=300):
     time.sleep(0.5)
 
 def type_text(text):
-    safe = text.replace("'", "").replace('"', "").replace(" ", "%s")
+    safe = __import__("jack_safe_text").typed(text)  # JACK_TUNE_SAFETEXT
     _adb(f"input text '{safe}'")
 
 def keyevent(code):

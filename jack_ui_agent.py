@@ -22,7 +22,7 @@ def _termux_cmd(cmd,t=15):
     return ((r.stdout or '')+(r.stderr or '')).strip()[:400]
 
 def _type(text):
-    safe=text.replace(' ','%s')
+    safe=__import__('jack_safe_text').typed(text)  # JACK_TUNE_SAFETEXT
     _ssh("su -c 'input text "+safe+"'",5)
     time.sleep(0.5)
 

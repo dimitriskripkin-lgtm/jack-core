@@ -912,7 +912,7 @@ def handle(text):
         mid = "m_approve_" + _tt.strftime("%Y%m%d_%H%M%S")
         mission = {"id": mid, "act": "approve_proposal", "src": "telegram",
                    "ts": _tt.strftime("%Y-%m-%dT%H:%M:%S"), "description": "Telegram-Freigabe",
-                   "proposal_id": pid}
+                   "proposal_id": pid, "dima_sig": __import__("jack_dima_sig").sign(mid, pid)}  # JACK_TUNE_DIMASIG
         with open(_to.path.join(pending_dir, mid + ".json"), "w", encoding="utf-8") as f:
             _tj.dump(mission, f, ensure_ascii=False, indent=2)
         log_path = "/data/data/com.termux/files/home/jack/missions/logs/" + mid + ".json"

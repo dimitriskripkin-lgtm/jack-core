@@ -203,6 +203,8 @@ qwen_snapshot.json
 .jack_mcp_token
 .jack_mcp_tokens
 .mcp_roles_off
+.dima_secret
+logs/mcp_audit.jsonl
 # Arbeitsplatz lebt nur auf der Honor (JACK_TUNE_ARBEITSPLATZ)
 ARBEITSPLATZ/
 
