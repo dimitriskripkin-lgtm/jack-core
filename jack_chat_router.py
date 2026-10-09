@@ -282,6 +282,9 @@ def _tools(text):
     # JACK_TUNE_READDOOR_CALL: letzter Versuch ueber die eine Lese-Tuer (Graph->Memory->Identity),
     # bevor an das normale Gespraech uebergeben wird. Rein additiv, aendert keinen Treffer oben.
     try:
+        _t0 = (norm(text).split() or [""])[0]  # JACK_TUNE_FOLLOWUP: Folgesaetze gehen ans Gespraech, nicht an die Suche
+        if "?" not in text and _t0 not in ("wie","was","wer","wo","wann","welche","welcher","welches","hast","kennst","weisst","woher","wohin","wieviel","wieviele","wem","wen"):
+            return None
         import jack_read_door as _rd
         _stopw = {"wie","heisst","heißt","wo","wohne","wohnt","was","wer","ist","sind","meine","mein","ich","du","der","die","das","den","dem","und","oder","hast","hat","kennst","weisst","weißt"}
         _tw = [w for w in norm(text).split() if w not in _stopw and len(w)>2]
