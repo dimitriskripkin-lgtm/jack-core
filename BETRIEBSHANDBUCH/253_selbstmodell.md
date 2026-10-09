@@ -11,3 +11,6 @@ Anlass: Auf "Was hat sich in den letzten 24 Stunden an dir veraendert?" nannte J
 1. Aktueller Architekturtext aus MODULKARTE.md/ONBOARDING.md als Antwort auf "Wie bist du aufgebaut?" (statt Raten).
 2. Dienste-Status und Rollen (jack_mcp_auth) als Teil der Selbstauskunft.
 3. Telemetrie-Tagesprofil (sobald genug Daten) als "So laeuft dein Tag".
+
+## Herkunft (09.10.2026, JACK_TUNE_HERKUNFT)
+Fragen wie "Kennst du deine Geschichte", "wie bist du entstanden", "woher kommst du" liefern die Lane HERKUNFT in jack_chat_router.classify. Antwort = Datei jack_herkunft.md (verdichtete Entstehungsgeschichte ohne Privates, ohne Token). Text bei Bedarf dort pflegen. Quelle: Chronik und Handbuch 254.

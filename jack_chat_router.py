@@ -14,6 +14,8 @@ def classify(text):
     t=norm(text)
     if not t:
         return "TALK"
+    if any(k in t for k in ("deine geschichte","eigene geschichte","wie bist du entstanden","woher kommst du","deine herkunft","wie bist du gewachsen","deine entstehung")):  # JACK_TUNE_HERKUNFT
+        return "HERKUNFT"
     if any(k in t for k in ("aufgefallen","was ist neu","was hat sich veraendert","was hat sich getan","letzten stunden","letzte stunden")):
         return "NEU"
     fact=("ist zustand" in t) or t in ("status","/status") or ("kiste" in t and "steht" in t) or t.startswith("wie steht")
@@ -454,8 +456,15 @@ def talk_scrub(s):
         if len(rest)>1 and len(rest[1].strip())>12:
             return rest[1].strip()
     return raw
+def herkunft_text():  # JACK_TUNE_HERKUNFT
+    try:
+        return open(J+"/jack_herkunft.md",encoding="utf-8").read().strip()[:2500]
+    except Exception:
+        return "Meine Geschichte steht im Betriebshandbuch (Kapitel 254)."
 def dispatch(text, send_keyboard=None):
     lane=classify(text)
+    if lane=="HERKUNFT":
+        return herkunft_text()
     if lane=="NEU":
         return neu_report(10)
     if lane=="FACT":
@@ -546,6 +555,8 @@ def fact_report():
     a=["Ist-Zustand:","SSH Xiaomi: "+str(h.get("ssh_xiaomi")),"Focus "+str(t.get("focus_sleep_s"))+"s, Genesis "+str(t.get("genesis_skip"))+", Idle "+str(t.get("autolearn_idle_s"))+"s","Marks: "+", ".join((k+":ja" if v else k+":nein") for k,v in m.items()),"Beats: "+", ".join(k+" "+str(v)+"s" for k,v in hb.items()),"Git-Push: "+_g+"."]  # JACK_TUNE_GITDYN
     return chr(10).join(a)
 def dispatch_lane(lane, text):
+    if lane=="HERKUNFT":
+        return herkunft_text()
     if lane=="NEU":
         return neu_report(10)
     if lane=="FACT":
