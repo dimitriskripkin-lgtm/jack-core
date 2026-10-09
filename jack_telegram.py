@@ -243,7 +243,7 @@ def send_voice(file_path):
 def _set_cmds():  # JACK_TUNE_CMDMENU: Telegram-Befehlsmenue (die Liste beim Tippen von /)
     import json as _js, urllib.request as _ur
     _c = [("menu","Befehlszentrale mit Knoepfen"),("befehle","Schnellknoepfe: Status, Akku, SSH"),
-          ("status","Systemstatus"),("suche","Volltextsuche in Handbuch und Missionen"),("korrigiere","Fakt korrigieren: alt => neu"),("muster","Wiederkehrende Fehler und Tipps"),("vorschlaege","Offene Vorschlaege"),("freigeben","Vorschlag freigeben"),
+          ("status","Systemstatus"),("suche","Volltextsuche in Handbuch und Missionen"),("korrigiere","Fakt korrigieren: alt => neu"),("muster","Wiederkehrende Fehler und Tipps"),("skillideen","Skill-Ideen aus erledigter Arbeit"),("vorschlaege","Offene Vorschlaege"),("freigeben","Vorschlag freigeben"),
           ("missionen","Missionen Uebersicht"),("mission","Neue Mission anlegen"),("mnext","Naechste Mission"),
           ("akku","Akku Honor und Xiaomi"),("errors","Letzte Fehler"),("log","Log ansehen"),
           ("selftest","Selbsttest der Dienste"),("fakten","Gespeicherte Fakten"),("skills","Skills Liste"),
@@ -681,6 +681,13 @@ def handle(text):
             except Exception as _be:
                 send('Bugfix-Fehler: ' + str(_be)[:150])
         _bth.Thread(target=_brun, daemon=True).start()
+        return None
+    if text.strip().lower().startswith('/skillideen'):  # JACK_TUNE_SKILLIDEE
+        try:
+            import jack_skillidee as _jsi
+            send(_jsi.antwort(text.strip()[11:].strip()))
+        except Exception as _sie:
+            send('Skill-Ideen-Fehler: ' + str(_sie)[:100])
         return None
     if text.strip().lower().startswith('/muster'):  # JACK_TUNE_MUSTER
         try:
