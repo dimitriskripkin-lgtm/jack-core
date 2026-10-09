@@ -112,6 +112,11 @@ def loop():
                     _xp.check()
                 except Exception:
                     pass
+                try:
+                    import jack_logrot as _lr  # JACK_TUNE_LOGROT
+                    _lr.rotiere()
+                except Exception:
+                    pass
             except Exception as e:
                 try:
                     import jack_log
