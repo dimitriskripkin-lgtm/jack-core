@@ -356,6 +356,13 @@ if __name__ == "__main__":
     print("JACK MCP Server startet auf Port 8000 (mit Bearer-Token-Auth)...")
     print("Tools: graph_list_nodes, graph_read_node, graph_search, memory_search, memory_recent, create_mission")
     _asgi = app.streamable_http_app(host="0.0.0.0")
+    try:  # JACK_TUNE_OAUTH: Notaus = Datei .oauth_off
+        if not os.path.exists(JACK_HOME + "/.oauth_off"):
+            import jack_mcp_oauth as _jo
+            _asgi.router.routes[0:0] = _jo.build_routes()
+            print("OAuth-Routen aktiv (nur Rolle chatgpt)")
+    except Exception as _e:
+        print("OAuth aus:", _e)
     try:  # JACK_TUNE_MCPROLES: Rollen-Token; Notausschalter: Datei .mcp_roles_off
         if os.path.exists(JACK_HOME + "/.mcp_roles_off"):
             raise RuntimeError("Notausschalter .mcp_roles_off")

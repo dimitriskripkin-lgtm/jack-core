@@ -68,6 +68,12 @@ def role_for(auth_header):
     for role, tok in load_tokens().items():  # alle pruefen, keine Abkuerzung
         if hmac.compare_digest(got, tok.encode()):
             hit = role
+    if hit is None:  # JACK_TUNE_OAUTH: OAuth-Access-Token -> Rolle chatgpt
+        try:
+            import jack_mcp_oauth as _jo
+            hit = _jo.role_of_token(got.decode())
+        except Exception:
+            hit = None
     return hit
 
 def audit(role, tool, act, verdict, note=""):
@@ -138,13 +144,26 @@ class RoleMiddleware:
 
     async def _deny(self, send, code, msg):
         body = json.dumps({"error": msg}).encode()
-        await send({"type": "http.response.start", "status": code,
-                    "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode())]})
+        _h = [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode())]
+        if code == 401:  # JACK_TUNE_OAUTH: Hinweis auf Resource-Metadaten (RFC 9728)
+            try:
+                import jack_mcp_oauth as _jo
+                if not _jo.is_off():
+                    _h.append((b"www-authenticate", ('Bearer resource_metadata="%s"' % _jo.resource_metadata_url()).encode()))
+            except Exception:
+                pass
+        await send({"type": "http.response.start", "status": code, "headers": _h})
         await send({"type": "http.response.body", "body": body})
 
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http":
             return await self.app(scope, receive, send)
+        try:  # JACK_TUNE_OAUTH: nur die OAuth-Endpunkte sind ohne Bearer erreichbar
+            import jack_mcp_oauth as _jo
+            if _jo.is_public(scope.get("path", "")):
+                return await self.app(scope, receive, send)
+        except Exception:
+            pass
         hdr = {k.decode().lower(): v.decode() for k, v in scope["headers"]}
         ip = hdr.get("cf-connecting-ip") or (scope.get("client") or ["?"])[0]
         if not load_tokens():
