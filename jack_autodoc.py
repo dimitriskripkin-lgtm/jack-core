@@ -126,7 +126,8 @@ def write_staged_fix(fname, func_info, docstring):
             if not any(e.get("id")==mid for e in data):
                 data.append(entry)
                 json.dump(data, open(APPROVALS,'w'))
-        except Exception: pass
+        except Exception as e:
+            log.warning(f"jack_autodoc: Approval-Eintrag fehlgeschlagen: {type(e).__name__}")
 
         log.info(f"Staged: {func_info['name']}() in {fname}")
         return True
