@@ -6,7 +6,7 @@ staged den Fix zur Genehmigung. Max 2 Dateien / 5 Funktionen pro Lauf.
 """
 MODULE_VERSION = 1
 
-import os, sys, json, time, ast, re
+import os, sys, json, time, ast
 J = os.path.expanduser("~/jack")
 sys.path.insert(0, J)
 from jack_log import get_logger
