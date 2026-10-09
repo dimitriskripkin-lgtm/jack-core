@@ -104,5 +104,8 @@ Ordner ARBEITSPLATZ/ auf der Honor. Rufe start_hier(wer="claude"|"grok"|"gemini"
 - Logs werden nie automatisch zu Fakten. Auswertungen nur als Vorschlag.
 - Grosse Datei lesen: read_file einzeln, nie parallel (vermischt Antworten), Feld 'path' der Antwort pruefen.
 
+## 8b. Uebergabe 09.10.2026
+Neue Session: zuerst ARBEITSPLATZ/gemeinsam/uebergabe_claude_20261009.md lesen (Stand, Entscheidungen, offene Punkte). Jack-Onboarding: onboarding_jack_20261009.md. Kapitel 250-255 = Tiefenanalyse.
+
 ## 9. Session-Ende-Pflicht
 Was geändert wurde, in die Betriebshandbuch-Kapitel eintragen. Offene Punkte nennen. Neue Schalter in Abschnitt 5 aufnehmen.

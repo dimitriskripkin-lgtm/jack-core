@@ -107,6 +107,11 @@ def loop():
         if not os.path.exists(STOP):
             try:
                 _write(sample())
+                try:
+                    import jack_xiaomi_ports as _xp  # JACK_TUNE_XPORTS
+                    _xp.check()
+                except Exception:
+                    pass
             except Exception as e:
                 try:
                     import jack_log
