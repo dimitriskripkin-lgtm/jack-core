@@ -20,5 +20,8 @@ _chatgpt_write_ok lehnt relative file/path-Werte sofort ab ("file/path muss ein 
 ## Stufe 2a (09.10. 19:20, Dima-Go "C", JACK_TUNE_CHATGPT_S2A)
 sv_restart fuer Rolle chatgpt, nur Dienste jack_autolearn, jack_cortex, jack_focus_monitor, jack_missions, jack_publisher, jack_waechter (NICHT jack_mcp, NICHT jack_telegram). Hoechstens 1 Neustart je Dienst alle 5 Minuten (Speicher im MCP-Prozess, nach MCP-Neustart zurueckgesetzt). batch, reload_module, exec_proposed, git_publish bleiben zu, damit sv_restart nicht ueber batch umgangen wird. Test reports/t_s2a.py (15 Faelle), reports/t_s1b.py unveraendert gruen. Bedingung aus der Roadmap: H1, H2, H4 bestanden (+H3). Rueckstufung bei Verstoss: sv_restart wieder raus aus CHATGPT_RESTART (leere Menge) + MCP-Neustart.
 
+## Fehler 2a-Sperre (09.10. 19:17, behoben 19:30)
+Der erste Zusatztest (jack_focus_monitor) scheiterte an der 5-Minuten-Sperre OHNE Neustart: Das Handbuch-Gate braucht zwei Aufrufe (erst Ablehnung, dann mit extra.quittung). Meine Sperre startete schon beim ersten, abgelehnten Aufruf und blockte den zweiten. Fix: Sperre zaehlt nur Aufrufe mit nicht leerer Quittung (die tatsaechlich ausfuehrenden). Test reports/t_s2a2.py (11 Faelle). ChatGPT hat korrekt gehandelt: nicht erneut versucht, Fehler wortlich zitiert, PID-Vergleich als Beleg.
+
 ## Offen
 Live-Test ueber echte ChatGPT-Verbindung (ein erlaubter Patch, ein verbotener exec, diag). Auswertung der Probezeit fuer gezielte Erweiterung.

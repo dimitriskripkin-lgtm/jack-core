@@ -50,6 +50,8 @@ def _chatgpt_restart_ok(args):
     svc = d.get("service") if isinstance(d, dict) else None
     if svc not in CHATGPT_RESTART:
         return False, "Dienst nicht fuer ChatGPT freigegeben"
+    if not str(d.get("quittung", "")).strip():
+        return True, ""  # Gate lehnt Aufrufe ohne Quittung ab; Sperre zaehlt nur den ausfuehrenden Aufruf
     now = time.time()
     if now - _rs_last.get(svc, 0) < 300:
         return False, "Neustart-Sperre: 5 Minuten pro Dienst"
