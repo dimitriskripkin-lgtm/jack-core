@@ -64,7 +64,6 @@ def notify(tok, cid, text):
 
 def suche_vinted(keyword, max_preis=None, min_preis=0):
     import urllib.parse
-    import urllib.parse
     q = urllib.parse.quote(keyword)
     url = f"https://www.vinted.de/vetements?search_text={q}&order=newest_first"
     if max_preis:
