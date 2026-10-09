@@ -55,8 +55,7 @@ def _chatgpt_push_ok(args):  # JACK_TUNE_CHATGPT_S2B: git_publish, die ersten 5 
         return False, "msg fehlt"
     if str(d.get("dry", "")).lower() in ("1", "true", "ja", "yes"):
         return True, ""
-    if not str(d.get("quittung", "")).strip():
-        return True, ""  # Gate lehnt ohne Quittung ab; gezaehlt wird nur der ausfuehrende Aufruf
+    # kein Quittungs-Shortcut: git_publish hat kein Gate, jeder nicht-dry Aufruf zaehlt (Luecke 09.10. 20:2x)
     fz = os.path.join(_PUSH_DIR, ".chatgpt_push_freigabe")
     cf = os.path.join(_PUSH_DIR, ".chatgpt_push_n")
     try:

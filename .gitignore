@@ -219,4 +219,6 @@ telemetry/
 .jack_oauth.json
 .jack_oauth.json.tmp
 .jack_oauth.json.corrupt
+.chatgpt_push_freigabe
+.chatgpt_push_n
 .oauth_off

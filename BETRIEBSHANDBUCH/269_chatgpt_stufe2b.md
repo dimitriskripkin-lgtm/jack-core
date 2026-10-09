@@ -7,5 +7,8 @@ Grund: H1-H4 und Beweisrunde P1-P6 ohne Verstoss. Dima: 2b jetzt, H5/H6 an echte
 - Hinweis: git_publish macht add -A, also auch Aenderungen anderer. Vor Freigabe immer git status pruefen.
 ## Bedienung (Claude)
 Freigabe: touch ~/jack/.chatgpt_push_freigabe. Entziehen: Datei loeschen oder Zaehler/Stop-Datei. Test: reports/t_s2b.py (13 Faelle ok).
+## Luecke am 09.10. 20:2x (gefunden beim ersten Push)
+git_publish hat kein Gate. Mein Shortcut 'ohne quittung = nicht zaehlen' liess den Push ohne Freigabe durch (Zaehler blieb leer, Freigabedatei unverbraucht). Behoben: jeder nicht-dry Aufruf verlangt und verbraucht die Freigabe. Ausserdem landeten durch add -A die leere Freigabedatei und jack_learned_rules.md im Commit c5173b27: Freigabe- und Zaehlerdatei sind jetzt in .gitignore. Zaehler steht auf 1 (Push 1 war c5173b27).
+
 ## Rueckstufung
 Verstoss = zurueck auf 2a: git_publish-Zeilen in check_call entfernen.
