@@ -36,7 +36,7 @@ def post(wer, an, typ, text, re_id=0):
         typ = str(typ or "").strip().lower()
         text = str(text or "").strip()
         if not wer: return _ap._err("wer ungueltig")
-        if an != "alle" and an not in _ap.WER: return _ap._err("an: claude|grok|gemini|dima|alle")
+        if an != "alle" and an not in _ap.WER: return _ap._err("an: claude|grok|gemini|chatgpt|dima|alle")
         if typ not in TYPEN: return _ap._err("typ: " + "|".join(TYPEN))
         if not text: return _ap._err("text leer")
         if len(text) > MAXTEXT: return _ap._err("text zu lang (max %d Zeichen)" % MAXTEXT)

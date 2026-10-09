@@ -14,7 +14,7 @@ J = os.environ.get("JACK_HOME", "/data/data/com.termux/files/home/jack")
 TOKFILE = os.path.join(J, ".jack_mcp_tokens")
 LEGACY = os.path.join(J, ".jack_mcp_token")
 AUDIT = os.path.join(J, "logs", "mcp_audit.jsonl")
-ROLES = ("claude", "nachtlauf", "gemini", "grok")
+ROLES = ("claude", "nachtlauf", "gemini", "grok", "chatgpt")  # JACK_TUNE_CHATGPT
 
 READ_ACTS_PREFIX = ("ro_",)
 READ_ACTS = {"diag", "file_exists", "compile_ok", "sv_ok"}
@@ -24,11 +24,13 @@ NIGHT_DENY = {"sv_restart", "reload_module", "git_publish", "file_delete", "batc
 CORE_FILES = ("jack_acts.py", "jack_mission_runner.py", "jack_mcp_server.py",
               "jack_handbuch_gate.py", "jack_kanal.py", "jack_arbeitsplatz.py", "jack_mcp_auth.py")
 WER_OK = {"claude": {"claude"}, "nachtlauf": {"claude"}, "gemini": {"gemini"},
-          "grok": {"grok"}, "legacy": None}
+          "grok": {"grok"}, "chatgpt": {"chatgpt"}, "legacy": None}
 
 SECRET_WORDS = ("token", "secret", "credential", "passw")  # JACK_TUNE_SECRETBLOCK
 SECRET_NAMES = {"config.ini", ".netrc", ".env", ".git-credentials"}
 FULL_ROLES = ("claude", "legacy")
+# JACK_TUNE_CHATGPT: persoenliche Fakten (Graph/Gedaechtnis) bleiben fuer ChatGPT zu, bis Dima es freigibt
+CHATGPT_DENY = {"graph_list_nodes", "graph_read_node", "graph_search", "graph_list_edges", "memory_search", "memory_recent"}
 
 _cache = {"t": 0.0, "m": {}}
 _fails = {}
@@ -88,6 +90,8 @@ def _path_check(role, name, args):
     bn = os.path.basename(full).lower()
     if name == "read_file" and (bn in SECRET_NAMES or any(w in bn for w in SECRET_WORDS) or "/.ssh/" in full):
         return False, "Geheimnis-Datei gesperrt"
+    if role == "chatgpt" and name == "read_file" and bn.endswith((".db", ".sqlite", ".sqlite3")):
+        return False, "Datenbank-Datei fuer diese Rolle gesperrt"
     if role not in FULL_ROLES:
         jr = os.path.realpath(J)
         if not (full == jr or full.startswith(jr + os.sep)):
@@ -101,6 +105,8 @@ def check_call(role, name, args):
         return False, why
     if role in ("legacy", "claude") and name != "create_mission":
         return True, ""
+    if role == "chatgpt" and name in CHATGPT_DENY:
+        return False, "persoenliche Fakten fuer diese Rolle gesperrt"
     wer_ok = WER_OK.get(role)
     if isinstance(args, dict) and "wer" in args and wer_ok is not None:
         if str(args.get("wer", "")).lower() not in wer_ok:
@@ -110,7 +116,7 @@ def check_call(role, name, args):
     act = str((args or {}).get("act", ""))
     if role in ("legacy", "claude"):
         return True, ""
-    if role in ("grok", "gemini"):
+    if role in ("grok", "gemini", "chatgpt"):
         if act in READ_ACTS or act.startswith(READ_ACTS_PREFIX):
             return True, ""
         return False, "Rolle darf nur lesende Acts"

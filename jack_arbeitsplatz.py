@@ -6,7 +6,7 @@ import os, re, json, time, shutil
 
 J = os.environ.get("JACK_HB_HOME", "/data/data/com.termux/files/home/jack")
 AP = J + "/ARBEITSPLATZ"
-WER = ("claude", "grok", "gemini", "dima")
+WER = ("claude", "grok", "gemini", "chatgpt", "dima")  # JACK_TUNE_CHATGPT
 OKNAME = re.compile(r"^[A-Za-z0-9_.-]{1,60}\.(md|jsonl|json|txt)$")
 OKDIR = re.compile(r"^[A-Za-z0-9_-]{1,40}$")
 MAXCALL = 8000
