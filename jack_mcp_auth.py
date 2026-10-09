@@ -53,7 +53,9 @@ def _chatgpt_write_ok(args):
         return False, "Zieldatei fehlt"
     jr = os.path.realpath(J)
     for v in vals:
-        full = os.path.realpath(str(v) if str(v).startswith("/") else os.path.join(J, str(v)))
+        if not isinstance(v, str) or not v.startswith("/"):  # Vorschlag ChatGPT (Kanal 30): Runner loest relative Pfade falsch auf
+            return False, "file/path muss ein absoluter Pfad sein"
+        full = os.path.realpath(v)
         low = full.lower()
         if not full.startswith(jr + os.sep):
             return False, "nur JACK_HOME"

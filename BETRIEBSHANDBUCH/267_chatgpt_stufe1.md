@@ -14,5 +14,8 @@ Protokoll: ARBEITSPLATZ/gemeinsam/zusammenarbeit_claude_chatgpt.md (Besitzer/Pru
 ## Erster Live-Test (09.10. 18:51)
 diag ok, exec_proposed korrekt abgelehnt ("Act nur ueber Vier-Augen"). file_create scheiterte mit "Pfad-Tabu": Runner will absoluten Pfad im Feld file (relative Pfade loest er vom Arbeitsverzeichnis auf). Kein Rechtefehler. Protokoll um Abschnitt "Pfade bei Missions" ergaenzt.
 
+## Pfadpruefung (Vorschlag ChatGPT, Kanal 30, umgesetzt 19:10)
+_chatgpt_write_ok lehnt relative file/path-Werte sofort ab ("file/path muss ein absoluter Pfad sein"). Gilt fuer file_create und py_replace. Test reports/t_s1b.py. ChatGPT hat den Kern NICHT selbst geaendert, sondern per Kanal vorgeschlagen (Huerde H3 bestanden). Die Blockade bei Aufgabe 1 (zweiter Durchlauf) lag auf OpenAI-Seite, am Server kamen keine Aufrufe an.
+
 ## Offen
 Live-Test ueber echte ChatGPT-Verbindung (ein erlaubter Patch, ein verbotener exec, diag). Auswertung der Probezeit fuer gezielte Erweiterung.
