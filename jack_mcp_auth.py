@@ -34,7 +34,7 @@ CHATGPT_DENY = {"graph_list_nodes", "graph_read_node", "graph_search", "graph_li
 
 # JACK_TUNE_CHATGPT_S1: Stufe 1 = Schreiben (py_replace/file_create) in JACK_HOME, nie im Kern, nie Shell/Restart/Push
 CHATGPT_WRITE_ACTS = {"py_replace", "file_create"}
-CHATGPT_NOWRITE = tuple(CORE_FILES) + ("jack_mcp_oauth.py", "jack_exec.py", "jack_xiaomi.py", "jack_xibreaker.py",
+CHATGPT_NOWRITE = tuple(CORE_FILES) + ("jack_mcp_oauth.py","jack_honor_diag.py", "jack_exec.py", "jack_xiaomi.py", "jack_xibreaker.py",
     "jack_telegram.py", "jack_publisher.py", "jack_waechter.py", "jack_logrot.py", ".gitignore", ".oauth_off",
     ".mcp_roles_off", ".jack_oauth", ".jack_mcp", "config.ini", "/.ssh", "/.git/", "/missions/", "/Attic/")
 

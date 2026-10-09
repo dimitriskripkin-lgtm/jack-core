@@ -115,8 +115,16 @@ def aufnehmen(sekunden=10):
             frueh_gestoppt = True
             break
 
-    subprocess.run(["termux-microphone-record", "-q"],
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        stop = subprocess.run(["termux-microphone-record", "-q"],
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                              timeout=5)
+        if stop.returncode != 0:
+            log_phase("WARNUNG: Mikrofon-Stopp fehlgeschlagen")
+            return False
+    except (subprocess.TimeoutExpired, OSError) as e:
+        log_phase("WARNUNG: Mikrofon-Stopp unbestaetigt: " + type(e).__name__)
+        return False
     time.sleep(0.5)
 
     size = os.path.getsize(REC) if os.path.exists(REC) else 0

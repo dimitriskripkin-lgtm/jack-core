@@ -139,7 +139,8 @@ def run():
     try:
         import jack_queue_gate
         if not jack_queue_gate.allow(): return 0
-    except Exception: pass
+    except Exception as e:
+        log.warning(f"jack_autodoc: Queue-Gate-Pruefung fehlgeschlagen: {type(e).__name__}")
     state = load_state()
     done = state.get("done", {})
     files_done = 0
