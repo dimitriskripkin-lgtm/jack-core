@@ -212,3 +212,5 @@ service/
 skills_try/
 Attic/
 telemetry/
+.xiaomi_breaker.json
+.xiaomi_ports_state.json

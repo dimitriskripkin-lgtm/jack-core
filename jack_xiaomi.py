@@ -95,6 +95,10 @@ _BR = {"fails": 0, "until": 0.0}  # JACK_TUNE_XIBREAKER
 
 def _br_note(verbindung_ok):
     import time as _tm
+    try:
+        import jack_xibreaker as _xb; _xb.note(verbindung_ok)  # JACK_TUNE_XIBREAKER2
+    except Exception:
+        pass
     if verbindung_ok:
         _BR["fails"] = 0
         return
@@ -122,6 +126,12 @@ def run_shell(cmd, as_root=True, timeout=15):
     import time as _tm2
     if _tm2.time() < _BR["until"]:
         return {"success": False, "stdout": "", "stderr": "Xiaomi weg (Schutz 30 s)", "returncode": -2}
+    try:
+        import jack_xibreaker as _xb2
+        if _xb2.wait() > 0:  # JACK_TUNE_XIBREAKER2
+            return {"success": False, "stdout": "", "stderr": "Xiaomi weg (Schutz 30 s)", "returncode": -2}
+    except Exception:
+        pass
     ip = _quick_ip() or _get_xiaomi_ip()  # JACK_TUNE_XIQUICK
     full_cmd = cmd
     if as_root and not cmd.startswith("su "):

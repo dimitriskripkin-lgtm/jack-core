@@ -74,6 +74,14 @@ def run(cmd, timeout=120):
             import jack_log; jack_log.log_decision('UNLOCK', _us, cmd[:60])
         except Exception:
             pass
+    _xi = ('xiaomi-jack' in cmd) or ('-p 8022' in cmd)  # JACK_TUNE_XIBREAKER2
+    if _xi:
+        try:
+            import jack_xibreaker as _xb
+            if _xb.wait() > 0:
+                return 'rc=255' + chr(10) + 'Xiaomi weg (gemeinsamer Schutz, 30 s)'
+        except Exception:
+            pass
     try:
         r = subprocess.run(['bash','-lc',cmd], capture_output=True,
                            text=True, timeout=timeout,
@@ -81,6 +89,11 @@ def run(cmd, timeout=120):
         out = (r.stdout or '') + (r.stderr or '')
         out = out.strip() or '(kein Output)'
         rc = r.returncode
+        if _xi:
+            try:
+                import jack_xibreaker as _xb3; _xb3.note(rc != 255)
+            except Exception:
+                pass
         try:
             import jack_observer
             obs_ok, errs = jack_observer.check_output(r.stdout or '', r.stderr or '')
@@ -102,6 +115,11 @@ def run(cmd, timeout=120):
             pass
         return 'rc=' + str(rc) + chr(10) + out
     except subprocess.TimeoutExpired:
+        if _xi:
+            try:
+                import jack_xibreaker as _xb4; _xb4.note(False)
+            except Exception:
+                pass
         return 'TIMEOUT nach ' + str(timeout) + 's'
     except Exception as e:
         return 'Fehler: ' + str(e)[:200]
