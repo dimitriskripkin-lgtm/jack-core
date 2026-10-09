@@ -38,6 +38,24 @@ CHATGPT_NOWRITE = tuple(CORE_FILES) + ("jack_mcp_oauth.py", "jack_exec.py", "jac
     "jack_telegram.py", "jack_publisher.py", "jack_waechter.py", "jack_logrot.py", ".gitignore", ".oauth_off",
     ".mcp_roles_off", ".jack_oauth", ".jack_mcp", "config.ini", "/.ssh", "/.git/", "/missions/", "/Attic/")
 
+# JACK_TUNE_CHATGPT_S2A: sv_restart nur fuer diese Dienste, hoechstens 1x je Dienst alle 5 Minuten
+CHATGPT_RESTART = {"jack_autolearn", "jack_cortex", "jack_focus_monitor", "jack_missions", "jack_publisher", "jack_waechter"}
+_rs_last = {}
+
+def _chatgpt_restart_ok(args):
+    try:
+        d = json.loads(str((args or {}).get("extra", "")))
+    except Exception:
+        return False, "extra kein JSON"
+    svc = d.get("service") if isinstance(d, dict) else None
+    if svc not in CHATGPT_RESTART:
+        return False, "Dienst nicht fuer ChatGPT freigegeben"
+    now = time.time()
+    if now - _rs_last.get(svc, 0) < 300:
+        return False, "Neustart-Sperre: 5 Minuten pro Dienst"
+    _rs_last[svc] = now
+    return True, ""
+
 def _chatgpt_write_ok(args):
     ex = str((args or {}).get("extra", ""))
     if ".." in ex:
@@ -158,6 +176,8 @@ def check_call(role, name, args):
             return True, ""
         if act in CHATGPT_WRITE_ACTS:
             return _chatgpt_write_ok(args)
+        if act == "sv_restart":  # JACK_TUNE_CHATGPT_S2A
+            return _chatgpt_restart_ok(args)
         return False, "Act nur ueber Vier-Augen (Claude)"
     if role in ("grok", "gemini"):
         if act in READ_ACTS or act.startswith(READ_ACTS_PREFIX):
