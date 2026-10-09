@@ -79,8 +79,20 @@ def aufnehmen(sekunden=10):
         except Exception: pass
 
     log_phase("Starte Aufnahme (max " + str(sekunden) + "s, stoppt bei Stille)... Sprich JETZT!")
-    subprocess.run(["termux-microphone-record", "-f", REC, "-e", "aac",
-                    "-r", "16000", "-l", str(sekunden)], capture_output=True)
+    try:
+        start = subprocess.run(["termux-microphone-record", "-f", REC, "-e", "aac",
+                                "-r", "16000", "-l", str(sekunden)],
+                               capture_output=True, timeout=8)
+        if start.returncode != 0:
+            raise RuntimeError("Mikrofon-Start fehlgeschlagen")
+    except (subprocess.TimeoutExpired, OSError, RuntimeError) as e:
+        log_phase("WARNUNG: Mikrofon-Start: " + type(e).__name__)
+        try:
+            subprocess.run(["termux-microphone-record", "-q"],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=5)
+        except (subprocess.TimeoutExpired, OSError) as stop_error:
+            log_phase("WARNUNG: Mikrofon-Stopp unbestaetigt: " + type(stop_error).__name__)
+        return False
 
     t0 = time.time()
     frueh_gestoppt = False
