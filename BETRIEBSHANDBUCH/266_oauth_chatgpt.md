@@ -19,5 +19,8 @@ ChatGPT-Connectoren verlangen OAuth (Authorization Code + PKCE), ein statischer 
 ## Getestet
 Sandbox 24/24 (falscher Redirect, http-Redirect, falsche PIN, 3-Fehler-Sperre, falscher Verifier, Code-Wiederverwendung, Refresh-Rotation, Dateirechte, kein Klartext-Token, drop, Notaus). Live: ohne Token 401+Metadaten, evil-Redirect 400, uebrige Pfade 401.
 
+## Fehler 09.10. 18:19 (behoben)
+ChatGPT registriert sich mit client_secret_post. Erste Version loeschte beim Registrieren das Client-Secret, der Token-Tausch scheiterte mit invalid_client (kein gespeichertes Secret). Fix: Secret bleibt gespeichert (Datei chmod 600, gitignore). Test vorher nur mit auth_method none, jetzt Fall client_secret_post abgedeckt. Der Server loggt keine Zugriffe (uvicorn log_level warning), Diagnose lief ueber Audit-Log + Nachstellen in der Sandbox.
+
 ## Offen
 Echter Durchlauf mit ChatGPT steht aus (Dimas Test). Issuer-URL hat Schrägstrich am Ende (SDK-Normalisierung), falls ChatGPT mault. Auth-Rate-Limit pro IP fehlt (global genuegt vorerst).

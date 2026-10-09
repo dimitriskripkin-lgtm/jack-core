@@ -153,8 +153,7 @@ def build_provider():
                     raise RegistrationError("invalid_redirect_uri", "redirect_uri nicht erlaubt")
                 if len(d["clients"]) >= MAX_CLIENTS or not _rl(d, "reg"):
                     raise RegistrationError("invalid_client_metadata", "Limit erreicht")
-                if info.client_secret:
-                    info.client_secret = None
+                # JACK_TUNE_OAUTH2: Secret bleibt gespeichert (SDK vergleicht es direkt), Datei chmod 600 + gitignore
                 d["clients"][info.client_id] = json.loads(info.model_dump_json())
                 _save(d)
                 _audit("client registriert")
