@@ -27,7 +27,7 @@ WER_OK = {"claude": {"claude"}, "nachtlauf": {"claude"}, "gemini": {"gemini"},
           "grok": {"grok"}, "chatgpt": {"chatgpt"}, "legacy": None}
 
 SECRET_WORDS = ("token", "secret", "credential", "passw")  # JACK_TUNE_SECRETBLOCK
-SECRET_NAMES = {"config.ini", ".netrc", ".env", ".git-credentials", ".jack_oauth.json", ".jack_oauth.json.tmp", ".jack_mcp_tokens", ".jack_mcp_token"}  # JACK_TUNE_OAUTH: OAuth-Zustand ist Geheimnis
+SECRET_NAMES = {"config.ini", ".netrc", ".env", ".git-credentials", ".jack_oauth.json", ".jack_oauth.json.tmp",".jack_oauth.json.corrupt", ".jack_mcp_tokens", ".jack_mcp_token"}  # JACK_TUNE_OAUTH: OAuth-Zustand ist Geheimnis
 FULL_ROLES = ("claude", "legacy")
 # JACK_TUNE_CHATGPT: persoenliche Fakten (Graph/Gedaechtnis) bleiben fuer ChatGPT zu, bis Dima es freigibt
 CHATGPT_DENY = {"graph_list_nodes", "graph_read_node", "graph_search", "graph_list_edges", "memory_search", "memory_recent"}

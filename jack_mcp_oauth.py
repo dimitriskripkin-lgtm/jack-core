@@ -38,11 +38,28 @@ def _load():
             d = json.load(open(STATE))
             for k, v in _empty().items():
                 d.setdefault(k, v)
-        except Exception:
+        except FileNotFoundError:
+            d = _empty()
+            m = None
+        except Exception as e:
+            # JACK_TUNE_OAUTH3: beschaedigter Zustand wird einmalig gesichert statt still ueberschrieben
+            _keep_bad(type(e).__name__)
             d = _empty()
             m = None
         _cache.update(m=m, d=d)
         return d
+
+
+def _keep_bad(why):
+    bak = STATE + ".corrupt"
+    try:
+        if os.path.exists(STATE) and not os.path.exists(bak):
+            import shutil
+            shutil.copy2(STATE, bak)
+            os.chmod(bak, 0o600)
+        print("jack_mcp_oauth: Zustandsdatei unlesbar (%s), Kopie gesichert" % why, flush=True)
+    except Exception:
+        pass
 
 
 def _save(d):
@@ -239,6 +256,33 @@ _HDR = {"Cache-Control": "no-store", "X-Frame-Options": "DENY",
         "Content-Security-Policy": "frame-ancestors 'none'", "Referrer-Policy": "no-referrer"}
 
 
+_ipc = {}
+
+
+def _ipguard(app, name, n, w):
+    # JACK_TUNE_OAUTH3: Limit pro Client-IP vor dem SDK, damit ein Fremder die globalen Limits nicht leerschiesst
+    async def guarded(scope, receive, send):
+        if scope["type"] == "http":
+            h = dict(scope.get("headers") or [])
+            ip = (h.get(b"cf-connecting-ip") or b"").decode()[:64] or str((scope.get("client") or ("?",))[0])
+            now = time.time()
+            with _lock:
+                L = [t for t in _ipc.get((name, ip), []) if now - t < w]
+                ok = len(L) < n
+                if ok:
+                    L.append(now)
+                _ipc[(name, ip)] = L
+                if len(_ipc) > 2000:
+                    _ipc.clear()
+            if not ok:
+                await send({"type": "http.response.start", "status": 429,
+                            "headers": [(b"content-type", b"application/json"), (b"retry-after", b"3600")]})
+                await send({"type": "http.response.body", "body": b'{"error":"too_many_requests"}'})
+                return
+        await app(scope, receive, send)
+    return guarded
+
+
 def build_routes():
     from starlette.routing import Route
     from starlette.responses import HTMLResponse, RedirectResponse
@@ -297,6 +341,11 @@ def build_routes():
         revocation_options=RevocationOptions(enabled=False))
     routes += create_protected_resource_routes(AnyHttpUrl(BASE + "/mcp"), [AnyHttpUrl(BASE)],
                                                scopes_supported=[SCOPE], resource_name="JACK")
+    for r in routes:
+        if getattr(r, "path", "") == "/register":
+            r.app = _ipguard(r.app, "reg", 3, 3600)
+        elif getattr(r, "path", "") == "/authorize":
+            r.app = _ipguard(r.app, "auth", 10, 3600)
     routes.append(Route("/oauth/consent", consent, methods=["GET", "POST"]))
     return routes
 

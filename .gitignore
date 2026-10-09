@@ -218,4 +218,5 @@ telemetry/
 
 .jack_oauth.json
 .jack_oauth.json.tmp
+.jack_oauth.json.corrupt
 .oauth_off
