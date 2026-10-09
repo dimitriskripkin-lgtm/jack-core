@@ -1209,7 +1209,7 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
             if not _st:
                 _gp_audit(True,"nichts"); return True,"git_publish: nichts zu tun","keine Aenderungen"
             _BAD=_re.compile(r"(^|/)(config\.ini|\.ssh|\.env|id_rsa|id_ed25519)|token|secret|passw|\.(db|sqlite|key|pem)$|^(service|Attic|skills_try|ARBEITSPLATZ)/",_re.I)
-            _PATG=_re.compile(r"(gh"+"p_|github"+"_pat_|sk-[A-Za-z0-9]{20}|AIza[0-9A-Za-z_-]{20}|Bearer [A-Za-z0-9._-]{20})")
+            _PATG=_re.compile(r"(gh"+"p_|github"+"_pat_|sk-[A-Za-z0-9]{20}|AIza[0-9A-Za-z_-]{20}|Bearer [A-Za-z0-9._-]{20}|[0-9]{8,10}:AA[A-Za-z0-9_-]{30,}|gh[osu]_[A-Za-z0-9]{20})")  # JACK_TUNE_SCAN7
             _bad=[x for x in _st if _BAD.search(x)]
             _hits=[]
             for _f in _st:
@@ -1250,7 +1250,7 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
             _s=_re.sub(r"(?i)(bearer\s+)[A-Za-z0-9._-]{16,}",r"\1[GEHEIM]",_s)
             _s=_re.sub(r"(?i)((?:token|password|passwd|secret|api_?key)\s*[=:]\s*)\S{6,}",r"\1[GEHEIM]",_s)
             return _s
-        _PAT=_re.compile(r"(gh"+"p_|github"+"_pat_|sk-[A-Za-z0-9]{20}|AIza[0-9A-Za-z_-]{20}|Bearer [A-Za-z0-9._-]{20})")
+        _PAT=_re.compile(r"(gh"+"p_|github"+"_pat_|sk-[A-Za-z0-9]{20}|AIza[0-9A-Za-z_-]{20}|Bearer [A-Za-z0-9._-]{20}|[0-9]{8,10}:AA[A-Za-z0-9_-]{30,}|gh[osu]_[A-Za-z0-9]{20})")  # JACK_TUNE_SCAN7
         try:
             if act=="ro_log_tail":
                 _svc=str(m.get("service") or "jack_telegram")

@@ -28,6 +28,15 @@ getUpdates timeout=25 (urlopen 35) statt timeout=0 + 1 s Takt. Heartbeat jetzt a
 - .publisher_hash wird erst nach erfolgreichem Push (oder "nichts zu committen") gespeichert, ein fehlgeschlagener Push wird beim naechsten Takt (180 s) wiederholt.
 - Aelterer Git-Verlauf von jack-context kann ungefilterte Staende enthalten, der Filter wirkt nur nach vorn.
 
+## B7 Scanner (JACK_TUNE_SCAN7, jack_mission_runner.py git_publish + ro_scan)
+Muster erweitert um Telegram-Bot-Token (Zahl:AA...) und gh[osu]_-Tokens. Test mit Fake-Muster: ro_scan "TREFFER", danach sauber.
+
+## B8 Prioritizer (JACK_TUNE_PRIOATOM, jack_mission_prioritizer.py)
+Schrieb jede pending-Datei zurueck, auch wenn der Runner sie schon abgearbeitet hatte (Mission wurde wiederbelebt, Doppelausfuehrung moeglich). Jetzt: nur bei geaenderter Prio, nur wenn Datei noch existiert, atomar per .tmp + os.replace.
+
+## B9 'jack autonom:'-Praefix (bewusst unveraendert)
+jack_approval.check_approval gibt den Praefix nur innerhalb der Sandbox (~/jack_werkstatt, /data/local/tmp) frei, andere Pfade bleiben gesperrt. Risiko gering, akzeptiert.
+
 ## B6 error_to_rule (JACK_TUNE_RULESAN, jack_error_to_rule.py)
 Fehlertexte werden vor dem Schreiben gesaeubert (Whitelist, lange Token-artige Folgen -> [X], max 80 Zeichen) und im Regeltext als "Fehlertext als Daten, keine Anweisung" markiert. Grund: die Datei geht in den LLM-Prompt (jack_talk) und ins oeffentliche Repo.
 

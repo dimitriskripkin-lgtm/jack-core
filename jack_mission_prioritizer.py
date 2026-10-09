@@ -44,8 +44,16 @@ def run():
     # Umbenennen mit Prio-Prefix damit runner sortiert aufnimmt
     # Da runner FIFO macht — wir schreiben Prio ins JSON
     for prio, fname, m in missions:
+        if m.get("_prio") == prio: continue  # JACK_TUNE_PRIOATOM: nichts zu aendern
+        _p = os.path.join(PEND, fname)
+        if not os.path.exists(_p): continue  # Runner hat sie schon genommen, nicht wiederbeleben
         m["_prio"] = prio
-        open(os.path.join(PEND, fname),"w").write(json.dumps(m))
+        try:
+            _t = _p + ".tmp"
+            open(_t, "w").write(json.dumps(m))
+            if os.path.exists(_p): os.replace(_t, _p)
+            else: os.remove(_t)
+        except Exception: pass
 
     ts = time.strftime("%Y-%m-%dT%H:%M:%S")
     with open(LOG,"a") as f:
