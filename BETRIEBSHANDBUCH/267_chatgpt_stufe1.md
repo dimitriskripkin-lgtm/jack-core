@@ -11,5 +11,8 @@ Stand 09.10.2026, Probezeit. Freigabe durch Dima (Option A).
 ## Zusammenarbeit
 Protokoll: ARBEITSPLATZ/gemeinsam/zusammenarbeit_claude_chatgpt.md (Besitzer/Pruefer, Review-Format, Bericht, Notbremse, Auswertung nach Probezeit).
 
+## Erster Live-Test (09.10. 18:51)
+diag ok, exec_proposed korrekt abgelehnt ("Act nur ueber Vier-Augen"). file_create scheiterte mit "Pfad-Tabu": Runner will absoluten Pfad im Feld file (relative Pfade loest er vom Arbeitsverzeichnis auf). Kein Rechtefehler. Protokoll um Abschnitt "Pfade bei Missions" ergaenzt.
+
 ## Offen
 Live-Test ueber echte ChatGPT-Verbindung (ein erlaubter Patch, ein verbotener exec, diag). Auswertung der Probezeit fuer gezielte Erweiterung.
