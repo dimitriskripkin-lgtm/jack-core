@@ -31,6 +31,14 @@ getUpdates timeout=25 (urlopen 35) statt timeout=0 + 1 s Takt. Heartbeat jetzt a
 ## C5 Stille Fehler im Waechter (JACK_TUNE_LOOPLOG, jack_autonomous.py)
 Elf Modul-Aufrufe in der Waechter-Hauptschleife (mission_gen, talk_trainer, code_analyzer, semantic_analyzer, autodoc, dep_map, mission_prioritizer, changelog, health_monitor, approval_digest, score_avg) hatten `except Exception: pass`. Jetzt `_lg_fehler(name, e)`: Eintrag "LOOP-ERR <name>" in jack_decisions.log, hoechstens einmal pro 30 min und Modul. Auswerten: `grep LOOP-ERR ~/jack/jack_decisions.log | tail`. Waechter neu gestartet, laeuft. Weitere ~12 stille excepts in Schleifen von jack_autonomous bleiben (kleine Dateilese-Fallbacks).
 
+## C6 Nachtarbeit Block 3 (09.10. 06:10-06:25) - Befunde, nichts kaputt
+- Dateirechte Honor: .jack_secrets, .jack_private_filter, .jack_mcp_tokens, .jack_mcp_token, config.ini alle 600; .cloudflared und .termux/boot 700; keine Geheimnisdatei fuer andere lesbar. (.ssh nicht geprueft: Runner sperrt den Pfad bewusst.) Xiaomi: .ssh 700, keine offene Schluesseldatei, keine lesbaren Geheimnisdateien.
+- .dima_secret wurde vorab vom Modul angelegt (0600, 64 Byte), damit sie nicht vor dem ersten /freigeben von jemand anderem erzeugt werden kann.
+- Xiaomi Load 3,5: Artefakt von vier dauerhaft schlafenden Kernel-Threads (D-Zustand, Qualcomm normal), echter Druck (PSI) ~0.
+- Akku-Wache existiert schon (Waechter, JACK_TUNE_AUTOBAT/LADEALARM/LADETON): <40 Prozent eine Meldung/6 h, <20 Prozent alle 10 min plus Ton, Lerner pausiert <30 Prozent. Honor-Akku 06:08 nur 45 Prozent und faellt 5-7 Prozent/h ohne Ladegeraet.
+- Gruppe D Gedaechtnis: jack_memory.db 32 MB, memory 10.506 Zeilen (aelteste 13.07.), ingested_context 7.006, memory_fts 19.947. jack_memory_pruning (aufgerufen vom autolearn) sollte Eintraege >30 Tage loeschen, aelteste Zeile ist aber 88 Tage alt: Pruning loescht praktisch nichts (parent_id gesetzt oder laeuft nicht). Kein Datenverlust, aber Wachstum offen. Groessen sonst: waechter.log 18 MB (ohne Rotation, Schreiber nicht im Python-Code), missions/logs 52 MB (1.874 Dateien), Platte 266 GB frei. Kein akutes Problem.
+- Nachtlauf 03:00: bis 06:11 kein nachtlauf-Audit, Morgenbericht alt. Dima muss die Routine pruefen.
+
 ## C3 jack_qwen abgeschaltet (09.10. 03:56, Dima per sv down + Datei "down")
 Dienst holte alle 300 s einen Snapshot nach qwen_snapshot.json, kein Modul liest die Datei. Zusatz: jack_qwen_client rief alle 5 min MCP mit dem alten (rotierten) Token auf = der periodische "ungueltiger Token" im Audit. Nach dem Stopp verschwunden (04:00 geprueft).
 Rueckgaengig: rm $PREFIX/var/service/jack_qwen/down; sv up $PREFIX/var/service/jack_qwen.
