@@ -29,9 +29,9 @@ def _git_status():
     out = {"branch": None, "lokal": None, "remote": None, "synchron": None}
     try:
         out["branch"] = subprocess.check_output(
-            ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=JACK_DIR, text=True).strip()
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=JACK_DIR, text=True, timeout=10).strip()
         out["lokal"] = subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=JACK_DIR, text=True).strip()[:7]
+            ["git", "rev-parse", "HEAD"], cwd=JACK_DIR, text=True, timeout=10).strip()[:7]
         info = subprocess.check_output(
             ["git", "ls-remote", "origin", "master"], cwd=JACK_DIR,
             text=True, timeout=15).split()

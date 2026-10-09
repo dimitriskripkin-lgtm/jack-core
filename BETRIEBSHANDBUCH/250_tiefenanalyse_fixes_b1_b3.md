@@ -28,6 +28,14 @@ getUpdates timeout=25 (urlopen 35) statt timeout=0 + 1 s Takt. Heartbeat jetzt a
 - .publisher_hash wird erst nach erfolgreichem Push (oder "nichts zu committen") gespeichert, ein fehlgeschlagener Push wird beim naechsten Takt (180 s) wiederholt.
 - Aelterer Git-Verlauf von jack-context kann ungefilterte Staende enthalten, der Filter wirkt nur nach vorn.
 
+## C3 jack_qwen abgeschaltet (09.10. 03:56, Dima per sv down + Datei "down")
+Dienst holte alle 300 s einen Snapshot nach qwen_snapshot.json, kein Modul liest die Datei. Zusatz: jack_qwen_client rief alle 5 min MCP mit dem alten (rotierten) Token auf = der periodische "ungueltiger Token" im Audit. Nach dem Stopp verschwunden (04:00 geprueft).
+Rueckgaengig: rm $PREFIX/var/service/jack_qwen/down; sv up $PREFIX/var/service/jack_qwen.
+
+## C4 Timeouts (JACK_TUNE_TIMEOUTS, 09.10. 04:15)
+Gesetzt in: jack_cortex (pgrep 10 s, kill 5 s), jack_telegram (getFile 20 s, Download 30 s statt urlretrieve, Foto-Download, send_voice curl 60 s, pkill 10 s), jack_heat_protection (sv stop 15 s), jack_sanity (git 10 s), jack_voice_processor (ffmpeg 90 s, whisper 240 s, 4 Stellen). Ein haengender Sprachbefehl blockiert damit nicht mehr die einzige Telegram-Schleife. Telegram, cortex, waechter neu gestartet, laufen.
+Noch ohne Timeout (selten genutzte Module, bewusst offen): jack_voice_router (6), jack_hey (2), jack_improve (3), jack_live_bridge (2), jack_loop, jack_operator, jack_stress, jack_android:76, kortex_profile_updater:100.
+
 ## B7 Scanner (JACK_TUNE_SCAN7, jack_mission_runner.py git_publish + ro_scan)
 Muster erweitert um Telegram-Bot-Token (Zahl:AA...) und gh[osu]_-Tokens. Test mit Fake-Muster: ro_scan "TREFFER", danach sauber.
 

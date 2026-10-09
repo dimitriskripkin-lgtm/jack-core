@@ -43,12 +43,12 @@ def process_voice_message(ogg_path):
             except Exception as e:
                 print(f"P8: Xiaomi-Whisper Fehler ({e}), Fallback lokal")
                 with jack_guard.Guard("whisper"):
-                    result = subprocess.run([WHISPER_PATH,"-m",MODEL_PATH,"-f",wav_path,"-l","de","-nt","-t","6"], capture_output=True, text=True)
+                    result = subprocess.run([WHISPER_PATH,"-m",MODEL_PATH,"-f",wav_path,"-l","de","-nt","-t","6"], capture_output=True, text=True, timeout=240)  # JACK_TUNE_TIMEOUTS
                 text = " ".join(result.stdout.split()).strip()
         else:
             # Honor kuehl - lokale Ausfuehrung
             with jack_guard.Guard("whisper"):
-                result = subprocess.run([WHISPER_PATH,"-m",MODEL_PATH,"-f",wav_path,"-l","de","-nt","-t","6"], capture_output=True, text=True)
+                result = subprocess.run([WHISPER_PATH,"-m",MODEL_PATH,"-f",wav_path,"-l","de","-nt","-t","6"], capture_output=True, text=True, timeout=240)  # JACK_TUNE_TIMEOUTS
             text = " ".join(result.stdout.split()).strip()
     except Exception as e:
         return None, "", f"Whisper-Fehler: {e}"
@@ -93,11 +93,11 @@ def _DEAD_ORIGINAL_process_voice_message(ogg_path):
     wav_path = ogg_path.replace(".ogg", ".wav")
     
     # Audio konvertieren
-    subprocess.run(["ffmpeg", "-y", "-i", ogg_path, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav_path], check=True, capture_output=True)
+    subprocess.run(["ffmpeg", "-y", "-i", ogg_path, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav_path], check=True, capture_output=True, timeout=90)  # JACK_TUNE_TIMEOUTS
     
     # Audio transkribieren mit 6 CPU-Threads für maximale Geschwindigkeit
     with jack_guard.Guard("whisper"):
-        result = subprocess.run([WHISPER_PATH, "-m", MODEL_PATH, "-f", wav_path, "-l", "de", "-nt", "-t", "6"], capture_output=True, text=True)
+        result = subprocess.run([WHISPER_PATH, "-m", MODEL_PATH, "-f", wav_path, "-l", "de", "-nt", "-t", "6"], capture_output=True, text=True, timeout=240)  # JACK_TUNE_TIMEOUTS
     text = " ".join(result.stdout.split()).strip()
     
     # Intent-Routing: direkte Befehle ohne Gemini-Umweg

@@ -226,10 +226,11 @@ def _send_raw(text):
 
 def get_voice(file_id, out_path):
     url = f"{API}/getFile?file_id={file_id}"
-    with urllib.request.urlopen(url) as res:
+    with urllib.request.urlopen(url, timeout=20) as res:  # JACK_TUNE_TIMEOUTS
         path = json.loads(res.read())['result']['file_path']
     dl_url = f"https://api.telegram.org/file/bot{TOKEN}/{path}"
-    urllib.request.urlretrieve(dl_url, out_path)
+    with urllib.request.urlopen(dl_url, timeout=30) as _vr, open(out_path, 'wb') as _vf:
+        _vf.write(_vr.read())
 
 def send_voice(file_path):
     subprocess.run([
@@ -237,7 +238,7 @@ def send_voice(file_path):
         f"{API}/sendVoice",
         "-F", f"chat_id={CHAT_ID}",
         "-F", f"voice=@{file_path}"
-    ])
+    ], timeout=60)
 
 def send_keyboard(text, buttons):
     """Sendet Nachricht mit Inline-Keyboard. buttons = [[('Label','data'),...],...]"""
@@ -614,7 +615,7 @@ def handle(text):
             import subprocess
             subprocess.run(
                 "pkill -f run_guarded_settings; pkill -f jack_ui_; pkill -f ui_agent.cortex",
-                shell=True, capture_output=True,
+                shell=True, capture_output=True, timeout=10,
             )
             send("KILL: UI/Forschung gestoppt (.jack_ui_kill gesetzt).")
         except Exception as e:
@@ -1399,11 +1400,12 @@ def main():
                         try:
                             import urllib.request as _ur, json as _j, base64, subprocess as _sp2, os as _o2
                             url = f"{API}/getFile?file_id={fid}"
-                            with _ur.urlopen(url) as res:
+                            with _ur.urlopen(url, timeout=20) as res:
                                 path = _j.loads(res.read())['result']['file_path']
                             dl = f"https://api.telegram.org/file/bot{TOKEN}/{path}"
                             raw = _o2.path.expanduser(f"~/jack/foto_{fid}.jpg")
-                            _ur.urlretrieve(dl, raw)
+                            with _ur.urlopen(dl, timeout=30) as _fr, open(raw, "wb") as _ff:
+                                _ff.write(_fr.read())
                             b64 = base64.b64encode(open(raw,'rb').read()).decode()
                             import jack_gemini_bridge as _gb, jack_config as _jc
                             key = _gb.load_api_key()

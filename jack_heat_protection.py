@@ -130,7 +130,7 @@ def emergency_stop():
         # Shadow-Fixer killen
         _kill_exact("false")  # JACK_TUNE_NOPKILL2 autofixer-f gestrichen, kein Namens-Kill
         # Autolearn pausieren
-        subprocess.run(["sv", "stop", "jack_autolearn"], capture_output=True)
+        subprocess.run(["sv", "stop", "jack_autolearn"], capture_output=True, timeout=15)
         # Lokales Ollama killen (falls doch gestartet)
         _kill_exact("ollama",9)
         _kill_exact("llama-server",9)

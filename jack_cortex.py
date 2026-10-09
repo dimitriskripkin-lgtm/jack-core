@@ -264,9 +264,9 @@ def selftest():
 def main():
     my_pid = os.getpid()
     try:
-        res = subprocess.run(["pgrep", "-f", "jack_cortex.py"], capture_output=True, text=True)
+        res = subprocess.run(["pgrep", "-f", "jack_cortex.py"], capture_output=True, text=True, timeout=10)  # JACK_TUNE_TIMEOUTS
         for pid in res.stdout.strip().split():
-            if int(pid) != my_pid: subprocess.run(["kill", "-9", pid])
+            if int(pid) != my_pid: subprocess.run(["kill", "-9", pid], timeout=5)
     except Exception as _le: _jlog and _jlog.fehler("cortex","unbenannt",_le)
     # Oracle-Polling Counter
     _oracle_tick = 0
