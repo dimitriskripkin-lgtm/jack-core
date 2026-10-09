@@ -62,8 +62,8 @@ def apply_improvement(module, gemini_answer):
     if not _h["ok"]:
         open(path,"w").write(original)
         return False, "HALIZA BLOCKIERT (" + _h["stufe"] + "/" + _h["risiko"] + ") - zurueckgerollt: " + _h["grund"][:200]
-    subprocess.run(["git","add",name],cwd=JACK,capture_output=True)
-    subprocess.run(["git","commit","-m",f"Selbstverbesserung {name} (JACK-Vorschlag, Dima-Freigabe)"],cwd=JACK,capture_output=True)
-    subprocess.run(["git","push"],cwd=JACK,capture_output=True)
+    subprocess.run(["git","add",name],cwd=JACK,capture_output=True,timeout=30)
+    subprocess.run(["git","commit","-m",f"Selbstverbesserung {name} (JACK-Vorschlag, Dima-Freigabe)"],cwd=JACK,capture_output=True,timeout=30)
+    subprocess.run(["git","push"],cwd=JACK,capture_output=True,timeout=60)
     import jack_log; jack_log.log_decision('SELBSTVERBESSERUNG', name, 'angewendet+gesichert')
     return True, f"Verbessert + gesichert: {name}\n\n{preview}"

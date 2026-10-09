@@ -46,7 +46,7 @@ class JackOperator:
     
     def get_report(self):
         """Holt aktuellen Report von cortex."""
-        result = subprocess.run(f"{self.cortex_cmd} report", shell=True, capture_output=True, text=True)
+        result = subprocess.run(f"{self.cortex_cmd} report", shell=True, capture_output=True, text=True, timeout=30)
         try:
             return json.loads(result.stdout)
         except Exception:

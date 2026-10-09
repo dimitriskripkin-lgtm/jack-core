@@ -23,7 +23,7 @@ class JACKLiveVoiceBridge:
         """Nimmt kurz Audio über Termux-API auf."""
         try:
             cmd = f"termux-microphone-record -f {RECORD_FILE} -l {duration} -r 16000 -c 1"
-            subprocess.run(cmd, shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(cmd, shell=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=30)
             time.sleep(duration + 0.2)
             if os.path.exists(RECORD_FILE) and os.path.getsize(RECORD_FILE) > 1000:
                 try:
@@ -41,7 +41,7 @@ class JACKLiveVoiceBridge:
         print(f"\n[JACK]: {text}")
         # Einfacher TTS Fallback / System Player
         tts_cmd = f"espeak-ng -v de \"{text}\" --stdout | mpv - --really-quiet"
-        subprocess.run(tts_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(tts_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60)
 
     async def run_loop(self):
         self.is_running = True

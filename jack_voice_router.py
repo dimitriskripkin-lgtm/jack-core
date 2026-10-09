@@ -53,7 +53,7 @@ def write_wav_header(f, sample_rate=24000, channels=1, sample_width=2):
 def tts_espeak(text, wav_out):
     """Offline TTS mit espeak."""
     try:
-        subprocess.run(["espeak", "-v", "de", "-s", "120", "-p", "10", "-w", wav_out, text], capture_output=True, check=True)
+        subprocess.run(["espeak", "-v", "de", "-s", "120", "-p", "10", "-w", wav_out, text], capture_output=True, check=True, timeout=30)
         return os.path.exists(wav_out) and os.path.getsize(wav_out) > 100
     except Exception:
         return False
@@ -63,7 +63,7 @@ def play_audio(wav_path):
     try:
         size = os.path.getsize(wav_path)
         duration = max(1, int(size / 48000) + 1)
-        subprocess.run(["termux-media-player", "play", wav_path], capture_output=True)
+        subprocess.run(["termux-media-player", "play", wav_path], capture_output=True, timeout=30)
         time.sleep(duration)
     except Exception as _le:
         _jlog and _jlog.fehler("jack_voice_router","unbenannt",_le)
@@ -167,7 +167,7 @@ async def process_stack_b_offline(audio_path):
         model_path = os.path.expanduser("~/whisper.cpp/models/ggml-small.bin")
         if not os.path.exists(whisper_path) or not os.path.exists(model_path):
             return None, "Whisper fehlt"
-        result = subprocess.run([whisper_path, "-m", model_path, "-f", wav_in, "-l", "de", "-nt", "-t", "4"], capture_output=True, text=True)
+        result = subprocess.run([whisper_path, "-m", model_path, "-f", wav_in, "-l", "de", "-nt", "-t", "4"], capture_output=True, text=True, timeout=240)
         text = " ".join(result.stdout.split()).strip()
         if not text:
             return None, "Kein Text erkannt"

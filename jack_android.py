@@ -73,7 +73,7 @@ def adb_setup():
     _sh('setprop service.adb.tcp.port 5555', root=True)
     _sh('stop adbd && start adbd', root=True)
     time.sleep(2)
-    subprocess.run('adb connect 127.0.0.1:5555', shell=True, capture_output=True)
+    subprocess.run('adb connect 127.0.0.1:5555', shell=True, capture_output=True, timeout=15)
 
 # ─── ANDROID SYSTEM ───────────────────────────────────────────────────────────
 
