@@ -20,6 +20,8 @@ def classify(text):
         return "SELBST"
     if len(t.split())<=9 and any(k in t for k in ("einfachen worten","einfache worten","einfach erklaert","einfacher erklaeren","kuerzer","fass das zusammen","nochmal kurz","nochmal einfach")):  # JACK_TUNE_UMFORMEN
         return "UMFORMEN"
+    if len(t.split())<=9 and any(k in t for k in ("das davor","die davor","davor meinte","vorletzte","vorherige antwort","vorherige frage","das vorherige")):  # JACK_TUNE_DAVOR
+        return "DAVOR"
     if any(k in t for k in ("aufgefallen","was ist neu","was hat sich veraendert","was hat sich getan","letzten stunden","letzte stunden")):
         return "NEU"
     fact=("ist zustand" in t) or t in ("status","/status") or ("kiste" in t and "steht" in t) or t.startswith("wie steht")
@@ -470,6 +472,16 @@ def herkunft_text():  # JACK_TUNE_HERKUNFT
         return open(J+"/jack_herkunft.md",encoding="utf-8").read().strip()[:2500]
     except Exception:
         return "Meine Geschichte steht im Betriebshandbuch (Kapitel 254)."
+def davor(text):  # JACK_TUNE_DAVOR: "ich meinte das davor" -> vorletzte Antwort
+    try:
+        import jack_talk as _jt
+        _jt.get_window_ctx()
+        w=[x for x in _jt._ROLLING_WINDOW if x and len(x)>1 and x[1] and x[0]!="(Start)"]
+        if len(w)<2: return None
+        q,a=w[-2][0],w[-2][1]
+        return "Du meinst meine Antwort auf \""+str(q)[:70]+"\":\n"+str(a)[:700]
+    except Exception:
+        return None
 def umformen(text):  # JACK_TUNE_UMFORMEN: Folgewunsch bezieht sich fest auf Jacks letzte Antwort
     try:
         import jack_talk as _jt, jack_groq_bridge as _gb
@@ -496,6 +508,8 @@ def selbst_text(text):  # JACK_TUNE_SELBST
         return "Mein Aufbau steht im Betriebshandbuch."
 def dispatch(text, send_keyboard=None):
     lane=classify(text)
+    if lane=="DAVOR":
+        return davor(text)
     if lane=="UMFORMEN":
         return umformen(text)
     if lane=="SELBST":
