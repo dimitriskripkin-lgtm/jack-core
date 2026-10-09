@@ -1,5 +1,0 @@
-{"ts": "2026-10-09T02:07:45", "rolle": "legacy", "tool": "create_mission", "act": "file_exists", "urteil": "ja", "note": ""}
-{"ts": "2026-10-09T02:07:46", "rolle": "legacy", "tool": "create_mission", "act": "git_publish", "urteil": "ja", "note": ""}
-{"ts": "2026-10-09T02:07:50", "rolle": "legacy", "tool": "create_mission", "act": "git_publish", "urteil": "ja", "note": ""}
-{"ts": "2026-10-09T02:07:55", "rolle": "legacy", "tool": "read_file", "act": "", "urteil": "ja", "note": ""}
-{"ts": "2026-10-09T02:07:58", "rolle": "legacy", "tool": "create_mission", "act": "git_publish", "urteil": "ja", "note": ""}
