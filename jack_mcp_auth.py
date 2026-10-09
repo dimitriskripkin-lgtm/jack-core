@@ -32,6 +32,35 @@ FULL_ROLES = ("claude", "legacy")
 # JACK_TUNE_CHATGPT: persoenliche Fakten (Graph/Gedaechtnis) bleiben fuer ChatGPT zu, bis Dima es freigibt
 CHATGPT_DENY = {"graph_list_nodes", "graph_read_node", "graph_search", "graph_list_edges", "memory_search", "memory_recent"}
 
+# JACK_TUNE_CHATGPT_S1: Stufe 1 = Schreiben (py_replace/file_create) in JACK_HOME, nie im Kern, nie Shell/Restart/Push
+CHATGPT_WRITE_ACTS = {"py_replace", "file_create"}
+CHATGPT_NOWRITE = tuple(CORE_FILES) + ("jack_mcp_oauth.py", "jack_exec.py", "jack_xiaomi.py", "jack_xibreaker.py",
+    "jack_telegram.py", "jack_publisher.py", "jack_waechter.py", "jack_logrot.py", ".gitignore", ".oauth_off",
+    ".mcp_roles_off", ".jack_oauth", ".jack_mcp", "config.ini", "/.ssh", "/.git/", "/missions/", "/Attic/")
+
+def _chatgpt_write_ok(args):
+    ex = str((args or {}).get("extra", ""))
+    if ".." in ex:
+        return False, "Pfad mit .. gesperrt"
+    try:
+        d = json.loads(ex)
+    except Exception:
+        return False, "extra kein JSON"
+    if not isinstance(d, dict):
+        return False, "extra kein Objekt"
+    vals = [d.get(k) for k in ("file", "path") if d.get(k)]
+    if not vals:
+        return False, "Zieldatei fehlt"
+    jr = os.path.realpath(J)
+    for v in vals:
+        full = os.path.realpath(str(v) if str(v).startswith("/") else os.path.join(J, str(v)))
+        low = full.lower()
+        if not full.startswith(jr + os.sep):
+            return False, "nur JACK_HOME"
+        if any(w in low for w in SECRET_WORDS) or any(n in low for n in CHATGPT_NOWRITE):
+            return False, "Sicherheitskern/Geheimnis gesperrt"
+    return True, ""
+
 _cache = {"t": 0.0, "m": {}}
 _fails = {}
 
@@ -122,7 +151,13 @@ def check_call(role, name, args):
     act = str((args or {}).get("act", ""))
     if role in ("legacy", "claude"):
         return True, ""
-    if role in ("grok", "gemini", "chatgpt"):
+    if role == "chatgpt":  # JACK_TUNE_CHATGPT_S1
+        if act in READ_ACTS or act.startswith(READ_ACTS_PREFIX):
+            return True, ""
+        if act in CHATGPT_WRITE_ACTS:
+            return _chatgpt_write_ok(args)
+        return False, "Act nur ueber Vier-Augen (Claude)"
+    if role in ("grok", "gemini"):
         if act in READ_ACTS or act.startswith(READ_ACTS_PREFIX):
             return True, ""
         return False, "Rolle darf nur lesende Acts"
