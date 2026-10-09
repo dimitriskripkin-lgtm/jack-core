@@ -240,6 +240,22 @@ def send_voice(file_path):
         "-F", f"voice=@{file_path}"
     ], timeout=60)
 
+def _set_cmds():  # JACK_TUNE_CMDMENU: Telegram-Befehlsmenue (die Liste beim Tippen von /)
+    import json as _js, urllib.request as _ur
+    _c = [("menu","Befehlszentrale mit Knoepfen"),("befehle","Schnellknoepfe: Status, Akku, SSH"),
+          ("status","Systemstatus"),("vorschlaege","Offene Vorschlaege"),("freigeben","Vorschlag freigeben"),
+          ("missionen","Missionen Uebersicht"),("mission","Neue Mission anlegen"),("mnext","Naechste Mission"),
+          ("akku","Akku Honor und Xiaomi"),("errors","Letzte Fehler"),("log","Log ansehen"),
+          ("selftest","Selbsttest der Dienste"),("fakten","Gespeicherte Fakten"),("skills","Skills Liste"),
+          ("scan","System scannen"),("find","Datei oder Modul suchen"),("code","Code ansehen"),
+          ("bugfix","Bugfix-Loop starten"),("auto","Autonomie Status"),("level","Level und Fortschritt"),
+          ("budget","Token-Budget"),("ssh","Xiaomi per SSH"),("standort","Standort"),("sensor","Sensoren"),
+          ("sehen","Bildschirm ansehen"),("tap","Tippen auf Bildschirm"),("lernen","Lernstatus"),
+          ("forsche","Recherche starten"),("explore","System erkunden"),("harvest_status","Harvest Status"),
+          ("autolearn_status","Autolearn Status"),("stop","Aktion stoppen"),("kill","Prozess beenden")]
+    _d = _js.dumps({"commands": [{"command": a, "description": b} for a, b in _c]}).encode()
+    _ur.urlopen(_ur.Request(API + "/setMyCommands", data=_d, headers={"Content-Type": "application/json"}), timeout=15).read()
+
 def send_keyboard(text, buttons):
     """Sendet Nachricht mit Inline-Keyboard. buttons = [[('Label','data'),...],...]"""
     keyboard = {"inline_keyboard": [
@@ -1359,6 +1375,8 @@ def _einzelinstanz():
 
 def main():
     _einzelinstanz()
+    try: _set_cmds()
+    except Exception: pass
     try: send("JACK online.")  # JACK_TUNE_BOOTLIE
     except Exception: pass
     vibrate(200)
