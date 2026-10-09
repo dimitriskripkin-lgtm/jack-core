@@ -16,6 +16,10 @@ def classify(text):
         return "TALK"
     if any(k in t for k in ("deine geschichte","eigene geschichte","wie bist du entstanden","woher kommst du","deine herkunft","wie bist du gewachsen","deine entstehung")):  # JACK_TUNE_HERKUNFT
         return "HERKUNFT"
+    if any(k in t for k in ("was kannst du","wie lernst du","wie lernt jack","aus welchen teilen","woraus bestehst du","wo laufen deine","wie funktionierst du","wie speicherst du","wie sicher bist du","dein gedaechtnis","dein gedächtnis","deine faehigkeiten","wenn der xiaomi nicht antwortet","was bist du","wie arbeitest du")):  # JACK_TUNE_SELBST
+        return "SELBST"
+    if len(t.split())<=9 and any(k in t for k in ("einfachen worten","einfache worten","einfach erklaert","einfacher erklaeren","kuerzer","fass das zusammen","nochmal kurz","nochmal einfach")):  # JACK_TUNE_UMFORMEN
+        return "UMFORMEN"
     if any(k in t for k in ("aufgefallen","was ist neu","was hat sich veraendert","was hat sich getan","letzten stunden","letzte stunden")):
         return "NEU"
     fact=("ist zustand" in t) or t in ("status","/status") or ("kiste" in t and "steht" in t) or t.startswith("wie steht")
@@ -283,13 +287,14 @@ def _tools(text):
     # bevor an das normale Gespraech uebergeben wird. Rein additiv, aendert keinen Treffer oben.
     try:
         _t0 = (norm(text).split() or [""])[0]  # JACK_TUNE_FOLLOWUP: Folgesaetze gehen ans Gespraech, nicht an die Suche
-        if "?" not in text and _t0 not in ("wie","was","wer","wo","wann","welche","welcher","welches","hast","kennst","weisst","woher","wohin","wieviel","wieviele","wem","wen"):
+        if _t0 not in ("wie","was","wer","wo","wann","welche","welcher","welches","hast","kennst","weisst","woher","wohin","wieviel","wieviele","wem","wen"):
             return None
         import jack_read_door as _rd
         _stopw = {"wie","heisst","heißt","wo","wohne","wohnt","was","wer","ist","sind","meine","mein","ich","du","der","die","das","den","dem","und","oder","hast","hat","kennst","weisst","weißt"}
         _tw = [w for w in norm(text).split() if w not in _stopw and len(w)>2]
+        if "wohne" in norm(text).split() or "wohnst" in norm(text).split(): _tw.append("wohnort")  # JACK_TUNE_WOHNORT
         _q = " ".join(_tw) if _tw else text
-        _hits = _rd.lesen(_q)
+        _hits = [h for h in (_rd.lesen(_q) or []) if len(str(h.get("wert","")))<300 and "AKTUELLE UHRZEIT" not in str(h.get("wert",""))]  # JACK_TUNE_DUMPFILTER
         if _hits:
             _lines=["%s: %s"%(h.get("name",""),h.get("wert","")) for h in _hits]
             return "Gefunden ("+_hits[0].get("quelle","?")+"):\n"+"\n".join(_lines)
@@ -465,8 +470,36 @@ def herkunft_text():  # JACK_TUNE_HERKUNFT
         return open(J+"/jack_herkunft.md",encoding="utf-8").read().strip()[:2500]
     except Exception:
         return "Meine Geschichte steht im Betriebshandbuch (Kapitel 254)."
+def umformen(text):  # JACK_TUNE_UMFORMEN: Folgewunsch bezieht sich fest auf Jacks letzte Antwort
+    try:
+        import jack_talk as _jt, jack_groq_bridge as _gb
+        _jt.get_window_ctx()
+        w=[x for x in _jt._ROLLING_WINDOW if x and len(x)>1 and x[1] and x[0]!="(Start)"]
+        if not w: return None
+        letzte=str(w[-1][1])
+        r=_gb.ask_groq("Du formulierst Texte um. Erfinde nichts dazu. Nur der gegebene Text zaehlt.", "Sag das Folgende in 2 bis 3 kurzen, ganz einfachen Saetzen, locker auf Deutsch. Nichts Neues dazu:\n\n"+letzte[:1200])
+        r=_jt._scrub_out(r)
+        return r if r and not str(r).startswith("[Groq]") else None
+    except Exception:
+        return None
+def selbst_text(text):  # JACK_TUNE_SELBST
+    try:
+        t=norm(text)
+        raw=open(J+"/jack_selbst.md",encoding="utf-8").read()
+        best=None; score=0
+        for sec in raw.split("## ")[1:]:
+            kopf,_,body=sec.partition("\n")
+            s=sum(len(k.strip()) for k in kopf.split(",") if k.strip() and k.strip() in t)
+            if s>score: score=s; best=body.strip()
+        return best or raw.split("## ")[1].partition("\n")[2].strip()
+    except Exception:
+        return "Mein Aufbau steht im Betriebshandbuch."
 def dispatch(text, send_keyboard=None):
     lane=classify(text)
+    if lane=="UMFORMEN":
+        return umformen(text)
+    if lane=="SELBST":
+        return selbst_text(text)
     if lane=="HERKUNFT":
         return herkunft_text()
     if lane=="NEU":
@@ -559,6 +592,8 @@ def fact_report():
     a=["Ist-Zustand:","SSH Xiaomi: "+str(h.get("ssh_xiaomi")),"Focus "+str(t.get("focus_sleep_s"))+"s, Genesis "+str(t.get("genesis_skip"))+", Idle "+str(t.get("autolearn_idle_s"))+"s","Marks: "+", ".join((k+":ja" if v else k+":nein") for k,v in m.items()),"Beats: "+", ".join(k+" "+str(v)+"s" for k,v in hb.items()),"Git-Push: "+_g+"."]  # JACK_TUNE_GITDYN
     return chr(10).join(a)
 def dispatch_lane(lane, text):
+    if lane=="SELBST":
+        return selbst_text(text)  # JACK_TUNE_SELBST
     if lane=="HERKUNFT":
         return herkunft_text()
     if lane=="NEU":

@@ -371,7 +371,7 @@ def _talk_to_gemini_impl(prompt):
                 open("/data/data/com.termux/files/home/jack/reports/promptlog.jsonl","a").write(_plj.dumps(_pl,ensure_ascii=False)+"\n")
             except Exception:
                 pass  # JACK_TUNE_PROMPTLOG
-            _w=get_window_ctx(); _v1='JACK_TUNE_VERSATZ1'; _ws=((_w or '')[-(2400-len(prompt)):] if len(prompt)<2400 else ''); _um=(('Frueherer Verlauf (nur Kontext, NICHT beantworten):\n'+_ws+'\n\nDIMA JETZT (nur hierauf antworten): '+prompt) if _ws and '(keiner)' not in _ws else prompt)[-2800:]; _r=_scrub_out(_gq.ask_groq(system, _um))  # JACK_TUNE_WIN1
+            _w=get_window_ctx(); _v1='JACK_TUNE_VERSATZ1'; _ws=((_w or '')[-(2400-len(prompt)):] if len(prompt)<2400 else ''); _um=(('Frueherer Verlauf (nur Kontext, NICHT beantworten, bei neuem Thema ignorieren):\n'+_ws+'\n\nDIMA JETZT (nur DIESE Nachricht beantworten, nichts Altes wiederholen): '+prompt) if _ws and '(keiner)' not in _ws else prompt)[-2800:]; _r=_scrub_out(_gq.ask_groq(system, _um))  # JACK_TUNE_WIN1
             if _r.startswith("[Groq Limit]") or _r.startswith("[Groq Fehler]"):
                 return talk_to_ollama(prompt, [])  # JACK_TUNE_G2O
             try: auto_save_to_memory(prompt, _r)
