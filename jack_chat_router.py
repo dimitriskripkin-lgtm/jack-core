@@ -80,10 +80,16 @@ def _do_save_fakt(text):
               "speichere bitte", "speichere", "merk dir das bitte", "merke dir das bitte",
               "merk dir", "merke dir", "das ist ein Fakt", "das ist ein fakt",
               "Der Fakt dass", "der Fakt dass", "Fact gespeichert"):
-        if payload.lower().startswith(p.lower()):
-            payload = payload[len(p):].lstrip(" :,-")
+        _ix = payload.lower().find(p.lower())  # JACK_TUNE_SAVEPAYLOAD
+        if _ix >= 0:
+            _pre = payload[:_ix].strip(" :,-.")
+            payload = payload[_ix + len(p):].lstrip(" :,-")
+            if payload.lower().startswith("dass "):
+                payload = payload[5:]
             break
     payload = payload.strip() or raw
+    if len(payload) < 5 and locals().get('_pre'):
+        payload = _pre
     import re as _fre
     _low=payload.lower()
     if any(k in _low for k in ("token","passwort","password","secret","bearer","api_key","apikey")) or _fre.search(r"[A-Za-z0-9+/=_-]{30,}", payload):
