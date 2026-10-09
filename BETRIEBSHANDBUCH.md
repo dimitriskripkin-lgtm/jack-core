@@ -294,4 +294,6 @@ Alle vier live bewiesen, Backups im Attic, committed als `2a7cb2d2`.
 - [248 MCP-Rollen-Zugang](BETRIEBSHANDBUCH/248_mcp_rollen_zugang.md)
 - [249 Tiefenanalyse 09.10.2026](BETRIEBSHANDBUCH/249_tiefenanalyse_20261009.md)
 - [250 Tiefenanalyse-Fixes B1-B3](BETRIEBSHANDBUCH/250_tiefenanalyse_fixes_b1_b3.md)
+- [251 Dienst-Logs und Log-Prozesse](BETRIEBSHANDBUCH/251_dienst_logs.md)
+- [252 Xiaomi-Karte und Vorfall offene Root-API](BETRIEBSHANDBUCH/252_xiaomi_karte_vorfall.md)
 - Modulkarte (generiert): MODULKARTE.md
