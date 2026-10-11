@@ -9,3 +9,8 @@ Gelesen 03.10.2026, erste 70 Zeilen. Kein Umbau.
 **Grenze:** Kein Groq-Ersatz in dieser Datei. Aufrufer sind coder und write.
 
 **Offen:** ask_gemini selbst hinter dem Schnitt.
+
+## Nachtrag 11.10.2026 (JACK_TUNE_FLASHCODE)
+- ask_gemini(question, status=None, model=None): model nur aus Whitelist (gemini-2.5-flash, gemini-2.5-flash-lite), sonst Config (gemini.model, steht auf flash-lite). Bei Override thinkingBudget 0 (so in der Arena gemessen, sonst frisst Denken die 1400 Ausgabetokens).
+- Grund: Arena-Messung 11.10.: Flash 50/58, Flash-Lite 41/58 Aufgaben (ARBEITSPLATZ/gemeinsam/arena/claude_regeln_v1.md). Dima hat am 11.10. Flash fuer schwierige Technik-Aufgaben freigegeben.
+- Aufrufer mit Flash: jack_coder.write_code, jack_bugfix_loop. Alle anderen Aufrufer unveraendert (Lite). Live getestet: Flash antwortet, falsches Modell faellt auf Config zurueck.

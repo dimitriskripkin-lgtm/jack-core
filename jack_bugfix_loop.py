@@ -58,7 +58,7 @@ def generiere_fix(bug, analyse):
         f"Nur den Fix, keine Erklaerung."
     )
     try:
-        antwort = _gb.ask_gemini(prompt)
+        antwort = _gb.ask_gemini(prompt, model="gemini-2.5-flash")  # JACK_TUNE_FLASHCODE
         return antwort, None
     except Exception as e:
         return None, str(e)[:200]

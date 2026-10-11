@@ -158,7 +158,7 @@ def _load_persona():
     try: return open("/data/data/com.termux/files/home/jack/jack_persona_kern.md",encoding="utf-8").read().strip()  # JACK_TUNE_ONEMOUTH
     except Exception: return "Du kennst Dima gut - Details aus jack_identity.json."
 
-def ask_gemini(question, status=None):
+def ask_gemini(question, status=None, model=None):  # JACK_TUNE_FLASHCODE 11.10.2026: model nur Whitelist, Standard = Config
     try:
         import jack_circuit_breaker as _cb
         if _cb.is_open():
@@ -198,6 +198,9 @@ def ask_gemini(question, status=None):
         except Exception: pass
         return _ollama_fallback(question)
     model_name = __import__("jack_config").get_param("gemini", "model")
+    _override = model if model in ("gemini-2.5-flash", "gemini-2.5-flash-lite") else None  # JACK_TUNE_FLASHCODE
+    if _override:
+        model_name = _override
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
     system = (
         "Du bist JACK - Dimas persoenlicher KI-Kumpel, kein Assistent. "
@@ -219,10 +222,13 @@ def ask_gemini(question, status=None):
         "TECHNISCH: Honor Magic8 Pro Host, Xiaomi 11T Pro Slave (SSH-Alias xiaomi-jack, Port 8022, IP wechselt). Gemini=Denkwerkzeug, du BIST JACK."
     )
     content = f"SYSTEM-STATUS:\n{json.dumps(status, indent=2)}\n\nFRAGE: {question}" if status else question
+    _gcfg = {"maxOutputTokens": 1400, "temperature": 0.7, "topP": 0.95}
+    if _override:
+        _gcfg["thinkingConfig"] = {"thinkingBudget": 0}  # wie in der Arena gemessen (Denkbudget 0), sonst frisst Denken die 1400 Tokens
     payload = {
         "system_instruction": {"parts": [{"text": system}]},
         "contents": [{"parts": [{"text": content}]}],
-        "generationConfig": {"maxOutputTokens": 1400, "temperature": 0.7, "topP": 0.95}
+        "generationConfig": _gcfg
     }
     data = json.dumps(payload).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})

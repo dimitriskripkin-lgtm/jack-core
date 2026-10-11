@@ -16,3 +16,5 @@ Gelesen 03.10.2026, Grok, live per read_file. Kein Umbau.
 **Outcomes:** coder schreibt nicht in jack_outcomes.db.
 
 **Offen:** Welches Modul write_code aufruft.
+
+Nachtrag 11.10.2026: write_code ruft ask_gemini mit model gemini-2.5-flash (JACK_TUNE_FLASHCODE, Kap 22). jack_telegram neu gestartet; jack_missions laedt jack_coder erst beim naechsten Neustart (nie per Auftrag, Kap 275).

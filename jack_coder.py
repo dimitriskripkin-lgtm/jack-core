@@ -42,7 +42,7 @@ def write_code(task, filename=None):
         "Keine Netzwerkzugriffe, keine Datei-Loeschungen, kein Zugriff ausserhalb des Ordners.\n\n"
         f"AUFGABE: {task}"
     )
-    _raw = gb.ask_gemini(prompt)
+    _raw = gb.ask_gemini(prompt, model="gemini-2.5-flash")  # JACK_TUNE_FLASHCODE
     if _raw is None:
         return None, None, "Gemini nicht erreichbar (kein Ersatz)"
     code = _raw.strip()
