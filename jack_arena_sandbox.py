@@ -13,6 +13,7 @@ Befehle: python3 jack_arena_sandbox.py selftest | gate <datei.py>
 Kein Netz, keine Geheimnisse, keine JACK-Pfade. Prueflingscode laeuft nie im Runner-Prozess.
 """
 import ast
+import builtins
 import collections
 import hashlib
 import itertools
@@ -21,6 +22,7 @@ import math
 import os
 import re
 import resource
+import select
 import shutil
 import signal
 import subprocess
@@ -28,10 +30,12 @@ import sys
 import tempfile
 import time
 
-VERSION = "1"
+VERSION = "2"  # 2: ChatGPT-Review 11.10. (Scope-Vergiftung, Attribut-Schreiben, Annotationen, Ausgabeflut)
 MAX_SOURCE = 20000
 MAX_NODES = 5000
 SUMMARY_MAX = 1500
+OUT_MAX = 1024 * 1024  # harte Grenze fuer pytest-Ausgabe, schon beim Lesen (C-SEC-22)
+OUT_TAIL = 16384
 
 # ---------- Schicht 1: AST-Tor ----------
 STMT_OK = {"FunctionDef", "Return", "If", "For", "While", "Break", "Continue", "Pass", "Assign",
@@ -79,12 +83,28 @@ ALLOWED_ATTRS |= {"args"}
 ALLOWED_ATTRS -= {"format", "format_map"}  # Formatfelder koennen Attribute lesen ("{0.__class__}")
 
 
+# Kein Name aus der Python-Builtin-Menge darf gebunden werden, ausser er ist erlaubt (C-SEC-20):
+# sonst "legitimiert" ein Parameter open in Funktion A das echte open in Funktion B (Bindungen werden modulweit gesammelt).
+FORBIDDEN_BIND = set(dir(builtins)) - ALLOWED_BUILTINS
+ANNOT_OK = (ast.Name, ast.Attribute, ast.Subscript, ast.Tuple, ast.List, ast.Load, ast.BinOp, ast.BitOr)
+
+
 class Block(Exception):
     pass
 
 
 def _bad_ident(name):
-    return not isinstance(name, str) or name.startswith("__")
+    return not isinstance(name, str) or name.startswith("__") or name in FORBIDDEN_BIND
+
+
+def _check_annotation(a):
+    if a is None:
+        return
+    for x in ast.walk(a):
+        if isinstance(x, ast.Constant) and x.value is None:
+            continue
+        if not isinstance(x, ANNOT_OK) or (isinstance(x, ast.BinOp) and not isinstance(x.op, ast.BitOr)):
+            raise Block("Annotation zu komplex: %s" % type(x).__name__)
 
 
 def ast_gate(source):
@@ -145,6 +165,10 @@ def _check(tree):
             for d in n.args.defaults + [x for x in n.args.kw_defaults if x is not None]:
                 if any(isinstance(x, ast.Call) for x in ast.walk(d)):
                     raise Block("Aufruf in Default-Wert nicht erlaubt")
+            allargs = n.args.posonlyargs + n.args.args + n.args.kwonlyargs + [x for x in (n.args.vararg, n.args.kwarg) if x]
+            for x in allargs:
+                _check_annotation(x.annotation)
+            _check_annotation(n.returns)
             bound.add(n.name)
         elif isinstance(n, ast.arg):
             if _bad_ident(n.arg):
@@ -154,7 +178,7 @@ def _check(tree):
             if _bad_ident(n.name):
                 raise Block("Bezeichner nicht erlaubt: %s" % n.name)
             bound.add(n.name)
-        elif isinstance(n, ast.keyword) and n.arg is not None and _bad_ident(n.arg):
+        elif isinstance(n, ast.keyword) and n.arg is not None and n.arg.startswith("__"):  # Schluesselwort bindet nichts
             raise Block("Bezeichner nicht erlaubt: %s" % n.arg)
         elif isinstance(n, ast.Name):
             if _bad_ident(n.id):
@@ -164,6 +188,10 @@ def _check(tree):
         elif isinstance(n, ast.Attribute):
             if n.attr.startswith("_"):
                 raise Block("Attribut mit _ nicht erlaubt: %s" % n.attr)
+            if not isinstance(n.ctx, ast.Load):
+                raise Block("Attribut schreiben/loeschen nicht erlaubt: %s" % n.attr)
+        elif isinstance(n, ast.AnnAssign):
+            _check_annotation(n.annotation)
     clash = bound & set(modules)
     if clash:
         raise Block("Modulname wird ueberschrieben: %s" % sorted(clash)[0])
@@ -209,7 +237,7 @@ def _limiter(cpu_s, mem_bytes, fsize_bytes):
 
 
 def run_pytest(run_dir, tests, timeout_s=30, cpu_s=20, mem_mb=768, fsize_kb=1024):
-    """Fuehrt die festen Testdateien aus. Rueckgabe dict mit status PASSED|FAILED|ERROR|TIMEOUT|KILLED|NO_TESTS|INFRA."""
+    """Fuehrt die festen Testdateien aus. Rueckgabe dict mit status PASSED|FAILED|ERROR|TIMEOUT|KILLED|OUTPUT_LIMIT|NO_TESTS|INFRA."""
     run_dir = os.path.realpath(run_dir)
     for t in tests:
         p = os.path.realpath(os.path.join(run_dir, t))
@@ -231,17 +259,41 @@ def run_pytest(run_dir, tests, timeout_s=30, cpu_s=20, mem_mb=768, fsize_kb=1024
         p = subprocess.Popen(cmd, cwd=run_dir, env=env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT, start_new_session=True,
                              preexec_fn=_limiter(cpu_s, mem_mb * 1024 * 1024 if mem_mb else 0, fsize_kb * 1024))
+        raw, total = bytearray(), 0
+        deadline = t0 + timeout_s
+        fd = p.stdout.fileno()
+        while True:
+            left = deadline - time.time()
+            if left <= 0:
+                status = "TIMEOUT"
+                break
+            r, _, _ = select.select([fd], [], [], min(left, 0.5))
+            if not r:
+                continue
+            chunk = os.read(fd, 65536)
+            if not chunk:
+                break
+            total += len(chunk)
+            raw = (raw + chunk)[-OUT_TAIL:]  # nur das Ende behalten, Speicher bleibt begrenzt
+            if total > OUT_MAX:
+                status = "OUTPUT_LIMIT"
+                break
+        if status is not None:
+            try:
+                os.killpg(p.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        p.stdout.close()
         try:
-            raw, _ = p.communicate(timeout=timeout_s)
-            rc = p.returncode
-            out = raw.decode("utf-8", errors="replace")
+            rc = p.wait(timeout=max(1.0, deadline - time.time()))
         except subprocess.TimeoutExpired:
             try:
                 os.killpg(p.pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
-            p.communicate()
-            status = "TIMEOUT"
+            rc = p.wait()
+            status = status or "TIMEOUT"
+        out = raw.decode("utf-8", errors="replace")
     except OSError as e:
         status, out = "INFRA", "Start fehlgeschlagen: %s" % type(e).__name__
     finally:
@@ -332,6 +384,18 @@ SEC = [
     ("X-16 Top-Level-Comprehension", "X = [len(a) for a in ['x']]\ndef f():\n    return X\n"),
     ("X-17 __future__", "from __future__ import annotations\ndef f():\n    return 1\n"),
     ("X-18 unbekannter Name", "def f():\n    return breakpoint()\n"),
+    ("C-SEC-20 Scope-Vergiftung", "def a(open):\n    return open\ndef b(p):\n    return open(p)\n"),
+    ("C-SEC-20b Comprehension-Ziel", "def f():\n    xs = [open for open in [1]]\n    return open('x')\n"),
+    ("C-SEC-20c Default-Capture", "def a(getattr):\n    return 1\ndef b(x, g=getattr):\n    return g(x, 'real')\n"),
+    ("C-SEC-20d Import-Alias", "from math import floor as open\ndef f(p):\n    return open(p)\n"),
+    ("C-SEC-20e except-Name", "def f():\n    try:\n        pass\n    except ValueError as eval:\n        pass\n"),
+    ("C-SEC-21 Attribut schreiben", "import collections\ndef f():\n    collections.Counter.most_common = None\n"),
+    ("C-SEC-21b Attribut loeschen", "import re\ndef f():\n    del re.sub\n"),
+    ("C-SEC-21c Attribut AugAssign", "def f(xs):\n    xs.real += 1\n"),
+    ("C-SEC-23 Annotation-Aufruf", "def f(x: len('a')) -> int:\n    return x\n"),
+    ("C-SEC-23b Return-Comprehension", "def f(x) -> [i for i in [1]]:\n    return x\n"),
+    ("C-SEC-23c Annotation-String", "def f(x: 'open(1)'):\n    return x\n"),
+    ("C-SEC-23d AnnAssign-Aufruf", "def f():\n    y: len('a') = 1\n    return y\n"),
 ]
 
 OK_CASES = [
@@ -348,6 +412,9 @@ OK_CASES = [
     ("P-11 C08 intervals", "def merge(iv):\n    out = []\n    for a, b in sorted(iv):\n        if out and a <= out[-1][1]:\n            out[-1][1] = max(out[-1][1], b)\n        else:\n            out.append([a, b])\n    return [tuple(x) for x in out]\n"),
     ("P-12 collections", "from collections import Counter\nimport collections\ndef top(xs):\n    d = collections.defaultdict(int)\n    for x in xs:\n        d[x] += 1\n    return Counter(xs).most_common(1)[0][0]\n"),
     ("P-13 f-string", "def show(n):\n    return f'{n:>4} Stueck {n!r}'\n"),
+    ("P-14 erlaubter Builtin als Name", "def f(xs):\n    sum = 0\n    for x in xs:\n        sum += x\n    return sum\n"),
+    ("P-16 Schluesselwort type=", "def f():\n    return dict(type=1, id=2)\n"),
+    ("P-15 einfache Annotationen", "from typing import Optional\ndef f(x: int | None, ys: list[int]) -> Optional[dict[str, int]]:\n    return None\n"),
 ]
 
 RES = [  # Schicht 2: muessen durch Limits enden, nicht durch das Tor
@@ -355,6 +422,7 @@ RES = [  # Schicht 2: muessen durch Limits enden, nicht durch das Tor
     ("C-SEC-18 Speicherbombe", "def f():\n    x = [0] * (10 ** 10)\n    return len(x)\n", ("FAILED", "KILLED")),
     ("C-SEC-18b wachsender Speicher", "def f():\n    x = []\n    for i in range(5000):\n        x.append('a' * 10 ** 6)\n    return len(x)\n", ("FAILED", "KILLED")),
     ("C-SEC-19 tiefe Rekursion", "def f(n=0):\n    return f(n + 1)\n", ("FAILED",)),
+    ("C-SEC-22 Ausgabeflut", "def f():\n    raise ValueError('x' * 10 ** 7)\n", ("OUTPUT_LIMIT", "FAILED", "KILLED")),
 ]
 
 

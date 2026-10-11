@@ -1,6 +1,6 @@
 # 276 jack_arena_sandbox.py - Sicherheitsrahmen C fuer die Arena (11.10.2026)
 Zweck: Voraussetzung fuer Arena-Kategorie C (Code-Fix mit pytest). Prueflingscode laeuft nie im Runner-Prozess und nur nach drei Schichten. Grundlage: phase2b_aufgaben_BCD.md F3.1 (ChatGPT, Block-Testliste C-SEC-01..16) und Review-Auflagen 1+2 (Claude, phase2b_review3_claude.md).
-Status: Modul gebaut und getestet (Selbsttest 60/60 auf dem Honor). NOCH NICHT im Runner/Richter verdrahtet, Kategorie C bleibt gesperrt (BLOCKED_CATEGORIES in jack_arena.py), bis C-Aufgaben, Aktionen und Richter-Teil gebaut sind.
+Status: Modul gebaut und getestet (v1 60/60, v2 76/76 auf dem Honor). NOCH NICHT im Runner/Richter verdrahtet, Kategorie C bleibt gesperrt (BLOCKED_CATEGORIES in jack_arena.py), bis C-Aufgaben, Aktionen und Richter-Teil gebaut sind.
 
 Schicht 1 ast_gate(source): Positivliste, fail-closed. Rueckgabe {ok, code OK|POLICY_BLOCK|SYNTAX_ERROR, reason}.
 - Knoten nur aus STMT_OK/EXPR_OK/MISC_OK. Keine Klassen, Lambda, With, Global/Nonlocal, Yield, Walross, Match, async.
@@ -22,3 +22,12 @@ Einzelpruefung: python3 jack_arena_sandbox.py gate <datei.py>.
 
 Naechste Schritte (nach Holdout 3, Runner/Richter vorher nicht anfassen): C-Aktionen code_read / code_replace (nur Zielmodul, expected_sha256) / pytest_run im Runner, Richter-Teil C in jack_arena.py (Tor + pytest + state_diff, Teständerung = FAIL), Aufgaben C01-C08 plus Varianten, Selbsttest Richter, dann C freischalten. Optional spaeter: C auf dem Xiaomi unter eigenem unprivilegierten Benutzer.
 Merke: Wer ALLOWED_* erweitert, muss vorher einen neuen Blockfall in SEC schreiben, der den Ausbruchsweg prueft, und den Selbsttest gruen sehen.
+
+## v2 (11.10.2026 abends, nach Review ChatGPT)
+- C-SEC-20 Scope-Vergiftung (echte Luecke in v1, von ChatGPT gefunden): Bindungen wurden modulweit gesammelt. Ein Parameter open in Funktion A gab das echte open in Funktion B frei. Fix: kein Name aus dir(builtins) darf gebunden werden (Parameter, Zuweisung, Comprehension-Ziel, Import-Alias, except-Name), ausser er steht in ALLOWED_BUILTINS. Faelle 20, 20b-e.
+- C-SEC-21: Attribute nur lesen (kein Schreiben/Loeschen/AugAssign auf Attributen), sonst koennte Zielcode re/collections umbiegen und Tests beeinflussen.
+- C-SEC-23: Annotationen nur einfache Typformen (Name, Attribut, Subscript, Tuple/List, X | None). Kein Aufruf, keine Comprehension, keine String-Annotation (Python 3.14 wertet Annotationen verzoegert aus).
+- C-SEC-22: pytest-Ausgabe wird schon beim Lesen begrenzt (OUT_MAX 1 MB, nur die letzten 16 KB im Speicher). Darueber: Prozessgruppe getoetet, Status OUTPUT_LIMIT. Vorher sammelte communicate() alles im Runner-Speicher.
+- Schluesselwort-Argumente (dict(type=1)) binden nichts und sind erlaubt.
+- Selbsttest Honor v2: 76/76.
+- Grenze (bewusst akzeptiert fuer Arena-C mit eigenen Aufgaben): pytest laeuft unter derselben Termux-UID. -I, leere Umgebung und RLIMITs sind keine Kernel-Isolation von Dateisystem oder Netz. Wird das AST-Tor je umgangen, hat der Prozess die Rechte des Termux-Benutzers. Fuer echten fremden Code: Xiaomi mit eigenem unprivilegierten Benutzer oder Namespace.
