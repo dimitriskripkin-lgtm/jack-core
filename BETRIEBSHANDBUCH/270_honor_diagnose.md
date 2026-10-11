@@ -10,3 +10,8 @@ Shizuku muss laufen (Server is not running = aus). Ohne Root nach jedem Neustart
 jack_honor_diag.py steht in CHATGPT_NOWRITE (privilegierter Wrapper). Lesen darf ChatGPT.
 ## Offen
 Shizuku laeuft nur bis zum Neustart des Handys (danach per Wireless-Debugging neu starten, sonst nur Termux-Werte). Strom-Rohwert von termux-battery-status hat uneinheitliche Einheit (µA oder mA), nicht interpretieren.
+
+## Nachtrag 11.10.2026: Hitze-Ursache gefunden
+- com.appseleration.android.selfcare (v15.8.1, normale User-App) lief dauerhaft bei ca. 125 % CPU, in allen honor_hot-Schnappschuessen seit 09.10. 22:08, mit wechselnder PID (Neustarts). force-stop half nicht: neue PID nach <1 s, wieder 129 %.
+- Massnahme (Dima, 11.10. 00:4x): rish pm disable-user --user 0 <paket>. Danach keine Last mehr, Akku 41 -> 37 C. Rueckgaengig: rish -c 'pm enable --user 0 <paket>'.
+- Ursache der App-Last und Herkunft der App unbekannt. JACK-Anteil an der Last: gering (jack_mcp_server ca. 3 %).

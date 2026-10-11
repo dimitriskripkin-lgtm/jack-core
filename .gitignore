@@ -222,3 +222,5 @@ telemetry/
 .chatgpt_push_freigabe
 .chatgpt_push_n
 .oauth_off
+.deadman_last
+reports/selfcare_cpu.log

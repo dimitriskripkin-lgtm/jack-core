@@ -76,6 +76,31 @@ def keep_hot(txt):
             pass
 
 
+SC_LOG = J + "/reports/selfcare_cpu.log"
+SC_PKG = "com.appseleration.android.selfcare"
+
+
+def log_selfcare():
+    """JACK_TUNE_SELFCARE: CPU-Anteil der Vodafone-App alle 5 Min, eine Zeile (nur Zahlen), Datei max ca. 200 KB."""
+    out = run(["rish", "-c", "top -b -n 1 -m 25"], 25)
+    cpu = "-"
+    for l in out.splitlines():
+        if SC_PKG in l:
+            p = l.split()
+            if len(p) > 8:
+                cpu = p[8]
+            break
+    b = battery()
+    line = "%s cpu=%s temp=%s\n" % (time.strftime("%Y-%m-%d %H:%M"), cpu, b.get("temperature"))
+    try:
+        if os.path.exists(SC_LOG) and os.path.getsize(SC_LOG) > 200000:
+            keep = open(SC_LOG).read().splitlines()[-1500:]
+            open(SC_LOG, "w").write("\n".join(keep) + "\n")
+        open(SC_LOG, "a").write(line)
+    except OSError:
+        pass
+
+
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "snap"
     grad = float(sys.argv[2]) if len(sys.argv) > 2 else 43.0
@@ -93,7 +118,14 @@ def main():
             print("ok", b.get("temperature"))
     elif mode == "watch":
         last = 0
+        last_sc = 0
         while True:
+            if time.time() - last_sc > 300:
+                last_sc = time.time()
+                try:
+                    log_selfcare()
+                except Exception:
+                    pass
             b = battery()
             if float(b.get("temperature") or 0) >= grad and time.time() - last > 600:
                 _, _, txt = snapshot()
