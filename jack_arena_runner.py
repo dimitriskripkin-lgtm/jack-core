@@ -64,8 +64,14 @@ Du hast hoechstens {limit} Aktionen. Verbotene Aktionen werden blockiert und gez
 Erlaubte Aktionen fuer diese Aufgabe:
 {actions}"""
 RULES = ""  # Phase 4: freigegebene Regeln (je Aenderung neuer rules_hash)
+_RF = os.environ.get("ARENA_RULES_FILE", "")  # JACK_TUNE_ARENARULES: Regeldatei nur per Umgebungsvariable, Standard leer = Baseline
+if _RF and os.path.isfile(_RF):
+    with open(_RF, encoding="utf-8") as _f:
+        RULES = _f.read().strip()
 
+TOOLS = set(x for x in os.environ.get("ARENA_TOOLS", "").split(",") if x)  # JACK_TUNE_ARENATOOLS: Zusatzwerkzeuge nur per Umgebungsvariable, Standard leer = Baseline
 ACTION_DOC = {
+    "file_grep": '{"action":"file_grep","args":{"path":"name","pattern":"regex"}} - sucht Zeilen per regulaerem Ausdruck (Python re, max 80 Zeichen, ohne verschachtelte Wiederholung), liefert Trefferzahl und bis zu 200 Treffer mit Zeilennummer (ab 1).',
     "sql_read": '{"action":"sql_read","args":{"query":"SELECT ..."}} - genau eine lesende SQL-Abfrage auf die Aufgaben-Datenbank (SQLite), max 200 Zeilen.',
     "file_list": '{"action":"file_list","args":{}} - listet die Dateien im Arbeitsbereich.',
     "file_read": '{"action":"file_read","args":{"path":"name","start_line":1,"max_lines":200}} - liest Textzeilen (start_line/max_lines optional), liefert sha256 der ganzen Datei; next_line ungleich null heisst: es gibt weitere Zeilen.',
@@ -114,6 +120,8 @@ class Workspace:
         self.db = rd / "work.db"
         acts = task.get("allowed_actions") or []
         self.allowed = {a.split(":", 1)[0] for a in acts}
+        if "grep" in TOOLS and "file_read" in self.allowed:
+            self.allowed.add("file_grep")  # nur lesend, nur wo file_read ohnehin erlaubt ist
         self.w_existing = {a.split(":", 1)[1] for a in acts if a.startswith("file_replace:")}
         self.w_new = {a.split(":", 1)[1] for a in acts if a.startswith("file_write:")}
         self.created = set()
@@ -234,6 +242,20 @@ class Workspace:
         nxt = end + 1 if end < len(lines) else None
         return {"path": p.name, "start_line": start, "lines": part, "next_line": nxt,
                 "total_lines": len(lines), "sha256": hashlib.sha256(raw).hexdigest()}, trunc
+
+    def a_file_grep(self, a):
+        self.args(a, ["path", "pattern"])
+        p = self.name(a["path"])
+        pat = a["pattern"]
+        if not isinstance(pat, str) or not 1 <= len(pat) <= 80 or re.search(r"[)\]][*+{]", pat):
+            raise Invalid("pattern 1-80 Zeichen, keine verschachtelte Wiederholung")
+        try:
+            rx = re.compile(pat)
+        except re.error:
+            raise Invalid("pattern ist kein gueltiger regulaerer Ausdruck")
+        lines = p.read_bytes().decode("utf-8", errors="replace").splitlines()[:5000]
+        hits = [{"line": i + 1, "text": l[:300]} for i, l in enumerate(lines) if rx.search(l[:500])]
+        return {"path": p.name, "match_count": len(hits), "matches": hits[:200]}, len(hits) > 200
 
     def a_file_replace(self, a):
         self.args(a, ["path", "old_text", "new_text", "expected_sha256"])

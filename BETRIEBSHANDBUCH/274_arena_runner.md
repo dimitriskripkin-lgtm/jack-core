@@ -17,3 +17,9 @@ Offen: Pilot 3, Baseline (Train+Dev, 2 Serien), Phase 4 erste Regel, Transfer-Se
 ## Nachtrag 11.10.2026
 - Einrichtungs-Freigabe .arena_einrichtung ('YYYY-MM-DD N', nur an dem Tag) darf jetzt bis 1000 gehen (vorher 600). Normalgrenze DAY_CALLS bleibt 300. Datei nach Gebrauch loeschen.
 - jack_budget text-Grenze seit 11.10. 1000 (Dima). Dienste, die jack_budget beim Start laden, haben bis zum naechsten Neustart noch 600 im RAM.
+
+## Phase 4 Schalter (11.10.2026)
+- ARENA_RULES_FILE=<datei>: Regeltext wird an den Prompt gehaengt, rules_hash aendert sich. Ohne Variable = Baseline.
+- ARENA_TOOLS=grep: aktiviert lesendes Werkzeug file_grep (nur wo file_read erlaubt). Ohne Variable = Baseline.
+- Regelstatus und Messungen: ARBEITSPLATZ/gemeinsam/arena/claude_regeln_v1.md. Regel 1 (erst pruefen) verworfen, Regel 2 (file_grep) offen.
+- Merke: pkill -f in einem exec trifft die eigene Kommandozeile. Laeufe per Pidfile oder 'ps | grep [x]' beenden, und danach pruefen, ob wirklich nichts mehr laeuft.
