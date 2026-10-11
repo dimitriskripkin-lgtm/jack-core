@@ -55,5 +55,7 @@ Offen: Runner (Phase 3), Modell-Pin Gemini 2.5 Flash-Lite nach Pilotlauf, Sicher
   Flash B (offizielle Basis, code_replace-Doku nennt lambda/Builtin-Namen): 70/88, false_success 12, public_overfit 12, Policy 11 (lambda trotz Hinweis), STUCK 4.
   Schwer fuer Flash: KA Lauflaenge 0/8 (4x gleicher code_replace mit mehrdeutigem old_text = STUCK, 4x Teilfix), KB freie Zeiten 5/8, K6/K7/K9 6/8. Leicht: K1, K2, K3, K5, K8 8/8.
   Richter-Selbsttest mit C2: 1776/1776.
+- C2-Aenderung AMBIGUOUS_MATCH (11.10.2026 23:00, vorregistriert): genC2 netto -2 (W5 L7, 84 von 88, Abbruch durch jack_budget-Wochenlimit), false_success 10 -> 14, public_overfit 10 -> 15, STUCK 4 -> 1. Verworfen, Schalter bleibt aus. genC2 fuer Werkzeugaenderungen verbraucht, C2-Holdout QK unbenutzt und versiegelt.
+- Merke: jack_budget-Wochenlimit (Schaetzung tokens x 0.40 EUR/Mio, 3 EUR) zaehlt Arena und JACK gemeinsam. Grosse Arena-Serien am Wochenende koennen JACKs eigene Gemini-Aufrufe bis Montag 00:00 sperren.
 - Neue Metrik public_overfit (JUDGE_VERSION 4): Richter laesst sichtbare Tests allein laufen; sichtbar gruen + Richter rot = public_overfit, steht in results/runs.jsonl. Auswertung: jack_arena_private/evc2.py.
 - C-Basismessung Flash (11.10.2026 21:55, grep2-Standard, fuer C ohne Wirkung): Train 6/6, Dev 2/2, false_success 0, 1.2 Cent. C01-C08 sind fuer Flash zu leicht (Decke wie bei A). Erster Versuch davor (Sandbox v3) verworfen: undefinierter Name wurde als Policy-Verstoss gewertet, siehe Kap 276 v4.

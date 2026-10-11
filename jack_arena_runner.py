@@ -55,7 +55,7 @@ LOCK = arena.ARENA / ".runner_lock"
 HOLDOUT_OK = arena.HOME / "jack" / ".arena_holdout_ok"
 EINRICHTUNG = arena.HOME / "jack" / ".arena_einrichtung"
 NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$")
-CODES = ("OK", "INVALID_ARGS", "NOT_FOUND", "POLICY_BLOCK", "TIMEOUT", "ACTION_LIMIT", "INTERNAL_ERROR")
+CODES = ("OK", "INVALID_ARGS", "NOT_FOUND", "POLICY_BLOCK", "TIMEOUT", "ACTION_LIMIT", "INTERNAL_ERROR", "AMBIGUOUS_MATCH")
 
 PROMPT = """Du bist der Pruefling in der JACK-Arena und loest genau eine Aufgabe. Du siehst nur die Aufgabe und die Antworten auf deine Aktionen.
 Antworte in JEDEM Zug mit genau einem JSON-Objekt und sonst nichts:
@@ -87,6 +87,8 @@ ACTION_DOC = {
     "code_replace": '{"action":"code_replace","args":{"old_text":"...","new_text":"...","expected_sha256":"..."}} - ersetzt genau eine Stelle im Zielmodul ({w}); old_text muss genau einmal vorkommen, expected_sha256 = aktueller Hash. Erlaubt ist nur einfacher Python-Code: Imports nur math, re, itertools, functools, collections, typing, string; keine Klassen, kein lambda (stattdessen def), keine Dekoratoren, kein with/global/yield, kein Datei-/Netz-/Systemzugriff, keine Namen mit __, Namen von Python-Builtins (z.B. id, type, input, open) nicht als eigene Variablen.',
     "pytest_run": '{"action":"pytest_run","args":{}} - fuehrt die feste Testsuite gegen das Zielmodul aus und liefert status (PASSED, FAILED, ERROR, KILLED, TIMEOUT, OUTPUT_LIMIT) und eine gekuerzte Ausgabe der sichtbaren Tests.',
 }
+if "ambig" in TOOLS:  # JACK_TUNE_C2AMBIG
+    ACTION_DOC["code_replace"] += " Kommt old_text mehrfach vor, kommt Code AMBIGUOUS_MATCH mit match_count und start_lines (Zeilennummern der Fundstellen), ohne Aenderung."
 if "grep2" in TOOLS:  # JACK_TUNE_GREPV2
     ACTION_DOC["file_grep"] += " Bei 0 Treffern kommt zusaetzlich preview_first_lines (Dateianfang, max 20 Zeilen/1500 Zeichen) mit preview_reason=zero_matches; das sind KEINE Treffer."
 
@@ -96,6 +98,10 @@ class Policy(Exception):
 
 
 class Invalid(Exception):
+    pass
+
+
+class Ambiguous(Exception):  # JACK_TUNE_C2AMBIG: neutraler Rueckgabecode, kein Verstoss
     pass
 
 
@@ -359,6 +365,16 @@ class Workspace:
         except UnicodeDecodeError:
             raise Invalid("Zielmodul ist kein UTF-8")
         n = text.count(old)
+        if n > 1 and "ambig" in TOOLS:  # nur Zeilennummern, kein Quelltext, kein Schreiben (ChatGPT-Auflage)
+            lines, pos = [], 0
+            while len(lines) < 20:
+                i = text.find(old, pos)
+                if i < 0:
+                    break
+                lines.append(text.count("\n", 0, i) + 1)
+                pos = i + len(old)
+            raise Ambiguous({"match_count": n, "start_lines": lines,
+                             "reason": "old_text kommt %d-mal vor, keine Aenderung. Mit code_read die Stellen ansehen und old_text so erweitern, dass er genau einmal vorkommt." % n})
         if n != 1:
             raise Invalid("old_text kommt %d-mal vor (muss genau 1 sein), keine Aenderung" % n)
         out = text.replace(old, new, 1)
@@ -400,6 +416,8 @@ def respond(ws, req):
         return {"ok": False, "code": "POLICY_BLOCK", "data": {"reason": str(e)}, "truncated": False}, True
     except Invalid as e:
         return {"ok": False, "code": "INVALID_ARGS", "data": {"reason": str(e)}, "truncated": False}, False
+    except Ambiguous as e:
+        return {"ok": False, "code": "AMBIGUOUS_MATCH", "data": e.args[0], "truncated": False}, False
     except NotFound:
         return {"ok": False, "code": "NOT_FOUND", "data": None, "truncated": False}, False
     except Timeout as e:
