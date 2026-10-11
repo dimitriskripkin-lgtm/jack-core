@@ -16,7 +16,7 @@ import subprocess
 import sys
 import time
 
-VERSION = "1"
+VERSION = "2"  # 2: Nachpruefung komplett (Not-Aus, Display, Sperre, Vordergrund), Haertetests nach ChatGPT-Review
 HOME = os.path.expanduser("~")
 KILL = os.path.join(HOME, "jack", ".phone_off")
 AUDIT = os.path.join(HOME, "jack", "logs", "phone_audit.log")
@@ -141,6 +141,20 @@ def guard(need_allow):
     return fg
 
 
+def post_check(fg):
+    """Nach dem Sinn alles erneut pruefen; bei jeder Aenderung wird das Ergebnis verworfen (ChatGPT-Review 12.10.)."""
+    if os.path.exists(KILL):
+        raise Stop("ABORTED", "phone_off_waehrend", fg)
+    if "mWakefulness=Awake" not in _run("wake"):
+        raise Stop("ABORTED", "display_aus_waehrend", fg)
+    if "isKeyguardShowing=false" not in _run("keyguard"):
+        raise Stop("ABORTED", "gesperrt_waehrend", fg)
+    fg_after = foreground_pkg()
+    if fg_after != fg:
+        raise Stop("ABORTED", "vordergrund_gewechselt", fg)
+    return fg_after
+
+
 def sense(name, job=None, step=1):
     """Ein Sinn mit Pruefung vorher und nachher. Rueckgabe dict mit ergebnis und daten (nie Inhalte)."""
     job = job or "L0-" + time.strftime("%Y%m%d%H%M%S")
@@ -172,9 +186,7 @@ def sense(name, job=None, step=1):
             data = {"paket": fg, "elemente": nodes, "pakete": sorted(pk)}
         else:
             raise Stop("BLOCKED", "sinn_unbekannt", fg)
-        fg_after = foreground_pkg()
-        if fg_after != fg:
-            raise Stop("ABORTED", "vordergrund_gewechselt", fg)
+        fg_after = post_check(fg)
         audit(job, step, name, fg, fg_after, "OK", "ok")
         return {"ergebnis": "OK", "daten": data}
     except Stop as e:
@@ -200,8 +212,19 @@ def selftest():
 
     def fake(key):
         s = state
+        s["n_" + key] = s.get("n_" + key, 0) + 1
         if s.get("norish"):
             raise OSError("weg")
+        if s.get("timeout") == key:
+            raise subprocess.TimeoutExpired("rish", 1)
+        if s.get("kill_on") == key:
+            open(KILL, "w").close()
+        if key == "focus" and s.get("fg2") and s["n_focus"] >= 2:
+            return (0, "  mCurrentFocus=Window{abc u0 %s/%s.Main}" % (s["fg2"], s["fg2"]))
+        if key == "keyguard" and s.get("kg2") and s["n_keyguard"] >= 2:
+            return (0, "    isKeyguardShowing=true")
+        if key == "wake" and s.get("wake2") and s["n_wake"] >= 2:
+            return (0, "  mWakefulness=Asleep")
         return {"id": (0, "uid=%s(shell)" % s.get("uid", 2000)),
                 "focus": (0, "  mCurrentFocus=Window{abc u0 %s/%s.Main}" % (s["fg"], s["fg"])),
                 "wake": (0, "  mWakefulness=%s" % s.get("wake", "Awake")),
@@ -224,10 +247,18 @@ def selftest():
         ("Tabu im UI-Baum", {"fg": SETTINGS, "uipkg": "com.whatsapp"}, "ui_summary", "ABORTED", "tabu_im_ui"),
         ("Benachrichtigungen nur Pakete", {"fg": LAUNCHER}, "notif_meta", "OK", None),
         ("unbekannter Sinn", {"fg": TERMUX}, "shell", "BLOCKED", "sinn_unbekannt"),
+        ("Race: Vordergrund -> Tabu", {"fg": TERMUX, "fg2": "com.whatsapp"}, "ui_summary", "ABORTED", "vordergrund_gewechselt"),
+        ("Race: Sperre waehrend Sinn", {"fg": TERMUX, "kg2": True}, "battery", "ABORTED", "gesperrt_waehrend"),
+        ("Race: Display aus waehrend", {"fg": TERMUX, "wake2": True}, "notif_meta", "ABORTED", "display_aus_waehrend"),
+        ("Not-Aus waehrend Sinn", {"fg": TERMUX, "kill_on": "battery"}, "battery", "ABORTED", "phone_off_waehrend"),
+        ("Timeout rish", {"fg": TERMUX, "timeout": "ui"}, "ui_summary", "TIMEOUT", "rish_ui_timeout"),
+        ("nach Timeout wieder normal", {"fg": TERMUX}, "ui_summary", "OK", None),
     ]
     ok = 0
     for name, st, s, want, why in cases:
         state.clear(); state.update(st)
+        if os.path.exists(KILL):
+            os.remove(KILL)
         r = sense(s, "TEST", 1)
         good = r["ergebnis"] == want and (why is None or r.get("grund") == why)
         ok += good
@@ -254,11 +285,80 @@ def selftest():
     good = os.path.getsize(AUDIT) < AUDIT_MAX and "2020-01-01" not in open(AUDIT).read()
     ok += good
     print("%-32s %s  groesse=%d" % ("Audit-Rotation 1 MiB/14 Tage", "ok" if good else "FEHLER", os.path.getsize(AUDIT)))
+    extra = _hardening_tests(tmp)
+    ok += sum(extra)
     import shutil
     shutil.rmtree(tmp, ignore_errors=True)
-    total = len(cases) + 3
+    total = len(cases) + 3 + len(extra)
     print("PHONE-SINNE-SELFTEST %d/%d ok (v%s)" % (ok, total, VERSION))
     return ok == total
+
+
+def _hardening_tests(tmp):
+    """Leak-Tests der echten Shell-Filter, rish stdout/stderr, Prozess-Timeout, Audit-Grenzen."""
+    res = []
+    canary_ui = ('<?xml version="1.0"?><hierarchy><node index="0" text="SECRET_CANARY" resource-id="com.termux:id/x" '
+                 'class="android.widget.TextView" package="com.termux" content-desc="CANARY_DESC 123456" bounds="[0,0][1,1]"/>'
+                 '<node text="OTP 482913" package="com.termux"/></hierarchy>')
+    out = subprocess.run(["sh", "-c", CMD["ui"].split("|", 1)[1]], input=canary_ui, capture_output=True, text=True).stdout
+    good = "CANARY" not in out and "482913" not in out and "2 <node" in out and 'package="com.termux"' in out
+    res.append(good)
+    print("%-32s %s  %s" % ("Leak UI-Filter (Canary)", "ok" if good else "FEHLER", out.split()))
+    canary_n = ("  Notification List:\n    NotificationRecord(0x0a1b2c3d: pkg=com.whatsapp user=UserHandle{0} id=7 tag=Anna Mueller "
+                "importance=4 key=0|com.whatsapp|7|Anna|10123: Notification(channel=msg))\n      tickerText=Dein Code 482913\n"
+                "      android.text=SECRET_CANARY Passwort\n")
+    out = subprocess.run(["sh", "-c", CMD["notif"].split("|", 1)[1]], input=canary_n.replace("\\n", "\n"), capture_output=True, text=True).stdout
+    good = out.strip() == "pkg=com.whatsapp"
+    res.append(good)
+    print("%-32s %s  %s" % ("Leak Benachrichtigung (Canary)", "ok" if good else "FEHLER", out.split()))
+    # rish stdout / stderr / gemischt mit gefaelschtem rish-Programm
+    bindir = os.path.join(tmp, "bin")
+    os.makedirs(bindir, exist_ok=True)
+    old_path = os.environ.get("PATH", "")
+    os.environ["PATH"] = bindir + ":" + old_path
+    global STEP_TIMEOUT
+    old_to = STEP_TIMEOUT
+    try:
+        for label, body in (("nur stdout", "echo uid=2000"), ("nur stderr", "echo uid=2000 >&2"), ("gemischt", "echo uid= >&2; echo 2000")):
+            with open(os.path.join(bindir, "rish"), "w") as f:
+                f.write("#!/bin/sh\n%s\n" % body)
+            os.chmod(os.path.join(bindir, "rish"), 0o755)
+            rc, o = _rish_real("id")
+            good = "uid=" in o and "2000" in o
+            res.append(good)
+            print("%-32s %s  %r" % ("rish " + label, "ok" if good else "FEHLER", o.strip()))
+        with open(os.path.join(bindir, "rish"), "w") as f:
+            f.write("#!/bin/sh\nsleep 30\n")
+        STEP_TIMEOUT = 1
+        t0 = time.time()
+        try:
+            _rish_real("id")
+            good = False
+        except subprocess.TimeoutExpired:
+            good = time.time() - t0 < 5
+        res.append(good)
+        print("%-32s %s  %.1fs" % ("rish haengt -> Timeout", "ok" if good else "FEHLER", time.time() - t0))
+    finally:
+        os.environ["PATH"] = old_path
+        STEP_TIMEOUT = old_to
+    # Audit-Grenzen: genau 14 Tage / aelter, > 1 MiB, danach 600 und nur ganze JSON-Zeilen
+    old = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() - AUDIT_DAYS * 86400 - 60))
+    edge = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() - AUDIT_DAYS * 86400 + 60))
+    with open(AUDIT, "w") as f:
+        f.write(json.dumps({"ts": old, "aktion": "zu_alt"}) + "\n" + json.dumps({"ts": edge, "aktion": "grenze"}) + "\n")
+        now = time.strftime("%Y-%m-%d %H:%M:%S")
+        for i in range(9000):
+            f.write(json.dumps({"ts": now, "aktion": "fueller", "grund": "x" * 120}) + "\n")
+    os.chmod(AUDIT, 0o644)
+    audit("TEST", 1, "rotation", "-", "-", "OK", "ok")
+    txt = open(AUDIT).read()
+    lines = txt.splitlines()
+    whole = all(l.startswith("{") and l.endswith("}") for l in lines)
+    good = (os.path.getsize(AUDIT) <= AUDIT_MAX and "zu_alt" not in txt and oct(os.stat(AUDIT).st_mode & 0o777) == "0o600"
+            and whole and lines[-1].find('"rotation"') > 0)
+    res.append(good)
+    print("%-32s %s  groesse=%d zeilen=%d ganz=%s" % ("Audit-Grenzen 14 Tage/1 MiB", "ok" if good else "FEHLER", os.path.getsize(AUDIT), len(lines), whole))
+    return res
 
 
 def main(argv):
