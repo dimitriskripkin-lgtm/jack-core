@@ -517,7 +517,7 @@ class GeminiAgent(Agent):
         if self.eur >= RUN_EUR:
             raise BudgetStop("Run-Kostenlimit")
         deur, dcalls = day_usage()
-        if deur >= DAY_EUR:
+        if deur >= (DAY_EUR * 3 if day_cap() != DAY_CALLS else DAY_EUR):  # Einrichtungs-Freigabe hebt auch die Tageskosten auf 1.50 EUR, Wochendeckel 3 EUR bleibt
             raise BudgetStop("Arena-Tageskosten")
         if dcalls >= day_cap():
             raise BudgetStop("Arena-Tagesaufrufe")

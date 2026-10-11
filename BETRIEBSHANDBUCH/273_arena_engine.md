@@ -23,3 +23,8 @@ Offen: Runner (Phase 3), Modell-Pin Gemini 2.5 Flash-Lite nach Pilotlauf, Sicher
 - Transfer = Varianten (neue Namen, Werte, Dateien, gleiche Denkaufgabe), Dev B11/B12/D11/D12 ebenfalls Varianten. Pakete mit Loesungen nie ins Repo, nach install geloescht.
 - Statistikregel: ARBEITSPLATZ/gemeinsam/arena/phase3_statistik_fassung2_review.md (ChatGPT Fassung 2 + Auflagen Claude).
 - Baseline Gemini 2.5 Flash-Lite (temperature 0, 2 Serien, alle Aufgaben stabil): A Train 6/6, Dev 2/2, Transfer 6/6. B Train 3/6, Dev 1/4, Transfer 6/12. D Train 5/6, Dev 3/4, Transfer 9/12. Fehlschlaege fast alle mit false_success.
+
+## Split gen (11.10.2026)
+- 120 generierte Aufgaben B/D (GB1..6, GD1..6, je 10 Varianten, Fixtures gb*/gd*). Generator liegt ausserhalb des Repos (ARBEITSPLATZ/gemeinsam/arena/generator, gitignored). Selbsttest 736/736.
+- Lauf: python3 jack_arena_runner.py series gemini gen 1 B,D (mit ARENA_MODEL / ARENA_TOOLS). Einrichtungs-Freigabe hebt auch die Tageskosten auf 1.50 EUR (Wochendeckel 3 EUR bleibt).
+- Messung Flash: ohne Tool 101/120, mit file_grep 107/120, false_success 19->12. Details claude_regeln_v1.md.
