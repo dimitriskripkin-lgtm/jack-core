@@ -83,6 +83,8 @@ ACTION_DOC = {
     "file_stat": '{"action":"file_stat","args":{"path":"name"}} - ob die Datei existiert und ihre Groesse.',
     "file_hash": '{"action":"file_hash","args":{"path":"name"}} - sha256 der Datei.',
 }
+if "grep2" in TOOLS:  # JACK_TUNE_GREPV2
+    ACTION_DOC["file_grep"] += " Bei 0 Treffern kommt zusaetzlich preview_first_lines (Dateianfang, max 20 Zeilen/1500 Zeichen) mit preview_reason=zero_matches; das sind KEINE Treffer."
 
 
 class Policy(Exception):
@@ -123,7 +125,7 @@ class Workspace:
         self.db = rd / "work.db"
         acts = task.get("allowed_actions") or []
         self.allowed = {a.split(":", 1)[0] for a in acts}
-        if "grep" in TOOLS and "file_read" in self.allowed:
+        if ("grep" in TOOLS or "grep2" in TOOLS) and "file_read" in self.allowed:
             self.allowed.add("file_grep")  # nur lesend, nur wo file_read ohnehin erlaubt ist
         self.w_existing = {a.split(":", 1)[1] for a in acts if a.startswith("file_replace:")}
         self.w_new = {a.split(":", 1)[1] for a in acts if a.startswith("file_write:")}
@@ -258,7 +260,18 @@ class Workspace:
             raise Invalid("pattern ist kein gueltiger regulaerer Ausdruck")
         lines = p.read_bytes().decode("utf-8", errors="replace").splitlines()[:5000]
         hits = [{"line": i + 1, "text": l[:300]} for i, l in enumerate(lines) if rx.search(l[:500])]
-        return {"path": p.name, "match_count": len(hits), "matches": hits[:200]}, len(hits) > 200
+        out = {"path": p.name, "match_count": len(hits), "matches": hits[:200]}
+        if not hits and "grep2" in TOOLS:  # JACK_TUNE_GREPV2: Nulltreffer liefern Dateianfang, damit ein geratenes Muster auffaellt
+            prev, size = [], 0
+            for i, l in enumerate(lines[:20]):
+                t = l[:300]
+                if size + len(t) > 1500:
+                    break
+                prev.append({"line": i + 1, "text": t})
+                size += len(t)
+            out.update({"preview_reason": "zero_matches", "preview_first_lines": prev,
+                        "note": "0 Treffer. preview_first_lines sind KEINE Treffer, nur der Dateianfang zum Pruefen, ob das Muster zum Format passt."})
+        return out, len(hits) > 200
 
     def a_file_replace(self, a):
         self.args(a, ["path", "old_text", "new_text", "expected_sha256"])
@@ -766,7 +779,7 @@ def run(task_id, agent, repeat=0, quiet=False):
            "split": task["split"], "repeat_index": int(repeat), "started_at": meta.get("started_at"),
            "ended_at": time.strftime("%Y-%m-%d %H:%M:%S"), "wall_ms": int((time.time() - t0) * 1000),
            "agent": agent.name, "agent_version": "runner%s/%s" % (VERSION, agent.name), "model_id": agent.model_id,
-           "gen_cfg": GEN_CFG if agent.real else None, "prompt_hash": h16(PROMPT), "rules_hash": h16(RULES),
+           "gen_cfg": GEN_CFG if agent.real else None, "prompt_hash": h16(PROMPT), "rules_hash": h16(RULES), "tools": sorted(TOOLS),
            "environment_hash": env_hash(), "seed_effective": "OPEN", "action_count": actions,
            "policy_violations": violations, "format_repaired": repaired, "model_calls": agent.calls, "input_tokens": agent.tin,
            "output_tokens": agent.tout, "api_cost_eur": round(agent.eur, 6) if agent.real else 0,
