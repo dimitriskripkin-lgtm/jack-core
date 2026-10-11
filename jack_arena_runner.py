@@ -39,9 +39,12 @@ RUN_TOKENS = 20000
 RUN_EUR = 0.05
 DAY_EUR = 0.50
 DAY_CALLS = 300  # Arena-eigene Obergrenze Modellaufrufe/Tag (halbe jack_budget-Grenze text 600/Tag)
-MODEL_ID = "gemini-2.5-flash-lite"
-PRICE = {"version": "P1-20261011", "model": MODEL_ID, "usd_per_mtok_in": 0.10, "usd_per_mtok_out": 0.40,
-         "fx_usd_eur": 0.8925, "quelle": "ai.google.dev/gemini-api/docs/pricing, Standard Paid, abgerufen 11.10.2026"}
+_MODELS = {"gemini-2.5-flash-lite": ("P1-20261011", 0.10, 0.40), "gemini-2.5-flash": ("P2-20261011", 0.30, 2.50)}
+MODEL_ID = os.environ.get("ARENA_MODEL", "gemini-2.5-flash-lite")  # JACK_TUNE_ARENAMODEL: nur Whitelist, Standard Flash-Lite = Baseline
+if MODEL_ID not in _MODELS:
+    raise SystemExit("ARENA_MODEL nicht in Whitelist: " + ", ".join(sorted(_MODELS)))
+PRICE = {"version": _MODELS[MODEL_ID][0], "model": MODEL_ID, "usd_per_mtok_in": _MODELS[MODEL_ID][1], "usd_per_mtok_out": _MODELS[MODEL_ID][2],
+         "fx_usd_eur": 0.8925, "quelle": "ai.google.dev/gemini-api/docs/pricing, Standard Paid, Flash-Lite 11.10.2026, Flash gegengeprueft 11.10.2026 (morphllm.com 21.08.2026)"}
 GEN_CFG = {"temperature": 0.0, "maxOutputTokens": 1024, "responseMimeType": "application/json",
            "thinkingConfig": {"thinkingBudget": 0}}
 RUNLOG = arena.ARENA / "runs.jsonl"
@@ -335,7 +338,7 @@ def day_cap():
     try:
         d, n = EINRICHTUNG.read_text().split()[:2]
         if d == today():
-            return max(DAY_CALLS, min(int(n), 1000))
+            return max(DAY_CALLS, min(int(n), 10000))
     except (OSError, ValueError):
         pass
     return DAY_CALLS

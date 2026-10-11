@@ -23,3 +23,4 @@ Offen: Pilot 3, Baseline (Train+Dev, 2 Serien), Phase 4 erste Regel, Transfer-Se
 - ARENA_TOOLS=grep: aktiviert lesendes Werkzeug file_grep (nur wo file_read erlaubt). Ohne Variable = Baseline.
 - Regelstatus und Messungen: ARBEITSPLATZ/gemeinsam/arena/claude_regeln_v1.md. Regel 1 (erst pruefen) verworfen, Regel 2 (file_grep) offen.
 - Merke: pkill -f in einem exec trifft die eigene Kommandozeile. Laeufe per Pidfile oder 'ps | grep [x]' beenden, und danach pruefen, ob wirklich nichts mehr laeuft.
+- ARENA_MODEL=gemini-2.5-flash waehlt das Pruefling-Modell (Whitelist: gemini-2.5-flash-lite = Standard, gemini-2.5-flash). Preis je Modell in _MODELS (price_version P1 Lite, P2 Flash). Aufgaben mit leerer rules_hash und anderem model_id sind getrennte Messreihen.
