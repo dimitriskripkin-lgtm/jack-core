@@ -28,3 +28,10 @@ Offen: Runner (Phase 3), Modell-Pin Gemini 2.5 Flash-Lite nach Pilotlauf, Sicher
 - 120 generierte Aufgaben B/D (GB1..6, GD1..6, je 10 Varianten, Fixtures gb*/gd*). Generator liegt ausserhalb des Repos (ARBEITSPLATZ/gemeinsam/arena/generator, gitignored). Selbsttest 736/736.
 - Lauf: python3 jack_arena_runner.py series gemini gen 1 B,D (mit ARENA_MODEL / ARENA_TOOLS). Einrichtungs-Freigabe hebt auch die Tageskosten auf 1.50 EUR (Wochendeckel 3 EUR bleibt).
 - Messung Flash: ohne Tool 101/120, mit file_grep 107/120, false_success 19->12. Details claude_regeln_v1.md.
+- Regel 4 (file_grep + Hinweis nur zum Zaehlen/Filtern), Flash gen: 104/120, false_success 13. Kein Gewinn ueber das reine Tool, verworfen. Damit ist gen fuer Entscheidungen verbraucht (3 gepruefte Aenderungen).
+
+## Holdout 2 (11.10.2026)
+- 120 neue Aufgaben HB/HD (12 Typen x 10, neue Woerter, Seeds 900+) plus alte B09/B10/D09/D10 = 124. D mit gemischter Polaritaet (30/60 richtig = CONFIRMED). Generator nur privat (jack_arena_private/generator), Selbsttest 1216/1216.
+- Vorregistrierung vor dem Lauf: ARBEITSPLATZ/gemeinsam/arena/holdout2_vorregistrierung.md. Holdout-Lauf braucht .arena_holdout_ok, Datei wird nach jeder Serie geloescht (zwei Arme = zweimal anlegen).
+- Ergebnis Flash ohne/mit file_grep: 105 -> 101 von 124, Wins 8 / Losses 12, false_success 17 -> 19, violations 0. NICHT BESTANDEN, Satz verbraucht.
+- Ursache: ID-Listen (HB4) 9 -> 1. Das Modell sucht per file_grep mit geratenem Zeilenformat (z.B. Job-ID: statt job=), bekommt 0 Treffer und meldet [] als Erfolg. Zaehl-Typen (HB2, HD6) wieder besser (+3/+3), wie auf gen.
