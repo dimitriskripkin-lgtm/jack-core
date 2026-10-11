@@ -41,3 +41,6 @@ Offen: Runner (Phase 3), Modell-Pin Gemini 2.5 Flash-Lite nach Pilotlauf, Sicher
 - gen2 = erneuerter Entscheidungssatz (ersetzt Dev/Transfer nach Auflage 5): 120 Aufgaben KB/KD, Seeds 1100+. Holdout 3: 120 Aufgaben LB/LD, Seeds 1300+, versiegelt. Beide mit gemischter D-Polaritaet. Generator privat (generator/make_gen2_h3.py, braucht make_holdout2.py + make_transfer_BD2.py daneben). Selbsttest 2176/2176.
 - Vorregistrierung: ARBEITSPLATZ/gemeinsam/arena/grep2_vorregistrierung.md. Auswertung: jack_arena_private/evpair.py <split> gate|holdout (paart per Feld tools).
 - gen2 Flash ohne/mit grep2: 104 -> 112/120, Wins 13 / Losses 5, false_success 16 -> 7, false_alarm 4 -> 1. Tor bestanden. Holdout 3 laeuft per jack_arena_private/h3run.sh (am 12.10., Tageskosten-Reserve).
+
+## Sicherheitsrahmen C (11.10.2026 abends)
+- Kap 276, jack_arena_sandbox.py: AST-Tor (Positivliste), pytest im begrenzten Subprozess, Dateizustand vorher/nachher. Selbsttest 60/60. Noch nicht verdrahtet, C bleibt gesperrt.
