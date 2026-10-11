@@ -17,3 +17,9 @@ Offen: Runner (Phase 3), Modell-Pin Gemini 2.5 Flash-Lite nach Pilotlauf, Sicher
 - Eingespielt per install-Paket, Paket danach geloescht (enthaelt Loesungen, nie ins Repo). Selbsttest 192/192, Siegel ok.
 - Lauf: python3 jack_arena_runner.py series gemini transfer 1 A,B,D
 - Erste Messung Gemini 2.5 Flash-Lite: A 6/6, B 2/6 (false_success 3), D 5/6 (false_alarm 1). Schwaeche aus Train (B, false_success) reproduziert sich auf Transfer.
+
+## Stand 11.10.2026 abends: Aufgabenmenge und Baseline
+- Aufgaben: A 6 Train/2 Dev/6 Transfer; B 6/4/12; D 6/4/12; Holdout je 2 (versiegelt). Selbsttest 256/256.
+- Transfer = Varianten (neue Namen, Werte, Dateien, gleiche Denkaufgabe), Dev B11/B12/D11/D12 ebenfalls Varianten. Pakete mit Loesungen nie ins Repo, nach install geloescht.
+- Statistikregel: ARBEITSPLATZ/gemeinsam/arena/phase3_statistik_fassung2_review.md (ChatGPT Fassung 2 + Auflagen Claude).
+- Baseline Gemini 2.5 Flash-Lite (temperature 0, 2 Serien, alle Aufgaben stabil): A Train 6/6, Dev 2/2, Transfer 6/6. B Train 3/6, Dev 1/4, Transfer 6/12. D Train 5/6, Dev 3/4, Transfer 9/12. Fehlschlaege fast alle mit false_success.

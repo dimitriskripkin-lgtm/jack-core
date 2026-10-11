@@ -13,3 +13,7 @@ Befund Statistik: bei temperature 0 wiederholen sich Laeufe praktisch identisch 
 Engine-Aenderung 11.10.: prepare macht run_id bei Kollision eindeutig.
 Not-Aus: ~/jack/.arena_off. Kein Dienst, kein Cron.
 Offen: Pilot 3, Baseline (Train+Dev, 2 Serien), Phase 4 erste Regel, Transfer-Set, Kategorie C mit Sicherheitsrahmen.
+
+## Nachtrag 11.10.2026
+- Einrichtungs-Freigabe .arena_einrichtung ('YYYY-MM-DD N', nur an dem Tag) darf jetzt bis 1000 gehen (vorher 600). Normalgrenze DAY_CALLS bleibt 300. Datei nach Gebrauch loeschen.
+- jack_budget text-Grenze seit 11.10. 1000 (Dima). Dienste, die jack_budget beim Start laden, haben bis zum naechsten Neustart noch 600 im RAM.

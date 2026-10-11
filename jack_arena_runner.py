@@ -309,11 +309,11 @@ def cost_eur(tin, tout):
 
 
 def day_cap():
-    """Arena-Tagesgrenze Modellaufrufe. Einmal-Freigabe: ~/jack/.arena_einrichtung mit 'YYYY-MM-DD N' gilt nur an diesem Tag, max 600."""
+    """Arena-Tagesgrenze Modellaufrufe. Einmal-Freigabe: ~/jack/.arena_einrichtung mit 'YYYY-MM-DD N' gilt nur an diesem Tag, max 1000 (Dima 11.10.)."""
     try:
         d, n = EINRICHTUNG.read_text().split()[:2]
         if d == today():
-            return max(DAY_CALLS, min(int(n), 600))
+            return max(DAY_CALLS, min(int(n), 1000))
     except (OSError, ValueError):
         pass
     return DAY_CALLS
