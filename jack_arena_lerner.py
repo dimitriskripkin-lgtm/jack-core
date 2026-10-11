@@ -99,7 +99,7 @@ def vorschlag(split, model):
     payload = {"system_instruction": {"parts": [{"text": SYSTEM}]},
                "contents": [{"role": "user", "parts": [{"text": "FEHLSCHLAEGE (%d von %d Aufgaben, gezeigt %d):\n%s" % (
                    nfail, ntask, len(fails), json.dumps(fails, ensure_ascii=False))}]}],
-               "generationConfig": {"temperature": 0.0, "maxOutputTokens": 800, "responseMimeType": "application/json",
+               "generationConfig": {"temperature": 0.0, "maxOutputTokens": 1500, "responseMimeType": "application/json",
                                     "thinkingConfig": {"thinkingBudget": 0}}}
     resp = R.GeminiAgent()._http(payload)
     um = resp.get("usageMetadata") or {}
@@ -114,14 +114,23 @@ def vorschlag(split, model):
         pass
     text = "".join(p.get("text", "") for p in resp["candidates"][0]["content"]["parts"])
     try:
-        d = json.loads(text)
-    except ValueError:
-        d = {"regel": None, "roh": text[:500]}
+        d = json.loads(text, strict=False)  # Modell setzt manchmal echte Zeilenumbrueche in Strings
+    except ValueError:  # kaputtes JSON (z.B. in "muster"): Felder einzeln herausziehen
+        d = {}
+        for k in ("regel", "begruendung"):
+            m = re.search(r'"%s"\s*:\s*"((?:[^"\\]|\\.)*)"' % k, text, re.S)
+            if m:
+                d[k] = json.loads('"%s"' % m.group(1).replace("\n", "\\n"), strict=False)
+    if isinstance(d, list) and d and isinstance(d[0], dict):
+        d = d[0]
+    if not isinstance(d, dict):
+        d = {}
+    d.setdefault("roh", text[:600])
     why = check_rule(d.get("regel"), names)
     rec = {"ts": ts, "lerner_version": VERSION, "split": split, "modell_laeufe": model, "lerner_modell": R.MODEL_ID,
            "fehlschlaege": nfail, "aufgaben": ntask, "gezeigt": len(fails), "regel": d.get("regel"),
            "begruendung": d.get("begruendung"), "muster": d.get("muster"), "tokens": [tin, tout], "eur": round(eur, 6),
-           "gueltig": not why, "grund": why}
+           "gueltig": not why, "grund": why, "roh": None if not why else d.get("roh")}
     if not why:
         RULES_DIR.mkdir(exist_ok=True)
         p = RULES_DIR / ("jack_regel_%s.txt" % ts)
