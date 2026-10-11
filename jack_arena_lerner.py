@@ -37,7 +37,7 @@ Verboten in der Regel: Aufgaben-, Funktions- oder Dateinamen, konkrete Werte ode
 Antworte nur mit JSON: {"regel": "...", "begruendung": "hoechstens 300 Zeichen", "muster": ["...", "..."]}"""
 
 
-def failures(split, model):
+def failures(split, model, rhash=None):
     if split == "holdout":
         raise SystemExit("Holdout ist fuer den Lerner verboten")
     latest = {}
@@ -46,7 +46,7 @@ def failures(split, model):
             r = json.loads(line)
         except ValueError:
             continue
-        if r.get("split") == split and r.get("model_id") == model and r.get("agent") == "gemini" and r.get("rules_hash") == R.h16(""):
+        if r.get("split") == split and r.get("model_id") == model and r.get("agent") == "gemini" and r.get("rules_hash") == (rhash or R.h16("")):
             latest[r["task_id"]] = r
     out, names = [], set()
     for tid, r in sorted(latest.items()):
@@ -85,8 +85,44 @@ def check_rule(rule, names):
     return ""
 
 
-def vorschlag(split, model):
-    fails, nfail, names, ntask = failures(split, model)
+SYSTEM2 = SYSTEM + """
+Zusatz: JACK hatte schon eine eigene Regel (unten). Die Laeufe unten sind MIT dieser Regel entstanden. Rueckmeldung der Arena:
+fachlich besser, aber die Regel fuehrte zu mehr Policy-Blocks (verbotene Bauformen, Gruende unten). Verbessere die Regel so,
+dass die fachliche Wirkung bleibt UND keine zusaetzlichen verbotenen Bauformen versucht werden. Wieder genau eine Regel."""
+
+
+def policy_reasons(split, model, rhash):
+    c, runs = {}, 0
+    for line in R.RUNLOG.read_text().splitlines():
+        try:
+            r = json.loads(line)
+        except ValueError:
+            continue
+        if r.get("split") != split or r.get("model_id") != model or r.get("rules_hash") != rhash:
+            continue
+        runs += 1
+        tp = A.D_RUNS / r["run_id"] / "transcript.jsonl"
+        if r.get("policy_violations") and tp.exists():
+            for l in tp.read_text().splitlines():
+                try:
+                    d = json.loads(l)
+                    if "POLICY_BLOCK" in d.get("resp", ""):
+                        k = json.loads(d["resp"])["data"]["reason"][:80]
+                        c[k] = c.get(k, 0) + 1
+                except (ValueError, KeyError, TypeError):
+                    pass
+    return c, runs
+
+
+def vorschlag(split, model, rule_file=None):
+    old, rhash, feedback = None, None, ""
+    if rule_file:
+        rp = RULES_DIR / os.path.basename(rule_file)
+        old = rp.read_text(encoding="utf-8").strip()
+        rhash = R.h16(old)
+        pol, nr = policy_reasons(split, model, rhash)
+        feedback = "BISHERIGE REGEL: %s\nPOLICY-BLOCKS MIT DIESER REGEL (%d Laeufe): %s\n\n" % (old, nr, json.dumps(pol, ensure_ascii=False))
+    fails, nfail, names, ntask = failures(split, model, rhash)
     if not fails:
         raise SystemExit("keine Fehlschlaege gefunden")
     import jack_budget
@@ -96,8 +132,8 @@ def vorschlag(split, model):
     deur, _ = R.day_usage()
     if deur >= R.day_eur_cap():
         raise SystemExit("Arena-Tageskosten erreicht")
-    payload = {"system_instruction": {"parts": [{"text": SYSTEM}]},
-               "contents": [{"role": "user", "parts": [{"text": "FEHLSCHLAEGE (%d von %d Aufgaben, gezeigt %d):\n%s" % (
+    payload = {"system_instruction": {"parts": [{"text": SYSTEM2 if old else SYSTEM}]},
+               "contents": [{"role": "user", "parts": [{"text": feedback + "FEHLSCHLAEGE (%d von %d Aufgaben, gezeigt %d):\n%s" % (
                    nfail, ntask, len(fails), json.dumps(fails, ensure_ascii=False))}]}],
                "generationConfig": {"temperature": 0.0, "maxOutputTokens": 1500, "responseMimeType": "application/json",
                                     "thinkingConfig": {"thinkingBudget": 0}}}
@@ -127,7 +163,7 @@ def vorschlag(split, model):
         d = {}
     d.setdefault("roh", text[:600])
     why = check_rule(d.get("regel"), names)
-    rec = {"ts": ts, "lerner_version": VERSION, "split": split, "modell_laeufe": model, "lerner_modell": R.MODEL_ID,
+    rec = {"ts": ts, "lerner_version": VERSION, "basis_regel": rule_file, "split": split, "modell_laeufe": model, "lerner_modell": R.MODEL_ID,
            "fehlschlaege": nfail, "aufgaben": ntask, "gezeigt": len(fails), "regel": d.get("regel"),
            "begruendung": d.get("begruendung"), "muster": d.get("muster"), "tokens": [tin, tout], "eur": round(eur, 6),
            "gueltig": not why, "grund": why, "roh": None if not why else d.get("roh")}
@@ -146,6 +182,9 @@ def vorschlag(split, model):
 def main(argv):
     if len(argv) >= 4 and argv[1] == "vorschlag":
         vorschlag(argv[2], argv[3])
+        return 0
+    if len(argv) >= 5 and argv[1] == "verbessern":  # verbessern <split> <modell> <regel_datei>: Laeufe MIT dieser Regel
+        vorschlag(argv[2], argv[3], argv[4])
         return 0
     print(__doc__)
     return 2
