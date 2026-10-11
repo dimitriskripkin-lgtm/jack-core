@@ -1,0 +1,9 @@
+# 277 jack_arena_lerner.py - JACK als Lerner (Arena Phase 4, 11.10.2026)
+Zweck: Erster Schritt, in dem JACK selbst lernt. JACKs Modell (gemini-2.5-flash, temperature 0) liest Fehlschlaege eines Uebungssatzes und schlaegt GENAU EINE allgemeine Arbeitsregel vor. Kein Code wird veraendert, nichts wird automatisch uebernommen.
+Aufruf: python3 jack_arena_lerner.py vorschlag <split> <modell_der_laeufe>, z.B. vorschlag genC2 gemini-2.5-flash-lite.
+Sieht: sichtbaren Aufgabentext, Richterurteil, Stop-Grund, ob sichtbar gruen/versteckt rot, ob Erfolg gemeldet, letzte sichtbare pytest-Ausgabe (max 500 Zeichen). Nur Laeufe ohne Regel (rules_hash leer), max 25 Fehlschlaege.
+Sieht nie: Holdout (split holdout wird abgelehnt), Oracle, versteckte Tests, Musterloesungen.
+Pruefung der Regel: 20-450 Zeichen, keine Aufgaben-IDs, keine Funktions-/Dateinamen aus den gezeigten Aufgaben, kein Codeblock. Gueltige Regel -> jack_arena_private/rules/jack_regel_<zeit>.txt, Protokoll lerner.jsonl (Regel, Begruendung, Muster, Tokens, Kosten, rules_hash). Kosten laufen ueber costs.jsonl (run_id LERNER_...) und jack_budget.
+Weg einer Regel: Vorschlag -> Dima gibt Messung frei -> vorregistrierte Messung (ARENA_RULES_FILE) auf frischem Satz -> nur bei bestandenem Tor Holdout -> nur bei bestandenem Holdout und Dimas Ja Arena-Standard, danach eigener Schritt fuer JACKs echte Regeldatei (jack_talk laedt jack_learned_rules.md; jack_coder laedt bisher keine Regeln).
+Erster Testlauf: Vorregistrierung ARBEITSPLATZ/gemeinsam/arena/lerner_vorregistrierung.md (Lernstoff genC2 Lite-Fehlschlaege 42/88, Entscheidung genC3 88 Aufgaben Seed 2500 mit Flash-Lite, Holdout QK). Auswertung jack_arena_private/evrule.py.
+Sperre: jack_budget-Wochenlimit 3 EUR gilt auch fuer den Lerner.
