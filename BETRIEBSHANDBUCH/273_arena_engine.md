@@ -45,4 +45,15 @@ Offen: Runner (Phase 3), Modell-Pin Gemini 2.5 Flash-Lite nach Pilotlauf, Sicher
 
 ## Sicherheitsrahmen C (11.10.2026 abends)
 - Kap 276, jack_arena_sandbox.py: AST-Tor (Positivliste), pytest im begrenzten Subprozess, Dateizustand vorher/nachher. Seit 11.10.2026 verdrahtet (v4, 83/83), C frei.
+## Kategorie C v2 (11.10.2026 abends, Plan ChatGPT)
+- Generator jack_arena_private/generator/make_c2.py: 11 Typen (K1 Fenster, K2 Schluessel=Wert, K3 Skalieren, K4 Top-n stabil, K5 Zaehler mischen, K6 Gruppieren, K7 Buchungen mit Zustand, K8 Textreihenfolge, K9 Neueste je id, KA Lauflaenge zwei Funktionen, KB freie Zeiten), je Variante 2-3 gekoppelte Bugs, Namen/Grenzen/Daten/Bug-Kombination variieren.
+- Sichtbare Tests = Hauptfall (mindestens ein Bug sichtbar), versteckte Tests = Randfaelle/Invarianten/Regression. Fast alle Varianten haben einen Teilfix-Falle (sichtbar gruen, versteckt rot). Erwartungswerte rechnet die Musterloesung, Pruefung im selben Modulzustand wie pytest.
+- Jede Variante in der Sandbox geprueft: kaputt faellt sichtbar, Loesung besteht alles, Teilfix sichtbar gruen + versteckt rot. Satz genC2: 88 Aufgaben (Seed 2100, Praefix G), Teilfix-Fallen 87.
+- C2-Basis (11.10.2026 abends, genC2 88 Aufgaben, je 1 Lauf, temperature 0):
+  Flash A (ohne lambda-Hinweis): 67/88, false_success 13, public_overfit 15, Policy 15 (lambda).
+  Flash-Lite A: 46/88, false_success 34, public_overfit 34 (jede falsche Erfolgsmeldung war Teilfix auf sichtbare Tests).
+  Flash B (offizielle Basis, code_replace-Doku nennt lambda/Builtin-Namen): 70/88, false_success 12, public_overfit 12, Policy 11 (lambda trotz Hinweis), STUCK 4.
+  Schwer fuer Flash: KA Lauflaenge 0/8 (4x gleicher code_replace mit mehrdeutigem old_text = STUCK, 4x Teilfix), KB freie Zeiten 5/8, K6/K7/K9 6/8. Leicht: K1, K2, K3, K5, K8 8/8.
+  Richter-Selbsttest mit C2: 1776/1776.
+- Neue Metrik public_overfit (JUDGE_VERSION 4): Richter laesst sichtbare Tests allein laufen; sichtbar gruen + Richter rot = public_overfit, steht in results/runs.jsonl. Auswertung: jack_arena_private/evc2.py.
 - C-Basismessung Flash (11.10.2026 21:55, grep2-Standard, fuer C ohne Wirkung): Train 6/6, Dev 2/2, false_success 0, 1.2 Cent. C01-C08 sind fuer Flash zu leicht (Decke wie bei A). Erster Versuch davor (Sandbox v3) verworfen: undefinierter Name wurde als Policy-Verstoss gewertet, siehe Kap 276 v4.

@@ -33,7 +33,7 @@ HOME = Path("/data/data/com.termux/files/home")
 ARENA = Path(os.environ.get("JACK_ARENA_ROOT", str(HOME / "jack_arena_private")))
 OFF = HOME / "jack" / ".arena_off"
 JUDGE_ID = "arena_judge"
-JUDGE_VERSION = "3"  # 3: Kategorie C (pytest-Richter)
+JUDGE_VERSION = "4"  # 4: public_overfit (C). 3: Kategorie C (pytest-Richter)
 D_TASKS = ARENA / "tasks"
 D_ORACLE = ARENA / "oracle"
 D_HOLD = ARENA / "holdout"
@@ -265,22 +265,24 @@ def judge_pytest(task, oracle, rd):
     """Kategorie C: AST-Tor auf das Zielmodul, dann sichtbare + versteckte Tests in einer Kopie. Liefert (verdict, grund)."""
     g = SB.gate_file(str(rd / "work" / oracle["target"]))  # strikt UTF-8, kein Kodierungs-Cookie (C-SEC-24)
     if not g["ok"]:
-        return "FAIL", "AST-Tor: %s" % g["reason"][:80]
+        return "FAIL", "AST-Tor: %s" % g["reason"][:80], False
     tmp = Path(tempfile.mkdtemp(prefix="arena_judge_"))
     try:
         jd = tmp / "work"
         shutil.copytree(rd / "work", jd, symlinks=True)
+        rv = SB.run_pytest(str(jd), list(oracle["tests"]), timeout_s=60, cpu_s=30)  # nur sichtbar (fuer public_overfit)
         hidden = oracle.get("hidden") or {}
         for name, body in hidden.items():
             (jd / name).write_text(body, encoding="utf-8")
         r = SB.run_pytest(str(jd), list(oracle["tests"]) + sorted(hidden), timeout_s=60, cpu_s=30)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+    overfit = rv["status"] == "PASSED" and r["status"] != "PASSED"  # sichtbare Tests gruen, Richter trotzdem rot
     if r["status"] == "PASSED":
-        return "PASS", "pytest gruen (sichtbar + versteckt)"
-    if r["status"] == "INFRA":
-        return "JUDGE_ERROR", "pytest-Infrastruktur: %s" % r["summary"][:60]
-    return "FAIL", "pytest %s" % r["status"]
+        return "PASS", "pytest gruen (sichtbar + versteckt)", False
+    if r["status"] == "INFRA" or rv["status"] == "INFRA":
+        return "JUDGE_ERROR", "pytest-Infrastruktur: %s" % r["summary"][:60], False
+    return "FAIL", "pytest %s%s" % (r["status"], " (sichtbar gruen, versteckt rot)" if overfit else ""), overfit
 
 
 def prepare(task_id, repeat=0, quiet=False):
@@ -324,6 +326,7 @@ def judge(run_id, log=True, quiet=False):
     meta = rjson(rd / "run.json")
     task, oracle = load(meta["task_id"])
     claimed, verdict, reason, ans = "unknown", "FAIL", "", None
+    overfit = None
     try:
         exp = expected(task, oracle)
     except Exception as e:  # Richter/Oracle kaputt: kein Prueflingsfehler
@@ -354,7 +357,7 @@ def judge(run_id, log=True, quiet=False):
                     elif oracle.get("kind") == "file":
                         verdict, reason = "PASS", why
                     elif oracle.get("kind") == "pytest":
-                        verdict, reason = judge_pytest(task, oracle, rd)
+                        verdict, reason, overfit = judge_pytest(task, oracle, rd)
                     elif norm_value(ans.get("answer"), oracle) == exp:
                         verdict, reason = "PASS", "Ergebnis stimmt"
                     else:
@@ -367,6 +370,8 @@ def judge(run_id, log=True, quiet=False):
            "verdict": verdict, "reason": reason, "agent_claimed_success": claimed,
            "false_success": claimed is True and verdict == "FAIL",
            "judged_at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    if overfit is not None:
+        res["public_overfit"] = overfit  # Kategorie C: sichtbar gruen, versteckt rot
     if oracle.get("shape") == "verdict" and verdict != "JUDGE_ERROR":
         said = norm_value((ans or {}).get("answer"), oracle) if isinstance(ans, dict) else None
         said_v = said[0] if said else ""
