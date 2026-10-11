@@ -566,7 +566,91 @@ class GeminiAgent(Agent):
         return obj if isinstance(obj, dict) else {"_invalid": True}
 
 
-AGENTS = {"gemini": GeminiAgent, "dummy": DummyAgent}
+_CLAUDE = {"claude-haiku-5-5": ("P3-20261011", 0.10, 0.50), "claude-sonnet-5-5": ("P4-20261011", 2.00, 10.00)}  # platform.claude.com/docs/en/about-claude/pricing, 11.10.2026 (Haiku: Prompts bis 100k Token)
+CLAUDE_MODEL = os.environ.get("ARENA_CLAUDE_MODEL", "claude-haiku-5-5")  # JACK_TUNE_ARENACLAUDE: nur Whitelist
+
+
+def _claude_key():
+    with open(os.path.expanduser("~/.jack_secrets")) as f:
+        for line in f:
+            if "ANTHROPIC_API_KEY" in line and '"' in line:
+                return line.split('"')[1]
+    raise AgentError("ANTHROPIC_API_KEY fehlt in der Secrets-Datei")
+
+
+class ClaudeAgent(GeminiAgent):
+    """Anthropic Messages API als Pruefling. Gleicher Prompt, gleiche Regeln, gleiche Limits wie GeminiAgent."""
+    name = "claude"
+    URL = "https://api.anthropic.com/v1/messages"
+
+    def __init__(self, post=None):
+        super().__init__(post)
+        if CLAUDE_MODEL not in _CLAUDE:
+            raise SystemExit("ARENA_CLAUDE_MODEL nicht in Whitelist: " + ", ".join(sorted(_CLAUDE)))
+        self.model_id = CLAUDE_MODEL
+        v, pin, pout = _CLAUDE[CLAUDE_MODEL]
+        PRICE.update({"version": v, "model": CLAUDE_MODEL, "usd_per_mtok_in": pin, "usd_per_mtok_out": pout})
+
+    def start(self, visible, ws, limit, run_id):
+        super().start(visible, ws, limit, run_id)
+        self.msgs = [{"role": "user", "content": self.contents[0]["parts"][0]["text"]}]
+
+    def _http(self, payload):
+        if self._key is None:
+            self._key = _claude_key()
+        req = urllib.request.Request(self.URL, data=json.dumps(payload).encode(),
+                                     headers={"Content-Type": "application/json", "x-api-key": self._key,
+                                              "anthropic-version": "2023-06-01"})
+        last = None
+        for attempt in range(2):
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    return json.loads(r.read().decode())
+            except urllib.error.HTTPError as e:
+                last = "HTTP %s" % e.code
+                if e.code not in (429, 500, 502, 503, 504, 529):
+                    break
+            except (urllib.error.URLError, TimeoutError, OSError) as e:
+                last = type(e).__name__
+            time.sleep(3)
+        raise AgentError(last or "Anfrage fehlgeschlagen")
+
+    def next(self, observation):
+        if observation is not None:
+            self.msgs.append({"role": "user", "content": json.dumps(observation, ensure_ascii=False)})
+        self._budget()
+        payload = {"model": self.model_id, "max_tokens": 1024, "temperature": 0, "system": self.system, "messages": self.msgs}
+        resp = self._post(payload)
+        um = resp.get("usage") or {}
+        tin = int(um.get("input_tokens") or 0)
+        tout = int(um.get("output_tokens") or 0)
+        eur = cost_eur(tin, tout)
+        self.tin += tin
+        self.tout += tout
+        self.calls += 1
+        self.eur += eur
+        arena.append(COSTS, {"ts": time.strftime("%Y-%m-%d %H:%M:%S"), "day": today(), "run_id": self.run_id,
+                             "model": self.model_id, "in": tin, "out": tout, "eur": eur, "price": PRICE["version"]})
+        try:
+            import jack_budget
+            jack_budget.add_tokens(tin + tout)
+        except Exception:
+            pass
+        text = "".join(b.get("text", "") for b in (resp.get("content") or []) if isinstance(b, dict) and b.get("type") == "text")
+        self.raw = text[:2000]
+        self.msgs.append({"role": "assistant", "content": text or "{}"})
+        try:
+            obj = json.loads(text)
+        except ValueError:
+            m = re.search(r"\{.*\}", text, re.S)
+            try:
+                obj = json.loads(m.group(0)) if m else None
+            except ValueError:
+                obj = None
+        return obj if isinstance(obj, dict) else {"_invalid": True}
+
+
+AGENTS = {"gemini": GeminiAgent, "dummy": DummyAgent, "claude": ClaudeAgent}
 _LOCK_FH = None
 
 
