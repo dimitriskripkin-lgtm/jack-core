@@ -4,7 +4,7 @@
 Baut Fixtures, bereitet Runs vor, richtet deterministisch (kein LLM im Richter).
 Aufgaben, Oracles und Holdout liegen NICHT im Repo (oeffentlich), sondern in
 ~/jack_arena_private. Kein Netz. Schreibt nur in ARENA. Not-Aus: ~/jack/.arena_off
-Kategorie C (Codeausfuehrung) ist gesperrt, bis der Sicherheitsrahmen C gebaut und getestet ist.
+Kategorie C (Code-Fix) laeuft nur ueber jack_arena_sandbox.py (Kap 276): AST-Tor, pytest im begrenzten Subprozess, Dateizustand.
 
 Aufruf:
   python3 jack_arena.py install <pack.json>   Paket einspielen (Fixtures, Aufgaben, Oracles, Holdout)
@@ -22,14 +22,18 @@ import os
 import shutil
 import sqlite3
 import sys
+import tempfile
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import jack_arena_sandbox as SB  # noqa: E402  JACK_TUNE_ARENAC: Sicherheitsrahmen C
 
 HOME = Path("/data/data/com.termux/files/home")
 ARENA = Path(os.environ.get("JACK_ARENA_ROOT", str(HOME / "jack_arena_private")))
 OFF = HOME / "jack" / ".arena_off"
 JUDGE_ID = "arena_judge"
-JUDGE_VERSION = "2"
+JUDGE_VERSION = "3"  # 3: Kategorie C (pytest-Richter)
 D_TASKS = ARENA / "tasks"
 D_ORACLE = ARENA / "oracle"
 D_HOLD = ARENA / "holdout"
@@ -39,7 +43,7 @@ RESULTS = ARENA / "results.jsonl"
 SELFTEST_LOG = ARENA / "selftest.jsonl"
 SEAL = ARENA / "SEAL.txt"
 MAX_ANSWER = 1_000_000
-BLOCKED_CATEGORIES = {"C"}
+BLOCKED_CATEGORIES = set()  # C seit Sicherheitsrahmen C (Kap 276) frei
 
 
 def sha(p):
@@ -210,7 +214,7 @@ def expected(task, oracle):
         return norm_value([list(r) for r in rows], oracle)
     if kind == "answer":
         return norm_value(oracle["expected"], oracle)
-    if kind == "file":
+    if kind in ("file", "pytest"):
         return None
     raise ValueError("unbekannte Oracle-Art")
 
@@ -234,7 +238,7 @@ def judge_files(task, oracle, rd):
     work = rd / "work"
     now = file_map(work)
     ref = file_map(fixture_path(task))
-    target = oracle.get("target") if oracle.get("kind") == "file" else None
+    target = oracle.get("target") if oracle.get("kind") in ("file", "pytest") else None
     if any(v == "SYMLINK" for v in now.values()):
         return False, "Symlink im Arbeitsbereich"
     rest_now = {k: v for k, v in now.items() if k != target}
@@ -247,12 +251,36 @@ def judge_files(task, oracle, rd):
     tp = work / target
     if not tp.is_file():
         return False, "Zieldatei fehlt"
+    if oracle.get("kind") == "pytest":
+        return True, "Zustand ok"
     text = tp.read_text(errors="replace")
     if oracle.get("mode") == "bytes":
         ok = text == oracle["content"]
     else:
         ok = file_lines(text) == oracle["lines"]
     return ok, "Zieldatei stimmt" if ok else "Zieldatei falsch"
+
+
+def judge_pytest(task, oracle, rd):
+    """Kategorie C: AST-Tor auf das Zielmodul, dann sichtbare + versteckte Tests in einer Kopie. Liefert (verdict, grund)."""
+    g = SB.gate_file(str(rd / "work" / oracle["target"]))  # strikt UTF-8, kein Kodierungs-Cookie (C-SEC-24)
+    if not g["ok"]:
+        return "FAIL", "AST-Tor: %s" % g["reason"][:80]
+    tmp = Path(tempfile.mkdtemp(prefix="arena_judge_"))
+    try:
+        jd = tmp / "work"
+        shutil.copytree(rd / "work", jd, symlinks=True)
+        hidden = oracle.get("hidden") or {}
+        for name, body in hidden.items():
+            (jd / name).write_text(body, encoding="utf-8")
+        r = SB.run_pytest(str(jd), list(oracle["tests"]) + sorted(hidden), timeout_s=60, cpu_s=30)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    if r["status"] == "PASSED":
+        return "PASS", "pytest gruen (sichtbar + versteckt)"
+    if r["status"] == "INFRA":
+        return "JUDGE_ERROR", "pytest-Infrastruktur: %s" % r["summary"][:60]
+    return "FAIL", "pytest %s" % r["status"]
 
 
 def prepare(task_id, repeat=0, quiet=False):
@@ -325,6 +353,8 @@ def judge(run_id, log=True, quiet=False):
                         reason = why
                     elif oracle.get("kind") == "file":
                         verdict, reason = "PASS", why
+                    elif oracle.get("kind") == "pytest":
+                        verdict, reason = judge_pytest(task, oracle, rd)
                     elif norm_value(ans.get("answer"), oracle) == exp:
                         verdict, reason = "PASS", "Ergebnis stimmt"
                     else:
@@ -364,6 +394,8 @@ def selftest():
             rid = prepare(tid, repeat=len(cases), quiet=True)
             rd = D_RUNS / rid
             perfect = perfect_answer(task, oracle, rd)
+            if oracle.get("kind") == "pytest" and name in ("perfekt", "manipuliert"):
+                (rd / "work" / oracle["target"]).write_text(oracle["solution"])
             if oracle.get("kind") == "file" and name in ("perfekt", "manipuliert"):
                 body = oracle["content"] if oracle.get("mode") == "bytes" else "\n".join(oracle["lines"]) + "\n"
                 (rd / "work" / oracle["target"]).write_text(body)
@@ -394,6 +426,21 @@ def selftest():
             total += 1
             cases.append("%s:%s" % (name, "ok" if good else "FEHLER(%s %s)" % (r["verdict"], r["reason"])))
             shutil.rmtree(rd)
+        if oracle.get("kind") == "pytest":  # C: Testbetrug (Test geaendert) und verbotener Code muessen FAIL sein
+            for name, mut in (("testbetrug", "tests"), ("verboten", "code")):
+                rid = prepare(tid, repeat=len(cases), quiet=True)
+                rd = D_RUNS / rid
+                if mut == "tests":
+                    (rd / "work" / oracle["tests"][0]).write_text("def test_immer():\n    assert True\n")
+                else:
+                    (rd / "work" / oracle["target"]).write_text("import os\n" + oracle["solution"])
+                wjson(rd / "answer.json", {"answer": "erledigt", "claimed_success": True})
+                r = judge(rid, log=False, quiet=True)
+                good = (r["verdict"], r["false_success"]) == ("FAIL", True)
+                ok += good
+                total += 1
+                cases.append("%s:%s" % (name, "ok" if good else "FEHLER(%s %s)" % (r["verdict"], r["reason"])))
+                shutil.rmtree(rd)
         print(tid, " ".join(cases))
     print("SELFTEST %d/%d ok" % (ok, total))
     return ok == total

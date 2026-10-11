@@ -40,7 +40,9 @@ Offen: Runner (Phase 3), Modell-Pin Gemini 2.5 Flash-Lite nach Pilotlauf, Sicher
 ## gen2 + Holdout 3 (11.10.2026 abends)
 - gen2 = erneuerter Entscheidungssatz (ersetzt Dev/Transfer nach Auflage 5): 120 Aufgaben KB/KD, Seeds 1100+. Holdout 3: 120 Aufgaben LB/LD, Seeds 1300+, versiegelt. Beide mit gemischter D-Polaritaet. Generator privat (generator/make_gen2_h3.py, braucht make_holdout2.py + make_transfer_BD2.py daneben). Selbsttest 2176/2176.
 - Vorregistrierung: ARBEITSPLATZ/gemeinsam/arena/grep2_vorregistrierung.md. Auswertung: jack_arena_private/evpair.py <split> gate|holdout (paart per Feld tools).
-- gen2 Flash ohne/mit grep2: 104 -> 112/120, Wins 13 / Losses 5, false_success 16 -> 7, false_alarm 4 -> 1. Tor bestanden. Holdout 3 laeuft per jack_arena_private/h3run.sh (am 12.10., Tageskosten-Reserve).
+- gen2 Flash ohne/mit grep2: 104 -> 112/120, Wins 13 / Losses 5, false_success 16 -> 7, false_alarm 4 -> 1. Tor bestanden.
+- Holdout 3 (11.10.2026 21:35, vorgezogen, Tagesgrenze per day_eur_cap auf 3 EUR): 102 -> 110/120, Wins 16 / Losses 8, false_success 17 -> 7, false_alarm 4 -> 1, violations 0. BESTANDEN. Satz in holdout_verbraucht/. grep2 ist seitdem Arena-Standard (ARENA_TOOLS-Vorgabe grep2, ARENA_TOOLS= leer = ohne).
 
 ## Sicherheitsrahmen C (11.10.2026 abends)
-- Kap 276, jack_arena_sandbox.py: AST-Tor (Positivliste), pytest im begrenzten Subprozess, Dateizustand vorher/nachher. Selbsttest 60/60. Noch nicht verdrahtet, C bleibt gesperrt.
+- Kap 276, jack_arena_sandbox.py: AST-Tor (Positivliste), pytest im begrenzten Subprozess, Dateizustand vorher/nachher. Seit 11.10.2026 verdrahtet (v4, 83/83), C frei.
+- C-Basismessung Flash (11.10.2026 21:55, grep2-Standard, fuer C ohne Wirkung): Train 6/6, Dev 2/2, false_success 0, 1.2 Cent. C01-C08 sind fuer Flash zu leicht (Decke wie bei A). Erster Versuch davor (Sandbox v3) verworfen: undefinierter Name wurde als Policy-Verstoss gewertet, siehe Kap 276 v4.

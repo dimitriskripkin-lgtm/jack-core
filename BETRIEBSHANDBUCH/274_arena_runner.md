@@ -21,6 +21,9 @@ Offen: Pilot 3, Baseline (Train+Dev, 2 Serien), Phase 4 erste Regel, Transfer-Se
 ## Phase 4 Schalter (11.10.2026)
 - ARENA_RULES_FILE=<datei>: Regeltext wird an den Prompt gehaengt, rules_hash aendert sich. Ohne Variable = Baseline.
 - ARENA_TOOLS=grep: aktiviert lesendes Werkzeug file_grep (nur wo file_read erlaubt). Ohne Variable = Baseline.
+- Seit Holdout 3 (11.10.2026) ist grep2 Standard: ohne ARENA_TOOLS gilt grep2, ARENA_TOOLS= (leer) schaltet Zusatzwerkzeuge ab (alte Baseline).
+- day_eur_cap (11.10.2026, JACK_TUNE_ARENAEUR): .arena_einrichtung 'YYYY-MM-DD N EUR' setzt die Arena-Tageskosten fuer diesen Tag (max 4.00 EUR), ohne dritten Wert 1.50 EUR, ohne Datei 0.50 EUR.
+- Kategorie C: Aktionen code_read / code_replace / pytest_run, Details Kap 276.
 - ARENA_TOOLS=grep2 (11.10.2026, JACK_TUNE_GREPV2): file_grep mit Nulltreffer-Vertrag. Bei match_count=0 zusaetzlich preview_first_lines (max 20 Zeilen / 1500 Zeichen), preview_reason=zero_matches, Hinweis KEINE Treffer. Werkzeugbeschreibung nennt das. runs.jsonl hat seitdem das Feld tools (sortierte Liste der Zusatzwerkzeuge).
 - Regelstatus und Messungen: ARBEITSPLATZ/gemeinsam/arena/claude_regeln_v1.md. Regel 1 (erst pruefen) verworfen, Regel 2/3 (file_grep, Lite) verworfen, Regel 4 (Hinweis) verworfen. file_grep v1 mit Flash am Holdout 2 durchgefallen (11.10.2026): leeres Suchergebnis wird als Antwort genommen. ARENA_TOOLS bleibt ohne Vorgabe aus.
 - Merke: pkill -f in einem exec trifft die eigene Kommandozeile. Laeufe per Pidfile oder 'ps | grep [x]' beenden, und danach pruefen, ob wirklich nichts mehr laeuft.

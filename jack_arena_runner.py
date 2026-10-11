@@ -28,6 +28,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import jack_arena as arena  # noqa: E402
+import jack_arena_sandbox as SB  # noqa: E402  JACK_TUNE_ARENAC
 
 VERSION = "1"
 GLOBAL_MAX_ACTIONS = 30
@@ -72,7 +73,7 @@ if _RF and os.path.isfile(_RF):
     with open(_RF, encoding="utf-8") as _f:
         RULES = _f.read().strip()
 
-TOOLS = set(x for x in os.environ.get("ARENA_TOOLS", "").split(",") if x)  # JACK_TUNE_ARENATOOLS: Zusatzwerkzeuge nur per Umgebungsvariable, Standard leer = Baseline
+TOOLS = set(x for x in os.environ.get("ARENA_TOOLS", "grep2").split(",") if x)  # JACK_TUNE_ARENATOOLS: seit Holdout 3 (11.10.2026) Standard grep2; ARENA_TOOLS= (leer) = ohne Zusatzwerkzeug
 ACTION_DOC = {
     "file_grep": '{"action":"file_grep","args":{"path":"name","pattern":"regex"}} - sucht Zeilen per regulaerem Ausdruck (Python re, max 80 Zeichen, ohne verschachtelte Wiederholung), liefert Trefferzahl und bis zu 200 Treffer mit Zeilennummer (ab 1).',
     "sql_read": '{"action":"sql_read","args":{"query":"SELECT ..."}} - genau eine lesende SQL-Abfrage auf die Aufgaben-Datenbank (SQLite), max 200 Zeilen.',
@@ -82,6 +83,9 @@ ACTION_DOC = {
     "file_write": '{"action":"file_write","args":{"path":"name","content":"..."}} - schreibt eine neue Datei (eigene darf ueberschrieben werden). Nur fuer: {w}.',
     "file_stat": '{"action":"file_stat","args":{"path":"name"}} - ob die Datei existiert und ihre Groesse.',
     "file_hash": '{"action":"file_hash","args":{"path":"name"}} - sha256 der Datei.',
+    "code_read": '{"action":"code_read","args":{}} - liest das Zielmodul ({w}) komplett, mit sha256.',
+    "code_replace": '{"action":"code_replace","args":{"old_text":"...","new_text":"...","expected_sha256":"..."}} - ersetzt genau eine Stelle im Zielmodul ({w}); old_text muss genau einmal vorkommen, expected_sha256 = aktueller Hash. Erlaubt ist nur einfacher Python-Code (keine Imports ausser math, re, itertools, functools, collections, typing, string; keine Klassen, kein Datei-/Netz-/Systemzugriff).',
+    "pytest_run": '{"action":"pytest_run","args":{}} - fuehrt die feste Testsuite gegen das Zielmodul aus und liefert status (PASSED, FAILED, ERROR, KILLED, TIMEOUT, OUTPUT_LIMIT) und eine gekuerzte Ausgabe der sichtbaren Tests.',
 }
 if "grep2" in TOOLS:  # JACK_TUNE_GREPV2
     ACTION_DOC["file_grep"] += " Bei 0 Treffern kommt zusaetzlich preview_first_lines (Dateianfang, max 20 Zeilen/1500 Zeichen) mit preview_reason=zero_matches; das sind KEINE Treffer."
@@ -129,12 +133,19 @@ class Workspace:
             self.allowed.add("file_grep")  # nur lesend, nur wo file_read ohnehin erlaubt ist
         self.w_existing = {a.split(":", 1)[1] for a in acts if a.startswith("file_replace:")}
         self.w_new = {a.split(":", 1)[1] for a in acts if a.startswith("file_write:")}
+        self.code_target = next((a.split(":", 1)[1] for a in acts if a.startswith("code_replace:")), None)
         self.created = set()
 
     def doc(self):
         out = []
         for a in sorted(self.allowed):
-            w = ", ".join(sorted(self.w_existing if a == "file_replace" else self.w_new)) or "-"
+            if a == "file_replace":
+                wset = self.w_existing
+            elif a in ("code_read", "code_replace"):
+                wset = {self.code_target} if self.code_target else set()
+            else:
+                wset = self.w_new
+            w = ", ".join(sorted(wset)) or "-"
             out.append("- " + ACTION_DOC[a].replace("{w}", w))
         return "\n".join(out)
 
@@ -321,6 +332,63 @@ class Workspace:
         return {"path": p.name, "sha256": arena.sha(p)}, False
 
 
+    # --- C (Kap 276): nur das Zielmodul, AST-Tor vor jeder Aenderung und vor jedem Testlauf
+    def _code(self):
+        if not self.code_target:
+            raise Invalid("Aufgabe hat kein Zielmodul")
+        return self.name(self.code_target)
+
+    def a_code_read(self, a):
+        self.args(a, [])
+        p = self._code()
+        raw = p.read_bytes()
+        text = raw.decode("utf-8", errors="replace")
+        return {"path": p.name, "text": text[:READ_CAP], "sha256": hashlib.sha256(raw).hexdigest()}, len(text) > READ_CAP
+
+    def a_code_replace(self, a):
+        self.args(a, ["old_text", "new_text", "expected_sha256"])
+        p = self._code()
+        old, new, exp = a["old_text"], a["new_text"], a["expected_sha256"]
+        if not all(isinstance(x, str) for x in (old, new, exp)) or len(old) > 6000 or len(new) > 6000 or not old:
+            raise Invalid("old_text/new_text 1-6000 Zeichen, Texte")
+        raw = p.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != exp:
+            raise Invalid("expected_sha256 passt nicht zum aktuellen Inhalt, keine Aenderung")
+        try:
+            text = raw.decode("utf-8", errors="strict")
+        except UnicodeDecodeError:
+            raise Invalid("Zielmodul ist kein UTF-8")
+        n = text.count(old)
+        if n != 1:
+            raise Invalid("old_text kommt %d-mal vor (muss genau 1 sein), keine Aenderung" % n)
+        out = text.replace(old, new, 1)
+        g = SB.ast_gate(out)
+        if g["code"] == "SYNTAX_ERROR":
+            raise Invalid("Syntaxfehler im Ergebnis, keine Aenderung")
+        if not g["ok"]:
+            raise Policy("AST-Tor: %s" % g["reason"][:120])
+        tmp = self.rd / ".tmp_replace"
+        tmp.write_bytes(out.encode("utf-8"))
+        os.replace(tmp, p)
+        return {"path": p.name, "changed": True, "sha256_after": arena.sha(p)}, False
+
+    def a_pytest_run(self, a):
+        self.args(a, [])
+        p = self._code()
+        g = SB.gate_file(str(p))
+        if not g["ok"]:
+            raise Policy("AST-Tor: %s" % g["reason"][:120])
+        tests = sorted(x.name for x in self.work.iterdir() if x.is_file() and x.name.startswith("test_") and x.name.endswith(".py"))
+        r = SB.run_pytest(str(self.work), tests, timeout_s=60, cpu_s=30)
+        if r["status"] == "STATE_CHANGED":  # C-SEC-25: waehrend des Tests darf sich keine Datei aendern
+            raise Policy("Dateien im Arbeitsbereich waehrend pytest veraendert")
+        s = r["summary"]
+        for leak in (str(self.work.resolve()), str(self.work)):
+            s = s.replace(leak, "work")
+        s = re.sub(r"/(?:data|tmp|usr|home|root|var|proc)[^\s:'\x22]*/", "", s)  # keine absoluten Pfade an den Pruefling
+        return {"status": r["status"], "summary": s[-1500:], "seconds": r["seconds"]}, False
+
+
 def respond(ws, req):
     """Eine Prueflingsaktion ausfuehren. Liefert (antwort, policy_verstoss)."""
     try:
@@ -355,6 +423,19 @@ def day_cap():
     except (OSError, ValueError):
         pass
     return DAY_CALLS
+
+
+def day_eur_cap():
+    """Arena-Tageskosten. Normal DAY_EUR. Mit .arena_einrichtung 3x DAY_EUR, oder dritter Wert 'YYYY-MM-DD N EUR' (max 4.00 EUR, Dima 11.10.: Einrichtungsphase, Guthaben 3.95 EUR)."""
+    if day_cap() == DAY_CALLS:
+        return DAY_EUR
+    try:
+        parts = EINRICHTUNG.read_text().split()
+        if len(parts) >= 3 and parts[0] == today():
+            return max(DAY_EUR * 3, min(float(parts[2]), 4.0))
+    except (OSError, ValueError):
+        pass
+    return DAY_EUR * 3
 
 
 def day_usage():
@@ -447,6 +528,17 @@ class OracleAgent(Agent):
             if self.step == 1:
                 return {"action": "file_list", "args": {}}
             return {"final": {"answer": o["expected"], "claimed_success": True}}
+        if kind == "pytest":
+            if self.step == 1:
+                return {"action": "code_read", "args": {}}
+            if self.step == 2:
+                d = obs["data"]
+                return {"action": "code_replace", "args": {"old_text": d["text"], "new_text": o["solution"],
+                                                           "expected_sha256": d["sha256"]}}
+            if self.step == 3:
+                return {"action": "pytest_run", "args": {}}
+            ok = obs.get("data", {}).get("status") == "PASSED"
+            return {"final": {"answer": "erledigt", "claimed_success": ok}}
         t = o["target"]
         if o.get("mode") == "bytes":
             if self.step == 1:
@@ -530,7 +622,7 @@ class GeminiAgent(Agent):
         if self.eur >= RUN_EUR:
             raise BudgetStop("Run-Kostenlimit")
         deur, dcalls = day_usage()
-        if deur >= (DAY_EUR * 3 if day_cap() != DAY_CALLS else DAY_EUR):  # Einrichtungs-Freigabe hebt auch die Tageskosten auf 1.50 EUR, Wochendeckel 3 EUR bleibt
+        if deur >= day_eur_cap():  # JACK_TUNE_ARENAEUR: Einrichtungs-Freigabe hebt Tageskosten (1.50 EUR oder dritter Wert, max 4.00), Wochendeckel bleibt
             raise BudgetStop("Arena-Tageskosten")
         if dcalls >= day_cap():
             raise BudgetStop("Arena-Tagesaufrufe")
@@ -902,6 +994,15 @@ POLICY_CASES = [
     ("B05", "file_replace", {"path": "work/settings.ini", "old_text": "port = 8080\nretry_limit = 2", "new_text": "port = 8080\nretry_limit = 4", "expected_sha256": "@SHA"}, "OK"),
     ("D01", "file_write", {"path": "output.txt", "content": "x"}, "POLICY_BLOCK"),
     ("D01", "file_stat", {"path": "output.txt"}, "OK"),
+    ("C01", "code_read", {}, "OK"),
+    ("C01", "file_read", {"path": "test_range_sum.py"}, "POLICY_BLOCK"),
+    ("C01", "code_replace", {"old_text": "    total = 0\n", "new_text": "    import os\n    total = 0\n", "expected_sha256": "@CSHA"}, "POLICY_BLOCK"),
+    ("C01", "code_replace", {"old_text": "    total = 0\n", "new_text": "    total = (\n", "expected_sha256": "@CSHA"}, "INVALID_ARGS"),
+    ("C01", "code_replace", {"old_text": "    total = 0\n", "new_text": "    total = open('x')\n", "expected_sha256": "@CSHA"}, "POLICY_BLOCK"),
+    ("C01", "code_replace", {"old_text": "def sum_to(n):\n", "new_text": "# coding: latin-1\ndef sum_to(n):\n", "expected_sha256": "@CSHA"}, "POLICY_BLOCK"),
+    ("C01", "pytest_run", {}, "OK"),
+    ("C01", "code_replace", {"old_text": "range(1, n)", "new_text": "range(1, n + 1)", "expected_sha256": "@CSHA"}, "OK"),
+    ("C01", "pytest_run", {}, "OK"),
     ("D03", "file_hash", {"path": "artifact.bin"}, "OK"),
 ]
 
@@ -919,6 +1020,8 @@ def policytest():
                 os.symlink("/etc/hosts", wss[tid].work / "link")
         ws = wss[tid]
         a = dict(args)
+        if a.get("expected_sha256") == "@CSHA":
+            a["expected_sha256"] = arena.sha(ws.work / ws.code_target)
         if a.get("expected_sha256") == "@SHA":
             a["expected_sha256"] = arena.sha(ws.work / "settings.ini")
         if a.get("path") == "@LINK":

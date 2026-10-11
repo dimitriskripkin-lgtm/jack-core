@@ -30,7 +30,7 @@ import sys
 import tempfile
 import time
 
-VERSION = "2"  # 2: ChatGPT-Review 11.10. (Scope-Vergiftung, Attribut-Schreiben, Annotationen, Ausgabeflut)
+VERSION = "4"  # 4: unbekannte Nicht-Builtin-Namen = Programmierfehler (NameError), kein Policy-Block. 3: Kodierungs-Cookie, Zustand waehrend pytest eingefroren (ChatGPT-Review 2). 2: 2: ChatGPT-Review 11.10. (Scope-Vergiftung, Attribut-Schreiben, Annotationen, Ausgabeflut)
 MAX_SOURCE = 20000
 MAX_NODES = 5000
 SUMMARY_MAX = 1500
@@ -86,6 +86,7 @@ ALLOWED_ATTRS -= {"format", "format_map"}  # Formatfelder koennen Attribute lese
 # Kein Name aus der Python-Builtin-Menge darf gebunden werden, ausser er ist erlaubt (C-SEC-20):
 # sonst "legitimiert" ein Parameter open in Funktion A das echte open in Funktion B (Bindungen werden modulweit gesammelt).
 FORBIDDEN_BIND = set(dir(builtins)) - ALLOWED_BUILTINS
+CODING_RE = re.compile(r"^[ \t\f]*#.*?coding[:=]")  # PEP 263, nur Zeile 1-2 relevant (C-SEC-24)
 ANNOT_OK = (ast.Name, ast.Attribute, ast.Subscript, ast.Tuple, ast.List, ast.Load, ast.BinOp, ast.BitOr)
 
 
@@ -94,7 +95,8 @@ class Block(Exception):
 
 
 def _bad_ident(name):
-    return not isinstance(name, str) or name.startswith("__") or name in FORBIDDEN_BIND
+    # Nicht-ASCII-Bezeichner fail-closed (Homoglyphen, C-SEC-10b); Vollbreite normalisiert der Parser schon zu ASCII.
+    return not isinstance(name, str) or not name.isascii() or name.startswith("__") or name in FORBIDDEN_BIND
 
 
 def _check_annotation(a):
@@ -111,6 +113,8 @@ def ast_gate(source):
     """Prueft Quelltext. Rueckgabe {"ok": bool, "code": OK|POLICY_BLOCK|SYNTAX_ERROR, "reason": str}."""
     if not isinstance(source, str) or len(source) > MAX_SOURCE:
         return {"ok": False, "code": "POLICY_BLOCK", "reason": "Quelltext fehlt oder groesser als %d Zeichen" % MAX_SOURCE}
+    if source.startswith("\ufeff") or any(CODING_RE.match(l) for l in source.splitlines()[:2]):
+        return {"ok": False, "code": "POLICY_BLOCK", "reason": "Kodierungsangabe/BOM nicht erlaubt (nur UTF-8 ohne Cookie)"}
     try:
         tree = ast.parse(source)
     except (SyntaxError, ValueError, RecursionError, MemoryError) as e:
@@ -122,6 +126,17 @@ def ast_gate(source):
     except RecursionError:
         return {"ok": False, "code": "POLICY_BLOCK", "reason": "zu tief verschachtelt"}
     return {"ok": True, "code": "OK", "reason": "AST-Tor bestanden"}
+
+
+def gate_file(path):
+    """Tor auf die gespeicherten Bytes: strikt UTF-8 dekodieren, dann ast_gate. So sehen Tor und Interpreter denselben Text."""
+    try:
+        with open(path, "rb") as f:
+            raw = f.read(MAX_SOURCE * 4 + 1)
+        text = raw.decode("utf-8", errors="strict")
+    except (OSError, UnicodeDecodeError) as e:
+        return {"ok": False, "code": "POLICY_BLOCK", "reason": "Datei nicht strikt UTF-8 lesbar: %s" % type(e).__name__}
+    return ast_gate(text)
 
 
 def _check(tree):
@@ -202,8 +217,11 @@ def _check(tree):
                 p = parent.get(n)
                 if not (isinstance(p, ast.Attribute) and p.value is n):
                     raise Block("Modul nur als modul.name nutzbar: %s" % n.id)
-            elif n.id not in bound and n.id not in ALLOWED_BUILTINS:
+            elif n.id in FORBIDDEN_BIND:
+                # Binden verbotener Builtins ist ueberall gesperrt, also kann dieser Name nur das echte Builtin sein.
                 raise Block("Name nicht erlaubt: %s" % n.id)
+            # sonst: eigener Name oder undefiniert. Undefiniert ergibt zur Laufzeit NameError, ohne Sicherheitsfolge
+            # (kein globals/setattr/Stern-Import, Modulnamen nur aus geprueften Anweisungen).
         elif isinstance(n, ast.Attribute):
             v = n.value
             if isinstance(v, ast.Name) and v.id in modules:
@@ -237,7 +255,8 @@ def _limiter(cpu_s, mem_bytes, fsize_bytes):
 
 
 def run_pytest(run_dir, tests, timeout_s=30, cpu_s=20, mem_mb=768, fsize_kb=1024):
-    """Fuehrt die festen Testdateien aus. Rueckgabe dict mit status PASSED|FAILED|ERROR|TIMEOUT|KILLED|OUTPUT_LIMIT|NO_TESTS|INFRA."""
+    """Fuehrt die festen Testdateien aus. Rueckgabe dict mit status PASSED|FAILED|ERROR|TIMEOUT|KILLED|OUTPUT_LIMIT|STATE_CHANGED|NO_TESTS|INFRA.
+    STATE_CHANGED: waehrend des Laufs hat sich eine Datei im Run-Ordner geaendert (auch das Zielmodul) = immer Fehlschlag."""
     run_dir = os.path.realpath(run_dir)
     for t in tests:
         p = os.path.realpath(os.path.join(run_dir, t))
@@ -255,6 +274,7 @@ def run_pytest(run_dir, tests, timeout_s=30, cpu_s=20, mem_mb=768, fsize_kb=1024
            "--no-header", "-c", ini, "--rootdir", run_dir, "--basetemp", os.path.join(tmp, "bt")] + list(tests)
     t0 = time.time()
     status, out, rc = None, "", None
+    before = file_state(run_dir)  # C-SEC-25: waehrend pytest darf sich im Run-Ordner gar nichts aendern
     try:
         p = subprocess.Popen(cmd, cwd=run_dir, env=env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT, start_new_session=True,
@@ -298,6 +318,9 @@ def run_pytest(run_dir, tests, timeout_s=30, cpu_s=20, mem_mb=768, fsize_kb=1024
         status, out = "INFRA", "Start fehlgeschlagen: %s" % type(e).__name__
     finally:
         shutil.rmtree(side, ignore_errors=True)
+    changed = state_diff(before, file_state(run_dir))
+    if not changed["ok"]:
+        status = "STATE_CHANGED"
     if status is None:
         if "No module named pytest" in out:
             status = "INFRA"
@@ -313,7 +336,10 @@ def run_pytest(run_dir, tests, timeout_s=30, cpu_s=20, mem_mb=768, fsize_kb=1024
             status = "ERROR"  # 2 = Sammelfehler (z.B. Zielmodul kaputt), 3/4 = interner Fehler/Aufruf
     lines = [l for l in out.splitlines() if l.strip()]
     tail = "\n".join(lines[-25:])
-    return {"status": status, "rc": rc, "seconds": round(time.time() - t0, 2), "summary": tail[-SUMMARY_MAX:]}
+    res = {"status": status, "rc": rc, "seconds": round(time.time() - t0, 2), "summary": tail[-SUMMARY_MAX:]}
+    if not changed["ok"]:
+        res["state_violations"] = changed["violations"][:10]
+    return res
 
 
 # ---------- Schicht 3: Dateizustand ----------
@@ -396,6 +422,9 @@ SEC = [
     ("C-SEC-23b Return-Comprehension", "def f(x) -> [i for i in [1]]:\n    return x\n"),
     ("C-SEC-23c Annotation-String", "def f(x: 'open(1)'):\n    return x\n"),
     ("C-SEC-23d AnnAssign-Aufruf", "def f():\n    y: len('a') = 1\n    return y\n"),
+    ("C-SEC-24 coding-Cookie", "# -*- coding: utf-7 -*-\ndef f():\n    return 1\n"),
+    ("C-SEC-24b fileencoding Zeile 2", "#!/usr/bin/env python3\n# vim: set fileencoding=latin-1 :\ndef f():\n    return 1\n"),
+    ("C-SEC-24c BOM", "\ufeffdef f():\n    return 1\n"),
 ]
 
 OK_CASES = [
@@ -413,6 +442,8 @@ OK_CASES = [
     ("P-12 collections", "from collections import Counter\nimport collections\ndef top(xs):\n    d = collections.defaultdict(int)\n    for x in xs:\n        d[x] += 1\n    return Counter(xs).most_common(1)[0][0]\n"),
     ("P-13 f-string", "def show(n):\n    return f'{n:>4} Stueck {n!r}'\n"),
     ("P-14 erlaubter Builtin als Name", "def f(xs):\n    sum = 0\n    for x in xs:\n        sum += x\n    return sum\n"),
+    ("P-18 undefinierter Name (NameError, kein Angriff)", "def f():\n    return helfer(1) + rest\n"),
+    ("P-17 Kommentar spaeter", "def f(s):\n    return s\n# encoding: nur Kommentar in Zeile 3\n"),
     ("P-16 Schluesselwort type=", "def f():\n    return dict(type=1, id=2)\n"),
     ("P-15 einfache Annotationen", "from typing import Optional\ndef f(x: int | None, ys: list[int]) -> Optional[dict[str, int]]:\n    return None\n"),
 ]
@@ -491,6 +522,24 @@ def selftest():
         ok += good
         total += 1
         print("%-30s %s  neu=%s" % ("neue Datei erkannt", "ok" if good else "FEHLER", diff["new"]))
+        # C-SEC-25: Datei aendert sich waehrend pytest (simulierter Ausbruch ueber eine Testdatei) -> STATE_CHANGED
+        with open(os.path.join(d, "range_sum.py"), "w") as f:
+            f.write("def sum_to(n):\n    return sum(range(1, n + 1))\n")
+        os.remove(os.path.join(d, "conftest.py"))
+        with open(os.path.join(d, "test_range_sum.py"), "w") as f:
+            f.write("def test_schreibt():\n    open('range_sum.py', 'a').write('# nachher\\n')\n")
+        r = run_pytest(d, ["test_range_sum.py"])
+        good = r["status"] == "STATE_CHANGED" and r.get("state_violations") == ["range_sum.py"]
+        ok += good
+        total += 1
+        print("%-30s %s  %s %s" % ("C-SEC-25 Zustand eingefroren", "ok" if good else "FEHLER", r["status"], r.get("state_violations")))
+        with open(os.path.join(d, "x.py"), "wb") as f:
+            f.write("def f():\n    return 'caf\xe9'\n".encode("latin-1"))
+        g = gate_file(os.path.join(d, "x.py"))
+        good = g["code"] == "POLICY_BLOCK"
+        ok += good
+        total += 1
+        print("%-30s %s  %s" % ("C-SEC-24d kein UTF-8", "ok" if good else "FEHLER", g["reason"]))
         r = run_pytest(d, ["../x.py"])
         good = r["status"] == "INFRA"
         ok += good

@@ -1,6 +1,6 @@
 # 276 jack_arena_sandbox.py - Sicherheitsrahmen C fuer die Arena (11.10.2026)
 Zweck: Voraussetzung fuer Arena-Kategorie C (Code-Fix mit pytest). Prueflingscode laeuft nie im Runner-Prozess und nur nach drei Schichten. Grundlage: phase2b_aufgaben_BCD.md F3.1 (ChatGPT, Block-Testliste C-SEC-01..16) und Review-Auflagen 1+2 (Claude, phase2b_review3_claude.md).
-Status: Modul gebaut und getestet (v1 60/60, v2 76/76 auf dem Honor). NOCH NICHT im Runner/Richter verdrahtet, Kategorie C bleibt gesperrt (BLOCKED_CATEGORIES in jack_arena.py), bis C-Aufgaben, Aktionen und Richter-Teil gebaut sind.
+Status: v4 (83/83), seit 11.10.2026 nach Holdout 3 im Runner und Richter verdrahtet, Kategorie C frei (C01-C06 Train, C07-C08 Dev).
 
 Schicht 1 ast_gate(source): Positivliste, fail-closed. Rueckgabe {ok, code OK|POLICY_BLOCK|SYNTAX_ERROR, reason}.
 - Knoten nur aus STMT_OK/EXPR_OK/MISC_OK. Keine Klassen, Lambda, With, Global/Nonlocal, Yield, Walross, Match, async.
@@ -30,4 +30,22 @@ Merke: Wer ALLOWED_* erweitert, muss vorher einen neuen Blockfall in SEC schreib
 - C-SEC-22: pytest-Ausgabe wird schon beim Lesen begrenzt (OUT_MAX 1 MB, nur die letzten 16 KB im Speicher). Darueber: Prozessgruppe getoetet, Status OUTPUT_LIMIT. Vorher sammelte communicate() alles im Runner-Speicher.
 - Schluesselwort-Argumente (dict(type=1)) binden nichts und sind erlaubt.
 - Selbsttest Honor v2: 76/76.
+
+## v3 (11.10.2026 21:4x, Review 2 ChatGPT)
+- C-SEC-24: Kodierungsangabe (PEP-263-Cookie in Zeile 1-2) und BOM verboten. gate_file(path) prueft die gespeicherten Bytes strikt als UTF-8; Runner schreibt das Zielmodul nur als UTF-8-Bytes. So sehen Tor und Interpreter denselben Text.
+- C-SEC-25: Waehrend pytest darf sich im Run-Ordner gar nichts aendern, auch das Zielmodul nicht. run_pytest macht Schnappschuss vorher/nachher, Abweichung = Status STATE_CHANGED (immer Fehlschlag, im Runner Policy-Verstoss).
+- Vertrag Testdaten: sichtbare und versteckte Tests uebergeben an Prueflingsfunktionen nur einfache Werte (Zahlen, Texte, Listen, Tupel, Dicts, None). Keine Dateien, Pfade, Module, Callables, pytest-Fixtures wie monkeypatch. Grund: fremde Objekte koennen ueber Operatoren/repr/Methoden eigenen Code ausfuehren. C01-C08 halten das ein; neue C-Aufgaben pruefen.
+- Versteckte Tests laufen nur im Richter (Kopie des Arbeitsbereichs). pytest_run im Runner sieht nur test_*.py im Arbeitsbereich, versteckte Testnamen oder Assertions erreichen den Pruefling nie.
+- Selbsttest Honor v3: 82/82.
+
+## v4 (11.10.2026 22:0x, nach erster C-Messung)
+- Befund: Flash schrieb bei C08 Code mit einem undefinierten Namen (out). v3 wertete das als Policy-Verstoss (Name nicht erlaubt), drei Versuche = Stop POLICY. Das ist ein Programmierfehler, kein Angriff, und verzerrte policy_violations.
+- Fix: Lesen eines Namens blockt nur noch, wenn er ein nicht erlaubtes Builtin ist (FORBIDDEN_BIND) oder ein Dunder. Unbekannte ASCII-Namen sind erlaubt und ergeben zur Laufzeit NameError (kein globals/setattr/Stern-Import, Modulnamen nur aus geprueften Anweisungen, Builtin-Bindung verboten -> kein Ausbruch).
+- Nicht-ASCII-Bezeichner bleiben fail-closed (Homoglyphen, C-SEC-10b). Vollbreite normalisiert der Parser zu ASCII und faellt als Builtin.
+- Selbsttest Honor v4: 83/83 (neu P-18 undefinierter Name).
+
+## Verdrahtung (11.10.2026 nach Holdout 3)
+- Runner: Aktionen code_read, code_replace (AST-Tor vor dem Schreiben, nur UTF-8, Syntaxfehler = INVALID_ARGS ohne Verstoss, Tor-Verstoss = POLICY_BLOCK), pytest_run (Tor auf Datei, nur sichtbare test_*.py, Pfade aus der Ausgabe entfernt, STATE_CHANGED = Verstoss).
+- Richter (jack_arena.py JUDGE_VERSION 3): Kind pytest = Zustandspruefung wie B (nur Zielmodul darf sich aendern), dann gate_file, dann sichtbare + versteckte Tests in einer Kopie. BLOCKED_CATEGORIES leer.
+- Selbsttests Honor: Richter 1248/1248 (C mit Testbetrug und verbotenem Code), Runner Policy 43/43, Orakel 308/308.
 - Grenze (bewusst akzeptiert fuer Arena-C mit eigenen Aufgaben): pytest laeuft unter derselben Termux-UID. -I, leere Umgebung und RLIMITs sind keine Kernel-Isolation von Dateisystem oder Netz. Wird das AST-Tor je umgangen, hat der Prozess die Rechte des Termux-Benutzers. Fuer echten fremden Code: Xiaomi mit eigenem unprivilegierten Benutzer oder Namespace.
