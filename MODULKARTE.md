@@ -1,5 +1,9 @@
 # MODULKARTE (generiert 08.10.2026, Live-Honor, 197 Module)
 
+> Nachtrag 11.10.2026 (Claude): Live-Stand 209 jack_*.py, 16 Dienste. Frische Rohkarte: `python3 reports/karte_roh.py` -> ARBEITSPLATZ/gemeinsam/karte/roh/r1-r4 (nicht im Repo). Seit 11.10. zaehlt die Karte auch Aufrufer aus cron/*.sh, *.sh und crontab (JACK_TUNE_KARTE_EXTERN), vorher galten Cron-Ziele faelschlich als Waise.
+> Neu: jack_deadman.py (Cron */30, Kap 271), jack_arena.py (Arena-Richter, Bibliothek des Runners, Kap 273), jack_arena_runner.py (Arena-Runner, manuelles Werkzeug ohne Aufrufer = gewollt, Kap 274), Dienst jack_honor_watch (jack_honor_diag.py watch, Kap 270).
+> Waisen laut Rohkarte 11.10.: jack_arena_runner (gewollt, CLI), jack_bug_fixer, jack_dialog, jack_error_door, jack_intent_parser, jack_pyflakes_lauf, jack_radar, jack_skill_self_creation, jack_vinted_radar, jack_whitelist_guard. Vor jedem Loeschen: Aufrufer auch in Shell, Cron, run-Dateien und dynamischen Importen pruefen.
+
 Wahrheit ist die Live-Datei. Diese Karte zeigt: welcher Dienst, wer ruft wen. Verweise per Namenssuche, dynamisch gebaute Namen fehlen.
 Aufgeräumt am 08.10.2026: 19 tote Module sowie 127 .bak-Dateien nach Attic/ (rückholbar, nicht im Repo). Siehe Handbuch 246.
 

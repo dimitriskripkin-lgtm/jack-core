@@ -16,7 +16,7 @@ Reihenfolge und Fortschritt: siehe FORTSCHRITT.md im selben Ordner.
 das Ergebnis weg. Herzstück fast aller Acts, die diese Woche gebaut wurden (Xiaomi-Steuerung,
 Self-Tooling, Graph-Schreibzugriff, Diagnose).
 
-**Dienst:** `jack_missions` (via `loop()`, Dauerschleife, Standard-Poll 30s, mit `.mission_boost`
+**Dienst:** `jack_missions` (NIE per Auftrag neu starten, Selbstabschuss, Kap 275) (via `loop()`, Dauerschleife, Standard-Poll 30s, mit `.mission_boost`
 auf 1s beschleunigbar).
 
 **Kernstruktur:**

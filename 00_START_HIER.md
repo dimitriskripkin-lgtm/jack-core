@@ -1,7 +1,7 @@
 # 00 START HIER — Pflichtzettel für JEDE KI (Claude, Grok, Gemini, Qwen, ...)
 
 Du bist eine neue Session ohne Gedächtnis. Das ist normal. Dieser Zettel ersetzt das Gedächtnis.
-Lies ihn ganz (3 Minuten), BEVOR du irgendetwas änderst, baust oder "drosselst". Stand 08.10.2026.
+Lies ihn ganz (3 Minuten), BEVOR du irgendetwas änderst, baust oder "drosselst". Stand 11.10.2026.
 
 ## 1. Wahrheitsrangfolge (bei Widerspruch gewinnt die höhere Zeile)
 1. Die LIVE-Datei auf dem Honor (MCP `read_file`). Honor ist Wahrheit, GitHub kann stale sein.
@@ -35,7 +35,7 @@ JACK = Just Autonomous Command Kit. Selbst gebauter autonomer Reparatur- und Pro
 Besitzer: Dima (Nachtschicht-LKW-Fahrer, Selbstlerner Python, bedient alles mit einem Daumen).
 - HONOR Magic8 Pro = Gehirn/Host. Kein Root. Termux, Shizuku/rish. Hier läuft ALLES Wichtige und der MCP-Server.
 - XIAOMI 11T Pro = Muskel/Worker. Magisk-Root. SSH-Alias `xiaomi-jack` Port 8022. IP wechselt per DHCP,
-  nie fest einbauen. Aktuell gesehen: 10.176.117.131 (kann sich ändern). Ollama läuft nur hier.
+  nie fest einbauen. Zuletzt gesehen 11.10.: 172.29.165.131 (kann sich ändern). Ollama läuft nur hier.
 - Pfade IMMER voll: Code `/data/data/com.termux/files/home/jack`, Dienste `/data/data/com.termux/files/usr/var/service`.
   In Skripten nie `~` (os.path.expanduser benutzen).
 - Dienste auf dem Honor (runit, `sv`): jack_telegram, jack_cortex, jack_waechter (Logik in jack_autonomous.py!),
@@ -68,7 +68,7 @@ Besitzer: Dima (Nachtschicht-LKW-Fahrer, Selbstlerner Python, bedient alles mit 
 - `~/jack/.ollama_lock`: Ollama gesperrt. `missions/STOP`: Runner beendet sich. `~/jack/.focus_stop`: Focus-Monitor aus.
 - `jack_tune.json`: Feinabstimmung einzelner Module. `jack_acts.py`: Whitelist aller Acts (+ Freigabe-Flag).
 - Focus-Monitor pollt Xiaomi alle 15 s, bei fehlendem Xiaomi alle ~60 s.
-- Heartbeats: `.heartbeat_<dienst>`; Deadman: `jack_overmind_result.json`, Alarm nach 3 h.
+- Heartbeats: `.heartbeat_<dienst>`; Dead-Man: `jack_deadman.py` (Cron */30) prüft `.heartbeat_jack_waechter` und `jack_health_now.json`, Telegram nach 3 h Stille, höchstens alle 3 h (Kap 271).
 - Freigabe-Wege: Vorschlagsliste (`/vorschlaege`, `/vorschau`, `/freigeben`, `/ablehnen`), PENDING_EXEC/PENDING_WRITE, `.selfsee_pending`.
 
 ## 6. Bekannte Fallen (schon einmal teuer geworden)
@@ -98,6 +98,16 @@ Ordner ARBEITSPLATZ/ auf der Honor. Rufe start_hier(wer="claude"|"grok"|"gemini"
 - Xiaomi-Zugriff NUR ueber jack_xiaomi.run_shell (Schutzschalter + Schnellpfad, Kap. 244). Keine neuen eigenen ssh-Aufrufe bauen.
 - Telemetrie laeuft: telemetry/telemetrie_JJJJ-MM.jsonl, alle 5 Min Temperaturen, Akku, RAM, Last, Top-Prozesse beider Handys (Kap. 245). Stop: Datei .telemetry_stop. Nie ins Repo.
 - Lade-Ton: Akku unter 15 Prozent und nicht am Laden -> Vibration + Ansage (JACK_TUNE_LADETON, Kap. 243).
+
+## 12. Neu seit 10./11.10.2026
+- ARENA (messbares Lernen): jack_arena.py = deterministischer Richter (Kap 273), jack_arena_runner.py = Runner mit Gemini-Pruefling (Kap 274). Aufgaben, Loesungen, Holdout NUR privat in /data/data/com.termux/files/home/jack_arena_private (nie ins Repo, nie als Lernmaterial oeffnen). Kategorie C (Codeausfuehrung) gesperrt bis Sicherheitsrahmen C steht.
+- Arena-Schalter: `~/jack/.arena_off` (Not-Aus), `~/jack/.arena_holdout_ok` (Holdout einmalig, wird geloescht), `~/jack/.arena_einrichtung` mit `YYYY-MM-DD N` (Tagesgrenze nur an diesem Tag anheben, max 600).
+- jack_budget: text 600 Aufrufe/Tag (seit 11.10., vorher 300), Wochendeckel 3 EUR bleibt. Arena darf davon max 300/Tag. LIMITS wird beim Import gelesen: nach Aenderung Dienste neu starten (Kap 39).
+- NIE jack_missions per Auftrag (exec_proposed) neu starten: Selbstabschuss, Auftrag bleibt haengen (Kap 275). jack_mcp auch nicht.
+- Log-Dienste: log/run von sshd, ssh-agent, cloudflared ist ein Symlink auf die gemeinsame svlogger-Datei. Vor jedem Schreiben `readlink -f`, nie durch Symlinks schreiben (Kap 272). cloudflared laeuft als Dienst mit `--protocol http2`.
+- Kein `pgrep -f '<muster>'` in einem Befehl, dessen eigene Kommandozeile das Muster enthaelt (trifft sich selbst). Stattdessen `ps -A -o pid,args | awk`.
+- Hitze Honor: Hauptursache war die MeinVodafone-App (com.appseleration.android.selfcare, CarrierService wird vom System neu gebunden). Beobachtung: reports/selfcare_cpu.log alle 5 Min durch jack_honor_watch (Kap 270).
+- Karte: reports/karte_roh.py zaehlt jetzt auch Cron/Shell/crontab-Aufrufer (MODULKARTE.md Nachtrag).
 - Cloud-Nachtlauf: Routine 'JACK Nachtlauf' 03:00 MESZ liest ARBEITSPLATZ/gemeinsam/auftraege.md, schreibt morgenbericht.md. Regeln: auftrag_regeln.md (Stufe A und A2).
 - Dienst jack_qwen (jack_qwen_client.py) laeuft ebenfalls, nicht loeschen.
 - Token-Rotation steht aus (eine Token pro KI-Rolle). Token nie ausgeben.

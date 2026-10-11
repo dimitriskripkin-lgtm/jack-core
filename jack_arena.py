@@ -266,6 +266,11 @@ def prepare(task_id, repeat=0, quiet=False):
         sys.exit(4)
     run_id = "%s_%s_%d" % (task_id, time.strftime("%Y%m%d_%H%M%S"), int(repeat))
     rd = D_RUNS / run_id
+    n = 0
+    while rd.exists():  # gleiche Sekunde, gleiche Wiederholung: eindeutig machen
+        n += 1
+        rd = D_RUNS / ("%s_%d" % (run_id, n))
+    run_id = rd.name
     rd.mkdir()
     os.chmod(rd, 0o700)
     if task.get("fixture_type", "sqlite") == "sqlite":

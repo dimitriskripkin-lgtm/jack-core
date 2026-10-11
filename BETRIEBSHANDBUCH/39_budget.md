@@ -2,6 +2,6 @@
 
 Gelesen 03.10.2026, erste 36 Zeilen. Kein Umbau.
 
-**Grenzen:** text 300, vision 40 pro Tag. Woche 3.0 Euro, 0.40 Euro pro Million Tokens. Dateien .api_budget und .api_budget_week.
+**Grenzen:** text 600 (seit 11.10.2026 auf Dimas Wunsch, vorher 300), vision 40 pro Tag. Wochengrenze 3 EUR bleibt der eigentliche Kostendeckel. Aenderung wirkt in laufenden Diensten erst nach Neustart (LIMITS wird beim Import gelesen). Woche 3.0 Euro, 0.40 Euro pro Million Tokens. Dateien .api_budget und .api_budget_week.
 
 **Funktionen:** week_ok, check_and_count. Tageszaehler setzt sich um Mitternacht zurueck.
