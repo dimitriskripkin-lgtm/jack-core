@@ -11,3 +11,9 @@ Gemessen 11.10.: SQLite 3.53.3, 100k Inserts 0,09 s, pytest 9.1.1, Python 3.14.6
 Grenze: gleicher Unix-User, Dateirechte trennen Pruefling und Oracle nicht. Trennung erst durch den Runner (Phase 3, nur Allowlist-Aktionen auf den eigenen Run-Ordner). Spaeter optional Oracle aufs Xiaomi.
 Kein Dienst, kein Cron, beruehrt Live-JACK nicht. Paket-Generator liegt NICHT auf dem Honor (enthaelt Loesungen).
 Offen: Runner (Phase 3), Modell-Pin Gemini 2.5 Flash-Lite nach Pilotlauf, Sicherheitsrahmen C, Transfer-Set, Aufraeumen runs/ (Regel: nach Richten work loeschen, Rest 14 Tage).
+
+## Nachtrag 11.10.2026 (Transfer-Varianten)
+- Split transfer: 18 Aufgaben TA01-06 (A, Fixture a_lager_v2), TB01-06 (B), TD01-06 (D). Gleiche Denkaufgabe wie Train, neue Namen/Werte/Dateien. Polaritaet der D-Aufgaben wie im Original (TD03, TD06 positiv).
+- Eingespielt per install-Paket, Paket danach geloescht (enthaelt Loesungen, nie ins Repo). Selbsttest 192/192, Siegel ok.
+- Lauf: python3 jack_arena_runner.py series gemini transfer 1 A,B,D
+- Erste Messung Gemini 2.5 Flash-Lite: A 6/6, B 2/6 (false_success 3), D 5/6 (false_alarm 1). Schwaeche aus Train (B, false_success) reproduziert sich auf Transfer.
