@@ -93,6 +93,65 @@ Wenn Policy-Block-Gruende wiederholt auftreten, benenne die konkrete verbotene B
 Erfinde keine Verbote, die nicht aus dem Feedback belegt sind."""
 
 
+SYSTEM3 = """Du bist der Lerner von JACK. Unten steht eine Arbeitsregel, die JACK selbst formuliert hat und die in Messungen nachweislich
+geholfen hat (weniger falsche Erfolgsmeldungen). Sie ist aber an einen bestimmten Aufgabentyp angepasst.
+Formuliere sie ALLGEMEIN, so dass sie fuer Code-Reparatur, Dateiaufgaben, Datenabfragen und Verifikation gleichermassen sinnvoll ist.
+Formale Vorgaben: hoechstens 2 Saetze, Deutsch, Imperativ, keine Fachbegriffe aus der Vorlage wie Sortierung, Stabilitaet,
+Eingabedaten, sichtbare oder versteckte Tests, Arena; keine Beispiele. Den Inhalt formulierst du selbst.
+Antworte nur mit JSON: {"regel": "...", "begruendung": "hoechstens 300 Zeichen"}"""
+ABSTRACT_BANNED = ("sortier", "stabil", "eingabedaten", "unveraender", "unveränder", "sichtbar", "versteckt", "arena", "pytest", "lambda")
+
+
+def abstrahieren(rule_file):
+    rp = RULES_DIR / os.path.basename(rule_file)
+    old = rp.read_text(encoding="utf-8").strip()
+    import jack_budget
+    ok, msg = jack_budget.check_and_count("text")
+    if not ok:
+        raise SystemExit("jack_budget: %s" % msg)
+    payload = {"system_instruction": {"parts": [{"text": SYSTEM3}]},
+               "contents": [{"role": "user", "parts": [{"text": "VORLAGE (bestaetigte Regel von JACK): " + old}]}],
+               "generationConfig": {"temperature": 0.0, "maxOutputTokens": 600, "responseMimeType": "application/json",
+                                    "thinkingConfig": {"thinkingBudget": 0}}}
+    resp = R.GeminiAgent()._http(payload)
+    um = resp.get("usageMetadata") or {}
+    tin, tout = um.get("promptTokenCount", 0), um.get("candidatesTokenCount", 0)
+    eur = R.cost_eur(tin, tout)
+    ts = time.strftime("%Y%m%d_%H%M%S")
+    A.append(R.COSTS, {"ts": time.strftime("%Y-%m-%d %H:%M:%S"), "day": R.today(), "run_id": "LERNER_" + ts,
+                       "model": R.MODEL_ID, "in": tin, "out": tout, "eur": round(eur, 6), "price": R.PRICE["version"]})
+    jack_budget.add_tokens(tin + tout, eur)
+    text = "".join(p.get("text", "") for p in resp["candidates"][0]["content"]["parts"])
+    try:
+        d = json.loads(text, strict=False)
+    except ValueError:
+        d = {}
+        m = re.search(r'"regel"\s*:\s*"((?:[^"\\]|\\.)*)"', text, re.S)
+        if m:
+            d["regel"] = json.loads('"%s"' % m.group(1), strict=False)
+    rule = d.get("regel") if isinstance(d, dict) else None
+    why = check_rule(rule, set())
+    if not why:
+        low = rule.lower()
+        hit = [b for b in ABSTRACT_BANNED if b in low]
+        if hit:
+            why = "verbotene Vorlagenbegriffe: %s" % ",".join(hit)
+        elif len(re.findall(r"[.!?](\s|$)", rule.strip())) > 2:
+            why = "mehr als 2 Saetze"
+    rec = {"ts": ts, "lerner_version": VERSION, "modus": "abstrahieren", "lernprompt_hash": R.h16(SYSTEM3), "basis_regel": rule_file,
+           "regel": rule, "begruendung": (d or {}).get("begruendung"), "tokens": [tin, tout], "eur": round(eur, 6),
+           "gueltig": not why, "grund": why, "roh": None if not why else text[:600]}
+    if not why:
+        p = RULES_DIR / ("jack_regel_%s.txt" % ts)
+        p.write_text(rule.strip() + "\n", encoding="utf-8")
+        os.chmod(p, 0o600)
+        rec["datei"] = p.name
+        rec["rules_hash"] = R.h16(rule.strip())
+    A.append(LOG, rec)
+    print(json.dumps(rec, ensure_ascii=False, indent=1))
+    return rec
+
+
 def policy_reasons(split, model, rhash):
     c, runs = {}, 0
     for line in R.RUNLOG.read_text().splitlines():
@@ -184,6 +243,9 @@ def vorschlag(split, model, rule_file=None):
 def main(argv):
     if len(argv) >= 4 and argv[1] == "vorschlag":
         vorschlag(argv[2], argv[3])
+        return 0
+    if len(argv) >= 3 and argv[1] == "abstrahieren":  # abstrahieren <regel_datei>: allgemeine Fassung (Ebene 3a)
+        abstrahieren(argv[2])
         return 0
     if len(argv) >= 5 and argv[1] == "verbessern":  # verbessern <split> <modell> <regel_datei>: Laeufe MIT dieser Regel
         vorschlag(argv[2], argv[3], argv[4])

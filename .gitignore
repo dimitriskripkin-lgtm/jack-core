@@ -224,3 +224,6 @@ telemetry/
 .oauth_off
 .deadman_last
 reports/selfcare_cpu.log
+.arena_einrichtung
+.arena_holdout_ok
+.arena_off
