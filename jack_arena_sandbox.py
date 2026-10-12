@@ -30,7 +30,7 @@ import sys
 import tempfile
 import time
 
-VERSION = "4"  # 4: unbekannte Nicht-Builtin-Namen = Programmierfehler (NameError), kein Policy-Block. 3: Kodierungs-Cookie, Zustand waehrend pytest eingefroren (ChatGPT-Review 2). 2: 2: ChatGPT-Review 11.10. (Scope-Vergiftung, Attribut-Schreiben, Annotationen, Ausgabeflut)
+VERSION = "5"  # 5: lambda erlaubt als Syntax (Koerper verzoegert, Defaults sofort geprueft), ChatGPT 12.10. 02:20. 4: 4: unbekannte Nicht-Builtin-Namen = Programmierfehler (NameError), kein Policy-Block. 3: Kodierungs-Cookie, Zustand waehrend pytest eingefroren (ChatGPT-Review 2). 2: 2: ChatGPT-Review 11.10. (Scope-Vergiftung, Attribut-Schreiben, Annotationen, Ausgabeflut)
 MAX_SOURCE = 20000
 MAX_NODES = 5000
 SUMMARY_MAX = 1500
@@ -40,7 +40,7 @@ OUT_TAIL = 16384
 # ---------- Schicht 1: AST-Tor ----------
 STMT_OK = {"FunctionDef", "Return", "If", "For", "While", "Break", "Continue", "Pass", "Assign",
            "AugAssign", "AnnAssign", "Expr", "Raise", "Try", "Assert", "Delete", "Import", "ImportFrom"}
-EXPR_OK = {"BoolOp", "BinOp", "UnaryOp", "IfExp", "Dict", "Set", "ListComp", "SetComp", "DictComp",
+EXPR_OK = {"Lambda", "BoolOp", "BinOp", "UnaryOp", "IfExp", "Dict", "Set", "ListComp", "SetComp", "DictComp",
            "GeneratorExp", "Compare", "Call", "JoinedStr", "FormattedValue", "Constant", "Attribute",
            "Subscript", "Starred", "Name", "List", "Tuple", "Slice"}
 MISC_OK = {"Module", "arguments", "arg", "keyword", "alias", "comprehension", "ExceptHandler",
@@ -97,6 +97,19 @@ class Block(Exception):
 def _bad_ident(name):
     # Nicht-ASCII-Bezeichner fail-closed (Homoglyphen, C-SEC-10b); Vollbreite normalisiert der Parser schon zu ASCII.
     return not isinstance(name, str) or not name.isascii() or name.startswith("__") or name in FORBIDDEN_BIND
+
+
+def _eager(node):
+    """Alle Knoten, die beim Erzeugen sofort ausgewertet werden: Lambda-Koerper wird uebersprungen (laeuft erst beim Aufruf),
+    Lambda-Defaults werden dagegen sofort ausgewertet und mitgeprueft."""
+    todo = [node]
+    while todo:
+        n = todo.pop()
+        yield n
+        if isinstance(n, ast.Lambda):
+            todo.extend(n.args.defaults + [d for d in n.args.kw_defaults if d is not None])
+            continue
+        todo.extend(ast.iter_child_nodes(n))
 
 
 def _check_annotation(a):
@@ -178,13 +191,17 @@ def _check(tree):
             if _bad_ident(n.name):
                 raise Block("Bezeichner nicht erlaubt: %s" % n.name)
             for d in n.args.defaults + [x for x in n.args.kw_defaults if x is not None]:
-                if any(isinstance(x, ast.Call) for x in ast.walk(d)):
+                if any(isinstance(x, ast.Call) for x in _eager(d)):
                     raise Block("Aufruf in Default-Wert nicht erlaubt")
             allargs = n.args.posonlyargs + n.args.args + n.args.kwonlyargs + [x for x in (n.args.vararg, n.args.kwarg) if x]
             for x in allargs:
                 _check_annotation(x.annotation)
             _check_annotation(n.returns)
             bound.add(n.name)
+        elif isinstance(n, ast.Lambda):
+            for d in n.args.defaults + [x for x in n.args.kw_defaults if x is not None]:
+                if any(isinstance(x, ast.Call) for x in _eager(d)):
+                    raise Block("Aufruf in lambda-Default nicht erlaubt")
         elif isinstance(n, ast.arg):
             if _bad_ident(n.arg):
                 raise Block("Bezeichner nicht erlaubt: %s" % n.arg)
@@ -236,7 +253,7 @@ def _check(tree):
         if isinstance(st, ast.Expr) and isinstance(st.value, ast.Constant) and isinstance(st.value.value, str):
             continue
         if isinstance(st, (ast.Assign, ast.AnnAssign)):
-            if any(isinstance(x, (ast.Call, ast.GeneratorExp, ast.ListComp, ast.SetComp, ast.DictComp)) for x in ast.walk(st)):
+            if any(isinstance(x, (ast.Call, ast.GeneratorExp, ast.ListComp, ast.SetComp, ast.DictComp)) for x in _eager(st)):
                 raise Block("Aufruf auf Modulebene nicht erlaubt")
             continue
         raise Block("Anweisung auf Modulebene nicht erlaubt: %s" % type(st).__name__)
@@ -397,7 +414,6 @@ SEC = [
     ("X-03 Generator-Frame", "def f():\n    g = (x for x in [1])\n    return g.gi_frame.f_globals\n"),
     ("X-04 Modul als Wert", "import math\ndef f():\n    m = math\n    return m.floor(1.5)\n"),
     ("X-05 Formatfeld", "def f(x):\n    return '{0.real}'.format(x)\n"),
-    ("X-06 lambda", "def f():\n    return (lambda: 1)()\n"),
     ("X-07 Untermodul", "import collections.abc\ndef f():\n    return 1\n"),
     ("X-08 relativer Import", "from . import x\ndef f():\n    return 1\n"),
     ("X-09 global", "def f():\n    global y\n    y = 1\n"),
@@ -422,6 +438,14 @@ SEC = [
     ("C-SEC-23b Return-Comprehension", "def f(x) -> [i for i in [1]]:\n    return x\n"),
     ("C-SEC-23c Annotation-String", "def f(x: 'open(1)'):\n    return x\n"),
     ("C-SEC-23d AnnAssign-Aufruf", "def f():\n    y: len('a') = 1\n    return y\n"),
+    ("C-SEC-26 lambda-Koerper mit open", "def f():\n    g = lambda p: open(p)\n    return g\n"),
+    ("C-SEC-26b lambda-Default mit Call", "def f():\n    g = lambda x=len('a'): x\n    return g\n"),
+    ("C-SEC-26c lambda-Parameter open", "def f():\n    return lambda open: open\n"),
+    ("C-SEC-26d lambda sofort auf Modulebene", "X = (lambda: 1)()\ndef f():\n    return X\n"),
+    ("C-SEC-26e lambda verschachtelt eval", "def f():\n    return lambda: (lambda: eval)()\n"),
+    ("C-SEC-26f def-Default ruft lambda", "def f(g=(lambda: 1)()):\n    return g\n"),
+    ("C-SEC-26g lambda-Default auf Modulebene", "F = lambda x=len('a'): x\ndef f():\n    return F\n"),
+    ("C-SEC-26h lambda Dunder", "def f():\n    return lambda x: x.__class__\n"),
     ("C-SEC-24 coding-Cookie", "# -*- coding: utf-7 -*-\ndef f():\n    return 1\n"),
     ("C-SEC-24b fileencoding Zeile 2", "#!/usr/bin/env python3\n# vim: set fileencoding=latin-1 :\ndef f():\n    return 1\n"),
     ("C-SEC-24c BOM", "\ufeffdef f():\n    return 1\n"),
@@ -442,6 +466,9 @@ OK_CASES = [
     ("P-12 collections", "from collections import Counter\nimport collections\ndef top(xs):\n    d = collections.defaultdict(int)\n    for x in xs:\n        d[x] += 1\n    return Counter(xs).most_common(1)[0][0]\n"),
     ("P-13 f-string", "def show(n):\n    return f'{n:>4} Stueck {n!r}'\n"),
     ("P-14 erlaubter Builtin als Name", "def f(xs):\n    sum = 0\n    for x in xs:\n        sum += x\n    return sum\n"),
+    ("P-19 lambda auf Modulebene", "f = lambda x: len(x)\ndef g(xs):\n    return sorted(xs, key=lambda t: -t[1])\n"),
+    ("P-20 def-Default ist lambda", "def f(key=lambda t: t):\n    return key\n"),
+    ("P-21 lambda in Funktion sofort", "def f():\n    return (lambda: 1)()\n"),
     ("P-18 undefinierter Name (NameError, kein Angriff)", "def f():\n    return helfer(1) + rest\n"),
     ("P-17 Kommentar spaeter", "def f(s):\n    return s\n# encoding: nur Kommentar in Zeile 3\n"),
     ("P-16 Schluesselwort type=", "def f():\n    return dict(type=1, id=2)\n"),

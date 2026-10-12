@@ -44,6 +44,11 @@ Merke: Wer ALLOWED_* erweitert, muss vorher einen neuen Blockfall in SEC schreib
 - Nicht-ASCII-Bezeichner bleiben fail-closed (Homoglyphen, C-SEC-10b). Vollbreite normalisiert der Parser zu ASCII und faellt als Builtin.
 - Selbsttest Honor v4: 83/83 (neu P-18 undefinierter Name).
 
+## v5 (12.10.2026 02:2x, ChatGPT-Freigabe 02:20)
+- lambda erlaubt als Syntax, nicht als neue Faehigkeit: Koerper wird wie jeder Code geprueft (Namen, Builtins, Attribute, rekursiv auch verschachtelt), lambda-Defaults werden wie def-Defaults sofort ausgewertet und duerfen nichts aufrufen, Parameter keine Builtin-Namen, auf Modulebene nur als Wert. Neue Hilfsfunktion _eager(): ueberspringt lambda-Koerper (laeuft erst beim Aufruf), prueft aber Defaults; benutzt fuer Modulebene und def-Defaults.
+- Anlass: drei Lerner-Iterationen scheiterten fast nur an lambda-Policy-Blocks; das Verbot erzeugte Messrauschen. Freigabe nicht wegen der Haeufigkeit, sondern weil keine zusaetzliche Capability entsteht.
+- Neue Tests C-SEC-26/26b-h (Koerper mit open, Default mit Call, Parameter open, sofortiger Aufruf auf Modulebene, verschachtelt eval, def-Default ruft lambda, lambda-Default auf Modulebene, Dunder), Positiv P-19/20/21. Honor 93/93, Runner-Selbsttest mit 748 Orakel-Laeufen OK. Runner-Doku nennt lambda nicht mehr als verboten. Policy-Zahlen vor v5 nicht vergleichbar.
+
 ## Verdrahtung (11.10.2026 nach Holdout 3)
 - Runner: Aktionen code_read, code_replace (AST-Tor vor dem Schreiben, nur UTF-8, Syntaxfehler = INVALID_ARGS ohne Verstoss, Tor-Verstoss = POLICY_BLOCK), pytest_run (Tor auf Datei, nur sichtbare test_*.py, Pfade aus der Ausgabe entfernt, STATE_CHANGED = Verstoss).
 - Richter (jack_arena.py JUDGE_VERSION 3): Kind pytest = Zustandspruefung wie B (nur Zielmodul darf sich aendern), dann gate_file, dann sichtbare + versteckte Tests in einer Kopie. BLOCKED_CATEGORIES leer.

@@ -84,7 +84,7 @@ ACTION_DOC = {
     "file_stat": '{"action":"file_stat","args":{"path":"name"}} - ob die Datei existiert und ihre Groesse.',
     "file_hash": '{"action":"file_hash","args":{"path":"name"}} - sha256 der Datei.',
     "code_read": '{"action":"code_read","args":{}} - liest das Zielmodul ({w}) komplett, mit sha256.',
-    "code_replace": '{"action":"code_replace","args":{"old_text":"...","new_text":"...","expected_sha256":"..."}} - ersetzt genau eine Stelle im Zielmodul ({w}); old_text muss genau einmal vorkommen, expected_sha256 = aktueller Hash. Erlaubt ist nur einfacher Python-Code: Imports nur math, re, itertools, functools, collections, typing, string; keine Klassen, kein lambda (stattdessen def), keine Dekoratoren, kein with/global/yield, kein Datei-/Netz-/Systemzugriff, keine Namen mit __, Namen von Python-Builtins (z.B. id, type, input, open) nicht als eigene Variablen.',
+    "code_replace": '{"action":"code_replace","args":{"old_text":"...","new_text":"...","expected_sha256":"..."}} - ersetzt genau eine Stelle im Zielmodul ({w}); old_text muss genau einmal vorkommen, expected_sha256 = aktueller Hash. Erlaubt ist nur einfacher Python-Code: Imports nur math, re, itertools, functools, collections, typing, string; keine Klassen, keine Dekoratoren, kein with/global/yield, kein Datei-/Netz-/Systemzugriff, keine Namen mit __, Namen von Python-Builtins (z.B. id, type, input, open) nicht als eigene Variablen.',
     "pytest_run": '{"action":"pytest_run","args":{}} - fuehrt die feste Testsuite gegen das Zielmodul aus und liefert status (PASSED, FAILED, ERROR, KILLED, TIMEOUT, OUTPUT_LIMIT) und eine gekuerzte Ausgabe der sichtbaren Tests.',
 }
 if "ambig" in TOOLS:  # JACK_TUNE_C2AMBIG
