@@ -1,6 +1,6 @@
 # GELERNTE REGELN (automatisch aus Fehlern)
 
-Stand: 12.10.2026 17:41
+Stand: 12.10.2026 18:11
 
 ## [1x] jack_cortex/CORTEX_ERR
 Fehler: Cortex Loop-Error: Command ssh , -o , BatchMode=yes , -o , ConnectTimeout=8 , xi

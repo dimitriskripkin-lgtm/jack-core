@@ -8,10 +8,12 @@ Festlegungen (vorregistriert 12.10.2026, talk_vorregistrierung.md):
 - Kein Treffer -> feste Antwort, nie Ersatz aus Graph/Memory.
 """
 import datetime
+import os
 import re
 import subprocess
 
 MODULE_VERSION = 1
+AUS = os.path.join(os.path.expanduser("~"), "jack", ".aenderung_off")  # Arena-Schalter: Datei da = alter Arm (Auskunft aus)
 J = "/data/data/com.termux/files/home/jack"
 STANDARD_H = 96  # = Evidenzfenster der Arena-Probe (snapshot 96 h); 12.10.2026 von 168 auf 96 gesenkt (Uebungsbefund)
 MAXN = 8
@@ -103,6 +105,8 @@ def ist_aenderungsfrage(kopf, hat_fenster, begriffe):
 
 def erkennt(text, now=None):
     """Billige Erkennung ohne git: ist das eine Aenderungsfrage?"""
+    if os.path.exists(AUS):
+        return False
     kopf, _ = erste_teilfrage(text)
     return ist_aenderungsfrage(kopf, fenster(kopf, now or datetime.datetime.now()) is not None, themen(kopf))
 
@@ -168,6 +172,8 @@ def zeit_label(ts, now):
 
 
 def antwort(text, now=None):
+    if os.path.exists(AUS):
+        return None
     now = now or datetime.datetime.now()
     kopf, rest = erste_teilfrage(text)
     fw = fenster(kopf, now)

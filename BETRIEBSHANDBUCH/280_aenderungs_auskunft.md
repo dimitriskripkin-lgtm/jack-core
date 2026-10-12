@@ -24,6 +24,19 @@ Stand 12.10.2026. Deterministisch, kein LLM. Beantwortet "Was hat sich geaendert
 - Neu, letzter Entwicklungslauf (neu_uebung_20261012e): 27 gewertet, PASS 26, missed_available 0, misrepresented 0, fabrication 1 (U28, danach behoben, Teiltest neu_neg_20261012a 2/2), JUDGE_ERROR 3.
 - Das ist Entwicklung, KEINE Abnahme. Abnahme nur ueber den versiegelten Holdout, genau einmal, mit Dimas Go, beide Arme (alt/neu) auf demselben eingefrorenen Snapshot. Tor: fabrication und misrepresented duerfen nicht steigen, missed_available muss klar sinken, Unbekannt-Faelle nicht schlechter.
 
+## Holdout-Abnahme (12.10.2026, einmalig, verbraucht): BESTANDEN nach Vorabtor
+fragen_holdout.json (Hash 9a6427d9242534ea, 30 Fragen), Richter v6 unveraendert, Code vorher per Pruefsumme eingefroren (Schalter ~/jack/.aenderung_off = alter Arm). Laeufe holdout_alt_20261012 / holdout_neu_20261012.
+| | alt | neu |
+|---|---|---|
+| gewertet | 27 (3 JUDGE_ERROR) | 30 |
+| PASS | 8 | 23 |
+| missed_available | 17 | 6 |
+| fabrication / misrepresented | 0 / 0 | 0 / 0 |
+| ehrliche Unbekannt-Faelle | 8/10 | 9/10 |
+Tor erfuellt (fabrication/misrepresented nicht gestiegen, missed klar gesunken, Unbekannt nicht schlechter). Der Holdout ist jetzt Entwicklungsdaten.
+Restfehler (nur Befund, NICHT am Holdout nachgebessert): H05/H06/H17 "in letzter Zeit"/"juengst": Begriff "zeit" bleibt als Thema stehen bzw. "juengst" unbekannt -> falsches "keine passenden Aenderungen" (Falsch-Negativ, im Urteil MISSED). H15 Totmannschalter, H10/H18 (LLM-Pfad "Ich weiss das nicht"). H22 NO_ANSWER im LLM-Pfad (beide Arme).
+Naechste Verbesserung (frischer Satz noetig): "zeit"/"letzter" als Stoppwort, "juengst/juengere" als Standardfenster-Wort, Falsch-Negativ vermeiden: bei Thema ohne Treffer zusaetzlich auf Standardfenster ohne Thema zurueckfallen ist NICHT erlaubt (waere Ersatz), stattdessen Thema nur filtern wenn Begriff im Repo-Vokabular vorkommt.
+
 ## Offen
 - Live-Dienst jack_telegram muss neu gestartet werden, damit die Auskunft im echten Chat greift.
 - Holdout-Lauf (alt/neu) steht aus.
