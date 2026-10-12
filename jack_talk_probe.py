@@ -20,7 +20,7 @@ import subprocess
 import sys
 import time
 
-VERSION = "3"  # 2: Lese-Protokoll, Snapshot vorher/nachher; 3: Missionen + Graph-Fakten im Snapshot, Nachher voll gespeichert
+VERSION = "5"  # 2: Lese-Protokoll, Snapshot vorher/nachher; 3: Missionen + Graph-Fakten; 4: alle Graph-Fakten, 96 h; 5: Fakt-Text 400 statt 80 Zeichen
 J = "/data/data/com.termux/files/home/jack"
 HOME = os.path.realpath(os.path.expanduser("~"))
 PRIV = os.path.join(HOME, "jack_arena_private", "talk")
@@ -284,7 +284,7 @@ def child(mode):
 
 
 # ---------------------------------------------------------------- Elternprozess
-def snapshot(hours=168):
+def snapshot(hours=96):
     """Wahrheit zum Fragezeitpunkt: Git-Stand (Commits mit Zeit, Titel, Dateien) im Fenster. Evidence-IDs G:<hash>."""
     g = lambda *a: subprocess.run(["git", "-C", J, "--no-optional-locks"] + list(a), capture_output=True, text=True, timeout=30).stdout
     head = g("rev-parse", "HEAD").strip()
@@ -310,7 +310,7 @@ def snapshot(hours=168):
     try:
         import sqlite3
         c = sqlite3.connect("file:%s?mode=ro" % os.path.join(J, "jack_graph.db"), uri=True)
-        snap["fakten"] = [[r[0], str(r[1])[:60], r[2]] for r in c.execute("SELECT id, wert, ts FROM nodes WHERE ts>=? ORDER BY ts DESC LIMIT 30", (cut,))]
+        snap["fakten"] = [[r[0], str(r[1])[:400], r[2]] for r in c.execute("SELECT id, wert, ts FROM nodes WHERE typ NOT LIKE '%verworfen%' ORDER BY ts DESC LIMIT 60")]
         c.close()
     except Exception as e:  # Quelle kaputt = im Snapshot sichtbar, nicht still
         snap["fakten_fehler"] = type(e).__name__

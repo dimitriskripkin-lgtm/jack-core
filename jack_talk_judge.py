@@ -21,7 +21,7 @@ import re
 import sys
 import time
 
-JUDGE_VERSION = "5"  # 2: Zeitanker, Wiederholversuch; 3: Fenster Ankersache; 4: Zeitpunkt-Anker vor Modell; 5: Satzgrenze nicht in os.open, Wochentage, Zeitpunkt ohne Ankerpruefung nie PASS
+JUDGE_VERSION = "6"  # 2: Zeitanker, Wiederholversuch; 3: Fenster Ankersache; 4: Zeitpunkt-Anker vor Modell; 5: Satzgrenze, Wochentage, Zeitpunkt nur mit Anker; 6: Behauptung muss in der Antwort stehen
 MODEL = "gemini-2.5-flash"
 J = "/data/data/com.termux/files/home/jack"
 BERLIN = dt.timezone(dt.timedelta(hours=2))  # MESZ; Umstellung 25.10. -> dann Version erhoehen
@@ -352,6 +352,14 @@ def _judge(case, claims=None, retry=False):
     if not isinstance(claims, list) or any(not isinstance(c, dict) or c.get("klasse") not in valid for c in claims):
         res.update(urteil="JUDGE_ERROR", grund="Format")
         return res
+    # Jede faktische Behauptung muss aus der Antwort stammen (das Modell darf keine eigenen Saetze als Behauptung werten)
+    na_full = norm(case["answer"])
+    for c in claims:
+        if c["klasse"] in ("BELEGT", "FALSCH_DARGESTELLT", "ERFUNDEN"):
+            ct = toks(c.get("text"))
+            if len(ct) >= 2 and sum(1 for t in ct if t in na_full) < 0.5 * len(ct):
+                res.update(urteil="JUDGE_ERROR", grund="Behauptung steht nicht in der Antwort: %s" % c.get("text", "")[:60])
+                return res
     # Zaehlwerte sind deterministisch: von den Ankern bestaetigte Zahlen ueberstimmen das Modell (Anker zuerst)
     okn = {n for n, _ in an["zahl_ok"]} | ({an["fenster_genannt"]} if an["fenster_genannt"] else set())
     for c in claims:
