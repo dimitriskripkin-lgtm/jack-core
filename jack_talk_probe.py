@@ -20,7 +20,7 @@ import subprocess
 import sys
 import time
 
-VERSION = "1"
+VERSION = "2"  # 2: Lese-Protokoll, Snapshot vorher/nachher (stabil), Evidence-Datei
 J = "/data/data/com.termux/files/home/jack"
 HOME = os.path.realpath(os.path.expanduser("~"))
 PRIV = os.path.join(HOME, "jack_arena_private", "talk")
@@ -29,6 +29,9 @@ TMP = os.environ.get("TMPDIR", "/data/data/com.termux/files/usr/tmp")
 ALLOW_WRITE = {os.path.join(J, ".api_budget"), os.path.join(J, ".api_budget_week"), os.path.join(J, "reports", "groq_usage.jsonl")}  # Kosten/Limits echt zaehlen
 READ_CMDS = {"dumpsys", "getprop", "uptime", "df", "free", "date", "termux-battery-status", "nproc", "whoami", "id"}
 GIT_READ = {"log", "show", "rev-parse", "ls-files", "diff", "describe", "shortlog"}
+EVIDENCE_DIR = os.path.join(PRIV, "evidence")
+CAPTURE_OK = ("/jack/BETRIEBSHANDBUCH/", "/jack/00_START_HIER.md", "/jack/jack_health_now.json", "/jack/MODULKARTE.md")
+SECRETISH = ("config", ".env", "token", "secret", "/.ssh", ".key", "credential", "oauth", "passw", ".pem", "auth")
 
 
 # ---------------------------------------------------------------- Kindprozess: Sperre
@@ -72,7 +75,30 @@ def _install_guard(overlay, log):
             return real_open(redir[rp], mode, *a, **k)
         if rp and any(c in mode for c in "wax+"):
             return real_open(take(rp, "a" in mode or "+" in mode), mode, *a, **k)
+        if rp:
+            note_read(rp)
         return real_open(file, mode, *a, **k)
+
+    def note_read(rp):
+        rel = rp[len(HOME):]
+        if rel in log["reads"] or not os.path.isfile(rp):
+            return
+        if any(x in rel.lower() for x in SECRETISH):
+            log["reads"][rel] = "geheim"  # nie Inhalt, nie Hash
+            return
+        try:
+            size = os.path.getsize(rp)
+            if size > 2_000_000:
+                log["reads"][rel] = "gross:%d" % size
+                return
+            with real_open(rp, "rb") as f:
+                data = f.read()
+            log["reads"][rel] = _hb(data)
+            low = rel.lower()
+            if rel.startswith(CAPTURE_OK) and size <= 20000 and not any(x in low for x in SECRETISH):
+                log["captured"][rel] = data.decode("utf-8", "replace")
+        except OSError:
+            pass
 
     def g_os_open(path, flags, *a, **k):
         rp = prot(path)
@@ -160,7 +186,10 @@ def _install_guard(overlay, log):
     def g_run(args, *a, **k):
         parts = argv0(args, k.get("shell"))
         if allowed(parts):
-            return real_run(args, *a, **k)
+            r = real_run(args, *a, **k)
+            o = r.stdout if isinstance(r.stdout, str) else (r.stdout or b"").decode("utf-8", "replace")
+            log["subproc"].append({"cmd": " ".join(parts)[:120], "rc": r.returncode, "out_sha": _hb(o.encode()), "out": o[:4000]})
+            return r
         log["subproc_denied"].append(" ".join(parts)[:80])
         txt = k.get("text") or k.get("universal_newlines") or k.get("encoding")
         if k.get("check"):
@@ -204,6 +233,11 @@ def _install_guard(overlay, log):
     return dbs
 
 
+def _hb(data):
+    import hashlib
+    return hashlib.sha256(data).hexdigest()[:16]
+
+
 def _h(path):
     import hashlib
     h = hashlib.sha256()
@@ -216,7 +250,8 @@ def child(mode):
     req = json.loads(sys.stdin.read())
     overlay = os.path.join(TMP, "probe_%d" % os.getpid())
     os.makedirs(overlay, exist_ok=True)
-    log = {"writes": [], "dbs": {}, "denied": [], "subproc_denied": [], "net_denied": [], "sent": []}
+    log = {"writes": [], "dbs": {}, "denied": [], "subproc_denied": [], "net_denied": [], "sent": [],
+           "reads": {}, "captured": {}, "subproc": []}
     dbs = _install_guard(overlay, log)
     sys.path.insert(0, J)
     os.environ["JACK_PROBE"] = "1"
@@ -249,10 +284,25 @@ def child(mode):
 
 
 # ---------------------------------------------------------------- Elternprozess
+def snapshot(hours=168):
+    """Wahrheit zum Fragezeitpunkt: Git-Stand (Commits mit Zeit, Titel, Dateien) im Fenster. Evidence-IDs G:<hash>."""
+    g = lambda *a: subprocess.run(["git", "-C", J, "--no-optional-locks"] + list(a), capture_output=True, text=True, timeout=30).stdout
+    head = g("rev-parse", "HEAD").strip()
+    items = []
+    for block in g("log", "--since=%d hours ago" % hours, "--name-only", "--format=@@%h|%cI|%s").split("@@")[1:]:
+        lines = [l for l in block.splitlines() if l.strip()]
+        h, t, title = lines[0].split("|", 2)
+        items.append({"id": "G:" + h, "zeit": t, "titel": title, "dateien": lines[1:30]})
+    snap = {"genommen": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "head": head, "fenster_h": hours, "commits": items}
+    snap["hash"] = _hb(json.dumps([head, items], sort_keys=True).encode())
+    return snap
+
+
 def ask(mode, q, tag="", timeout=90):
     if mode not in ("unit", "e2e"):
         raise SystemExit("Modus unit oder e2e")
     t0 = time.strftime("%Y-%m-%d %H:%M:%S")
+    snap = snapshot()
     try:
         p = subprocess.run([sys.executable, os.path.abspath(__file__), "_child", mode], input=json.dumps({"q": q}),
                            capture_output=True, text=True, timeout=timeout, cwd=TMP)
@@ -260,8 +310,18 @@ def ask(mode, q, tag="", timeout=90):
         res = json.loads(line[-1][13:]) if line else {"answer": None, "err": "kein Ergebnis rc=%s %s" % (p.returncode, p.stderr[-200:])}
     except subprocess.TimeoutExpired:
         res = {"answer": None, "err": "TIMEOUT"}
-    rec = {"ts": t0, "probe_version": VERSION, "mode": mode, "tag": tag, "q": q}
+    after = snapshot()
+    pid = "P" + time.strftime("%Y%m%d_%H%M%S_") + _hb((q + mode + str(time.time())).encode())[:6]
+    ev = {"probe_id": pid, "snapshot": snap, "snapshot_nachher_hash": after["hash"], "reads": res.pop("reads", {}),
+          "captured": res.pop("captured", {}), "subproc": res.pop("subproc", [])}
+    rec = {"ts": t0, "probe_id": pid, "probe_version": VERSION, "mode": mode, "tag": tag, "q": q,
+           "snapshot_hash": snap["hash"], "stabil": snap["hash"] == after["hash"]}
     rec.update(res)
+    os.makedirs(EVIDENCE_DIR, mode=0o700, exist_ok=True)
+    ep = os.path.join(EVIDENCE_DIR, pid + ".json")
+    with open(ep, "w", encoding="utf-8") as f:
+        json.dump(ev, f, ensure_ascii=False)
+    os.chmod(ep, 0o600)
     os.makedirs(PRIV, mode=0o700, exist_ok=True)
     with open(AUDIT, "a", encoding="utf-8") as f:
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")
