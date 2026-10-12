@@ -115,8 +115,17 @@ Ordner ARBEITSPLATZ/ auf der Honor. Rufe start_hier(wer="claude"|"grok"|"gemini"
 - Karte: reports/karte_roh.py zaehlt jetzt auch Cron/Shell/crontab-Aufrufer (MODULKARTE.md Nachtrag).
 - git_publish: Commit-Nachricht kurz halten (rund 100 Zeichen), laengere werden abgelehnt.
 
-## 8b. Uebergabe 11.10.2026
-Neue Session: zuerst ARBEITSPLATZ/gemeinsam/uebergabe_claude_20261011.md lesen (Stand, Arena, offene Punkte, Lehren). Aeltere: uebergabe_claude_20261009.md. Jack-Onboarding: onboarding_jack_20261009.md. Kapitel 250-255 = Tiefenanalyse.
+## 13. Neu seit 11./12.10.2026 (ersetzt Teile von 12)
+- Arena Kategorie C ist FREI: Sicherheitsrahmen jack_arena_sandbox.py v5 (Kap 276), Code-Aufgaben C01-C08 und C-v2 (Generator privat). Richter-Kennzahl public_overfit (sichtbar gruen, versteckt rot).
+- Runner-Schalter: ARENA_MODEL (Flash-Lite Standard), ARENA_TOOLS (Standard grep2), ARENA_RULES_FILE. `.arena_einrichtung` jetzt `YYYY-MM-DD N EUR` (max 10000 Aufrufe, max 4 EUR, nur an dem Tag). Nur EIN Runner-Lauf gleichzeitig (Lock), auch Selbsttest.
+- Jede Aenderung: Vorregistrierung VOR dem Lauf (ARBEITSPLATZ/gemeinsam/arena/*_vorregistrierung.md), frischer Satz, dann Holdout. Verbrauchte Holdouts nach jack_arena_private/holdout_verbraucht/ + seal.
+- JACK als Lerner: jack_arena_lerner.py (Kap 277). Erste eigene Regel hat Tor + Holdout bestanden (12.10.). Uebernahme in JACKs echte Regeln NUR mit Dimas Ja und nach Abstraktion (Ebene 3).
+- Phone-Haende: jack_phone_senses.py (Kap 278) = L0 nur lesen, Tabu/Allowlist/Not-Aus ~/jack/.phone_off/Audit. Phase 3 (L1-Aktionen) NUR nach Dimas Go. rish schreibt zufaellig auf stderr: immer stderr=STDOUT.
+- jack_budget-Wochenlimit 3 EUR teilen Arena und JACK. Grosse Arena-Serien koennen JACKs Gemini bis Montag sperren.
+
+## 8b. Uebergabe 12.10.2026
+Neue Session: zuerst ARBEITSPLATZ/gemeinsam/uebergabe_claude_20261012.md lesen (Arena, Lernkreislauf, Phone, offene Entscheidungen). Davor: uebergabe_claude_20261011.md.
+Aeltere Uebergabe 11.10.2026: ARBEITSPLATZ/gemeinsam/uebergabe_claude_20261011.md lesen (Stand, Arena, offene Punkte, Lehren). Aeltere: uebergabe_claude_20261009.md. Jack-Onboarding: onboarding_jack_20261009.md. Kapitel 250-255 = Tiefenanalyse.
 
 ## 9. Session-Ende-Pflicht
 Was geändert wurde, in die Betriebshandbuch-Kapitel eintragen. Offene Punkte nennen. Neue Schalter in Abschnitt 5 aufnehmen.
