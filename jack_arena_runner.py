@@ -668,7 +668,7 @@ class GeminiAgent(Agent):
                              "model": MODEL_ID, "in": tin, "out": tout, "eur": eur, "price": PRICE["version"]})
         try:
             import jack_budget
-            jack_budget.add_tokens(tin + tout)
+            jack_budget.add_tokens(tin + tout, eur)  # echte Kosten statt Schaetzung (JACK_TUNE_BUDGETEUR)
         except Exception:
             pass
         try:
@@ -756,7 +756,7 @@ class ClaudeAgent(GeminiAgent):
                              "model": self.model_id, "in": tin, "out": tout, "eur": eur, "price": PRICE["version"]})
         try:
             import jack_budget
-            jack_budget.add_tokens(tin + tout)
+            jack_budget.add_tokens(tin + tout, eur)  # echte Kosten statt Schaetzung (JACK_TUNE_BUDGETEUR)
         except Exception:
             pass
         text = "".join(b.get("text", "") for b in (resp.get("content") or []) if isinstance(b, dict) and b.get("type") == "text")

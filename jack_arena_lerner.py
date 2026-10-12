@@ -147,7 +147,7 @@ def vorschlag(split, model, rule_file=None):
     A.append(R.COSTS, {"ts": time.strftime("%Y-%m-%d %H:%M:%S"), "day": R.today(), "run_id": "LERNER_" + ts,
                        "model": R.MODEL_ID, "in": tin, "out": tout, "eur": round(eur, 6), "price": R.PRICE["version"]})
     try:
-        jack_budget.add_tokens(tin + tout)
+        jack_budget.add_tokens(tin + tout, eur)
     except Exception:
         pass
     text = "".join(p.get("text", "") for p in resp["candidates"][0]["content"]["parts"])

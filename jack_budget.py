@@ -49,12 +49,13 @@ def check_and_count(kind="text"):
             pass
     json.dump(d,open(F,"w"))
     return True, "%s %s/%s"%(kind,d[kind],LIMITS[kind])
-def add_tokens(n):
+def add_tokens(n, eur=None):  # JACK_TUNE_BUDGETEUR 12.10.2026: echte Kosten wenn bekannt (Arena), sonst Schaetzung 0.40 EUR/Mio
     n=int(n or 0)
     d=_load(); d["tokens"]=d.get("tokens",0)+n
     json.dump(d,open(F,"w"))
     w=_week(); w["tokens"]=w.get("tokens",0)+n
-    w["eur"]=round(w["tokens"]/1e6*EUR_PER_MTOK,4)
+    add=float(eur) if eur is not None else n/1e6*EUR_PER_MTOK
+    w["eur"]=round(w.get("eur",0)+add,4)
     json.dump(w,open(W,"w"))
 def status():
     d=_load(); w=_week()
