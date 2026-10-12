@@ -24,6 +24,11 @@ def classify(text):
         return "DAVOR"
     if any(k in t for k in ("aufgefallen","was ist neu","was hat sich veraendert","was hat sich getan","letzten stunden","letzte stunden")):
         return "NEU"
+    try:  # JACK_TUNE_AENDERUNG 12.10.2026: Aenderungs-Auskunft (Zeitfenster + Thema), Kap 280
+        import jack_aenderung as _ae
+        if _ae.erkennt(text): return "NEU"
+    except Exception:
+        pass
     fact=("ist zustand" in t) or t in ("status","/status") or ("kiste" in t and "steht" in t) or t.startswith("wie steht")
     diag=any(k in t for k in ("essenz","schau dich","selbst sehen","eigenen code","eigener code","kompletten code","anomalie","nicht erreichbar","graceful","xiaomi offline","murks","guck dir")) or (any(k in t for k in ("analysier","fehler","verbesser","schau mal")) and any(k in t for k in ("code","modul","datei","log","dienst",".py")))  # JACK_TUNE_GATE1
     expl=("overmind" in t or "deadman" in t) and not fact and not diag
@@ -517,7 +522,7 @@ def dispatch(text, send_keyboard=None):
     if lane=="HERKUNFT":
         return herkunft_text()
     if lane=="NEU":
-        return neu_report(10)
+        return neu_antwort(text)
     if lane=="FACT":
         return fact_report()
     if lane=="EXPLAIN":
@@ -554,6 +559,15 @@ def strip_lane(text):
         if t.lstrip().startswith(tag):
             return t.lstrip()[len(tag):].lstrip(" \n")
     return t
+def neu_antwort(text):
+    """JACK_TUNE_AENDERUNG: erst deterministische Aenderungs-Auskunft, sonst alter 10-Std-Report."""
+    try:
+        import jack_aenderung as _ae
+        a = _ae.antwort(text)
+        if a: return a
+    except Exception:
+        pass
+    return neu_report(10)
 def neu_report(stunden=10):
     import time as _ntm, os as _nos, glob as _ngl, sqlite3 as _nsq, datetime as _ndt, json as _njs
     _cutoff_epoch=_ntm.time()-stunden*3600
@@ -611,7 +625,7 @@ def dispatch_lane(lane, text):
     if lane=="HERKUNFT":
         return herkunft_text()
     if lane=="NEU":
-        return neu_report(10)
+        return neu_antwort(text)
     if lane=="FACT":
         return fact_report()
     if lane=="EXPLAIN":
