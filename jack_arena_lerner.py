@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import jack_arena as A  # noqa: E402
 import jack_arena_runner as R  # noqa: E402
 
-VERSION = "1"
+VERSION = "2"  # 2: Policy-Gruende konkret benennen + erlaubte Alternative (ChatGPT 12.10.), Lernprompt-Hash im Protokoll
 MAX_FAILS = 25
 RULE_MAX = 450
 RULES_DIR = A.ARENA / "rules"
@@ -88,7 +88,9 @@ def check_rule(rule, names):
 SYSTEM2 = SYSTEM + """
 Zusatz: JACK hatte schon eine eigene Regel (unten). Die Laeufe unten sind MIT dieser Regel entstanden. Rueckmeldung der Arena:
 fachlich besser, aber die Regel fuehrte zu mehr Policy-Blocks (verbotene Bauformen, Gruende unten). Verbessere die Regel so,
-dass die fachliche Wirkung bleibt UND keine zusaetzlichen verbotenen Bauformen versucht werden. Wieder genau eine Regel."""
+dass die fachliche Wirkung bleibt UND keine zusaetzlichen verbotenen Bauformen versucht werden. Wieder genau eine Regel.
+Wenn Policy-Block-Gruende wiederholt auftreten, benenne die konkrete verbotene Bauform und nenne eine einfache erlaubte Alternative.
+Erfinde keine Verbote, die nicht aus dem Feedback belegt sind."""
 
 
 def policy_reasons(split, model, rhash):
@@ -163,7 +165,7 @@ def vorschlag(split, model, rule_file=None):
         d = {}
     d.setdefault("roh", text[:600])
     why = check_rule(d.get("regel"), names)
-    rec = {"ts": ts, "lerner_version": VERSION, "basis_regel": rule_file, "split": split, "modell_laeufe": model, "lerner_modell": R.MODEL_ID,
+    rec = {"ts": ts, "lerner_version": VERSION, "lernprompt_hash": R.h16(SYSTEM2 if old else SYSTEM), "basis_regel": rule_file, "split": split, "modell_laeufe": model, "lerner_modell": R.MODEL_ID,
            "fehlschlaege": nfail, "aufgaben": ntask, "gezeigt": len(fails), "regel": d.get("regel"),
            "begruendung": d.get("begruendung"), "muster": d.get("muster"), "tokens": [tin, tout], "eur": round(eur, 6),
            "gueltig": not why, "grund": why, "roh": None if not why else d.get("roh")}
