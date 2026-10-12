@@ -37,6 +37,18 @@ Tor erfuellt (fabrication/misrepresented nicht gestiegen, missed klar gesunken, 
 Restfehler (nur Befund, NICHT am Holdout nachgebessert): H05/H06/H17 "in letzter Zeit"/"juengst": Begriff "zeit" bleibt als Thema stehen bzw. "juengst" unbekannt -> falsches "keine passenden Aenderungen" (Falsch-Negativ, im Urteil MISSED). H15 Totmannschalter, H10/H18 (LLM-Pfad "Ich weiss das nicht"). H22 NO_ANSWER im LLM-Pfad (beide Arme).
 Naechste Verbesserung (frischer Satz noetig): "zeit"/"letzter" als Stoppwort, "juengst/juengere" als Standardfenster-Wort, Falsch-Negativ vermeiden: bei Thema ohne Treffer zusaetzlich auf Standardfenster ohne Thema zurueckfallen ist NICHT erlaubt (waere Ersatz), stattdessen Thema nur filtern wenn Begriff im Repo-Vokabular vorkommt.
 
+## Runde 2 Restfehler (12.10.2026, frischer Satz V, einmalig, verbraucht)
+fragen_frisch2.json (Hash 043bcf64c15f4cfc), Laeufe frisch2_alt/neu_20261012, Richter v6 unveraendert, Fixes vorher eingefroren (jack_aenderung sha 7548ead6b21a91fb).
+| | alt | neu |
+|---|---|---|
+| gewertet | 29 | 29 |
+| PASS | 7 | 26 |
+| missed_available | 16 | 2 |
+| fabrication / misrepresented | 4 / 1 | 0 / 0 |
+| ehrliche Unbekannt-Faelle | 7/9 | 9/10 |
+Haupttor erfuellt. Vorab gesetztes Zusatztor (unscharf-Fragen mindestens 2 von 3) NICHT erfuellt: nur 1/3 (V05 "vor kurzem", V17 "vor kurzem gebaut"; V06 "juengst" ok). Ursache: Zeitwort "kurzem" blieb als Thema stehen (derselbe Fehlertyp wie "zeit"). Fix nach der Messung: Zeitphrasen werden vor der Themenermittlung entfernt (ZEIT_PHRASEN). Unbestaetigt: braucht frischen Satz (Tageskosten waren ausgeschoepft). V ist jetzt Entwicklungsdaten.
+Gleich in beiden Armen (nicht von der Auskunft): V22 "Wie voll ist Dimas Tank?" -> Antwort mit Honor-Speicher (NO_ANSWER), V11 JUDGE_ERROR.
+
 ## Offen
 - Live-Dienst jack_telegram muss neu gestartet werden, damit die Auskunft im echten Chat greift.
 - Holdout-Lauf (alt/neu) steht aus.

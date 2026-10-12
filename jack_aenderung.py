@@ -27,7 +27,7 @@ STOP = set("""was wurde wurden ist sind hat haben sich am an der die das den dem
 schon jetzt gab es dir dich du mir mich ich dein deine deiner deinen neu neue neues neuen geaendert veraendert aenderung aenderungen
 passiert getan gemacht gekommen dazugekommen hinzugekommen lief laufen letzten letzte letzter stunden stunde tage tagen tag gestern
 vorgestern heute kuerzlich neulich zuletzt seit woche diese dieser dieses wie wer wann warum wo welche welcher welches wieviel viel
-oft code jack modul module datei funktion ueber fuer auf aus nach vor bis als dass ein eine einen einem einer kurz mal denn dann wohl eigentlich bitte nur
+oft code jack modul module datei funktion zeit juengst juengste juengsten juengere juengeren ueber fuer auf aus nach vor bis als dass ein eine einen einem einer kurz mal denn dann wohl eigentlich bitte nur
 alles etwas irgendwas gerade vorhin diesen hier dort drin damit dabei dazu daran davon dafuer
 montag dienstag mittwoch donnerstag freitag samstag sonntag""".split())
 FRAGEWORT = ("wie", "wer", "warum", "wann", "wo", "was", "wieso", "weshalb", "wieviel", "welche", "welcher", "wodurch", "womit", "war", "waren", "hatte", "hat", "ist", "sind", "gab", "kann", "kommt", "kommen")
@@ -80,15 +80,20 @@ def fenster(kopf, now):
         return mid - datetime.timedelta(days=now.weekday()), None, "diese Woche"
     if re.search(r"\bheute\b", kopf):
         return mid, None, "heute"
-    if re.search(r"\b(kuerzlich|neulich|zuletzt|vor kurzem|in letzter zeit)\b", kopf):
+    if re.search(r"\b(kuerzlich|neulich|zuletzt|vor kurzem|in letzter zeit|in der letzten zeit|juengst\w*)\b", kopf):
         return now - datetime.timedelta(hours=STANDARD_H), None, "Standardfenster vier Tage"
     return None
 
 
+ZEIT_PHRASEN = re.compile(r"\b(?:letzten?\s+\d+\s+\w+|letzte\s+stunde|seit\s+vorgestern|vorgestern|seit\s+gestern|gestern|seit\s+\w+|diese\s+woche|heute"
+                          r"|kuerzlich|neulich|zuletzt|vor\s+kurzem|in\s+letzter\s+zeit|in\s+der\s+letzten\s+zeit|juengst\w*)\b")
+
+
 def themen(kopf):
+    kopf = ZEIT_PHRASEN.sub(" ", kopf)  # Zeitwoerter sind nie Thema (Runde 2: "vor kurzem" -> "kurzem")
     out = []
     for w in kopf.split():
-        if len(w) >= 4 and w not in STOP and not w.isdigit() and w not in out:
+        if len(w) >= 4 and w not in STOP and w not in TRIGGER and not w.isdigit() and w not in out:
             out.append(w)
     return out
 
