@@ -20,7 +20,7 @@ import subprocess
 import sys
 import time
 
-VERSION = "2"  # 2: Lese-Protokoll, Snapshot vorher/nachher (stabil), Evidence-Datei
+VERSION = "3"  # 2: Lese-Protokoll, Snapshot vorher/nachher; 3: Missionen + Graph-Fakten im Snapshot, Nachher voll gespeichert
 J = "/data/data/com.termux/files/home/jack"
 HOME = os.path.realpath(os.path.expanduser("~"))
 PRIV = os.path.join(HOME, "jack_arena_private", "talk")
@@ -293,8 +293,27 @@ def snapshot(hours=168):
         lines = [l for l in block.splitlines() if l.strip()]
         h, t, title = lines[0].split("|", 2)
         items.append({"id": "G:" + h, "zeit": t, "titel": title, "dateien": lines[1:30]})
-    snap = {"genommen": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "head": head, "fenster_h": hours, "commits": items}
-    snap["hash"] = _hb(json.dumps([head, items], sort_keys=True).encode())
+    snap = {"genommen": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "epoch": time.time(), "head": head, "fenster_h": hours, "commits": items}
+    snap["hash"] = _hb(json.dumps([head, items], sort_keys=True).encode())  # Stabilitaet nur ueber Git (selten, aber hart)
+    cut = time.time() - hours * 3600
+    mis = []
+    for fn in os.listdir(os.path.join(J, "missions", "logs")):
+        fp = os.path.join(J, "missions", "logs", fn)
+        try:
+            mt = os.path.getmtime(fp)
+            if fn.endswith(".json") and mt >= cut:
+                with open(fp, encoding="utf-8") as f:
+                    mis.append([round(mt, 1), bool(json.load(f).get("ok"))])
+        except (OSError, ValueError):
+            pass
+    snap["missionen"] = sorted(mis)
+    try:
+        import sqlite3
+        c = sqlite3.connect("file:%s?mode=ro" % os.path.join(J, "jack_graph.db"), uri=True)
+        snap["fakten"] = [[r[0], str(r[1])[:60], r[2]] for r in c.execute("SELECT id, wert, ts FROM nodes WHERE ts>=? ORDER BY ts DESC LIMIT 30", (cut,))]
+        c.close()
+    except Exception as e:  # Quelle kaputt = im Snapshot sichtbar, nicht still
+        snap["fakten_fehler"] = type(e).__name__
     return snap
 
 
@@ -312,7 +331,7 @@ def ask(mode, q, tag="", timeout=90):
         res = {"answer": None, "err": "TIMEOUT"}
     after = snapshot()
     pid = "P" + time.strftime("%Y%m%d_%H%M%S_") + _hb((q + mode + str(time.time())).encode())[:6]
-    ev = {"probe_id": pid, "snapshot": snap, "snapshot_nachher_hash": after["hash"], "reads": res.pop("reads", {}),
+    ev = {"probe_id": pid, "snapshot": snap, "snapshot_nachher": after, "reads": res.pop("reads", {}),
           "captured": res.pop("captured", {}), "subproc": res.pop("subproc", [])}
     rec = {"ts": t0, "probe_id": pid, "probe_version": VERSION, "mode": mode, "tag": tag, "q": q,
            "snapshot_hash": snap["hash"], "stabil": snap["hash"] == after["hash"]}
