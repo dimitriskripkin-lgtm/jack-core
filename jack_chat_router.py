@@ -29,6 +29,11 @@ def classify(text):
         if _ae.erkennt(text): return "NEU"
     except Exception:
         pass
+    try:  # JACK_TUNE_WISSEN 12.10.2026: Wissens-Auskunft (Handbuch-Auszug), Kap 281; laeuft ueber die Spur NEU
+        import jack_wissen as _wi
+        if _wi.erkennt(text): return "NEU"
+    except Exception:
+        pass
     fact=("ist zustand" in t) or t in ("status","/status") or ("kiste" in t and "steht" in t) or t.startswith("wie steht")
     diag=any(k in t for k in ("essenz","schau dich","selbst sehen","eigenen code","eigener code","kompletten code","anomalie","nicht erreichbar","graceful","xiaomi offline","murks","guck dir")) or (any(k in t for k in ("analysier","fehler","verbesser","schau mal")) and any(k in t for k in ("code","modul","datei","log","dienst",".py")))  # JACK_TUNE_GATE1
     expl=("overmind" in t or "deadman" in t) and not fact and not diag
@@ -565,6 +570,12 @@ def neu_antwort(text):
         import jack_aenderung as _ae
         a = _ae.antwort(text)
         if a: return a
+    except Exception:
+        pass
+    try:  # JACK_TUNE_WISSEN
+        import jack_wissen as _wi
+        w = _wi.antwort(text)
+        if w: return w
     except Exception:
         pass
     return neu_report(10)

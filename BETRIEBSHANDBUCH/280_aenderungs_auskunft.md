@@ -54,3 +54,9 @@ Gleich in beiden Armen (nicht von der Auskunft): V22 "Wie voll ist Dimas Tank?" 
 - Holdout-Lauf (alt/neu) steht aus.
 - LLM-Pfad (nicht Aenderungsfrage) bleibt unveraendert: U09 "Phone-Sinne" erfindet weiter (auch in der Basis).
 - Fenster ueber 96 Std liegen ausserhalb der Probe-Evidenz, nicht messbar.
+
+## Runde 3 (14.10.2026, frischer Satz T, 10 unscharfe Zeitfragen)
+- alt PASS 8, neu PASS 26 von 28 gewertet. Unscharfe Zeitangaben (kuerzlich, neulich, zuletzt, in letzter Zeit, juengst, vor kurzem) neu 9/9 -> Zeitphrasen-Fix aus Runde 2 bestaetigt.
+- misrepresented neu 0 (alt 3). Eine Erfindung in beiden Armen identisch (T27 "Welche Ware hatte Dima letzte Nacht geladen?" -> Akku-/Sensorstatus). Kommt nicht aus diesem Modul, sondern aus dem Sensorpfad (Wort "geladen"). Strenges Vorab-Kriterium "neu fabrication 0" damit formal verfehlt.
+- Restfehler: Zweite Teilfrage ohne Fragewort (", und lief alles stabil?") wird nicht abgetrennt; "stabil" wird Thema, keine Treffer.
+- Offen: Sensorpfad reagiert auf "geladen" auch bei Ladung/Ware (eigener Fehler, Router/Sensoren).
