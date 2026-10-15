@@ -115,14 +115,14 @@ def run_ssh_agent(befehle,send_fn=None):
         if send_fn: send_fn('Fazit-Fehler: '+str(e)[:100])
     return ergebnisse
 
-def run_agent(ziel,start_app=None,max_schritte=20,send_fn=None):
+def run_agent(ziel,start_app=None,max_schritte=20,send_fn=None,vertrag=None,bild_pruefung=True):  # JACK_TUNE_FINISHVERIFY vertrag/bild_pruefung
     if send_fn: send_fn('Agent gestartet: '+ziel)
     verlauf=[]
     if start_app:
         subprocess.run(['ssh','xiaomi-jack',"su -c 'monkey -p "+start_app+" 1'"],capture_output=True,timeout=10)
         time.sleep(3)
     erlaubt=set(_APPS_STD)|({start_app} if start_app else set())
-    letzte=[]; leer=0; bilder=0
+    letzte=[]; leer=0; bilder=0; pruef=0
     for schritt in range(1,max_schritte+1):
         fg=_vordergrund()  # JACK_TUNE_AGENTSAFE
         if not fg:
@@ -156,9 +156,23 @@ def run_agent(ziel,start_app=None,max_schritte=20,send_fn=None):
         log='['+str(schritt)+'] '+e['aktion'].upper()+': '+e['grund'][:60]
         verlauf.append(log)
         if send_fn: send_fn(log)
-        if schritt>=3 and (e['fertig'] or e['aktion']=='fertig'):
-            if send_fn: send_fn('Ziel erreicht!')
-            _home(); return True,verlauf
+        if e['fertig'] or e['aktion']=='fertig':  # JACK_TUNE_FINISHVERIFY: Aussage ist kein Beweis (Kap 284)
+            import jack_finish_verify as _fv
+            _vf=None
+            if bild_pruefung:
+                import jack_vision as _jv
+                _vf=_jv.vision_ask
+            pruef+=1
+            stufe,gr=_fv.pruefe(ziel,vertrag,_vordergrund,_dump,_vf)
+            verlauf.append('PRUEFUNG '+stufe+': '+'; '.join(gr)[:150])
+            if send_fn: send_fn('Pruefung '+str(pruef)+': '+stufe+' - '+'; '.join(gr)[:150])
+            if stufe in ('VERIFIZIERT','BILD_BELEGT'):
+                if send_fn: send_fn('Ziel erreicht (belegt: '+stufe+')')
+                _home(); return True,verlauf
+            if pruef>=2:
+                if send_fn: send_fn('ABBRUCH: Endzustand nicht bewiesen')
+                _home(); return False,verlauf
+            continue
         if e['aktion']=='tap' and e['button']:
             btn=buttons[int(e['button'])-1] if e['button'].strip().isdigit() and 1<=int(e['button'])<=len(buttons) else None  # JACK_TUNE_AGENTSAFE Nummer
             if btn: _tap(btn['x'],btn['y'])
