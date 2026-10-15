@@ -39,7 +39,7 @@ def vision_ask(prompt, b64=None, max_px=1080, quality=80, timeout=45):
     payload = {"contents": [{"parts": [
         {"text": prompt},
         {"inline_data": {"mime_type": "image/jpeg", "data": b64}}]}],
-        "generationConfig": {"maxOutputTokens": 2048, "temperature": 0.2}}
+        "generationConfig": {"maxOutputTokens": 2048, "temperature": 0.2, "thinkingConfig": {"thinkingBudget": 0}}}
     req = urllib.request.Request(url, data=json.dumps(payload).encode(),
         headers={"Content-Type": "application/json"})
     try:
@@ -47,7 +47,9 @@ def vision_ask(prompt, b64=None, max_px=1080, quality=80, timeout=45):
             res = json.loads(r.read())
         try:
             import jack_budget as _b
-            _b.add_tokens(res.get('usageMetadata', {}).get('totalTokenCount', 0))
+            _um = res.get('usageMetadata', {})  # JACK_TUNE_VISIONEUR echte Kosten
+            _pin = _um.get('promptTokenCount', 0); _pout = _um.get('candidatesTokenCount', 0) + _um.get('thoughtsTokenCount', 0)
+            _b.add_tokens(_um.get('totalTokenCount', 0), (_pin * 0.30 + _pout * 2.50) / 1e6 * 0.9)
         except Exception: pass
         return res['candidates'][0]['content']['parts'][0]['text']
     except Exception as e:
