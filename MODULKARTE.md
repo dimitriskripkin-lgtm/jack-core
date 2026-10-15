@@ -4,7 +4,11 @@
 > Neu: jack_deadman.py (Cron */30, Kap 271), jack_arena.py (Arena-Richter, Bibliothek des Runners, Kap 273), jack_arena_runner.py (Arena-Runner, manuelles Werkzeug ohne Aufrufer = gewollt, Kap 274), Dienst jack_honor_watch (jack_honor_diag.py watch, Kap 270).
 > Waisen laut Rohkarte 11.10.: jack_arena_runner (gewollt, CLI), jack_bug_fixer, jack_dialog, jack_error_door, jack_intent_parser, jack_pyflakes_lauf, jack_radar, jack_skill_self_creation, jack_vinted_radar, jack_whitelist_guard. Vor jedem Loeschen: Aufrufer auch in Shell, Cron, run-Dateien und dynamischen Importen pruefen.
 
+> Diagnose 15.10.2026 (Chrome Card, Lauf 3): `jack_ui_session.ui_dump(max_chars=120000)` schneidet grosse Chrome-Dumps ab. Gemessen: Rohdump 144869 Zeichen; nach 120000 Zeichen ist das XML nicht mehr parsebar. Fuer den UI-Agent ist `jack_ghost.hol_xiaomi_ui()` der kanonische, live erprobte Dump-Pfad. Nicht still in `jack_ui_session` flicken; bestehende Aufrufer zuerst pruefen.
+
 Wahrheit ist die Live-Datei. Diese Karte zeigt: welcher Dienst, wer ruft wen. Verweise per Namenssuche, dynamisch gebaute Namen fehlen.
+
+> Nachtrag 15.10.2026 (Chrome-Diagnose): `jack_ui_session.ui_dump(max_chars=120000)` kann bei grossen Chrome-Seiten gueltiges XML nach 120000 Zeichen abschneiden; Lauf 3 zeigte Originaldump 144869 Zeichen, `<hierarchy>` vorhanden und vollstaendig parsebar ueber `jack_ghost.hol_xiaomi_ui()`, waehrend der gekuerzte Session-Pfad zuvor 0 UI-Texte lieferte. Fuer grosse UI-Dumps nicht still auf den gekuerzten Pfad vertrauen; kanonischer UI-Agent-Pfad ist derzeit `jack_ghost.hol_xiaomi_ui()`.
 Aufgeräumt am 08.10.2026: 19 tote Module sowie 127 .bak-Dateien nach Attic/ (rückholbar, nicht im Repo). Siehe Handbuch 246.
 
 ## Dienste (runit)
@@ -192,7 +196,7 @@ diag_snapshot, jack_bug_fixer, jack_error_door, jack_intent_parser, jack_pyflake
 | jack_ui_elements | Bibliothek (1 Aufrufer) | Element-Agent mit hartem Ziel (AppAgent-Light). |
 | jack_ui_nav | Bibliothek (1 Aufrufer) | Xiaomi System-Nav: Back / Home / Recents via keyevent. |
 | jack_ui_read | Bibliothek (1 Aufrufer) | Direkt Doku oeffnen, scrollen, Elemente tippen. Kein Google-Drift. |
-| jack_ui_session | Bibliothek (3 Aufrufer) | UI-Session: Vordergrund + optional UI-Dump vom Xiaomi. Lesen vor Schreiben. |
+| jack_ui_session | Bibliothek (3 Aufrufer) | UI-Session: Vordergrund + optional UI-Dump vom Xiaomi. KNOWN LIMIT 15.10.: ui_dump(max_chars=120000) kann grosse Chrome-Dumps abschneiden -> unparsebares XML; fuer Chrome kanonisch jack_ghost.hol_xiaomi_ui(). |
 | jack_ui_type | Bibliothek (2 Aufrufer) | UI tippen: EditText finden, leeren, Text setzen, Enter. |
 | jack_vecdb | Bibliothek (2 Aufrufer) | import os |
 | jack_verify_gate | Bibliothek (3 Aufrufer) | Shadow/Verify-Gate: wiederholen bis n OK, sonst kein Erfolg. |

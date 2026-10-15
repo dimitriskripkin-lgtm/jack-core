@@ -243,3 +243,6 @@ reports/selfcare_cpu.log
 .ollama_heat_down
 .overmind_last_api
 .reflexion_state
+.tunnel_watch_state.json
+.tunnel_watch_state.json.tmp
+.tunnel_watch_off

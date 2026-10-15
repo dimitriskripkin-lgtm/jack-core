@@ -595,6 +595,29 @@ def _monitor_loop():
             except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
         _tm.sleep(120)
 
+def _tunnel_loop():
+    """JACK_TUNE_TUNNELWATCH: feste 120-s-Tunnelpruefung im Waechterprozess."""
+    _last_logged = None
+    while True:
+        try:
+            import jack_tunnel_watch as _jtw
+            _tw = _jtw.check()
+            if _tw.get("ran"):
+                _st = str(_tw.get("status", "UNKNOWN"))
+                if _st != _last_logged:
+                    import jack_log
+                    jack_log.log_decision("TUNNEL-WATCH", _st)
+                    _last_logged = _st
+                if _tw.get("notify"):
+                    notify(_tw["notify"])
+        except Exception as _twe:
+            try:
+                import jack_log
+                jack_log.log_decision("TUNNEL-WATCH-ERR", type(_twe).__name__)
+            except Exception:
+                pass
+        _tm.sleep(120)
+
 def _reflexion_loop():
     """Laeuft nachts, reflektiert JACK-Aktionen und lernt daraus."""
     import time as _t
@@ -766,6 +789,7 @@ def start_consolidated():
     #   nur der Ausfuehr-Thread ist weg. jack_oracle.py bleibt unberuehrt (wird anderswo noch gebraucht).
     _th.Thread(target=_scout_loop,daemon=True,name="scout").start()
     _th.Thread(target=_monitor_loop,daemon=True,name="monitor").start()
+    _th.Thread(target=_tunnel_loop,daemon=True,name="tunnel_watch").start()
     _th.Thread(target=_sanity_loop,daemon=True,name="sanity").start()
     _th.Thread(target=_lerner_loop,daemon=True,name="lerner").start()
 

@@ -146,6 +146,13 @@ def _abschluss(ziel,vertrag,bild_pruefung,verlauf,send_fn,pruef):  # JACK_TUNE_F
 def run_agent(ziel,start_app=None,max_schritte=20,send_fn=None,vertrag=None,bild_pruefung=True):  # JACK_TUNE_FINISHVERIFY vertrag/bild_pruefung
     if send_fn: send_fn('Agent gestartet: '+ziel)
     verlauf=[]
+    if start_app=='com.android.chrome' and vertrag:  # JACK_TUNE_CHROMECARD (Kap 286, Entwurf ChatGPT, Review Claude)
+        import jack_chrome_card as _jcc
+        _q=_jcc.query_from_goal(ziel)
+        if _q:
+            _cr=_jcc.run_search(_q,vertrag,send_fn)
+            verlauf.append('APP_CARD_CHROME: %s - %s'%(_cr.get('stufe'),'; '.join(_cr.get('grund') or [])[:200]))
+            _home(); return bool(_cr.get('ok')),verlauf
     if start_app:
         subprocess.run(['ssh','xiaomi-jack',"su -c 'monkey -p "+start_app+" 1'"],capture_output=True,timeout=10)
         time.sleep(3)
