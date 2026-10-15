@@ -26,3 +26,8 @@
 - EUR_WEEK 8.0 (Dima 15.10.).
 - Test live: Einstellungen-Auftrag: Hang -> Bildanalyse 1 -> Ziel erreicht. Ganzer Lauf (7 Textcalls + 1 Bild) +0,44 Cent.
 - Offen: Abschlusspruefung per Bild bei 'fertig'; Gemini 2.5 Flash: Google beschraenkt 2.5 auf Bestandsnutzer (Changelog 18.09.2026), Nachfolger 3.x pruefen.
+
+## Nachtrag 15.10. 02:50
+- Prompt bekommt Vordergrund-App ('Du bist bereits in der App X, App-Titel nicht antippen'). Vorher tippte Gemini in den Einstellungen dauernd den Titel an; ohne Start-App oeffnete es auf dem Home-Screen den Ordner 'Google'. Test danach: 3 Schritte, kein Haenger, Ziel erreicht.
+- Commit c57a38ce (alles bis 02:47). Uebergabe an ChatGPT: ARBEITSPLATZ/gemeinsam/uebergabe_chatgpt_20261015.md.
+- Telegram /agent ohne passendes Stichwort startet ohne Start-App (wandert dann vom aktuellen Bildschirm los) - offen.

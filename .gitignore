@@ -229,3 +229,17 @@ reports/selfcare_cpu.log
 .arena_off
 .aenderung_off
 .wissen_off
+
+# Laufzeit-Zustand (15.10.2026)
+.adb_port
+.autonomie_level
+.delta_snapshot
+.e1_entscheid
+.jack_ui_run
+.kortex_daemon.pid
+.lerner_journal.json
+.lokal_modell
+.metrik_historie
+.ollama_heat_down
+.overmind_last_api
+.reflexion_state
