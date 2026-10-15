@@ -24,3 +24,10 @@
 - Rauchtest echt (Gemini, ~2,3 Cent gesamt): R1 'Ueber das Telefon' mit Vertrag VERIFIZIERT in 2 Schritten. R2 Chrome 'Wetter Bremen' Actor scheitert (12 Schritte), ein falsches fertig korrekt abgelehnt. R3 Bluetooth ohne Vertrag: erst 2x korrekt NEIN (Pruefung vor Aktion), nach Fix BILD_BELEGT in 1 Schritt.
 - Grenze bestaetigt: BILD_BELEGT mit Beleg 'Bluetooth' ist schwach (Wort steht auch auf der Hauptseite). Messungen nur mit Vertraegen.
 - Offen: Chrome-Suche (Actor-Qualitaet), /agent ohne Vertrag, Phone-Arena nach gemeinsam/arena/phone_verifier_plan.md, Recovery nach phone_recovery_plan.md.
+## Nachtrag 15.10.2026 — C2 / stale UI-Dump / JACK_TUNE_GHOSTFRESH
+- C2-Phone-Arena: 8/8 reguläre Aufgaben VERIFIZIERT, Oracle 8/8, false_success 0, Vision 0, Policy 0, Gerätezyklus 12/12. Tor NICHT BESTANDEN: nur 3/4 Fallen; T01 SETUP_FAIL.
+- T01 zeigte fg=com.android.settings/MainSettings, aber Snapshot-Texte der vorherigen Chrome-Suche "GitHub OpenAI". Ursache: jack_ghost.hol_xiaomi_ui() konnte bei uiautomator-Fehler den alten /sdcard/jack_ui.xml erneut lesen.
+- Kritischer Fix durch Claude in jack_ghost.py: JACK_TUNE_GHOSTFRESH, vor jedem uiautomator dump 'rm -f /sdcard/jack_ui.xml'; bei fehlgeschlagenem Dump kein alter Baum. Backup jack_ghost.py.bak_20261015, compile OK, Telegram neu gestartet, Live-Dump OK (Claude).
+- Sicherheitsgrenze: Ein parsebarer XML-Baum und stabiler Foreground allein beweisen keine Frische. Bei Widerspruch zwischen fg-App und app-spezifischem UI-Text ist der Zustand UNBEWIESEN (Grund stale_dump), niemals VERIFIZIERT/BILD_BELEGT. Fehlendes XML ebenfalls UNBEWIESEN. Plausible App-Signaturen sind nur Plausibilitätsprüfung, kein kryptographischer Frischebeweis.
+- C3: v3 Spec/Runner/Gate unverändert, separater nachgelagerter Snapshot-Foreground-Plausibilitätsaudit; Audit-Widerspruch sperrt Freigabe, auch wenn ursprüngliches v3-Gate BESTANDEN meldet.
+- C3 (16:11-16:18): Tor BESTANDEN. 8/8 VERIFIZIERT, Oracle 8/8, Fallen 4/4, false_success 0, Policy 0, Vision 0, 0,0043 EUR, Geraetezyklus 12/12, Frische-Audit 12/12 ohne stale_dump. (Claude)

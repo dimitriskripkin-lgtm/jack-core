@@ -7,7 +7,7 @@ def _ssh(cmd, timeout=15):
     return subprocess.run(['ssh', HOST, cmd], capture_output=True, text=True, timeout=timeout)
 
 def hol_xiaomi_ui():
-    cmd = 'su -c "uiautomator dump ' + DUMP + '" >/dev/null 2>&1; su -c "cat ' + DUMP + '"'
+    cmd = 'su -c "rm -f ' + DUMP + '; uiautomator dump ' + DUMP + '" >/dev/null 2>&1; su -c "cat ' + DUMP + '"'  # JACK_TUNE_GHOSTFRESH: kein veralteter Dump, wenn uiautomator scheitert (Arena C2 T01)
     try:
         r = _ssh(cmd)
     except Exception as e:
