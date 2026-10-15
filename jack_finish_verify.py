@@ -5,13 +5,14 @@ Die Abschlusspruefung schaut sich einen frischen Zustand an und bewertet ihn
 unabhaengig vom Actor. Stufen:
   VERIFIZIERT  Erfolgsvertrag deterministisch erfuellt (App + Texte), 2x stabil
   BILD_BELEGT  kein Vertrag: unabhaengige Bildpruefung sagt JA und ihr woertlicher
-               Beleg steht im frischen UI-Baum (oder der Baum ist leer)
+               Beleg steht im frischen UI-Baum vor UND nach der Bildpruefung,
+               Vordergrund-App unveraendert (leerer Baum = kein Anker = UNBEWIESEN)
   UNBEWIESEN   nichts pruefbar (kein Vertrag, keine Bildpruefung, Vision nicht verfuegbar)
   FAIL         Pruefung sagt: nicht erreicht
 Erfolg nur bei VERIFIZIERT oder BILD_BELEGT. Ohne Netz testbar: hol_fg, hol_xml und
 vision_fn werden hereingereicht.
 
-Vertrag (dict), mindestens ein Kriterium:
+Vertrag (dict), mindestens ein POSITIVES Kriterium (app, text_alle oder text_eins):
   app         erwartetes Paket im Vordergrund
   text_alle   alle diese Texte muessen sichtbar sein
   text_eins   mindestens einer davon
@@ -19,7 +20,8 @@ Vertrag (dict), mindestens ein Kriterium:
 """
 import re
 
-_KRIT = ('app', 'text_alle', 'text_eins', 'text_nicht')
+_KRIT = ('app', 'text_alle', 'text_eins')  # text_nicht allein beweist nichts (Review ChatGPT 15.10.)
+_BOUNDS = re.compile(r'\[(-?\d+),(-?\d+)\]\[(-?\d+),(-?\d+)\]')
 
 BILD_PROMPT = ("Du bist Pruefer, nicht Ausfuehrer. Pruefe NUR anhand dieses Bildschirmfotos, "
                "ob dieses Ziel erreicht ist: %s\n"
@@ -42,6 +44,13 @@ def ui_texte(xml):
         return []
     out = []
     for n in root.iter('node'):
+        if (n.get('visible-to-user') or '').lower() == 'false':
+            continue  # unsichtbar (Review ChatGPT 15.10.)
+        m = _BOUNDS.match(n.get('bounds') or '')
+        if m:
+            x1, y1, x2, y2 = map(int, m.groups())
+            if x2 <= x1 or y2 <= y1 or x2 <= 0 or y2 <= 0:
+                continue  # Nullflaeche oder ausserhalb
         for k in ('text', 'content-desc'):
             v = (n.get(k) or '').strip()
             if v:
@@ -96,22 +105,25 @@ def parse_bild(antwort):
     return erg, beleg
 
 
+def _im_baum(beleg, texte):
+    return bool(texte) and _norm(beleg) in ' | '.join(_norm(t) for t in texte)
+
+
 def pruefe_bild(ziel, texte, vision_fn):
-    """-> (ok: bool|None, gruende). None = Vision nicht verfuegbar."""
+    """-> (ok: bool|None, gruende, beleg). None = nicht pruefbar (Vision weg oder Baum leer)."""
+    if not texte:
+        return None, ['UI-Baum leer: kein unabhaengiger Anker fuer die Bildpruefung'], ''
     antwort = vision_fn(BILD_PROMPT % ziel) or ''
     if antwort.startswith('['):
-        return None, ['Bildpruefung nicht verfuegbar: ' + antwort[:80]]
+        return None, ['Bildpruefung nicht verfuegbar: ' + antwort[:80]], ''
     erg, beleg = parse_bild(antwort)
     if erg is not True:
-        return False, ['Bild: nicht erreicht (' + ' '.join(antwort.split())[:100] + ')']
+        return False, ['Bild: nicht erreicht (' + ' '.join(antwort.split())[:100] + ')'], beleg
     if len(_norm(beleg)) < 3:
-        return False, ['Bild sagt JA, aber ohne Beleg']
-    if texte:
-        blob = ' | '.join(_norm(t) for t in texte)
-        if _norm(beleg) not in blob:
-            return False, ['Bild-Beleg nicht im UI-Baum: ' + beleg[:60]]
-        return True, ['Bild-Beleg im UI-Baum gefunden: ' + beleg[:60]]
-    return True, ['Bild-Beleg (UI-Baum leer): ' + beleg[:60]]
+        return False, ['Bild sagt JA, aber ohne Beleg'], beleg
+    if not _im_baum(beleg, texte):
+        return False, ['Bild-Beleg nicht im UI-Baum: ' + beleg[:60]], beleg
+    return True, ['Bild-Beleg im UI-Baum gefunden: ' + beleg[:60]], beleg
 
 
 def pruefe(ziel, vertrag, hol_fg, hol_xml, vision_fn=None, wiederholen=2, pause=0.8):
@@ -130,7 +142,13 @@ def pruefe(ziel, vertrag, hol_fg, hol_xml, vision_fn=None, wiederholen=2, pause=
         return ('VERIFIZIERT' if ok else 'FAIL'), merk['gr']
     if vision_fn is None:
         return 'UNBEWIESEN', ['kein Vertrag, keine Bildpruefung']
-    ok, gr = pruefe_bild(ziel, ui_texte(hol_xml()), vision_fn)
-    if ok:
-        return 'BILD_BELEGT', gr
-    return ('UNBEWIESEN' if ok is None else 'FAIL'), gr
+    fg1 = hol_fg()
+    ok, gr, beleg = pruefe_bild(ziel, ui_texte(hol_xml()), vision_fn)
+    if not ok:
+        return ('UNBEWIESEN' if ok is None else 'FAIL'), gr
+    fg2, t2 = hol_fg(), ui_texte(hol_xml())  # Race-Schutz (Review ChatGPT 15.10.)
+    if not fg1 or fg1 != fg2:
+        return 'FAIL', ['Zustand gewechselt waehrend der Pruefung (%s -> %s)' % (fg1 or '?', fg2 or '?')]
+    if not _im_baum(beleg, t2):
+        return 'FAIL', ['Beleg nach der Bildpruefung nicht mehr im UI-Baum: ' + beleg[:60]]
+    return 'BILD_BELEGT', gr + ['vorher/nachher stabil']
