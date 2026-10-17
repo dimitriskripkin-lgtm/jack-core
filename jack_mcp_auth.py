@@ -277,7 +277,7 @@ class RoleMiddleware:
             recent.append(now); _fails[ip] = recent
             if len(_fails) > 500:
                 _fails.clear()
-            audit("?", "-", "", "NEIN", "ungueltiger Token")
+            audit("?", "-", "", "NEIN", ("ungueltiger Token" if hdr.get("authorization") else "kein Token") + " ip=" + str(ip)[:45])  # JACK_TUNE_AUDITIP (17.10.2026)
             return await self._deny(send, 401, "unauthorized")
         if scope["method"] != "POST":
             return await self.app(scope, receive, send)

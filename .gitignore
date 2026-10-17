@@ -246,3 +246,5 @@ reports/selfcare_cpu.log
 .tunnel_watch_state.json
 .tunnel_watch_state.json.tmp
 .tunnel_watch_off
+.ui_busy
+.recovery_off

@@ -38,7 +38,10 @@ def main():
                 pass
             low = f.lower()
             print("WECHSEL: " + f[:80])
-            if "aod" not in low and "keyguard" not in low:
+            # JACK_TUNE_UIBUSY (17.10.2026): eigener uiautomator-Dump schoss laufende Agent-/Verifier-Dumps ab (Exit 137).
+            _bz = "/data/data/com.termux/files/home/jack/.ui_busy"
+            _busy = os.path.exists(_bz) and time.time() - os.path.getmtime(_bz) < 90
+            if "aod" not in low and "keyguard" not in low and not _busy:
                 try:
                     h, pkg, act, els = sm.dump_and_parse()
                     print("  Screen %s/%s | %d El. | %s" % (pkg, act, len(els), h[:8]))

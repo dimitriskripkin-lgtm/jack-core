@@ -158,6 +158,16 @@ def run_agent(ziel,start_app=None,max_schritte=20,send_fn=None,vertrag=None,bild
         time.sleep(3)
     erlaubt=set(_APPS_STD)|({start_app} if start_app else set())
     letzte=[]; leer=0; bilder=0; pruef=0
+    # JACK_TUNE_RECOVERY_V1 (Kap 288): deterministische Recovery, Not-Aus ~/jack/.recovery_off
+    _rec=None
+    if not os.path.exists(os.path.expanduser('~/jack/.recovery_off')):
+        try:
+            import jack_recovery as _rec
+        except ImportError:
+            _rec=None
+            verlauf.append('RECOVERY AUS: jack_recovery fehlt')
+    _rbud=_rec.Budget() if _rec else None
+    _rstop={'LOGIN_REQUIRED','PERMISSION_UNBEWIESEN','SYSTEM_DIALOG_UNBEWIESEN','FORBIDDEN_DIALOG'}
     for schritt in range(1,max_schritte+1):
         fg=_vordergrund()  # JACK_TUNE_AGENTSAFE
         if not fg:
@@ -177,6 +187,25 @@ def run_agent(ziel,start_app=None,max_schritte=20,send_fn=None,vertrag=None,bild
         texte,buttons=_lese_ui(xml)
         sig=hash((tuple(texte),tuple(b['label'] for b in buttons)))  # JACK_TUNE_AGENTSAFE
         letzte=(letzte+[sig])[-4:]
+        if _rec is not None:  # JACK_TUNE_RECOVERY_V1: hoechstens 2 Eingriffe, nie Erfolg, Budget-Ende = alte Logik
+            rr=_rec.decide(_rec.Context(target_app=start_app or '',allowed_apps=erlaubt,foreground=fg,xml=xml,signatures=tuple(letzte)),_rbud)
+            if rr.action=='abort' and rr.reason in _rstop:
+                verlauf.append('RECOVERY ABBRUCH '+rr.cls+': '+rr.reason)
+                if send_fn: send_fn('ABBRUCH (Recovery '+rr.cls+'): '+rr.reason)
+                _home(); return False,verlauf
+            if rr.action in ('dismiss','back','wait'):
+                rok=True
+                if rr.action=='dismiss':  # Gegenprobe gegen _lese_ui: Index, Gefahr-Flag, sicheres Label
+                    rb=buttons[rr.button-1] if 1<=rr.button<=len(buttons) else None
+                    rok=bool(rb) and not rb.get('gefahr') and rb['label'].strip().casefold() in _rec.SAFE_DISMISS
+                    if rok: _tap(rb['x'],rb['y'])
+                elif rr.action=='back': _back()
+                else: time.sleep(2)
+                if rok:
+                    verlauf.append('RECOVERY '+rr.cls+' '+rr.action+': '+rr.reason)
+                    if send_fn: send_fn('Recovery '+rr.cls+': '+rr.reason)
+                    letzte=[]; continue  # naechster Schritt: frischer Vordergrund + frischer Dump
+                verlauf.append('RECOVERY VERWORFEN: Knopf passt nicht zu _lese_ui')
         if (len(letzte)==4 and len(set(letzte))==1) or (not texte and not buttons):
             if bilder>=3:
                 if send_fn: send_fn('ABBRUCH: haengt fest, 3 Bildanalysen halfen nicht')

@@ -391,8 +391,7 @@ def main():
             else:
                 print("P4: Honor kuehl - Shadow-Fixer laeuft lokal (LLM-Inferenz trotzdem via Tunnel auf Xiaomi)")
                 _afs.run(limit=3)
-            import jack_autofixer_shadow as _afs
-            _afs.run(limit=3)
+            # JACK_TUNE_SHADOWONCE (17.10.2026): doppelter Aufruf entfernt
 
         q.add_task(3, "explore_next", _run_explore)
         q.add_task(3, "autofixer_shadow", _run_autofixer)

@@ -451,7 +451,16 @@ def handle(text):
         if 'termux' in ziel.lower(): app='com.termux'
         elif 'einstellungen' in ziel.lower() or 'settings' in ziel.lower(): app='com.android.settings'
         elif 'chrome' in ziel.lower(): app='com.android.chrome'
-        threading.Thread(target=jack_ui_agent.run_agent,args=(ziel,app,20,send),daemon=True).start()
+        vertrag=None  # JACK_TUNE_AGENTVERTRAG (17.10.2026): Chrome-Suche bekommt einen Vertrag, sonst greift die App Card nie
+        if app=='com.android.chrome':
+            try:
+                import jack_chrome_card as _jcc
+                _q=_jcc.query_from_goal(ziel)
+                if _q:
+                    vertrag={"app":"com.android.chrome","text_alle":[_q],"text_eins":["Alle","Bilder","News","Videos"],"text_nicht":["Keine Internetverbindung","ERR_"]}
+            except Exception:
+                vertrag=None
+        threading.Thread(target=jack_ui_agent.run_agent,args=(ziel,app,20,send),kwargs={"vertrag":vertrag},daemon=True).start()
         return 'Agent gestartet: '+ziel
     if text.strip()=='/explore_deep' or text.strip().startswith('/explore_deep '):
         parts=text.strip().split()

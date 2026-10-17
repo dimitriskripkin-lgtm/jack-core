@@ -21,7 +21,7 @@ def _su(cmd, timeout=18):
     return _ssh("su -c '%s'" % esc, timeout=timeout)
 
 def dump_screen():
-    _su("uiautomator dump %s" % DUMP)
+    _su("rm -f %s; uiautomator dump %s" % (DUMP, DUMP))  # JACK_TUNE_UIFRESH (17.10.2026): kein veralteter Dump
     out, rc = _ssh("cat %s 2>/dev/null" % DUMP)
     if not out or "<hierarchy" not in out:
         return None

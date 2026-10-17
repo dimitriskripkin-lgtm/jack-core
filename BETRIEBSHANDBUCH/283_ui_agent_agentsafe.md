@@ -31,3 +31,7 @@
 - Prompt bekommt Vordergrund-App ('Du bist bereits in der App X, App-Titel nicht antippen'). Vorher tippte Gemini in den Einstellungen dauernd den Titel an; ohne Start-App oeffnete es auf dem Home-Screen den Ordner 'Google'. Test danach: 3 Schritte, kein Haenger, Ziel erreicht.
 - Commit c57a38ce (alles bis 02:47). Uebergabe an ChatGPT: ARBEITSPLATZ/gemeinsam/uebergabe_chatgpt_20261015.md.
 - Telegram /agent ohne passendes Stichwort startet ohne Start-App (wandert dann vom aktuellen Bildschirm los) - offen.
+
+## Nachtrag 17.10.2026 (Claude)
+- Recovery v1 ist im Kern eingehaengt (Kap. 288). Reihenfolge pro Schritt: App-Wache, Dump, Recovery-Pruefung, dann Haenger/Vision/Gemini. Recovery setzt nie Erfolg.
+- Lesepfad haertet weiter: GHOSTRETRY und UIBUSY (Kap. 289).

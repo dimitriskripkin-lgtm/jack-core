@@ -130,6 +130,8 @@ def _check_resources():
     return True,"OK"
 
 def run(limit=5):
+    if os.path.isfile("/data/data/com.termux/files/home/jack/.ollama_lock"):
+        return []  # JACK_TUNE_SHADOWLOCK (17.10.2026): ohne lokales Modell nichts zu tun, spart 290 Logzeilen/Tag
     try:
         import jack_circuit_breaker as cb
         if not cb.check_allowed():

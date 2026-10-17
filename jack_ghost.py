@@ -6,16 +6,30 @@ DUMP = '/sdcard/jack_ui.xml'
 def _ssh(cmd, timeout=15):
     return subprocess.run(['ssh', HOST, cmd], capture_output=True, text=True, timeout=timeout)
 
-def hol_xiaomi_ui():
-    cmd = 'su -c "rm -f ' + DUMP + '; uiautomator dump ' + DUMP + '" >/dev/null 2>&1; su -c "cat ' + DUMP + '"'  # JACK_TUNE_GHOSTFRESH: kein veralteter Dump, wenn uiautomator scheitert (Arena C2 T01)
+def hol_xiaomi_ui(versuche=3):
+    # JACK_TUNE_GHOSTFRESH: kein veralteter Dump, wenn uiautomator scheitert (Arena C2 T01)
+    # JACK_TUNE_GHOSTRETRY (17.10.2026): uiautomator wird bei schnell aufeinander folgenden Dumps
+    # gelegentlich abgeschossen (Exit 137, gemessen). Dann leer -> bis zu 3 Versuche mit Pause.
+    import time as _t
     try:
-        r = _ssh(cmd)
-    except Exception as e:
-        return 'FEHLER: ' + str(e)[:150]
-    out = (r.stdout or '').strip()
-    if not out.startswith('<'):
-        return 'FEHLER: kein XML - ' + (out or r.stderr)[:200]
-    return out
+        open('/data/data/com.termux/files/home/jack/.ui_busy', 'w').close()  # JACK_TUNE_UIBUSY: Fokus-Monitor dumpt dann nicht dazwischen
+    except Exception:
+        pass
+    cmd = 'su -c "rm -f ' + DUMP + '; uiautomator dump ' + DUMP + '" >/dev/null 2>&1; su -c "cat ' + DUMP + '"'
+    grund = ''
+    for i in range(max(1, versuche)):
+        if i:
+            _t.sleep(1.0 + 0.5 * i)
+        try:
+            r = _ssh(cmd)
+        except Exception as e:
+            grund = 'FEHLER: ' + str(e)[:150]
+            continue
+        out = (r.stdout or '').strip()
+        if out.startswith('<'):
+            return out
+        grund = 'FEHLER: kein XML - ' + (out or r.stderr)[:200]
+    return grund
 
 def _mitte(bounds):
     m = re.findall(r'-?[0-9]+', bounds or '')

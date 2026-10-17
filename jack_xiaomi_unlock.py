@@ -29,9 +29,16 @@ def unlock_sequence():
     time.sleep(0.5)
 
 def ensure_unlocked():
+    # JACK_TUNE_UNLOCKVERIFY (17.10.2026): Arena C4/P07 brach ab, weil der Swipe einmal nicht griff
+    # und nichts nachgeprueft wurde. Jetzt: bis zu 2 Sequenzen, danach je bis 3 s auf das Ende des Keyguards warten.
     wf = wakefulness()
     locked = keyguard_showing()
     if wf == 'Awake' and not locked:
         return 'SCHON_ENTSPERRT'
-    unlock_sequence()
-    return 'ENTSPERRT_von_' + wf + ('_locked' if locked else '_unlocked')
+    for versuch in (1, 2):
+        unlock_sequence()
+        for _ in range(6):
+            if not keyguard_showing():
+                return 'ENTSPERRT_von_' + wf + ('_locked' if locked else '_unlocked') + ('' if versuch == 1 else '_versuch2')
+            time.sleep(0.5)
+    return 'NOCH_GESPERRT_von_' + wf
