@@ -68,6 +68,13 @@ def _network_ok(http_fn=None):
     code, _body, _err = http_fn(SECOND_URL)
     return code is not None
 
+def _origin_ok(http_fn=None):
+    """JACK_TUNE_ORIGINCHECK (17.10.2026): antwortet der MCP-Server lokal? Dann ist er nicht das Problem.
+    Am 17.10. 11:45 wurde cloudflared neu gestartet, nur weil jack_mcp gerade neu startete (502)."""
+    http_fn = http_fn or _http
+    code, _body, _err = http_fn("http://127.0.0.1:8000/mcp")
+    return code is not None
+
 def _restart_cloudflared():
     try:
         r = subprocess.run(["sv", "restart", "cloudflared"], capture_output=True, text=True, timeout=20)
@@ -118,6 +125,9 @@ def check(force=False, now=None, http_fn=None, restart_fn=None, sleep_fn=None):
         return {"ran": True, "status": d["status"], "notify": _notify_text(prev, d)}
     if not _network_ok(http_fn):
         d = _save(dict(base, status="NETWORK_DOWN", http=code, reason=reason))
+        return {"ran": True, "status": d["status"], "notify": _notify_text(prev, d)}
+    if not _origin_ok(http_fn):  # JACK_TUNE_ORIGINCHECK: MCP selbst ist weg, cloudflared neu starten hilft nicht
+        d = _save(dict(base, status="ORIGIN_DOWN", http=code, reason=reason))
         return {"ran": True, "status": d["status"], "notify": _notify_text(prev, d)}
     if len(restarts) >= MAX_RESTARTS_H:
         d = _save(dict(base, status="RESTART_LIMIT", http=code, reason=reason))

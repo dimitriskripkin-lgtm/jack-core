@@ -65,3 +65,6 @@ Der echte Fehlerpfad bleibt deshalb bis zu einem natuerlichen Ausfall bzw. einem
 - 1033/530/502- und NETWORK_DOWN-Pfade noch nicht live provoziert.
 - Spaeter optional deterministische Injection-Tests fuer Probe/Restart ohne reale Leitung zu stoeren.
 - Falls der externe zweite Host dauerhaft ungeeignet wird, muss er gegen einen anderen unabhaengigen stabilen Host getauscht und neu dokumentiert werden.
+
+## Nachtrag 17.10.2026 (Claude): JACK_TUNE_ORIGINCHECK
+Befund: Am 17.10. 11:45 hat der Waechter cloudflared neu gestartet, nur weil jack_mcp gerade neu startete (Cloudflare 502, Origin weg). Fix: Vor einem Neustart wird der lokale MCP (http://127.0.0.1:8000/mcp) geprueft. Antwortet er nicht, gilt der Status ORIGIN_DOWN und es gibt keinen Neustart (runit startet jack_mcp selbst neu). Injektionstest 4/4 (gesund, Origin weg, Tunnel tot mit Neustart, Netz weg).
