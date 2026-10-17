@@ -20,7 +20,10 @@ def note(ok):
         d["fails"] = int(d.get("fails", 0)) + 1
         if d["fails"] >= 2:
             d["until"] = time.time() + 30
-    try:
-        json.dump(d, open(P, "w"))
+    try:  # JACK_TUNE_XBATOMIC (17.10.2026, Befund ChatGPT F07): atomar schreiben, sonst liest ein paralleler Prozess eine leere Datei und der Schutz ist aus
+        _t = P + ".%d.tmp" % os.getpid()
+        with open(_t, "w") as f:
+            json.dump(d, f)
+        os.replace(_t, P)
     except Exception:
         pass

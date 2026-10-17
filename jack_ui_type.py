@@ -9,7 +9,7 @@ def _ssh(cmd, t=25):
 
 def _dump_xml():
     import jack_ui_session as ui
-    d=ui.ui_dump(max_chars=120000)
+    d=ui.ui_dump(max_chars=0)  # JACK_TUNE_UIFULL (17.10.2026): nicht abschneiden, Chrome-Seiten haben ueber 120000 Zeichen
     return d.get("xml") or ""
 
 def _bounds(node):

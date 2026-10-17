@@ -170,7 +170,7 @@ def write_file(path, content):
     try:
         result = subprocess.run(
             ["ssh"] + SSH_OPTS + ["-p", str(XIAOMI_SSH_PORT), f"root@{ip}",
-             f"su -c \"cat > {path}\""],
+             "su -c " + __import__("shlex").quote("cat > " + __import__("shlex").quote(path))],  # JACK_TUNE_XWRITEQUOTE (17.10.2026): Pfad quoten
             input=content, capture_output=True, text=True, timeout=15
         )
         return result.returncode == 0
@@ -183,7 +183,7 @@ def get_status():
     status = {"ip": ip, "reachable": False}
 
     try:
-        import urllib.request as _ur3; _ur3.urlopen(f"http://{ip}:8022",timeout=2)
+        import socket as _so3; _s3 = _so3.create_connection((ip, int(XIAOMI_SSH_PORT)), timeout=2); _s3.close()  # JACK_TUNE_XSTATUSTCP (17.10.2026, Befund F06): HTTP gegen SSH-Port meldete immer "nicht erreichbar"
         status["reachable"]=True
     except Exception:
         status["reachable"]=False

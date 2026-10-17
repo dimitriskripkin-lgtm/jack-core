@@ -20,6 +20,8 @@ def wakefulness():
 
 def keyguard_showing():
     out = _su("dumpsys window | grep isKeyguardShowing")
+    if 'isKeyguardShowing=' not in out:
+        return True  # JACK_TUNE_KEYGUARDCLOSED (17.10.2026): unbekannt heisst gesperrt, nicht blind weiter
     return 'isKeyguardShowing=true' in out
 
 def unlock_sequence():
