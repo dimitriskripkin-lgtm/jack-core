@@ -132,7 +132,7 @@ def _testwert(alt):
     return None
 
 def _uidump():
-    sh("su -c 'uiautomator dump /sdcard/l.xml'", t=18)
+    sh("su -c 'rm -f /sdcard/l.xml; uiautomator dump /sdcard/l.xml'", t=18)  # JACK_TUNE_UIFRESH
     xml, _ = sh("su -c 'cat /sdcard/l.xml'", t=18)
     return set(re.findall(r'text="([^"]{2,50})"', xml))
 

@@ -190,6 +190,13 @@ def create_mission(act: str, description: str, extra: str = "{}", wait_seconds: 
         extra_d = _j.loads(extra) if extra.strip() else {}
     except Exception as e:
         return _j.dumps({"error": f"extra kein gueltiges JSON: {e}"})
+    # JACK_TUNE_EXTRAGUARD (17.10.2026, Befund ChatGPT F01, von Claude live bestaetigt):
+    # extra wurde nach der Rollen- und Gate-Pruefung in die Mission gemergt und konnte act/id/src ueberschreiben.
+    if not isinstance(extra_d, dict):
+        return _j.dumps({"error": "extra muss ein JSON-Objekt sein"})
+    _bad = sorted(k for k in extra_d if k in ("id", "act", "src", "ts", "description", "dima_sig"))
+    if _bad:
+        return _j.dumps({"error": "reservierte Felder in extra verboten: " + ", ".join(_bad)}, ensure_ascii=False)
     try:  # JACK_TUNE_HBGATE: Handbuch-Pflicht (fail-open)
         import jack_handbuch_gate as _hg2
         _gate = _hg2.gate(act, extra_d)
@@ -200,12 +207,24 @@ def create_mission(act: str, description: str, extra: str = "{}", wait_seconds: 
     PENDING = "/data/data/com.termux/files/home/jack/missions/pending"
     ts = _dt.now().strftime("%Y%m%d_%H%M%S")
     mid = f"m_{act}_{ts}"
-    mission = {"id": mid, "act": act, "src": "claude_mcp",
-               "ts": _dt.now().isoformat()[:19], "description": description}
-    mission.update(extra_d)
-    path = _os.path.join(PENDING, mid + ".json")
-    with open(path, "w", encoding="utf-8") as fp:
-        _j.dump(mission, fp, ensure_ascii=False, indent=2)
+    _n = 1
+    while True:  # JACK_TUNE_MIDUNIQ (17.10.2026, Befund ChatGPT F02): gleiche Sekunde ueberschrieb wartende Mission
+        path = _os.path.join(PENDING, mid + ".json")
+        _logp = "/data/data/com.termux/files/home/jack/missions/logs/" + mid + ".json"
+        if _os.path.exists(path) or _os.path.exists(_logp):
+            _n += 1
+            if _n > 50:
+                return _j.dumps({"error": "mission-id belegt"})
+            mid = f"m_{act}_{ts}_{_n}"
+            continue
+        mission = {"id": mid, "act": act, "src": "claude_mcp",
+                   "ts": _dt.now().isoformat()[:19], "description": description}
+        mission.update(extra_d)
+        _tmp = _os.path.join(PENDING, "." + mid + ".tmp")  # Runner liest nur *.json
+        with open(_tmp, "w", encoding="utf-8") as fp:
+            _j.dump(mission, fp, ensure_ascii=False, indent=2)
+        _os.replace(_tmp, path)
+        break
     result = {"ok": True, "mission_id": mid, "act": act, "path": path}
     if wait_seconds and wait_seconds > 0:
         import time as _tw

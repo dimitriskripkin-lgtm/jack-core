@@ -34,8 +34,14 @@ def vision_ask(prompt, b64=None, max_px=1080, quality=80, timeout=45):
     if b64 is None:
         try: b64 = get_screen_b64(max_px, quality)
         except Exception as e: return '[FEHLER Screenshot] ' + str(e)[:120]
+    _vm = 'gemini-2.5-flash'
+    try:
+        import jack_modelmap as _mm  # JACK_TUNE_MODELMAP (17.10.2026)
+        _vm = _mm.aktuell(_vm)
+    except Exception:
+        pass
     url = ('https://generativelanguage.googleapis.com/v1beta/models/'
-           'gemini-2.5-flash:generateContent?key=' + key)
+           + _vm + ':generateContent?key=' + key)
     payload = {"contents": [{"parts": [
         {"text": prompt},
         {"inline_data": {"mime_type": "image/jpeg", "data": b64}}]}],
@@ -53,6 +59,12 @@ def vision_ask(prompt, b64=None, max_px=1080, quality=80, timeout=45):
         except Exception: pass
         return res['candidates'][0]['content']['parts'][0]['text']
     except Exception as e:
+        if getattr(e, 'code', None) == 404:
+            try:
+                import jack_modelmap as _mm  # JACK_TUNE_MODELMAP: naechster Aufruf nutzt den Ersatz
+                _mm.melde_404(_vm)
+            except Exception:
+                pass
         return '[FEHLER Gemini] ' + str(e)[:150]
 
 def analyze_screen(prompt="Beschreibe kurz was auf dem Screen ist. Welche App, welche Buttons?"):

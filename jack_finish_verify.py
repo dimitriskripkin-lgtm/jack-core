@@ -98,7 +98,8 @@ def parse_bild(antwort):
         if up.startswith('ERGEBNIS:') and not erg_gesehen:
             erg_gesehen = True
             v = l.split(':', 1)[1].strip().strip('*').strip().upper()
-            erg = True if v.startswith('JA') else (False if v.startswith('NEIN') else None)
+            w = re.split(r'[^A-ZÄÖÜ]+', v)[0] if v else ''  # JACK_TUNE_BILDWORT (17.10.2026, Befund ChatGPT F08): nur das ganze Wort zaehlt, "JAEIN" ist kein JA
+            erg = True if w == 'JA' else (False if w == 'NEIN' else None)
         elif up.startswith('BELEG:') and not beleg_gesehen:
             beleg_gesehen = True
             beleg = l.split(':', 1)[1].strip().strip('*').strip().strip('"\'„“”')

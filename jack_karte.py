@@ -85,7 +85,7 @@ def fokus():
     return out
 
 def dump_elemente():
-    sh("su -c 'uiautomator dump /sdcard/jack_karte.xml' >/dev/null 2>&1; true")
+    sh("su -c 'rm -f /sdcard/jack_karte.xml; uiautomator dump /sdcard/jack_karte.xml' >/dev/null 2>&1; true")  # JACK_TUNE_UIFRESH
     rc, out, _ = sh("cat /sdcard/jack_karte.xml")
     if not out.startswith("<"): return []
     import xml.etree.ElementTree as ET

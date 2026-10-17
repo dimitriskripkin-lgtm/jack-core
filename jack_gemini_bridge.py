@@ -201,6 +201,11 @@ def ask_gemini(question, status=None, model=None):  # JACK_TUNE_FLASHCODE 11.10.
     _override = model if model in ("gemini-2.5-flash", "gemini-2.5-flash-lite") else None  # JACK_TUNE_FLASHCODE
     if _override:
         model_name = _override
+    try:
+        import jack_modelmap as _mm  # JACK_TUNE_MODELMAP (17.10.2026): 2.5 abgekuendigt, Ersatz erst nach 404
+        model_name = _mm.aktuell(model_name)
+    except Exception:
+        pass
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
     system = (
         "Du bist JACK - Dimas persoenlicher KI-Kumpel, kein Assistent. "
@@ -265,6 +270,17 @@ def ask_gemini(question, status=None, model=None):  # JACK_TUNE_FLASHCODE 11.10.
                 return _txt
         except Exception as _e:
             _code = getattr(_e, "code", None)
+            if _code == 404:  # JACK_TUNE_MODELMAP
+                try:
+                    import jack_modelmap as _mm
+                    if _mm.melde_404(model_name) and _mm.aktuell(model_name) != model_name:
+                        _neu = _mm.aktuell(model_name)
+                        url = url.replace("/models/" + model_name + ":", "/models/" + _neu + ":")
+                        model_name = _neu
+                        req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+                        continue
+                except Exception:
+                    pass
             if _code == 429 and _a < 2:
                 _t.sleep(4 * (_a + 1)); continue
             if _code == 429:

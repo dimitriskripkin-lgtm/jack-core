@@ -114,7 +114,7 @@ def run_ssh_agent(befehle,send_fn=None):
     import jack_gemini_bridge as gb
     ergebnisse=[]
     for cmd in befehle:
-        out=_termux_cmd(cmd)
+        out=_termux_cmd(cmd) if _cmd_ok(cmd) else 'GEBLOCKT: Befehl nicht erlaubt'  # JACK_TUNE_SSHAGENTSAFE (17.10.2026, Befund ChatGPT F04): gleiche Allowlist wie im Kern
         if send_fn: send_fn('$ '+cmd+chr(10)+out)
         ergebnisse.append({'cmd':cmd,'out':out})
     zusammenfassung='\n'.join(['$ '+e['cmd']+chr(10)+e['out'][:200] for e in ergebnisse])
