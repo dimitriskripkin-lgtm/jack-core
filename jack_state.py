@@ -6,7 +6,8 @@ STATE_FILE=os.path.expanduser("~/jack/.jack_state.json")
 
 STATES={
     "NACHTSCHICHT":  {"start":22,"end":10},
-    "POWER_TIME":    {"start":8,"end":15},
+    "POWER_TIME":    {"start":10,"end":15},  # JACK_TUNE_STATEA (19.10.2026, F14, Dima Variante A)
+    "UEBERGANG":     {"start":15,"end":16},
     "SCHLAF":        {"start":16,"end":22},
 }
 
@@ -16,7 +17,7 @@ def _now_hour():
 def detect_state():
     h=_now_hour()
     if 22<=h or h<10:  return "NACHTSCHICHT"
-    if 8<=h<15:        return "POWER_TIME"
+    if 10<=h<15:       return "POWER_TIME"
     if 16<=h<22:       return "SCHLAF"
     return "UEBERGANG"
 
@@ -26,7 +27,7 @@ def get_context_for_gemini():
     h=_now_hour()
     hints={
         "NACHTSCHICHT": "Dima ist gerade auf Tour (Nachtschicht). Kurze Antworten, er faehrt. Keine langen Erklaerungen.",
-        "POWER_TIME":   "Dima hat Programmierzeit (08-15 Uhr). Volle technische Antworten erlaubt.",
+        "POWER_TIME":   "Dima hat Programmierzeit (10-15 Uhr). Volle technische Antworten erlaubt.",
         "SCHLAF":       "Dima schlaeft wahrscheinlich (16-22 Uhr). Nur bei explizitem Aufruf antworten.",
         "UEBERGANG":    "Uebergangszeit. Normaler Ton.",
     }
