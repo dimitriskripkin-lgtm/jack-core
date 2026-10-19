@@ -19,3 +19,6 @@ Gelesen 03.10.2026, Grok, live per read_file. Kein Umbau.
 **Freigabe:** Kein proposals-, shadow- oder PENDING-Pfad in dieser Datei. step_guard fail-open, wenn das Modul fehlt. Shell ist bash -lc.
 
 **Offen:** Aufrufer in jack_telegram nicht zeilenweise nachgelesen.
+
+## Nachtrag 19.10.2026 (F12, JACK_TUNE_OBSLINE)
+jack_observer prueft stderr wie bisher komplett, stdout aber nur noch an Zeilenanfaengen mit echten Fehlermeldungen (Traceback, XyzError:, XyzException, fatal:, bash command not found / permission denied). Vorher blockte jedes Wort exception im Quelltext-Lesen (cat/sed/grep) mit rc 99. 12/12 Offline-Faelle. Backup jack_observer.py.bak_20261019. Wirkt im Runner nach Neustart, im Telegram-Dienst erst nach dessen naechstem Neustart.
