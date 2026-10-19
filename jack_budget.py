@@ -57,6 +57,28 @@ def add_tokens(n, eur=None):  # JACK_TUNE_BUDGETEUR 12.10.2026: echte Kosten wen
     add=float(eur) if eur is not None else n/1e6*EUR_PER_MTOK
     w["eur"]=round(w.get("eur",0)+add,4)
     json.dump(w,open(W,"w"))
+# JACK_TUNE_PREISMODELL (19.10.2026): Preis nach tatsaechlichem Modell statt pauschal 0.40 EUR/Mio bzw. fest 2.5-Flash.
+# USD pro 1 Mio Token (Input, Output inkl. Thinking), Google Paid Standard, Quelle ai.google.dev/gemini-api/docs/pricing, Stand 19.10.2026.
+PREISE_USD = {
+    "gemini-2.5-flash":      (0.30, 2.50),
+    "gemini-2.5-flash-lite": (0.10, 0.40),
+    "gemini-3.5-flash":      (1.50, 9.00),
+}
+EUR_PER_USD = 0.92  # bewusst grob, lieber leicht zu hoch als zu niedrig
+def eur_fuer(modell, usage):
+    """Kosten in EUR. Unbekanntes Modell (z. B. Alias auf 3.6) wird zum teuersten bekannten Preis gebucht, nie gesperrt."""
+    m = str(modell or "").split("/")[-1].lower()
+    p = None
+    for k in sorted(PREISE_USD, key=len, reverse=True):
+        if m == k or m.startswith(k + "-"):
+            p = PREISE_USD[k]; break
+    if p is None:
+        p = max(PREISE_USD.values(), key=lambda x: x[0] + x[1])
+    u = usage or {}
+    pin = int(u.get("promptTokenCount", 0) or 0)
+    pout = int(u.get("candidatesTokenCount", 0) or 0) + int(u.get("thoughtsTokenCount", 0) or 0)
+    return (pin * p[0] + pout * p[1]) / 1e6 * EUR_PER_USD
+
 def status():
     d=_load(); w=_week()
     return "Heute %s/%s vis %s/%s tok %s eur %.2f/3"%(d.get("text",0),LIMITS["text"],d.get("vision",0),LIMITS["vision"],d.get("tokens",0),w.get("eur",0))

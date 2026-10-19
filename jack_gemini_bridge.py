@@ -261,7 +261,7 @@ def ask_gemini(question, status=None, model=None):  # JACK_TUNE_FLASHCODE 11.10.
                 result = json.loads(res.read())
                 _cb_success()
                 try:
-                    import jack_budget; jack_budget.add_tokens(result.get("usageMetadata",{}).get("totalTokenCount",0))
+                    import jack_budget; _um = result.get("usageMetadata",{}); jack_budget.add_tokens(_um.get("totalTokenCount",0), jack_budget.eur_fuer(result.get("modelVersion") or model_name, _um))  # JACK_TUNE_PREISMODELL
                 except Exception as _e:
                     import jack_log; jack_log.log_decision("SILENT-FAIL jack_gemini", str(_e)[:120])
                 _txt = result["candidates"][0]["content"]["parts"][0]["text"]
