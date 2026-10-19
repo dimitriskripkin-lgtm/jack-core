@@ -16,6 +16,11 @@ def halt():
     if cnt("fail"): return "FAIL"
     return ""
 def pull():
+    # JACK_TUNE_PULLGATE (19.10.2026, Fund ChatGPT Auftrag 4d): Git-Missionen umgingen MCP-Rollen, EXTRAGUARD und Handbuch-Gate
+    # (OK-Liste enthielt ui_none/shadow_report mit Wirkung). War nur zufaellig ruhig, weil missions/fail nie leer ist.
+    # Gesperrt, bis der Pfad dieselben Pruefungen bekommt. Freischalten nur bewusst: ~/jack/.mission_pull_on
+    if not os.path.isfile(H+"/jack/.mission_pull_on"):
+        return "PULL_GESPERRT (JACK_TUNE_PULLGATE)"
     w=halt()
     if w: return "HALT "+w
     git(["pull","--ff-only","origin","main"])
