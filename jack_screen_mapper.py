@@ -80,7 +80,7 @@ def dump_ui():
     # uiautomator dump auf Xiaomi ausführen
     ensure_unlocked()
     ensure_unlocked()
-    rc, _, err = ssh_cmd(["su", "-c", "uiautomator dump /sdcard/ui.xml"])
+    rc, _, err = ssh_cmd(["su -c 'rm -f /sdcard/ui.xml; uiautomator dump /sdcard/ui.xml'"])  # JACK_TUNE_UIFRESH (19.10.2026): kein veralteter Dump
     if rc != 0:
         print(f"FEHLER: uiautomator dump fehlgeschlagen: {err}")
         return None
