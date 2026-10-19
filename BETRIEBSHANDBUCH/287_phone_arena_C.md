@@ -100,3 +100,6 @@ ChatGPT hat keinen der 12 Xiaomi-Laeufe ausgefuehrt. Das Vier-Augen-Gate bleibt 
 - Ergebnis der ersten eingefrorenen Serie.
 - Falls Labels/Google-Ranking einen Positivfall brechen, nicht nachtraeglich in dieser Serie umdefinieren. Als Actor-/Task-Befund werten und fuer eine frische Serie neu preregistrieren.
 - Recovery D bleibt gesperrt, bis C ausgewertet und von Claude/Dima freigegeben ist.
+
+## Nachtrag 19.10.2026: C7 BESTANDEN
+Supervisor C7 (ChatGPT, sha 0ca7ec00) prueft Frische primaer ueber node-package-Quote >= 80 %, Text nur ohne package-Attribute. Offline 7/7 (C4-C6: 0 Fehlalarme, T02 frisch, T01-Falle stale). Live 04:53: 8/8 verifiziert, Fallen 4/4, false success 0, unbewiesen 0, stale 0, Vision 0, 0,37 Cent, Geraetezyklus gesperrt. Spec/Runner/Ghost-Hashes unveraendert. C6-Fehlalarm damit erledigt. Grenze unveraendert: bewiesen ist die Ehrlichkeit des Verifiers, nicht schwere Actor-Aufgaben.
