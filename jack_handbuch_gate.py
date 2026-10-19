@@ -96,7 +96,7 @@ def kapitel(name):
 PATCH_ACTS = ("py_replace", "sed_replace")
 
 RESCUE_READS = {"fact", "diag", "compile_ok", "sv_ok", "hb_ok", "file_exists", "ro_git", "ro_scan", "ro_log_tail", "ro_ps", "ro_pyflakes"}  # read-only Notfunktionen, bleiben bei defektem Gate bedienbar
-FORCE_GATE_ACTS = {"git_publish"}  # schreibt, obwohl freigabe=False
+FORCE_GATE_ACTS = {"git_publish", "ui_none", "dashboard_render", "shadow_report", "sandbox_probe"}  # schreiben/handeln trotz freigabe=False (Wirkungsanalyse ChatGPT 19.10.2026)
 
 def gate(act, extra_d):
     """None = durchlassen, dict = Ablehnung."""

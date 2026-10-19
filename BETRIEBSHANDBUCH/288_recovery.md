@@ -26,3 +26,6 @@ Wenn der UI-Agent auf dem Xiaomi in einen Störzustand gerät (Popup, Hänger, l
   - C4 (17.10.): P07 UNBEWIESEN, weil das Entsperren einmal nicht griff (siehe Kap. 289).
   - **C5 (17.10.): Tor BESTANDEN.** 8/8 VERIFIZIERT, Fallen 4/4, false_success 0, Vision 0, 0,37 Cent, Gerätezyklus 12/12. Recovery hat dabei nicht eingegriffen, sie stört also auf Normalaufgaben nicht.
 - Offen: D1, eine Live-Serie mit echten Störfällen (Popup, Hänger, kaputter Dump), die zeigt, dass Recovery wirklich rettet. Plan von ChatGPT in `BUEROS/chatgpt/`.
+
+## Nachtrag 19.10.2026: D1 BESTANDEN (echte Stoerfaelle, Recovery v1 rettet)
+Spec/Runner ChatGPT (sha ff5a683b / 6840e604), Lauf Claude 05:5x. D01 echter MIUI-Dialog Geraet umbenennen: R01 drueckt Abbrechen, danach VERIFIZIERT, Orakel ohne Dialog-IDs. D02 haengender Zustand (scripted warte): R05 back, kein Erfolg. D03 einmal kaputtes XML: R07 wait, danach VERIFIZIERT. D04 dauerhaft kaputtes XML: R07 einmal, sicher ohne Erfolg beendet. 4/4, 0 false success, je 1 Recovery, Geraet nach jedem Fall gesperrt, 0 API-Kosten. Grenzen: D02-D04 sind im Testprozess injiziert, keine spontanen Android-Fehler. D04 rief den Vision-Rueckfall 3x (Stub) auf, im Ernstfall kostet das. Runner-Maengel: braucht PYTHONPATH=~/jack; Fehler vor setup() lassen das Geraet entsperrt (transport() vor try).
