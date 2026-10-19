@@ -197,13 +197,14 @@ def create_mission(act: str, description: str, extra: str = "{}", wait_seconds: 
     _bad = sorted(k for k in extra_d if k in ("id", "act", "src", "ts", "description", "dima_sig"))
     if _bad:
         return _j.dumps({"error": "reservierte Felder in extra verboten: " + ", ".join(_bad)}, ensure_ascii=False)
-    try:  # JACK_TUNE_HBGATE: Handbuch-Pflicht (fail-open)
+    try:  # JACK_TUNE_HBGATE: Handbuch-Pflicht (fail-closed seit 19.10.2026)
         import jack_handbuch_gate as _hg2
         _gate = _hg2.gate(act, extra_d)
         if _gate:
             return _j.dumps(_gate, ensure_ascii=False)
-    except Exception:
-        pass
+    except Exception:  # JACK_TUNE_HBGATE_CLOSED (19.10.2026, F13): Gate-Ausfall sperrt alles ausser Lese-Notfunktionen
+        if act not in {"fact", "diag", "compile_ok", "sv_ok", "hb_ok", "file_exists", "ro_git", "ro_scan", "ro_log_tail", "ro_ps", "ro_pyflakes"}:
+            return _j.dumps({"error": "GATE_UNVERFUEGBAR: Aktion nicht angenommen"})
     PENDING = "/data/data/com.termux/files/home/jack/missions/pending"
     ts = _dt.now().strftime("%Y%m%d_%H%M%S")
     mid = f"m_{act}_{ts}"

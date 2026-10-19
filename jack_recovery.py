@@ -86,6 +86,8 @@ def classify(ctx):
             password_field = True
         if DIALOG_CLASS.search(n.get('class') or ''):
             dialog = True
+        if (n.get('resource-id') or '') in ('android:id/button1', 'android:id/button2', 'android:id/button3'):
+            dialog = True  # JACK_TUNE_RECDIALOGID (17.10.2026): MIUI-Dialoge haben keine Dialog-Klasse, aber die Standard-Knopf-IDs
         if n.get('clickable') == 'true':
             clickable_nodes.append(n)
             # Exactly _lese_ui: clickable nodes with bounds parsed like jack_ghost._mitte and y < 2100.

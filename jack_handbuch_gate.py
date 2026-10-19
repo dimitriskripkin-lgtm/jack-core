@@ -2,7 +2,7 @@
 """JACK_TUNE_HBGATE: Handbuch-Pflicht fuer jede KI, die ueber MCP schreibt.
 Stateless: Quittung = sha256(Schluessel+Tag)[:8]. Sie steht nur in der Ablehnung
 (START-Regeln + Kapitelauszug), wer sie hat, hat die Texte im Kontext gehabt.
-Fail-open: jeder interne Fehler laesst den Aufruf durch (nie den MCP-Kanal blockieren)."""
+Fail-closed (JACK_TUNE_HBGATE_CLOSED 19.10.2026, F13): interne Fehler blockieren alles ausser RESCUE_READS."""
 import os, re, json, time, hashlib
 
 J = os.environ.get("JACK_HB_HOME", "/data/data/com.termux/files/home/jack")
@@ -95,12 +95,15 @@ def kapitel(name):
 
 PATCH_ACTS = ("py_replace", "sed_replace")
 
+RESCUE_READS = {"fact", "diag", "compile_ok", "sv_ok", "hb_ok", "file_exists", "ro_git", "ro_scan", "ro_log_tail", "ro_ps", "ro_pyflakes"}  # read-only Notfunktionen, bleiben bei defektem Gate bedienbar
+FORCE_GATE_ACTS = {"git_publish"}  # schreibt, obwohl freigabe=False
+
 def gate(act, extra_d):
     """None = durchlassen, dict = Ablehnung."""
     try:
         import jack_acts
         a = jack_acts.ACTS.get(act, {})
-        if not a.get("freigabe"):
+        if not a.get("freigabe") and act not in FORCE_GATE_ACTS:
             return None
         key, kap = "START", None
         if act in PATCH_ACTS:
@@ -120,5 +123,7 @@ def gate(act, extra_d):
             "start_auszug": _rd(START, 2600),
             "kapitel_auszug": _rd(os.path.join(HB, kap), 3500) if kap else "(kein Kapitel fuer dieses Ziel gefunden - START gilt)",
         }
-    except Exception:
-        return None
+    except Exception as exc:
+        if act in RESCUE_READS:
+            return None
+        return {"error": "GATE_UNVERFUEGBAR: Aktion blockiert (fail-closed)", "klasse": type(exc).__name__}
