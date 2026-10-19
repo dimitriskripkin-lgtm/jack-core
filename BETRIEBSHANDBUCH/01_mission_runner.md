@@ -113,3 +113,6 @@ Shadow-Pfad zusammen?
 
 ## Nachtrag 19.10.2026 (F10, JACK_TUNE_EXPECTGUARD)
 expect=FAIL invertiert ok und ist nur noch fuer lesende Test-Acts erlaubt (freigabe=False, nicht git_publish). Bei schreibenden Acts: nichts ausfuehren, ok=false, note EXPECTGUARD. Grund: Wirkung passiert + Meldung FAIL fuehrt zu Retries, keine Wirkung + Meldung ok taeuscht Erfolg vor. Bisherige Nutzung nur grep_count/no_secret, die bleiben unveraendert. Live: py_replace+FAIL blockiert, grep_count+FAIL invertiert weiter. Einbau mit 180-s-Auto-Rollback. Backup .bak_20261019.
+
+## Nachtrag 19.10.2026 (JACK_TUNE_COMPILE_NOWRITE)
+compile_ok prueft nur noch per compile() im Runner, schreibt kein __pycache__ mehr (Diff ChatGPT). Live: gueltig OK, Syntaxfehler FAIL mit Zeile, fehlende Datei FAIL, kein __pycache__ entstanden. Einbau mit Auto-Rollback, Backup jack_mission_runner.py.bak_20261019b.

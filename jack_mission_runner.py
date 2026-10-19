@@ -1165,20 +1165,27 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
         got=c.classify(m.get("text") or "")
         want=(m.get("expect") or "").upper()
         return got==want,"got="+str(got)+" want="+want,got
-    if act=="compile_ok":
+    if act=="compile_ok":  # JACK_TUNE_COMPILE_NOWRITE (19.10.2026, Diff ChatGPT): nur Syntax, kein __pycache__
+        def _syntax_only(_fp):
+            try:
+                with open(_fp, "rb") as _src:
+                    compile(_src.read(), _fp, "exec", dont_inherit=True)
+                return True, ""
+            except (OSError, SyntaxError, ValueError, TypeError) as _exc:
+                return False, str(_exc)
         # "file" (singular) hat Vorrang vor "files" (plural)
         if "file" in m:
             import os as _os
             single = m["file"].replace("~/jack", J)
             if not _os.path.exists(single):
                 return False, f"compile FAIL: Datei fehlt: {_os.path.basename(single)}", ""
-            rc,o=sh(["python3","-m","py_compile",single],t=12)
-            return (rc==0), "compile "+("OK" if rc==0 else "FAIL: "+o[:60]), ""
+            ok, why = _syntax_only(single)
+            return ok, "compile "+("OK" if ok else "FAIL: "+why[:60]), ""
         files=m.get("files") or ["jack_talk.py","jack_telegram.py","jack_chat_router.py","jack_selfsee.py","jack_exec.py"]
         bad=[]
         for n in files:
-            rc,o=sh(["python3","-m","py_compile",J+"/"+n],t=12)
-            if rc!=0: bad.append(n)
+            ok, _why = _syntax_only(J+"/"+n)
+            if not ok: bad.append(n)
         return (not bad),"compile "+("OK" if not bad else ",".join(bad)),""
     if act=="explain_ok":
         import jack_selfsee as s
