@@ -1444,8 +1444,20 @@ def one(path):
 
 
     rec={"id":mid,"act":m.get("act"),"ts":time.strftime("%Y-%m-%d %H:%M:%S"),"ok":False,"note":"","out":"","expect":m.get("expect","PASS")}
+    # JACK_TUNE_EXPECTGUARD (19.10.2026, F10): expect=FAIL invertiert ok. Bei schreibenden Acts hiesse das:
+    # Wirkung passiert, Meldung FAIL (Retry-Gefahr) bzw. nichts passiert, Meldung ok. Deshalb nur fuer lesende Test-Acts.
+    _blk = False
+    if (m.get("expect") or "PASS").upper() == "FAIL":
+        try:
+            import jack_acts as _jae
+            _blk = bool(_jae.ACTS.get(m.get("act"), {}).get("freigabe")) or m.get("act") in ("git_publish",)
+        except Exception:
+            _blk = True
     try:
-        ok,note,out=run_act(m)
+        if _blk:
+            ok,note,out=False,"EXPECTGUARD: expect=FAIL nur fuer lesende Test-Acts, nichts ausgefuehrt",""
+        else:
+            ok,note,out=run_act(m)
         rec.update({"ok":ok,"note":note,"out":out})
     except Exception as e:
         rec["note"]="EXC "+type(e).__name__+" "+str(e)[:160]
@@ -1454,7 +1466,7 @@ def one(path):
     rec["expect"]=want
     raw=bool(rec.get("ok"))
     rec["raw_ok"]=raw
-    if str(rec.get("note","")).startswith("EXC"):
+    if str(rec.get("note","")).startswith(("EXC","EXPECTGUARD")):
         rec["ok"]=False
     elif want=="FAIL":
         rec["ok"]=not raw

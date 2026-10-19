@@ -110,3 +110,6 @@ nicht nur beim Speichern. **Neue, unverifizierte Skills bauen bleibt immer Stufe
 **Offene Fragen für später:** Was macht `jack_mission_pull.py` genau? Was ist `jack_deadletter.py`?
 Wie hängen `jack_cmd_handler.py`/`jack_mission_gen.py`/`jack_schema.py`/`jack_stand.py` mit dem
 Shadow-Pfad zusammen?
+
+## Nachtrag 19.10.2026 (F10, JACK_TUNE_EXPECTGUARD)
+expect=FAIL invertiert ok und ist nur noch fuer lesende Test-Acts erlaubt (freigabe=False, nicht git_publish). Bei schreibenden Acts: nichts ausfuehren, ok=false, note EXPECTGUARD. Grund: Wirkung passiert + Meldung FAIL fuehrt zu Retries, keine Wirkung + Meldung ok taeuscht Erfolg vor. Bisherige Nutzung nur grep_count/no_secret, die bleiben unveraendert. Live: py_replace+FAIL blockiert, grep_count+FAIL invertiert weiter. Einbau mit 180-s-Auto-Rollback. Backup .bak_20261019.
