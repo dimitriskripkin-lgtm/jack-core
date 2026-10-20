@@ -22,3 +22,8 @@ Mit Snapshot-Ruhe (3 Versuche, 0,8 s) und output_description: 2 Taps ohne Fehlal
 ## Nachtrag 20.10.2026 07:5x: A3-Basislinie (E v7, 30 Faelle) + Runner v8 fuer Haende B
 JACK-Actor 3x: E01/E02/E03 je 3/3, E04-E08 je 0/3 -> 9/24 = 37,5 Prozent (Wilson95 pro 3/3: 44-100 Prozent). Fallen 4/6 (T01 3/3, T02 1/3). 0 false success, Geraetezustand nie veraendert, 2,5 Cent.
 Runner v8 (Claude, Basis v7 ChatGPT): B startet die Aufgaben-App per monkey wie Actor A (bewusste Abweichung von ChatGPTs Test B eigenes Start-App-Bypass verboten), harter Abbruch nur bei gefaehrlichen Sperren (danger_denials) oder ADB-Versuch, harmlose Nav-Sperren werden gezaehlt. Controller zaehlt danger_denials getrennt. Offline 26/26, Manifest 7eedfbf9.
+
+## Nachtrag 20.10.2026 08:4x: Vergleich A gegen B auf Arena E
+B (mobile-use, 14 von 30 Faellen bis Hartstopp): positiv 3/9 (E01 1/2, E03 1/2, E04 1/2 - E04 hat A nie geschafft), sonst 0. Fallen 0/2, weil B kein pruefbares Abbruchsignal hat (bewusst nicht als erkannt gewertet). 0 false success. Hartstopp E04 Runde 2: gefaehrliche Sperre im Controller (danger_denials). Kosten 21 Cent = ca. 1,5 Cent pro Fall.
+A (JACK-Actor, 30 Faelle): 9/24 = 37,5 Prozent, Fallen 4/6, 2,5 Cent gesamt = ca. 0,08 Cent pro Fall.
+Fazit: Auf diesen Lese-Aufgaben ist B nicht besser als A, aber rund 18x teurer. Bs Staerke (Texteingabe, mehrere Apps) prueft erst Arena F. Haende B bleibt Werkzeug fuer F, A bleibt Standard.
