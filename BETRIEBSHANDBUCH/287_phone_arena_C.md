@@ -121,3 +121,6 @@ E01-E04 geschafft (E04 jetzt mit GB-Vertrag). Scroll greift: E05 scrollt 2x korr
 
 ## Nachtrag 20.10.2026 05:3x: Arena E v5 = 4/8, Fallen 2/2, 0 false success
 E01-E03, E06 geschafft (E06 neu). Beide Fallen erstmals erkannt. E04 Rueckschritt durch Spec: nav ohne speicher, Tap auf Speicher blockiert. E05 scrollt, findet Akku aber nicht in 8 Schritten. E07 lief den ganzen Pfad Speicher > Download > DIR > alpha > Datei, letzter Tap blockiert: Dateizeile hat Auswahl-Checkbox (Toggle-Regel). E08 irrt (Interner gemeinsamer Speicher). 1,0 Cent. E v6 (Claude): E04 nav + speicher, Checkbox-Kind in Dateimanager-Zeile erlaubt (nur Dateien-App, Settings-Schalter weiter gesperrt). Offline 26/26.
+
+## Nachtrag 20.10.2026 05:4x: Arena E v6 = 3/8, Fallen 2/2, 0 false success
+E01-E03 geschafft. E06 diesmal gescheitert (in v5 geschafft): Ergebnisse schwanken von Lauf zu Lauf, Einzellaeufe sind Rauschen (+-1). E04: Speicher oeffnet com.miui.securitycenter (fremde App). E07: Actor oeffnet die Datei korrekt, sie startet im WPS-Viewer (cn.wps.xiaomi...), Kern bricht wegen fremder App ab. E05/E06: nach STUCK irrt Actor zu Sicherheit/Finanzen (blockiert). Lehre: kein Einzel-Spec-Flicken mehr, sondern (1) Hande B (mobile-use als Gehirn) und (2) Mehrfachlaeufe pro Aufgabe (Erfolgsquote ueber 3 Laeufe) als Messgroesse.
