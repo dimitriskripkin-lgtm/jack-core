@@ -20,7 +20,11 @@ Vertrag (dict), mindestens ein POSITIVES Kriterium (app, text_alle oder text_ein
 """
 import re
 
-_KRIT = ('app', 'text_alle', 'text_eins')  # text_nicht allein beweist nichts (Review ChatGPT 15.10.)
+_KRIT = ('app', 'text_alle', 'text_eins', 'text_regex')  # text_nicht allein beweist nichts
+# JACK_TUNE_FVGB: nur statische, vorgepruefte Regex-IDs, keine freien Modell-Muster
+_TEXT_REGEX = {
+    'gb_wert': re.compile(r'(?<![\d.,])\d{1,4}(?:[.,]\d{1,2})?\s*(?:\|\s*)?(?:GB|GiB)\b', re.I),
+}
 _BOUNDS = re.compile(r'\[(-?\d+),(-?\d+)\]\[(-?\d+),(-?\d+)\]')
 
 BILD_PROMPT = ("Du bist Pruefer, nicht Ausfuehrer. Pruefe NUR anhand dieses Bildschirmfotos, "
@@ -84,6 +88,15 @@ def pruefe_vertrag(vertrag, fg, texte):
         if _norm(t) in blob:
             ok = False
             gr.append('darf nicht da sein: ' + t)
+    rgx_id = vertrag.get('text_regex')
+    if rgx_id is not None:
+        rgx = _TEXT_REGEX.get(rgx_id) if isinstance(rgx_id, str) else None
+        if rgx is None:
+            ok = False
+            gr.append('unbekanntes/ungueltiges text_regex (nur gb_wert erlaubt)')
+        elif not rgx.search(' | '.join(str(t) for t in texte)):
+            ok = False
+            gr.append('kein sichtbarer Zahlenwert mit GB/GiB-Einheit')
     if ok:
         gr.append('Vertrag erfuellt')
     return ok, gr
