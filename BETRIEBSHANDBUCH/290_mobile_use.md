@@ -4,3 +4,7 @@
 - Telemetrie: immer mit MOBILE_USE_TELEMETRY_ENABLED=false starten (sonst PostHog).
 - ADB zum Xiaomi steht: 172.29.165.131:5555 device.
 - Import-Test OK (sdk.Agent, Builders). Noch KEIN Lauf am Geraet: erst Adapter jack_actor_b mit JACK-Waechter (Auftrag 12 ChatGPT), dann Arena E als Vergleich.
+
+## Nachtrag 20.10.2026 06:5x: Actor-B-Paket (Auftrag 13) auf dem Honor
+ZIP von Dima hochgeladen, Hashes 6/6 OK, abgelegt in ~/jack_ext/actor_b (nicht live). Code gelesen: Controller fuehrt nur tap/swipe/back/home ueber jack_xiaomi aus, liest ueber jack_ghost, sperrt Text/Install/Uninstall/Shell/am start/Longpress, prueft jeden Tap gegen frischen Dump, BAD_LABELS/_GEFAHR, Checkables, vorregistrierte Navigation. TransportFence blockt adbutils/uiautomator2/adb-Prozesse/ADB-Ports (nur In-Process, keine OS-Sandbox). Budget-Callback mit Vorab-Reservierung, Modell gemini-2.5-flash-lite. Auf dem Honor: SDK-Vertragscheck BESTAETIGT (Maestro-Pfad als NO-GO markiert, wird durch eigenen Controller umgangen), Unittests 19 (1 uebersprungen) OK.
+Naechster Schritt: Schattenlauf (echtes Gemini, echter Bildschirm, Aktionen nur protokolliert), danach Pilot E01 mit Dimas Go.
