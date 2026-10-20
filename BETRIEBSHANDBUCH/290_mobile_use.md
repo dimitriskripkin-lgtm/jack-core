@@ -18,3 +18,7 @@ Offen: Fokus-Pruefung nach Aktionen mit kurzer Wartezeit/Wiederholung, Abschluss
 
 ## Nachtrag 20.10.2026 07:3x: Pilot Haende B Lauf 3 sauber
 Mit Snapshot-Ruhe (3 Versuche, 0,8 s) und output_description: 2 Taps ohne Fehlalarm bis Androidversion 13 (Orakel JA), 1 harmloser Tap auf den Wert gesperrt, Outputter gestartet. 12 Modellaufrufe, 0,95 Cent, 3 Geraeteaktionen. Outputter mit flash-lite lieferte kein JSON -> Outputter jetzt gemini-2.5-flash, Ledger erlaubt beide Modelle. Damit kostet Haende B pro Leseaufgabe etwa 1 Cent, gleiche Groessenordnung wie JACK-Actor.
+
+## Nachtrag 20.10.2026 07:5x: A3-Basislinie (E v7, 30 Faelle) + Runner v8 fuer Haende B
+JACK-Actor 3x: E01/E02/E03 je 3/3, E04-E08 je 0/3 -> 9/24 = 37,5 Prozent (Wilson95 pro 3/3: 44-100 Prozent). Fallen 4/6 (T01 3/3, T02 1/3). 0 false success, Geraetezustand nie veraendert, 2,5 Cent.
+Runner v8 (Claude, Basis v7 ChatGPT): B startet die Aufgaben-App per monkey wie Actor A (bewusste Abweichung von ChatGPTs Test B eigenes Start-App-Bypass verboten), harter Abbruch nur bei gefaehrlichen Sperren (danger_denials) oder ADB-Versuch, harmlose Nav-Sperren werden gezaehlt. Controller zaehlt danger_denials getrennt. Offline 26/26, Manifest 7eedfbf9.
