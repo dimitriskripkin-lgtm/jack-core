@@ -11,3 +11,7 @@ Naechster Schritt: Schattenlauf (echtes Gemini, echter Bildschirm, Aktionen nur 
 
 ## Nachtrag 20.10.2026 07:00: Schattenlauf Haende B
 Kette steht: Planner > Orchestrator > Contextor > Cortex > Executor mit gemini-2.5-flash-lite, echter Bildschirm (Settings), Cortex entschied korrekt: Ueber das Telefon antippen. JACK-Controller blockte (Label-Abgleich Ueber das Telefon / Update, Fix: Praefix mit Leerzeichen, Tests OK). Aktionen im Schatten nicht ausgefuehrt. Kosten ca. 1,3 Cent fuer 12 Modellaufrufe (Limit max_calls 12 gegriffen). Noetige Fixes am Paket: GeminiBudgetLedger muss BaseCallbackHandler erben; langgraph 1.0.10 + langgraph-prebuilt 1.0.5 (neuere brechen mobile-use 4.0.0). Erwartung: ca. 3-5 Cent pro Aufgabe, etwa 10x JACK-Actor.
+
+## Nachtrag 20.10.2026 07:2x: Erster echter Pilot Haende B (E01)
+Lauf 1: Cortex wollte Settings per launch_app starten, Controller sperrte am start -> SDK brach ganz ab. Fix Claude: launch_app nur fuer Apps der Aufgabe erlaubt (monkey -p, Paketname-Regex), Tests OK. Lauf 2: mobile-use tippte Ueber das Telefon und Detaillierte Informationen und Spezifikationen, Endbildschirm zeigt Androidversion 13 (unabhaengiges Orakel: JA). Aber: (1) Controller meldet nach dem Tap faelschlich Fehler (Vordergrund aendert sich waehrend Dump = Animation), (2) mobile-use meldet nie fertig, endet am Rekursionslimit 48. Kosten Lauf 2 ca. 1,7 Cent. Geraet danach gesperrt.
+Offen: Fokus-Pruefung nach Aktionen mit kurzer Wartezeit/Wiederholung, Abschlusssignal (Outputter) fuer Lese-Aufgaben, Vergleich auf allen E-Aufgaben x3.
