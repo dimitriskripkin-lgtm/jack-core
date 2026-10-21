@@ -209,7 +209,21 @@ def send(text):
     teile = [text[i:i+3800] for i in range(0, len(text), 3800)]
     for teil in teile:
         _send_raw(teil)
+def _chatlog(von, text):  # JACK_TUNE_TGLOCK20B – derselbe flock und dieselbe Rotation
+    """Kap 293 kompatibel: gleiche Quelle fuer eingehende/ausgehende Logzeilen.
+    Bestehende Semantik beibehalten: Telegram schreibt ausgehend vor Netz-ACK.
+    """
+    try:
+        import jack_tg_send as _jtg
+        _jtg._record(_jtg.LOG,
+                     {'ts': time.strftime('%Y-%m-%d %H:%M:%S'), 'von': von,
+                      'quelle': 'telegram', 'wichtig': True, 'text': str(text)[:2000]},
+                     max_size=_jtg.MAX_LOG, rotate=True)
+    except Exception:
+        pass
+
 def _send_raw(text):
+    _chatlog('jack', text)
     url = f"{API}/sendMessage"
     data = json.dumps({"chat_id": CHAT_ID, "text": text}).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
@@ -345,6 +359,7 @@ def handle(text):
     import jack_exec  # FIX-UNBOUND (Qwen 22.08.): Import oben, sonst UnboundLocalError
     if not text:
         return None
+    _chatlog('dima', text)  # JACK_TUNE_CHATLOG
     if str(text).strip().lower().startswith("/vorschlaege"):  # JACK_TUNE_VORSCHLAGFRUEH
         try:
             import json as _tj, os as _to

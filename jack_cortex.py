@@ -167,17 +167,13 @@ def notify_xiaomi_state(connected):
     XIAOMI_LAST_STATE = connected
     XIAOMI_SEIT[0] = 0.0; XIAOMI_SEIT[1] = None
     try:
+        from jack_tg_send import send  # JACK_TUNE_TGSEND20B
         msg = 'Xiaomi ist seit 15 Minuten wieder erreichbar.' if connected else 'Xiaomi ist seit 15 Minuten weg.'
-        import urllib.request
-        sec = open(os.path.expanduser('~/.jack_secrets')).read()
-        tok = [l.split('=',1)[1].strip().strip('"') for l in sec.split(chr(10)) if 'TELEGRAM_BOT_TOKEN' in l][0]
-        cid = [l.split('=',1)[1].strip().strip('"') for l in sec.split(chr(10)) if 'TELEGRAM_CHAT_ID' in l][0]
-        data = _j.dumps({'chat_id':cid,'text':msg}).encode()
-        urllib.request.urlopen(urllib.request.Request(
-            'https://api.telegram.org/bot'+tok+'/sendMessage', data=data,
-            headers={'Content-Type':'application/json'}), timeout=12)
+        _res = send(msg, wichtig=not connected, quelle='cortex')
+        if _res.get('status') not in ('GESENDET', 'GEPUFFERT'):
+            log_status('[Cortex] Notify-Fehler: ' + _res.get('grund', 'unknown'))
     except Exception as e:
-        log_status('[Cortex] Notify-Fehler: ' + str(e)[:80])
+        log_status('[Cortex] Notify-Fehler: ' + type(e).__name__)
 def check_and_heal():
     global SSH_FAIL_COUNT, SSH_ERR_COUNT, XIAOMI_IP
     quick = subprocess.run(

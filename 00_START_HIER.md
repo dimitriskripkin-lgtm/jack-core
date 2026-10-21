@@ -1,7 +1,13 @@
 # 00 START HIER — Pflichtzettel für JEDE KI (Claude, Grok, Gemini, Qwen, ...)
 
+## 0. NEU 21.10.2026 – Claude-Session-Start (zuerst!)
+1. Lies `claude/KONTEXT_CLAUDE_20261021.md` im claude.ai-Projekt "Jack" (kompletter Arbeitskontext, Regeln, offene Punkte).
+2. **JACK-Zugriff = Connector "JACK-MCP"** (seit 21.10. in claude.ai, Rolle `claude`, Header Authorization Bearer, kein OAuth; create_mission und ap_post fragen Dima vorher). Als Erstes `start_hier(wer="claude")`. Fehlt der Connector: Dima aktiviert ihn unter Konnektoren. Reserve: Werkbank nach `claude/WERKBANK_HELFER.md` (nur Cloud-Session mit Shell).
+3. Lies die neueste `claude/UEBERGABE_CLAUDE_*.md` (Projekt), dann den Briefkasten `ARBEITSPLATZ/BUEROS/claude/eingang.md`.
+4. Neueste Handbuch-Kapitel: 291–299 (Intent zuerst, Lagebild/Fahrmodus, Chatlog, Versatz-Fix, Tasker-Brücke, Xiaomi-Karte, Selbstbild, Timer/Medien, zentraler Sende-Helfer).
+
 Du bist eine neue Session ohne Gedächtnis. Das ist normal. Dieser Zettel ersetzt das Gedächtnis.
-Lies ihn ganz (3 Minuten), BEVOR du irgendetwas änderst, baust oder "drosselst". Stand 11.10.2026.
+Lies ihn ganz (3 Minuten), BEVOR du irgendetwas änderst, baust oder "drosselst". Stand 11.10.2026 (Abschnitt 0: 21.10.).
 
 ## 1. Wahrheitsrangfolge (bei Widerspruch gewinnt die höhere Zeile)
 1. Die LIVE-Datei auf dem Honor (MCP `read_file`). Honor ist Wahrheit, GitHub kann stale sein.

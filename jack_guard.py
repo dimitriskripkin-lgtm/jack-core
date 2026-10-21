@@ -36,16 +36,15 @@ def _sec(k):
     return None
 
 def notify(t):
-    tok = _sec("TELEGRAM_BOT_TOKEN"); cid = _sec("TELEGRAM_CHAT_ID")
-    if not tok or not cid: return
     try:
-        d = json.dumps({"chat_id": cid, "text": "[JACK Guard] " + t}).encode()
-        r = urllib.request.Request(
-            "https://api.telegram.org/bot" + tok + "/sendMessage",
-            data=d, headers={"Content-Type": "application/json"})
-        urllib.request.urlopen(r, timeout=10)
+        from jack_tg_send import send  # JACK_TUNE_TGSEND20B
+        # RAM-Block = kritisch; Lock-Konflikt = Routine, aber dokumentiert.
+        kritisch = "MB frei" in str(t) or "abgelehnt: nur " in str(t)
+        _res = send("[JACK Guard] " + str(t), wichtig=kritisch, quelle="guard")
+        if _res.get('status') not in ('GESENDET', 'GEPUFFERT'):
+            _log("GUARD-NOTIFY-FEHLER", _res.get('grund', 'unknown'))
     except Exception as e:
-        _log("GUARD-NOTIFY-FEHLER", str(e)[:100])
+        _log("GUARD-NOTIFY-FEHLER", type(e).__name__)
 
 def _pid_alive(pid):
     try:

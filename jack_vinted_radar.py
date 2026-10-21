@@ -52,15 +52,14 @@ def load_config():
     return json.load(open(CONFIG))
 
 def notify(tok, cid, text):
-    d = json.dumps({"chat_id": cid, "text": text}).encode()
-    req = urllib.request.Request(
-        f"https://api.telegram.org/bot{tok}/sendMessage",
-        data=d, headers={"Content-Type": "application/json"}
-    )
     try:
-        urllib.request.urlopen(req, timeout=10)
+        from jack_tg_send import send  # JACK_TUNE_TGSEND20B: eigener Vinted-Bot bleibt!
+        _res = send(str(text), wichtig=False, quelle='vinted_radar',
+                    bot_token=tok, chat_id=cid, route='vinted')
+        if _res.get('status') not in ('GESENDET', 'GEPUFFERT'):
+            print('Telegram Fehler:', _res.get('grund', 'unknown'))
     except Exception as e:
-        print(f"Telegram Fehler: {e}")
+        print('Telegram Fehler:', type(e).__name__)
 
 def suche_vinted(keyword, max_preis=None, min_preis=0):
     import urllib.parse

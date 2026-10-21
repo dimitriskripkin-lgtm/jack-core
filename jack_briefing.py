@@ -165,16 +165,9 @@ def run():
 if __name__ == "__main__":
     result = run()
     if result:
-        import urllib.request, json as _json
-        tok = _sec("TELEGRAM_BOT_TOKEN")
-        cid = _sec("TELEGRAM_CHAT_ID")
-        if tok and cid:
-            d = _json.dumps({"chat_id": cid, "text": result}).encode()
-            req = urllib.request.Request(
-                f"https://api.telegram.org/bot{tok}/sendMessage",
-                data=d, headers={"Content-Type": "application/json"}
-            )
-            urllib.request.urlopen(req, timeout=10)
-            print("Briefing gesendet.")
+        from jack_tg_send import send  # JACK_TUNE_TGSEND20B
+        wichtig = False  # Tagesbericht bleibt Routine; echte Alarme kommen von Waechter/Monitor
+        status = send(result, wichtig=wichtig, quelle="briefing")
+        print("Briefing " + status["status"])
     else:
         print("Nichts kritisches zu melden.")

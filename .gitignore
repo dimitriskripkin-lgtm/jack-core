@@ -248,3 +248,19 @@ reports/selfcare_cpu.log
 .tunnel_watch_off
 .ui_busy
 .recovery_off
+
+# JACK_TUNE_CHATLOG: privater Chat, nie pushen
+logs/telegram_chat.jsonl
+logs/telegram_chat.jsonl.1
+
+# Kap 296: private App-Sperrliste
+.sperrliste_apps
+
+# Kap 299 (20b/20c)
+logs/telegram_fahrt_queue.jsonl
+logs/telegram_fahrt_state.json
+logs/.tg_send.lock
+logs/.fahrt_digest.lock
+logs/.fahrt-*.tmp
+.cron_env
+.fahrmodus

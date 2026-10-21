@@ -50,20 +50,15 @@ def _sec(k):
             return l.split('"')[1] if '"' in l else l.split("=",1)[1].strip()
 
 def notify(text):
-    tok = _sec("TELEGRAM_BOT_TOKEN")
-    cid = _sec("TELEGRAM_CHAT_ID")
-    if not tok or not cid:
-        return
-    d = json.dumps({"chat_id": cid, "text": text}).encode()
-    req = urllib.request.Request(
-        f"https://api.telegram.org/bot{tok}/sendMessage",
-        data=d, headers={"Content-Type": "application/json"}
-    )
     try:
-        urllib.request.urlopen(req, timeout=10)
+        from jack_tg_send import send  # JACK_TUNE_TGSEND20B
+        _res = send(str(text), wichtig=False, quelle='radar')
+        if _res.get('status') not in ('GESENDET', 'GEPUFFERT'):
+            import jack_log
+            jack_log.log_decision("RADAR-NOTIFY-FEHLER", _res.get('grund', 'unknown'))
     except Exception as e:
         import jack_log
-        jack_log.log_decision("RADAR-NOTIFY-FEHLER", str(e)[:100])
+        jack_log.log_decision("RADAR-NOTIFY-FEHLER", type(e).__name__)
 
 def suche_kleinanzeigen(keyword, max_preis=None):
     """Sucht auf Kleinanzeigen.de und gibt Liste von Anzeigen zurueck."""

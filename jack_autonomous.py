@@ -25,19 +25,19 @@ def _sec(k):
         _jlog and _jlog.fehler("autonomous","unbenannt",_le)
     return None
 
-def notify(t):
-    try:  # JACK_TUNE_NOTIFYMEM
+def notify(t, wichtig=True):  # JACK_TUNE_TGSEND20B
+    try:  # JACK_TUNE_NOTIFYMEM bleibt bestehen
         import jack_memory as _jmem
         _jmem.save("", str(t), "waechter_alarm")
     except Exception: pass
-    tok=_sec("TELEGRAM_BOT_TOKEN"); cid=_sec("TELEGRAM_CHAT_ID")
-    if not tok or not cid: return
     try:
-        d=json.dumps({"chat_id":cid,"text":"[JACK Waechter] "+t}).encode()
-        r=urllib.request.Request(f"https://api.telegram.org/bot{tok}/sendMessage",data=d,headers={"Content-Type":"application/json"})
-        urllib.request.urlopen(r,timeout=10)
+        from jack_tg_send import send
+        _res = send("[JACK Waechter] " + str(t), wichtig=wichtig, quelle="autonomous")
+        if _res.get("status") not in ("GESENDET", "GEPUFFERT"):
+            raise RuntimeError(_res.get("grund", "TGSEND_FEHLER"))
     except Exception as e:
-        try: import jack_log; jack_log.log_decision('NOTIFY-FEHLER', str(e)[:100])
+        try:
+            import jack_log; jack_log.log_decision('NOTIFY-FEHLER', type(e).__name__)
         except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
 
 def _up(n):
@@ -116,7 +116,7 @@ def _maybe_audit():
         try: last = float(open(lf).read().strip())
         except Exception: last = 0.0
         if _t.time() - last >= 604800:
-            notify("Woechentlicher Audit:" + chr(10) + jack_audit.report())
+            notify("Woechentlicher Audit:" + chr(10) + jack_audit.report(), wichtig=False)
             open(lf,"w").write(str(_t.time()))
             import jack_log; jack_log.log_decision("WAECHTER-AUDIT","woechentlich verschickt")
     except Exception as e:
@@ -139,7 +139,7 @@ def _maybe_self_improve():
             import jack_self_improve
             result = jack_self_improve.run()
             if result and "Keine" not in result:
-                notify(result[:1000])
+                notify(result[:1000], wichtig=False)
             open(lf,"w").write(str(_t.time()))
             import jack_log; jack_log.log_decision("SELF-IMPROVE","Tagescheck abgeschlossen")
     except Exception as e:
@@ -571,7 +571,7 @@ def _scout_loop():
                 import jack_skill_builder as _sb
                 neue = _sb.run()
                 if neue:
-                    notify("Skill-Builder: " + str(len(neue)) + " neue Skills: " + ", ".join(neue))
+                    notify("Skill-Builder: " + str(len(neue)) + " neue Skills: " + ", ".join(neue), wichtig=False)
             except Exception as _sbe:
                 try: jack_log.log_decision("SKILL-BUILDER-ERR", str(_sbe)[:80])
                 except Exception as _le: _jlog and _jlog.fehler("autonomous","unbenannt",_le)
@@ -650,6 +650,26 @@ def _sanity_loop():
         _t2.sleep(21600)
 
 
+def _fahrdigest_loop():
+    """JACK_TUNE_FAHRDIGEST_TICK (Kap 299, Dima 21.10.: alle 5 Min): Fahrmodus messen, Sammelmeldung nach dem Aussteigen."""
+    import time as _t3
+    _t3.sleep(60)
+    _last = None
+    while True:
+        try:
+            import jack_fahrt_digest as _jfd
+            _r = _jfd.tick()
+            _st = _r.get('status') if isinstance(_r, dict) else str(_r)
+            if _st != _last or _st in ('GESENDET', 'ACK_FEHLER', 'SENDEN_FEHLER', 'FEHLER'):
+                try: import jack_log; jack_log.log_decision("FAHRDIGEST", str(_r)[:160])
+                except Exception: pass
+            _last = _st
+        except Exception as _e:
+            try: import jack_log; jack_log.log_decision("FAHRDIGEST-ERR", type(_e).__name__)
+            except Exception: pass
+        _t3.sleep(300)
+
+
 def _proaktiv_loop():
     """Meldet sich proaktiv bei interessanten Ereignissen."""
     import time as _t2, datetime as _dt2
@@ -679,7 +699,7 @@ def _proaktiv_loop():
                     _r = _jc3.run('morgen_briefing')
                     notify("Moin Dima." + chr(10) + chr(10) + _r['text'])
                 except Exception:
-                    notify("Moin Dima. Nachtschicht rum?")
+                    notify("Moin Dima. Nachtschicht rum?", wichtig=False)
                 _last_moin = _t2.time()
             # Akku-Warnung
             try:
@@ -793,6 +813,7 @@ def start_consolidated():
     _th.Thread(target=_lerner_loop,daemon=True,name="lerner").start()
 
     _th.Thread(target=_proaktiv_loop,daemon=True,name="proaktiv").start()
+    _th.Thread(target=_fahrdigest_loop,daemon=True,name="fahrdigest").start()  # JACK_TUNE_FAHRDIGEST_TICK
     try:
         import jack_telemetry as _jt  # JACK_TUNE_TELEMETRIE
         _th.Thread(target=_jt.loop, daemon=True, name="telemetrie").start()

@@ -316,8 +316,43 @@ def _talk_to_gemini_impl(prompt):
                 _hp=os.path.join(JACK_HOME, "jack_health_now.json")
                 system+=("Halte dich an jack_persona_kern.md. Kein zweites Persona-Intro. Kein Meta ueber System/Kram/Schubsen. Folge dem Faden. Eine Haltung ist erlaubt. JACK_TUNE_CHAR1ischee.")+chr(10)  # JACK_TUNE_PER2
                 system+="VERBOT: Temp/RAM/Akku ungefragt. Kein Autonomie-Level. Kein BEFEHL-Platzhalter. Keine Floskel was-geht-ab."+chr(10)
+                try:  # JACK_TUNE_FAHRMODUS (Kap 292): faehrt Dima, kurz antworten
+                    import json as _jfm, time as _tfm
+                    try:
+                        _fm=_jfm.load(open(os.path.join(JACK_HOME,'.fahrmodus')))
+                    except Exception:
+                        _fm={}
+                    if _tfm.time()-_fm.get('geprueft',0)>60:
+                        import jack_lagebild as _jlb
+                        _fm=_jlb.fahrmodus()
+                    if _fm.get('aktiv'):
+                        system+="FAHRMODUS: Dima faehrt gerade LKW. Antworte in hoechstens zwei kurzen Saetzen, kein Code, keine Listen, nur das Wichtigste."+chr(10)
+                except Exception:
+                    pass
             except Exception:
                 pass  # JACK_TUNE_HEALTHINJ
+            # JACK_TUNE_SELBSTBILD A20a (ChatGPT, Review Claude, Kap 297): frisches, belegtes Selbstbild.
+            try:
+                import sys as _sbs, time as _sbt, subprocess as _sbp
+                _sbfile = os.path.join(JACK_HOME, 'reports', 'selbstbild.md')
+                def _sbfrisch():
+                    if not os.path.isfile(_sbfile):
+                        return False
+                    return 0 <= _sbt.time() - os.path.getmtime(_sbfile) < 1800
+                if not _sbfrisch():
+                    try:
+                        _sbp.run([_sbs.executable, os.path.join(JACK_HOME, 'jack_selbstbild.py')],
+                                 stdin=_sbp.DEVNULL, stdout=_sbp.DEVNULL, stderr=_sbp.DEVNULL,
+                                 timeout=5, check=False)
+                    except (_sbp.TimeoutExpired, OSError):
+                        pass
+                if _sbfrisch():
+                    with open(_sbfile, encoding='utf-8') as _sbf:
+                        _sb_text = _sbf.read(1501).strip()
+                    if 0 < len(_sb_text) <= 1500:
+                        system += '\nJACK-SELBSTBILD (Regel zuerst, Kap 297: Was hier nicht steht, weiss JACK nicht und sagt das. Kapitelinhalte nur aus den Inhaltszeilen. Messwerte genau, nie etwa):\n' + _sb_text + '\n'
+            except (OSError, ValueError):
+                pass  # Selbstbild-Ausfall blockiert TALK nie
             _p6w=("ueber mich","über mich","ueber dich","über dich","wer bin ich","wer bist du","was weisst du","was weißt du","mein name","kennst du mich","erzaehl mir")
             if _id and any(w in (prompt or "").lower() for w in _p6w): system+="DIMA-PROFIL:"+chr(10)+_id+chr(10)+chr(10)  # JACK_TUNE_P6PROFIL
             if _mem: system+="ERINNERUNGEN:"+chr(10)+_mem+chr(10)
@@ -371,7 +406,7 @@ def _talk_to_gemini_impl(prompt):
                 open("/data/data/com.termux/files/home/jack/reports/promptlog.jsonl","a").write(_plj.dumps(_pl,ensure_ascii=False)+"\n")
             except Exception:
                 pass  # JACK_TUNE_PROMPTLOG
-            _w=get_window_ctx(); _v1='JACK_TUNE_VERSATZ1'; _ws=((_w or '')[-(2400-len(prompt)):] if len(prompt)<2400 else ''); _um=(('Frueherer Verlauf (nur Kontext, NICHT beantworten, bei neuem Thema ignorieren):\n'+_ws+'\n\nDIMA JETZT (nur DIESE Nachricht beantworten, nichts Altes wiederholen): '+prompt) if _ws and '(keiner)' not in _ws else prompt)[-2800:]; _r=_scrub_out(_gq.ask_groq(system, _um))  # JACK_TUNE_WIN1
+            _w=get_window_ctx(); _v1='JACK_TUNE_VERSATZ1'; _ws=((_w or '')[-(1200-len(prompt)):] if len(prompt)<1200 else ''); _um=(('Frueherer Verlauf (nur Kontext, NICHT beantworten, bei neuem Thema ignorieren):\n'+_ws+'\n\nDIMA JETZT (nur DIESE Nachricht beantworten, nichts Altes wiederholen): '+prompt) if _ws and '(keiner)' not in _ws else prompt)[-1500:]; _r=_scrub_out(_gq.ask_groq(system, _um))  # JACK_TUNE_WIN1 JACK_TUNE_VERSATZ2: ask_groq kappt user_msg vorne auf 1500, aktuelle Frage muss drin bleiben (Kap 294)
             if _r.startswith("[Groq Limit]") or _r.startswith("[Groq Fehler]"):
                 return talk_to_ollama(prompt, [])  # JACK_TUNE_G2O
             try: auto_save_to_memory(prompt, _r)

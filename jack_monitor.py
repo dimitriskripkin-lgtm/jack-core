@@ -38,18 +38,15 @@ def _run(cmd, timeout=8):
 
 def _notify(msg):
     try:
-        import sys; sys.path.insert(0, H)
-        sec = open(os.path.expanduser("~/.jack_secrets")).read()
-        tok = [l.split("=",1)[1].strip().strip('"') for l in sec.split(chr(10)) if "TELEGRAM_BOT_TOKEN" in l][0]
-        cid = [l.split("=",1)[1].strip().strip('"') for l in sec.split(chr(10)) if "TELEGRAM_CHAT_ID" in l][0]
-        import urllib.request, json as _j
-        d = _j.dumps({"chat_id": cid, "text": "[Monitor] " + msg}).encode()
-        req = urllib.request.Request(f"https://api.telegram.org/bot{tok}/sendMessage",
-            data=d, headers={"Content-Type": "application/json"})
-        urllib.request.urlopen(req, timeout=10)
+        from jack_tg_send import send  # JACK_TUNE_TGSEND20B
+        kritisch = str(msg).startswith(("Akku kritisch:", "Temperatur kritisch:",
+                                       "RAM knapp:", "Dienste tot:"))
+        _res = send("[Monitor] " + str(msg), wichtig=kritisch, quelle="monitor")
+        if _res.get('status') not in ('GESENDET', 'GEPUFFERT'):
+            raise RuntimeError(_res.get('grund', 'TGSEND_FEHLER'))
     except Exception as e:
         try:
-            import jack_log; jack_log.log_decision("MONITOR-NOTIFY-ERR", str(e)[:80])
+            import jack_log; jack_log.log_decision("MONITOR-NOTIFY-ERR", type(e).__name__)
         except Exception as _le:
             _jlog and _jlog.fehler("jack_monitor","unbenannt",_le)
 

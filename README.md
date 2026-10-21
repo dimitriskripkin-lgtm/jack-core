@@ -1,102 +1,178 @@
-> **KI-SESSION? STOPP. Zuerst `00_START_HIER.md` lesen (MCP: start_hier()). Danach erst arbeiten.**
+> **KI-Session?** Zuerst [00_START_HIER.md](00_START_HIER.md) lesen und den aktuellen Gerätestand prüfen. GitHub ist ein Spiegel, der HONOR ist die operative Wahrheit.
 
 # JACK — Just Autonomous Command Kit
 
-**Personal edge-agent runtime for Android/Termux.**
+**Your AI. Your devices. Your rules.**
 
-- **Honor Magic8 Pro** = Host: Runtime, Memory, Missionen, Regeln
-- **Xiaomi 11T Pro** = Worker: kontrollierte Geräteausführung über benannte Acts
+*A personal, safety-first AI agent runtime built on Android phones — with persistent memory, verified actions and role-based MCP collaboration.*
 
-Gebaut von Dima — LKW-Fahrer, Autodidakt, ein Daumen, Termux, kein klassischer IT-Weg.
+JACK ist ein experimenteller persönlicher KI-Assistent, der nicht nur antwortet, sondern **Geräte beobachten, begrenzte Aufgaben planen und überprüfbare Aktionen ausführen** kann. Das Sprachmodell liefert Vorschläge und Sprache; **JACK behält die Kontrolle über Werkzeuge, Rechte, Ausführung und Erfolgskriterien**.
 
-**Modelle sind austauschbare Motoren. Runtime, Regeln, Memory, Safety, Evidence und Gerätezugriff gehören JACK.**
+Entstanden ist das Projekt weitgehend im Alleingang: Dima, LKW-Fahrer und Autodidakt, hat JACK über Monate direkt auf einem Smartphone mit Termux entwickelt – unterstützt von mehreren KIs, aber ohne klassisches Entwicklungsteam.
 
-> **Aktueller Ist-Zustand: [STAND_20261015.md](STAND_20261015.md)** — nur live geprüfte Fakten. GitHub ist der Spiegel, der Honor ist die Wahrheit.
+> **Kontrolle-first statt Cloud-versprechen.** JACK läuft als Runtime auf eigener Hardware. Für Sprache, Planung oder Bildverstehen werden teilweise Cloud-Modelle eingesetzt. Offline-Betrieb aller Funktionen wird ausdrücklich **nicht** behauptet.
 
-## Die Kernschleife
+**Stand dieser Übersicht: 21. Oktober 2026.** Quelle: aktuelle Geräte-Dokumentation und überprüfte Betriebsabläufe. Der Code auf GitHub kann dem Live-Stand hinterherliegen.
 
+## In 30 Sekunden
+
+| Baustein | Aufgabe |
+| --- | --- |
+| **HONOR Magic8 Pro** | Hauptsystem: Termux, Dienste, Routing, Gedächtnis, Prüfungen, MCP und Freigaben |
+| **Xiaomi 11T Pro** | Separates Android-Ausführungsgerät mit Root, SSH, Tasker und eingeschränkten Geräteskills |
+| **MCP** | Definierte Werkzeuge und Rollen für die Zusammenarbeit mit externen KI-Assistenten |
+| **Groq** | Gesprächsebene; keine freie Ausführung von Shell-Befehlen |
+| **Gemini** | Technische Modellaufgaben und bei Bedarf visuelle Interpretation |
+| **JACK selbst** | Missions- und Aktionskontrolle, Beobachtung, Verifikation, Gedächtnis und Sicherheitsgrenzen |
+
+JACK ist **kein eigenes Foundation Model, keine AGI und kein Chatbot mit uneingeschränktem Terminalzugriff**.
+
+## Was JACK heute tatsächlich kann
+
+Die Beispiele unterscheiden bewusst zwischen **live eingesetzt**, **gezielt getestet** und **noch nicht vollständig integriert**.
+
+### 1. Begrenzte Geräteaktionen statt blindem Modell-Output
+
+JACK verarbeitet Absichten als Missionen mit **benannten, erlaubten Aktionen**. Die Runtime trennt Planung und Ausführung: Das Modell kann einen Befehl vorschlagen, führt ihn aber nicht selbst direkt im Betriebssystem aus.
+
+Dazu gehören unter anderem Aktions-Whitelists, Freigabegrenzen, Ressourcenwachen, Ergebnisprüfungen und bei Codeänderungen definierte Patch- und Prüfschritte.
+
+Bei Android-Aktionen gilt seit der Architekturentscheidung vom 21. Oktober: **Intent/Deep-Link zuerst, Shell wenn sinnvoll, UI-Automation zuletzt.** Ein einfacher Timer muss nicht durch eine simulierte Fingerreise durch Android-Einstellungen entstehen.
+
+### 2. Zusammenarbeit mehrerer KIs über MCP
+
+Externe KI-Assistenten können innerhalb **rollenabhängiger Rechte** Informationen aus JACK lesen, den echten Gerätestand prüfen und Ergebnisse in einem gemeinsamen Arbeitsplatz übergeben.
+
+Der Unterschied zum klassischen „KI schreibt ein Skript“: Ein Assistent muss den Zustand nicht erraten; er kann die dafür freigegebenen Fakten und Dateien abfragen. Schreiben, Veröffentlichen und sensible Aktionen behalten eigene Grenzen und Freigaben. **MCP ist eine Schnittstelle, kein Freifahrtschein.**
+
+### 3. Gespräch mit einem ehrlicheren Selbstbild
+
+JACK besitzt eine getrennte Gesprächsebene und ein lokal erzeugtes **Selbstbild** aus technischen Messwerten, den jüngsten Handbuchkapiteln und dem bekannten Projektstand.
+
+Ein konkreter Fehler vom 21. Oktober: JACK erfand zuvor Kapitelinhalte und schätzte Akkustände. Nach der Korrektur antwortete es bei der Frage nach Kapitel 295 anhand der tatsächlich vorhandenen Inhaltszeile. Die Regel lautet sinngemäß: **Was nicht im Selbstbild steht, weiß JACK über seinen aktuellen technischen Zustand nicht.**
+
+Das ist keine Lösung aller Halluzinationen, sondern eine gezielte, überprüfte Verbesserung.
+
+### 4. Telegram mit Fahrkontext
+
+Ein gemeinsamer Sende-Helfer protokolliert Nachrichten mit **Quelle** und **Wichtigkeit**. Bei erkanntem LKW-Bluetooth kann JACK unwichtige Hinweise lokal zurückhalten; wichtige Alarme werden weiterhin gesendet.
+
+Die Sammelmeldung wird nach **mindestens zwei Minuten bestätigter Trennung** und beim nächsten Wächterlauf ausgelöst. Der Wächter prüft ungefähr alle fünf Minuten; damit kann die Benachrichtigung nach dem Aussteigen mehrere Minuten brauchen.
+
+**Status:** Am 21. Oktober auf dem HONOR integriert, 35/35 zugehörige Tests bestanden. Die erste komplette Fahrt als End-to-End-Feldtest war zum Dokumentationszeitpunkt noch offen. Die Pufferung ist kein Ersatz für sicherheitskritische Warnsysteme.
+
+### 5. Tasker-Brücke mit Quittung
+
+JACK kann auf dem Xiaomi freigegebene Tasker-Testaufgaben auslösen und deren Quittungsdateien abholen. Die dokumentierte Datei-Testaufgabe meldete nach etwa 1,5 Sekunden `DONE`; nicht freigegebene Aufgabennamen wurden abgelehnt.
+
+**Grenze:** Die Tasker-Quittung bestätigt die Ausführung aus Tasker-Sicht. Ob die reale gewünschte Wirkung eingetreten ist, muss wo nötig unabhängig verifiziert werden. Die Brücke ist noch kein allgemeiner Hintergrunddienst oder unbegrenzter Act.
+
+### 6. Erste alltagsnahe Skills
+
+Für Timer und Mediensteuerung existieren direkte Android-Wege, die ohne visuelle UI-Automation auskommen. Timer konnten über einen Android-Intent gesetzt und anhand einer Benachrichtigung belegt werden; Medienbefehle prüfen den Zustand einer aktiven Sitzung.
+
+**Grenzen:** Das Abbrechen eines Timers funktionierte auf MIUI nicht zuverlässig über den getesteten Intent. Medien-`play` kann nichts starten, wenn zwar Spotify geöffnet, aber noch keine Wiedergabe vorbereitet ist. Die einfache Bedienung über Telegram ist noch in Arbeit.
+
+
+## Architektur: Modell und Ausführung bleiben getrennt
+
+```text
+Mensch / Telegram / berechtigte MCP-Clients
+                  |
+               HONOR
+     Gespräch · Missionen · Freigaben
+       Memory · Regeln · Prüfung
+                  |
+          erlaubte Aktion
+                  |
+         HONOR oder XIAOMI
+          Ausführung / Beobachtung
+                  |
+             Verifikation
+                  |
+          Ergebnis und Erfahrung
 ```
-Intent → Mission → Plan → Capability → Execution → Observation → Verification → Result → Memory → Learning
-```
 
-Was JACK **nicht** ist:
-- kein eigenes LLM
-- keine AGI
-- kein Chat-Wrapper mit freiem Shell-Zugang. Es gibt nur benannte Acts aus zwei synchron gehaltenen Whitelists (`jack_mission_runner.py`, `jack_mcp_server.py`).
+Der kanonische Kreislauf lautet:
 
-## Was JACK heute zeigt
+`Intent → Mission → Plan → Capability → Execution → Observation → Verification → Result → Memory → Learning`
 
-- **Kontrollierte Missionsausführung**: jede Änderung läuft als Mission mit benanntem Act. Patches mit Hash-Prüfung, Compile-Check, Dienst-Neustart und Dienst-Prüfung.
-- **Abgesicherte Android-Bedienung**: siehe Phone / UI-Agent unten.
-- **Persistentes Gedächtnis**: `jack_graph.db` (Fakten, gewinnt bei Widerspruch), `jack_memory.db` (Episoden + Volltextsuche), `jack_identity.json` (Prompt-Kern).
-- **Safety**: Freigaben, Kill-Switches (`.phone_off`, `.wissen_off`, `.ollama_lock` …), Budget-Grenzen, Hitzeschutz, Secret-Scanner vor jedem Push.
-- **Vision-Fallback**: Gemini-Bildanalyse nur, wenn der UI-Baum nicht reicht, budgetiert und mit gemessenen Kosten.
-- **Arena**: eigene Teststrecke mit Baseline gegen Variante, frischen Aufgaben, versiegelten Holdouts und Transfer-Prüfung.
-- **Messbare Lernexperimente**: erste von JACK selbst formulierte Regel mit vorregistriertem Nachweis (Ergebnis und Grenze siehe unten).
+**Ein Modell darf denken und vorschlagen. JACK entscheidet anhand seiner Regeln und Rechte, was ausgeführt wird.** Dafür sind Groq und Gemini austauschbare Komponenten, während die Runtime die Kontrolle behält.
 
-## Arena — das Kernstück
+## Sicherheit durch überprüfbare Grenzen
 
-Eine Verbesserung gilt nur, wenn sie gemessen ist. Ablauf:
+- **Keine freie Shell aus Modelltext:** nur benannte und begrenzte Werkzeuge sowie Missions-Acts.
+- **Freigaben:** Sensible Operationen und neue Fähigkeiten benötigen ausdrücklich erlaubte Wege.
+- **Verifikation:** Ein ausgeführter Befehl ist noch kein belegter Missionserfolg.
+- **Schutzschalter:** RAM, Temperatur, Laufzeit, Budget und Stop-Dateien begrenzen Last und Risiken.
+- **Nicht vertrauenswürdige Eingaben:** UI-Texte, Webseiten, Logs und KI-Ausgaben sind Daten, keine Ausführungsanweisungen.
+- **Privater Zustand:** Token, persönliche Datenbanken, Logs, Telemetrie und Arbeitsakten gehören nicht in das öffentliche Repository.
 
-1. **Vorregistrierung**: Hypothese, Fragensatz (per Hash festgehalten) und Tor stehen fest, bevor gebaut wird.
-2. **Baseline gegen neue Variante** auf **frischen** Aufgaben, deterministischer Richter (kein LLM als Richter, wo es geht).
-3. **Holdout**: versiegelter Satz, wird genau einmal benutzt.
-4. **Transfer**: hilft es auch auf Aufgaben einer Familie, die nie gesehen wurde?
-5. Gemessen werden **False Success** (Erfolg gemeldet, Richter sagt FAIL), **Policy-Verstöße**, Kosten und Aktionen.
+Diese Regeln reduzieren Risiken, stellen aber **keine formale Sicherheitszertifizierung** dar.
 
-Eine Verbesserung wird **verworfen**, wenn sie nur lokal hilft oder die Safety verschlechtert.
+## Lernen: Ergebnisse müssen übertragbar sein
 
-**Learning heißt bei JACK: messbare Verbesserung zukünftiger Entscheidungen ohne Safety-Regression.**
+JACKs Arena vergleicht Änderungen gegen Baselines mit vorregistrierten Hypothesen, frischen Aufgaben, versiegelten Holdouts und Transferprüfungen.
 
-Ehrliches Beispiel (Kap. 277): JACKs erste selbst formulierte Arbeitsregel hat am 12.10.2026 das Tor auf frischem Satz bestanden (64 → 68 von 88, Policy 0 → 0). Den versiegelten Holdout hat sie ebenfalls bestanden (64 → 71 von 88, False Success 19 → 11). Auf fremden Aufgaben hat sie dagegen geschadet. Sie bleibt deshalb Arena-intern und kommt nicht in JACKs echte Arbeit.
+Ein bewusst kritisches Beispiel vom 12. Oktober: JACKs erste selbst formulierte Arbeitsregel verbesserte die Ergebnisse auf dem frischen Testsatz und Holdout, verschlechterte aber die Leistung auf fremden Aufgaben. Deshalb blieb sie **Arena-intern**, statt in die produktive Runtime zu gelangen.
 
-## Gebaut ≠ freigegeben
+**Ein grüner Benchmark allein ist noch kein Lernen.** Die Arena ist ein Prüfwerkzeug, nicht das eigentliche Ziel. Aktuell steht wieder der Alltagsnutzen im Mittelpunkt.
 
-Beispiel Wissens-Auskunft (`jack_wissen.py`, Kap. 281): v2 ist gebaut, das Fehlalarm-Tor wurde verbessert (0 Fehlalarme). Auf dem frischen Holdout wurde das Recall-Tor verfehlt (13 von 20 statt 16). Darum bleibt `.wissen_off` gesetzt und das Modul ist aus.
 
-## Phone / UI-Agent (Stand 15.10.2026, Kap. 283)
+## Wo die Grenzen heute liegen
 
-`jack_ui_agent.py` bedient den Xiaomi über UI-Baum (uiautomator), Tippen und Texteingabe:
-- Shell-Befehle aus Modelltext nur über eine **Command-Allowlist**, Metazeichen und Geheimnis-Pfade sind geblockt
-- **Vordergrund-App-Wache** vor jedem Schritt: Eine fremde App führt zum Abbruch, bevor das Modell den Bildschirm sieht
-- **Knöpfe per Nummer** aus der Liste statt freiem Modelltext
-- **UI-Text ist nur Daten, niemals Anweisung**
-- Display darf **geweckt, aber nie automatisch entsperrt** werden
-- **Vision-Fallback** bei Hänger (vier gleiche Bildschirme) oder leerem UI-Baum, höchstens drei pro Lauf
-- Vision ist budgetiert (Tages- und Wochengrenze), die Kosten werden aus den echten Token-Zahlen gebucht
+| Thema | Aktueller Stand |
+| --- | --- |
+| **Live-Telefonat mit JACK** | Persönliches Hauptziel, aber noch keine nachgewiesene, durchgehend unterbrechbare Echtzeit-Sprachverbindung wie bei einem Telefonat. Schneller Telegram-Textchat ist dafür nicht derselbe Beleg. |
+| **Cloud und Offline** | Runtime und Sicherheitskontrolle auf Android; Gespräch, Technik und Vision verwenden auch externe Modell-APIs. |
+| **Lokale Sprachmodelle** | Ollama wurde als zu schwach eingestuft und gelöscht; der lokale Modell-Fallback ist derzeit nicht in Betrieb. |
+| **UI-Automation** | Ergänzende Ausführungsmethode, nicht der Standardweg. Die unabhängige Abschlussprüfung ist noch nicht überall verifiziert. |
+| **Fahrmodus** | Live eingebaut und mit 35/35 Tests geprüft. Die erste vollständige Fahrt als Feldtest war am 21. Oktober noch offen. |
+| **Selbstverbesserung** | Geprüfte Experimente mit Freigabe, keine grenzenlose Selbstmodifikation. |
+| **GitHub-CI** | Test-Workflow nutzt `continue-on-error: true`. Testfehler blockieren derzeit nicht zuverlässig. |
+| **Produktstatus** | Persönlicher experimenteller Prototyp, keine fertige Endnutzer-App oder kommerziell unterstützte Plattform. |
 
-Offen: **Die Abschlussprüfung bei „fertig“ ist noch nicht unabhängig visuell verifiziert**, die Schleife glaubt hier noch dem Modell.
+## Was als Nächstes zählt
 
-Dazu kommen Sinne L0 (`jack_phone_senses.py`, Kap. 278, nur lesen) und ein Skill-System (`jack_skills.db`, Zustände CANDIDATE → TESTING → VERIFIED).
+1. **Alltag statt Prüfstand:** Timer und Mediensteuerung über Telegram zuverlässig nutzbar machen.
+2. **Fahrpraxis statt Simulation:** Puffern und Sammelmeldung nach einer echten Schicht beobachten.
+3. **Natürliche Live-Sprache:** Aufnahme, Pausenerkennung, Reaktionszeit, Audioausgabe und Unterbrechungen als Gesamterlebnis messen, bevor Hardware gekauft wird.
+4. **Echte Erledigung statt Erfolgssymbol:** Missions-Ergebnisse unabhängig bestätigen und Fehler sichtbar machen.
+5. **Weniger Wartung:** JACK soll auch nach Tagen ohne Entwicklung verständlich bleiben und tatsächlich Arbeit abnehmen.
 
-## Modelle: edge-first, model-agnostic
+Das sind Entwicklungsrichtungen, keine zugesagten Liefertermine.
 
-- Gespräch: Groq
-- Technik und Vision: Gemini
-- Lokale Ollama-Modelle wurden nach Messung entfernt und gesperrt (`.ollama_lock`, Kap. 282: 3B-Modell 1,6 Token/s, Embedding 0 von 8). Sie kommen zurück, wenn die Hardware das sinnvoll trägt.
+## Einstieg für Entwickler und KI-Assistenten
 
-## Warum über 200 Module
+JACK ist **kein One-Click-Installer**. Ein eigener Betrieb benötigt passende Android-Geräte, Termux, Rechte, Konfiguration und private Zugangsdaten. Relevante Laufzeitdateien und Geheimnisse werden bewusst nicht veröffentlicht.
 
-Viele Module kapseln je eine Verantwortung: Budget, Hitze, Herzschlag, Verifikation, Gateway, Memory, Freigaben, Vision, Arena usw. Die eigentliche Architekturfrage ist nicht die Dateizahl, sondern: **Gibt es für jede Verantwortung genau einen klaren, kanonischen Weg?**
+- [00_START_HIER.md](00_START_HIER.md) – Regeln und Einstieg für neue KI-Sessions.
+- [BETRIEBSHANDBUCH.md](BETRIEBSHANDBUCH.md) und [BETRIEBSHANDBUCH/](BETRIEBSHANDBUCH/) – Modul-Dokumentation. Neuere Kapitel können dem öffentlichen GitHub-Spiegel voraus sein.
+- `jack_mcp_server.py` – MCP-Schnittstelle.
+- `jack_mission_runner.py` – kontrollierte Aktionsausführung.
+- `jack_autonomous.py` – Wächter und wiederkehrende Arbeit.
+- `jack_chat_router.py` – Gesprächsrouting.
+- `jack_ui_agent.py` – experimentelle Android-UI-Aktionen.
 
-Bereits erledigt: 201 Alt- und Backup-Artefakte sowie 19 tote Module liegen im Attic (Kap. 246, nicht im Repo). Eine Modulkarte existiert, externe Aufrufer wie Cron und Shell werden mit erfasst.
+Vorhandene gerätespezifische Selbstchecks auf einem passend eingerichteten System:
 
-Ehrlicher Schuldenpunkt: Es gibt noch doppelte Zuständigkeiten. Ein Beispiel sind mehrere gewachsene Freigabe-Wege, die sich nicht gegenseitig kennen.
-
-## Repo-Hinweise
-
-- Einstieg ins Verständnis: `BETRIEBSHANDBUCH.md` und `BETRIEBSHANDBUCH/` (Kapitel 1 bis 283).
-- Einstiegspunkte im Code: `jack_mcp_server.py` (MCP für externe KIs), `jack_mission_runner.py` (Acts), `jack_autonomous.py` (Wächter), `jack_chat_router.py` (Gespräch), `jack_ui_agent.py` (Xiaomi-Bedienung).
-- Bewusst nicht im Repo: Datenbanken, Logs, Telemetrie, `ARBEITSPLATZ/`, Arena-Inhalte (Aufgaben, Oracle, Holdouts), Token und Schlüssel.
-- **CI**: `.github/workflows/tests.yml` läuft bei jedem Push, steht aber auf `continue-on-error: true`. Testfehler blockieren derzeit nichts, **CI ist also noch kein hartes Quality Gate**.
-
-## Selftest
-
-```
+```bash
 python3 jack_selftest.py
 python3 jack_whitelist_guard.py
 ```
 
-## Wie hier gearbeitet wird
+**Lizenz:** Derzeit ist keine ausdrückliche Open-Source-Lizenz angegeben. Öffentlich sichtbarer Code ist nicht automatisch zur Weiterverwendung lizenziert.
 
-Erst messen, dann ändern. Die Temperatur geht vor, ein Patch kann warten. Vor jeder Änderung steht ein Backup, Gelöschtes landet im Attic. Werkzeuge bleiben eng benannt und auf einen Zweck zugeschnitten. Ein Act, der genau eine Sache tut und das beweisen kann, ist mehr wert als einer, der vieles könnte.
+## Die Idee dahinter
+
+JACK entstand auf einem Smartphone – weitgehend in Eigenarbeit, mit KI als Werkzeug und einem einzigen Daumen als Entwicklungsoberfläche. Die eigentliche Frage war nie nur, wie viele Befehle ein Assistent kennt.
+
+**Kann ein einzelner Mensch mit KI ein System bauen, das verantwortlich handelt, ehrlich über seinen eigenen Zustand Auskunft gibt und ihm im Alltag spürbar Arbeit abnimmt?**
+
+Darauf arbeitet JACK hin. Ohne AGI-Versprechen, ohne perfekte Benchmarks zu erfinden – und ohne aus dem Menschen den Wartungsdienst seiner eigenen Idee zu machen.
+
+---
+
+*JACK = Just Autonomous Command Kit · Android / Termux · Control-first · Evidence before claims · Built by Dima.*
+
+*GitHub is the mirror. The device is the source of truth.*
