@@ -447,6 +447,9 @@ def handle(text):
         pass
     if text.strip().startswith('/ssh '):
         return 'Zu. /ssh schickt nichts mehr roh an das Xiaomi.'  # JACK_TUNE_SSHZU
+    if text.strip().lower().startswith(('/timer', '/musik')):  # JACK_TUNE_HANDYCMD (Kap 301): Timer/Musik, Standard Honor
+        import jack_handy as _jh
+        return _jh.telegram(text.strip())
     if text.strip().startswith('/lage'):
         import jack_xiaomi as _jx
         return _jx.lage()  # JACK_TUNE_LAGE
@@ -761,6 +764,13 @@ def handle(text):
         except Exception as e:
             send(f'⚠️ *Inspector Fehler:* {e}')
 
+    try:  # JACK_TUNE_LINKINBOX (Kap 302): Video-/Social-Links in die Link-Inbox statt Web-Ingest, /links
+        import jack_linkinbox as _jli
+        _li = _jli.merke(text)
+        if _li:
+            return _li
+    except Exception as _lie:
+        send('⚠️ Link-Inbox Fehler: %s' % type(_lie).__name__)
     # 2. Smart Web-Ingest Trigger (ignoriert localhost / internal URLs)
     import re
     url_match = re.search(r'https?://[^\s]+', text)

@@ -16,6 +16,8 @@ from starlette.responses import JSONResponse
 
 class _JackAuthMiddleware(BaseHTTPMiddleware):  # JACK_TUNE_MCPAUTH
     async def dispatch(self, request, call_next):
+        if not _JACK_MCP_TOKEN:  # JACK_TUNE_MCPFAILCLOSED (24.10.2026): Rueckfall ohne Token liess jeden durch (Kap 26, Fund ChatGPT 22.10.), jetzt zu
+            return JSONResponse({"error": "kein Token konfiguriert"}, status_code=503)
         if _JACK_MCP_TOKEN:
             auth = request.headers.get("authorization", "")
             if auth != f"Bearer {_JACK_MCP_TOKEN}":

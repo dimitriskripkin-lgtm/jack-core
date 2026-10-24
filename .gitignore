@@ -264,3 +264,5 @@ logs/.fahrt_digest.lock
 logs/.fahrt-*.tmp
 .cron_env
 .fahrmodus
+logs/link_inbox.jsonl
+logs/handy_timer.jsonl

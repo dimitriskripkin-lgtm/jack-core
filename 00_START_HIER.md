@@ -76,6 +76,9 @@ Besitzer: Dima (Nachtschicht-LKW-Fahrer, Selbstlerner Python, bedient alles mit 
 - Focus-Monitor pollt Xiaomi alle 15 s, bei fehlendem Xiaomi alle ~60 s.
 - Heartbeats: `.heartbeat_<dienst>`; Dead-Man: `jack_deadman.py` (Cron */30) prüft `.heartbeat_jack_waechter` und `jack_health_now.json`, Telegram nach 3 h Stille, höchstens alle 3 h (Kap 271).
 - Freigabe-Wege: Vorschlagsliste (`/vorschlaege`, `/vorschau`, `/freigeben`, `/ablehnen`), PENDING_EXEC/PENDING_WRITE, `.selfsee_pending`.
+- Neu seit 21.10. (Stand 24.10.): `~/jack/.heat_paused_autolearn` = Hitzebremse hat Autolearn gestoppt, Wächter startet ihn unter 55 °C wieder (Kap 300). `~/jack/.fahrmodus` + `logs/telegram_fahrt_queue.jsonl` = Fahrmodus (MBUX-Bluetooth) und Puffer, Sammelmeldung nach dem Aussteigen (Kap 292/299). `~/jack/.sperrliste_apps` = 24 Xiaomi-Apps, nie öffnen, Benachrichtigungen nur zählen (Kap 296). `logs/link_inbox.jsonl` = Video-Links für Claude (Kap 302).
+- `~/jack/.gemini25_weg` = nach einem 404 biegt jack_modelmap Gemini 2.5 auf 3.5-flash um (etwa 15-fach teurer). Fehlt = 2.5. Not-Aus: `.recovery_off` (Recovery), `.aenderung_off` (Änderungs-Auskunft), `.mcp_roles_off` (Rollen-Auth aus, Rückfall alter Token, seit 24.10. ohne Token zu), `.oauth_off`.
+- jack_budget LIVE (gemessen 24.10.): text 10000 Aufrufe/Tag, Wochendeckel 8 EUR (Dima 15.10.). Die Zahlen 600/3 EUR in Abschnitt 12/13 sind veraltet.
 
 ## 6. Bekannte Fallen (schon einmal teuer geworden)
 - Äußere `except Exception: sleep` in einer Hauptschleife versteckt Abstürze. Immer melden.
@@ -84,6 +87,10 @@ Besitzer: Dima (Nachtschicht-LKW-Fahrer, Selbstlerner Python, bedient alles mit 
 - Zwei Kopien derselben Sache (persona, Freigabewege, Fehler-DBs). Vor jedem Neubau: gibt es das schon?
 - Mehrere KIs mit gemeinsamer Zwischendatei kontaminieren sich. Eine Datei pro Vorgang.
 - GitHub-Klon in der KI-Sandbox ist oft stale. Immer gegen die Live-Datei prüfen und `sha256` mitschicken.
+- rish (Shizuku) verliert stdout oder meldet "Failed transaction": Ausgabe erst nach /data/local/tmp, dann nach /sdcard kopieren (RISHTMP, Kap 292).
+- `cmd media_session dispatch` trifft die "Media button session", oft das Claude-Vorlesen statt Spotify. Die Honor-Uhr ignoriert die Timer-Länge, deshalb JACK-eigener Timer (Kap 301).
+- `.xi_hb_down` ist nur der 3-h-Abkühlstempel der Wächter-Meldung, KEIN Zustand "Xiaomi weg" (wird nie gelöscht). Zustand immer frisch messen (Kap 303).
+- Teilwort-Schlüsselwörter täuschen: "log" steckt in "Logik", "dienst" in "Dienstag". Ganze Wörter prüfen. Zähler über alle Zeiten (missions/fail) machen Selbsttests dauerrot, Zeitfenster nehmen. Vergessene Arbeitsdateien (jack_mission_active.json vom 24.08.) erzeugten Wochen später Meldungen (Kap 303).
 
 ## 7. Wegweiser
 - Alle Kapitel: Tool `handbuch_index(suche)`. Ein Kapitel: `handbuch_kapitel('jack_xyz.py')`.
@@ -105,7 +112,7 @@ Ordner ARBEITSPLATZ/ auf der Honor. Rufe start_hier(wer="claude"|"grok"|"gemini"
 - Telemetrie laeuft: telemetry/telemetrie_JJJJ-MM.jsonl, alle 5 Min Temperaturen, Akku, RAM, Last, Top-Prozesse beider Handys (Kap. 245). Stop: Datei .telemetry_stop. Nie ins Repo.
 - Lade-Ton: Akku unter 15 Prozent und nicht am Laden -> Vibration + Ansage (JACK_TUNE_LADETON, Kap. 243).
 - Cloud-Nachtlauf: geplante Aufgabe 'JACK Nachtlauf' taeglich ca. 03:20 MESZ (Stufe A2) liest ARBEITSPLATZ/gemeinsam/auftraege.md, bearbeitet nur Auftraege mit Status OFFEN, schreibt gemeinsam/morgenbericht.md. Regeln: auftrag_regeln.md. Ohne neue OFFEN-Auftraege tut er nichts (Stand 09.-11.10.: leer).
-- Dienst jack_qwen (jack_qwen_client.py) laeuft ebenfalls, nicht loeschen.
+- Dienst jack_qwen (jack_qwen_client.py): seit 22.10.2026 auf Dimas Wunsch AUS (down-Datei). Nicht loeschen, nicht ohne Dima starten.
 - Token-Rotation steht aus (eine Token pro KI-Rolle). Token nie ausgeben.
 - Logs werden nie automatisch zu Fakten. Auswertungen nur als Vorschlag.
 - Grosse Datei lesen: read_file einzeln, nie parallel (vermischt Antworten), Feld 'path' der Antwort pruefen.

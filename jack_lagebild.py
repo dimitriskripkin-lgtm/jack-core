@@ -29,7 +29,8 @@ def _rish(cmd, timeout=12):
     und loescht sie sofort (Inhalt kann privat sein)."""
     f = '/sdcard/Download/.jack_rish_%d.txt' % os.getpid()
     lokal = '/storage/emulated/0/Download/' + os.path.basename(f)
-    rc, _ = _run(['rish', '-c', '( %s ) > %s 2>&1' % (cmd, f)], timeout)
+    t = '/data/local/tmp/' + os.path.basename(f)  # JACK_TUNE_RISHTMP (Kap 301): cmd-Dienste (am broadcast, appops) melden 'Failed transaction', wenn sie direkt nach /sdcard schreiben
+    rc, _ = _run(['rish', '-c', '( %s ) </dev/null > %s 2>&1; cat %s > %s; rm -f %s' % (cmd, t, t, f, t)], timeout)
     try:
         with open(lokal, errors='replace') as fh:
             out = fh.read()

@@ -29,7 +29,8 @@ passiert getan gemacht gekommen dazugekommen hinzugekommen lief laufen letzten l
 vorgestern heute kuerzlich neulich zuletzt seit woche diese dieser dieses wie wer wann warum wo welche welcher welches wieviel viel
 oft code jack modul module datei funktion zeit juengst juengste juengsten juengere juengeren ueber fuer auf aus nach vor bis als dass ein eine einen einem einer kurz mal denn dann wohl eigentlich bitte nur
 alles etwas irgendwas gerade vorhin diesen hier dort drin damit dabei dazu daran davon dafuer
-montag dienstag mittwoch donnerstag freitag samstag sonntag""".split())
+montag dienstag mittwoch donnerstag freitag samstag sonntag
+moin hallo servus geht gehts erzaehl erzaehle erzaehlen hast habt gesehen sehen siehst sage sagen zeig zeige zeigen kannst koennen weisst""".split())  # JACK_TUNE_AENDSTOP (24.10.2026): Gruss-/Fuellwoerter sind kein Thema
 FRAGEWORT = ("wie", "wer", "warum", "wann", "wo", "was", "wieso", "weshalb", "wieviel", "welche", "welcher", "wodurch", "womit", "war", "waren", "hatte", "hat", "ist", "sind", "gab", "kann", "kommt", "kommen")
 
 

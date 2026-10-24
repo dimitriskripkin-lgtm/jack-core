@@ -29,3 +29,5 @@ Datei: ~/jack/jack_lagebild.py (JACK_TUNE_LAGEBILD), nur lesen, kein Dienst, kei
 ## Nachtrag 21.10. 07:31: Tasker-Bruecke LIVE BEWIESEN
 - Import: Tasker-Hauptseite, ganz unten Reiter "Standardprojekt" lang druecken -> Project Importieren (Datei muss in /sdcard/Tasker/projects/ liegen). Tasker braucht Speicherzugriff (von Dima erteilt). Kein Anfaengermodus in 6.6.20.
 - Ausloesen (root): am broadcast -a net.dinglisch.android.tasker.ACTION_TASK -e task_name <NAME>. JACK_TEST_DATEI schrieb /sdcard/Tasker/JACK/outbox/datei_<ms>.json mit result DONE (Weg Tasker->JACK ueber Datei bewiesen).
+
+Nachtrag 22.10. 03:13 (JACK_TUNE_RISHTMP, Backup jack_lagebild.py.bak_20261022_rishtmp): am broadcast/appops ueber rish meldeten Failed transaction, weil der cmd-Dienst nicht direkt in die /sdcard-Datei schreiben darf. _rish schreibt jetzt erst nach /data/local/tmp/<name> (stdin </dev/null), kopiert nach /sdcard/Download/.jack_rish_<pid>.txt und loescht. Gemessen: Broadcast completed result=0, appops liest, Fahrmodus 5/5 stabil. Neustart jack_telegram + jack_waechter 03:13. Damit ist ACTION_TASK an Tasker auch auf dem Honor moeglich.

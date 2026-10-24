@@ -42,3 +42,6 @@ sobald die Kartierung fertig ist.
 
 **Offene Fragen für später:** Was ist `jack_selfsee.py` genau (EXPLAIN/DIAG-Logik, Overmind/Deadman)?
 Was ist `jack_learned_rules.md` vs. `reports/korrekturen.jsonl` — führt eins ins andere?
+
+**Nachtrag 24.10.2026 (Claude, Kap 303)**
+JACK_TUNE_GATE1WORT: DIAG-Technikwoerter nur noch als ganze Woerter (Logik ist kein Log, Dienstag kein Dienst). Gespraechsfragen landen nicht mehr im Reparatur-Modus.

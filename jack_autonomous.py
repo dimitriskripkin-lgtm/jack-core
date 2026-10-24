@@ -179,6 +179,21 @@ def _heartbeat_sv_check():
     try:
         import jack_heartbeat
         import subprocess
+        # JACK_TUNE_HEATRESUME (22.10.2026, Kap 300): jack_heat_protection.emergency_stop stoppt Autolearn
+        # ab 65 C ohne Rueckweg (Wiederbelebung sonst erst nach 22000 s). Marke + Honor unter WARN -> sofort start.
+        _hm = J + "/.heat_paused_autolearn"
+        if os.path.isfile(_hm):
+            try:
+                import jack_heat_protection as _hp
+                _t = float(_hp.get_temp("honor") or 0)
+                if 0 < _t < _hp.HONOR_TEMP_WARN:
+                    subprocess.run(["sv", "start", "/data/data/com.termux/files/usr/var/service/jack_autolearn"], capture_output=True, timeout=15)
+                    os.remove(_hm)
+                    notify("Autolearn nach Hitzepause wieder an (Honor %.0f C)." % _t, wichtig=False)
+            except Exception as _he:
+                try: os.remove(_hm)
+                except Exception: pass
+                notify("HEATRESUME Fehler: %s" % type(_he).__name__)
         # JACK_TUNE_PHASEA: max_age zentral aus jack_tune.json, Fallback = alter Festwert
         _defaults = [
             ("jack_telegram", 180),

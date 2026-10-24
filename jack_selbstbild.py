@@ -140,6 +140,7 @@ def build(root=JACK_HOME, lage=None, stamp=None, handbuch_fn=None, git_fn=None, 
         ('OK' if bt.get('ok') else 'UNBEKANNT') + ', Audiogeraet ' + _clean(bt.get('aktiv') or 'unbekannt', 32),
         f'XIAOMI: { _clean(xs, 18) }, Akku {_akku_wert(xi.get("akku"))}, Temp {_val(xi.get("temp_c"), "C")}, Benachrichtigungen {_val(count)} (nur Anzahl)',
         'Fahrmodus: ' + fahr,
+        'Befehle: /standort GPS, /akku, /status, /lage, /timer, /musik, /agent, /scan, /selftest, /sensor, /budget, /vorschlaege, /links, /befehle (alle)',  # JACK_TUNE_HEUTEBEFEHLE (24.10.)
         'Handbuch (5 neueste Kapitel):',
     ]
     rows += ['- ' + _clean(s, 120) for s in hb[:5]]

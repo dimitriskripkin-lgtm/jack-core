@@ -24,3 +24,6 @@ Stand 12.10.2026 14:30: Richter v6 (85e1715182c7e592, Eichsatz G 40/40; v6 = Beh
 Fragensaetze privat: Uebung 30 (38a23ede5e6d6c80), versiegelter Holdout 30 (9a6427d9242534ea), je 10 verfuegbar/teilweise/unbekannt.
 Basismessung c (gueltig): verfuegbar 0/9, teilweise 0/9, unbekannt 10/10; missed_available 16, honest_unknown 10, fabrication 2. JACK ist ehrlich, aber blind: Git-Wissen erreicht ihn nicht, NEU-Lane antwortet fest mit 10 h, Graph-Fakten werden themenfremd ausgegeben.
 Offen (Plan mit ChatGPT): Richter = deterministische Anker zuerst (Commit-Hashes/Titel, Zahlen, Zeitfenster), dann Flash T=0 zerlegt die finale Antwort in Claims; jeder SUPPORTED-Claim braucht eine Evidence-ID; Klassen SUPPORTED, MISREPRESENTED, FABRICATION, HONEST_UNKNOWN, MISSED_AVAILABLE_FACT, PARTIAL_OK, RETRIEVAL_ERROR, JUDGE_ERROR (nie automatisch PASS/FAIL). Vorher Kalibrierung auf 30-50 handgebauten Faellen. Fragensatz mit negativen Kontrollen und mehreren Formulierungen pro Tatsache. e2e wertet nur die final sichtbare Antwort.
+
+**Nachtrag 24.10.2026 (Claude, Kap 303)**
+Die Probe sperrt den Unterprozess jack_selbstbild.py. Ist reports/selbstbild.md aelter als 30 Min, antwortet TALK in der Probe ohne Selbstbild und damit schlechter als im echten Chat. Vor einer Messung jack_selbstbild.py einmal ausfuehren.

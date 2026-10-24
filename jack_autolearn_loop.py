@@ -356,7 +356,18 @@ def _proaktiv_check():
         xi_down_marker = B+"/.xi_hb_down"
         if _po.path.isfile(xi_down_marker):
             age = _pt.time() - float(open(xi_down_marker).read().strip())
-            _once("xiaomi_ssh_long_down", age > 600, f"Xiaomi SSH seit {int(age/60)} Min. nicht erreichbar")
+            # JACK_TUNE_XIDOWNSTALE (24.10.2026): .xi_hb_down ist nur der 3-h-Abkuehlstempel der Waechter-Meldung und wird bei
+            # Rueckkehr nie geloescht. Ohne Gegenprobe kam "seit X Min. nicht erreichbar", obwohl das Xiaomi laengst zurueck war.
+            if age <= 600:
+                _once("xiaomi_ssh_long_down", False, "")
+            else:
+                try:
+                    import jack_heartbeat as _jhb
+                    _xi_jetzt = bool(_jhb.is_xiaomi_alive())
+                except Exception:
+                    _xi_jetzt = False
+                if not _xi_jetzt:
+                    _once("xiaomi_ssh_long_down", True, f"Xiaomi SSH weiterhin nicht erreichbar (erste Meldung vor {int(age/60)} Min.)")
         else:
             _once("xiaomi_ssh_long_down", False, "")
     except Exception:

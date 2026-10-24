@@ -7,3 +7,6 @@ Gebaut von ChatGPT (Auftrag 20a + Nachtrag, 20/20 offline), Review und Live-Einb
 - Offen: Live-Bestaetigung (System-Laenge in reports/promptlog.jsonl muss unter 4000 bleiben; Antworten zu Kapiteln muessen den Inhaltszeilen entsprechen).
 
 - Nachtrag 08:38: Live gemessen system=3797 + ask_groq-Kern 376 = 4173 > 4000, Regelsatz am Ende waere abgeschnitten. Regel jetzt VOR dem Selbstbild, MAX_CHARS 850. Test Kapitel 295: richtige Antwort.
+
+**Nachtrag 24.10.2026 (Claude, Kap 303)**
+JACK_TUNE_HEUTEBEFEHLE: Befehlszeile im Selbstbild, damit JACK seine Befehle kennt (vorher verneinte er /standort).

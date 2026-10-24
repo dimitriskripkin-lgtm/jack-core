@@ -60,3 +60,6 @@ Gleich in beiden Armen (nicht von der Auskunft): V22 "Wie voll ist Dimas Tank?" 
 - misrepresented neu 0 (alt 3). Eine Erfindung in beiden Armen identisch (T27 "Welche Ware hatte Dima letzte Nacht geladen?" -> Akku-/Sensorstatus). Kommt nicht aus diesem Modul, sondern aus dem Sensorpfad (Wort "geladen"). Strenges Vorab-Kriterium "neu fabrication 0" damit formal verfehlt.
 - Restfehler: Zweite Teilfrage ohne Fragewort (", und lief alles stabil?") wird nicht abgetrennt; "stabil" wird Thema, keine Treffer.
 - Offen: Sensorpfad reagiert auf "geladen" auch bei Ladung/Ware (eigener Fehler, Router/Sensoren).
+
+**Nachtrag 24.10.2026 (Claude, Kap 303)**
+JACK_TUNE_AENDSTOP: Gruss- und Fuellwoerter (moin, geht, erzaehl, hast, gesehen ...) sind Stoppwoerter. Vorregistrierte Regel damit erweitert, alte Arena-Laeufe dieser Spur sind nicht direkt vergleichbar.

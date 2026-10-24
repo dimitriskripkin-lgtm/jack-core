@@ -131,6 +131,11 @@ def emergency_stop():
         _kill_exact("false")  # JACK_TUNE_NOPKILL2 autofixer-f gestrichen, kein Namens-Kill
         # Autolearn pausieren
         subprocess.run(["sv", "stop", "jack_autolearn"], capture_output=True, timeout=15)
+        try:  # JACK_TUNE_HEATRESUME (22.10., Kap 300): Marke, damit der Waechter nach Abkuehlung neu startet
+            import time as _ht
+            open("/data/data/com.termux/files/home/jack/.heat_paused_autolearn", "w").write(str(int(_ht.time())))
+        except Exception as _he:
+            print("HEATRESUME Marke fehlgeschlagen:", _he)
         # Lokales Ollama killen (falls doch gestartet)
         _kill_exact("ollama",9)
         _kill_exact("llama-server",9)

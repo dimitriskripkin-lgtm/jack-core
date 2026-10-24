@@ -22,6 +22,11 @@ def classify(text):
         return "UMFORMEN"
     if len(t.split())<=9 and any(k in t for k in ("das davor","die davor","davor meinte","vorletzte","vorherige antwort","vorherige frage","das vorherige")):  # JACK_TUNE_DAVOR
         return "DAVOR"
+    try:  # JACK_TUNE_HEUTE: erkannte Tages-/Schichtfragen vor Aenderungs-Auskunft
+        import jack_heute as _he
+        if _he.erkennt(text): return "NEU"
+    except Exception:
+        pass
     if any(k in t for k in ("aufgefallen","was ist neu","was hat sich veraendert","was hat sich getan","letzten stunden","letzte stunden")):
         return "NEU"
     try:  # JACK_TUNE_AENDERUNG 12.10.2026: Aenderungs-Auskunft (Zeitfenster + Thema), Kap 280
@@ -35,7 +40,9 @@ def classify(text):
     except Exception:
         pass
     fact=("ist zustand" in t) or t in ("status","/status") or ("kiste" in t and "steht" in t) or t.startswith("wie steht")
-    diag=any(k in t for k in ("essenz","schau dich","selbst sehen","eigenen code","eigener code","kompletten code","anomalie","nicht erreichbar","graceful","xiaomi offline","murks","guck dir")) or (any(k in t for k in ("analysier","fehler","verbesser","schau mal")) and any(k in t for k in ("code","modul","datei","log","dienst",".py")))  # JACK_TUNE_GATE1
+    _tw=t.split()  # JACK_TUNE_GATE1WORT (24.10.2026): ganze Woerter statt Teilwort ("log" steckte in "Logik" -> Gespraech landete im Reparatur-Modus)
+    _technik=any(w.startswith(("code","modul","datei")) or (w.startswith("dienst") and not w.startswith("dienstag")) or w in ("log","logs","logdatei","logdateien","logfile","py") for w in _tw)
+    diag=any(k in t for k in ("essenz","schau dich","selbst sehen","eigenen code","eigener code","kompletten code","anomalie","nicht erreichbar","graceful","xiaomi offline","murks","guck dir")) or (any(k in t for k in ("analysier","fehler","verbesser","schau mal")) and _technik)  # JACK_TUNE_GATE1
     expl=("overmind" in t or "deadman" in t) and not fact and not diag
     if fact: return "FACT"
     if expl: return "EXPLAIN"
@@ -282,7 +289,7 @@ def _tools(text):
         try:
             import jack_graph as _g
             c=_g.con()
-            rows=c.execute("SELECT typ,name,wert FROM nodes ORDER BY rowid DESC LIMIT 10").fetchall()
+            rows=c.execute("SELECT n.typ,n.name,n.wert FROM nodes n JOIN edges e ON e.b=n.id WHERE e.a='person:dima' AND n.typ NOT LIKE '%verworfen%' AND n.typ!='geraet' ORDER BY n.rowid DESC LIMIT 12").fetchall()  # JACK_TUNE_UEBERMICH (24.10.): nur Fakten an person:dima, ohne verworfene
             if not rows: return "Keine Knoten."
             lines=[]
             for typ,name,wert in rows:
@@ -566,6 +573,12 @@ def strip_lane(text):
     return t
 def neu_antwort(text):
     """JACK_TUNE_AENDERUNG: erst deterministische Aenderungs-Auskunft, sonst alter 10-Std-Report."""
+    try:
+        import jack_heute as _he
+        result = _he.antwort(text)
+        if result is not None: return result
+    except Exception:
+        pass
     try:
         import jack_aenderung as _ae
         a = _ae.antwort(text)

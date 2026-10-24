@@ -81,7 +81,25 @@ def _missions():
     pending = len(os.listdir(p)) if os.path.exists(p) else 0
     done = len(os.listdir(d)) if os.path.exists(d) else 0
     fail = len(os.listdir(f)) if os.path.exists(f) else 0
-    return fail<25, f"pending={pending} done={done} fail={fail}"
+    # JACK_TUNE_SELFTEST24H (24.10.2026): frueher zaehlte fail<25 alle Fehlschlaege seit Juli (932) -> jeden Morgen 85 %.
+    # Jetzt nur die letzten 24 h und nur echte Aktionen. Pruef-Acts (grep_count, sv_ok, hb_ok, file_exists, diag, fact,
+    # compile_ok, ro_*) melden ok=false, wenn die gepruefte Bedingung nicht zutrifft. Das ist kein Defekt.
+    import re as _re
+    _grenze = time.time() - 86400
+    _pruef = ("grep_count", "sv_ok", "hb_ok", "file_exists", "diag", "fact", "compile_ok", "ro_")
+    echt = 0
+    if os.path.exists(f):
+        for _n in os.listdir(f):
+            try:
+                if os.path.getmtime(os.path.join(f, _n)) < _grenze:
+                    continue
+            except OSError:
+                continue
+            _m = _re.match(r"m_(.+?)_\d{8}_\d{6}", _n)
+            if _m and _m.group(1).startswith(_pruef):
+                continue
+            echt += 1
+    return echt < 25, f"pending={pending} done={done} fail={fail} (24h echt: {echt})"
 
 # Config
 def _config():

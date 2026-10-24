@@ -2,7 +2,7 @@ MODULE_VERSION = 1
 import os,subprocess,time
 J="/data/data/com.termux/files/home/jack"
 ST=J+"/.quota_last"
-LIM=500*1024
+LIM=1024*1024  # JACK_TUNE_QUOTA1G (24.10.2026): 500 MB war dauerhaft ueberschritten (703 MB) und meldete bei jedem Xiaomi-Aussetzer ohne Aussage
 def maybe():
     now=time.time()
     try:
@@ -19,7 +19,7 @@ def maybe():
     if kb>LIM:
         try:
             import jack_telegram as tg
-            msg="JACK Speicher %s MB"%(kb//1024)
+            msg="JACK-Ordner %s MB, Warnschwelle %s MB"%(kb//1024, LIM//1024)  # JACK_TUNE_QUOTA1G
             if hasattr(tg,"send"): tg.send(msg)
             elif hasattr(tg,"send_message"): tg.send_message(msg)
         except Exception:

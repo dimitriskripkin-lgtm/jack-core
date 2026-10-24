@@ -206,7 +206,7 @@ def vollscan():
     dienste = check_dienste()
     if dienste:
         if dienste["alle_ok"]:
-            zeilen.append("Dienste: alle 3 laufen  # JACK_TUNE_MON3")
+            zeilen.append("Dienste: alle 3 laufen")  # JACK_TUNE_MON3 (Marker stand bis 24.10.2026 im Text und landete im Briefing)
         else:
             zeilen.append(f"Dienste: TOT -> {', '.join(dienste['tote'])}")
 

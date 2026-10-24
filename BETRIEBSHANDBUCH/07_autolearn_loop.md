@@ -40,3 +40,6 @@ falsch, aber ein Vereinheitlichungs-Kandidat für später.
 
 **Offene Fragen für später:** Was genau prüft `_d2_rate_ok()`/`_skill_cmd_allowed()` (ganz am
 Dateianfang, noch nicht gelesen)? Was ist `jack_memory_pruning.py` im Detail?
+
+**Nachtrag 24.10.2026 (Claude, Kap 303)**
+JACK_TUNE_XIDOWNSTALE: Xiaomi-Ausfallmeldung nur noch, wenn jack_heartbeat.is_xiaomi_alive() jetzt False ist. .xi_hb_down ist ein 3-h-Abkuehlstempel, kein Zustand.
