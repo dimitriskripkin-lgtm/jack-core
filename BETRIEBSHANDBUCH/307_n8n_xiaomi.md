@@ -28,3 +28,9 @@
 - Stopp-Fix: runit control/t beendet n8n gezielt (vorher traf sv down nur die proot-distro-Huelle!), Notbremse ebenso.
 - ACHTUNG: Testmodus -> Google-Freigabe laeuft laut n8n-Doku nach 7 Tagen ab (ca. 03.11.). Vorher App auf "In Produktion" stellen oder neu verbinden.
 - Offen: Zugang an Workflow haengen, Header-Secret, jack_n8n.py, Testtermin mit Dimas Knopf.
+
+**Nachtrag 27.10.2026 10:12 (Claude) Ablauf scharf + Telegram-Knopf**
+- Header-Auth-Zugang jackWebhookSec01 (X-JACK-Secret = webhook.secret) + Google-Zugang an Workflow 20oqHGmlPNa6Jawg gehaengt, per n8n publish:workflow veroeffentlicht, n8n neu gestartet. Webhook: POST http://127.0.0.1:5678/webhook/jack-kalender (nur Xiaomi lokal).
+- jack_n8n.py (Honor, JACK_TUNE_N8N, Entwurf ChatGPT, Timeouts 20/30 s) + Secret ~/jack/.n8n_webhook_secret (0600, gitignored). Tests ohne echten Termin: falscher Schluessel 403, ungueltiger Termin 500 (abgelehnt), ohne Knopf PermissionError.
+- jack_termin.py (JACK_TUNE_TERMIN): vorschlag() schickt Telegram-Knopf, confirm() nur Dimas Privatchat, Einmal-Code 10 Min, offene Freigaben logs/termin_pending.json (0600, gitignored). jack_telegram handle_callback: tm:-Knoepfe -> Thread. Backup logs/jack_telegram_vor_TERMIN_20261027.py.
+- n8n-Neustart dauert ~3,5 Min wenn per Kill (finish-Pause 120 s greift, weil rc != TERM-Signal).

@@ -336,6 +336,15 @@ def _check_memory_trigger(text, chat_id):
     return False
 
 def handle_callback(callback_data, callback_id, s1_chat_id=None, s1_from_id=None):
+    if str(callback_data).startswith('tm:'):  # JACK_TUNE_TERMIN: Kalender-Knopf (Kap 307)
+        import jack_termin as _tm
+        import threading as _threading
+        answer_callback(callback_id, 'Termin wird eingetragen ...')
+        def _go_tm():
+            reply = _tm.confirm(callback_data, s1_chat_id, s1_from_id, CHAT_ID)
+            if reply: send(reply)
+        _threading.Thread(target=_go_tm, daemon=True).start()
+        return None
     if str(callback_data).startswith('s1:'):
         import jack_spotify_s1 as _s1
         import threading as _threading

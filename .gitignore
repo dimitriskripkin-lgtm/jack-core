@@ -277,3 +277,6 @@ logs/.tg_m2_seen.json
 logs/crontab_vor_*
 logs/*_vor_S*_*.py
 logs/telegram_nur_log.jsonl
+.n8n_webhook_secret
+logs/termin_pending.json
+logs/*_vor_TERMIN_*.py
