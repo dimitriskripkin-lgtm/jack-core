@@ -19,3 +19,12 @@
 - Beobachtung: Ollama auf dem Xiaomi lief nach dem Neustart 07:4x nicht (pgrep), nicht angefasst.
 
 **Nachtrag 27.10.2026 08:32:** Kalender-Workflow (N1_workflow_kalender.json) per n8n import:workflow INAKTIV importiert, ID 20oqHGmlPNa6Jawg "JACK N1 - Kalender, Bestaetigung erforderlich". Offen: Header-Auth-Credential (X-JACK-Secret aus webhook.secret) zuordnen, Google-Calendar-Credential nur nach Dimas OAuth-Freigabe, jack_n8n.py (Honor-Client, ChatGPT) pruefen/installieren, E2E-Testtermin.
+
+**Nachtrag 27.10.2026 09:58 (Claude) Google-Kalender-Zugang VERBUNDEN**
+- Google-Cloud-Projekt "JACK n8n", Calendar API an, OAuth-Zustimmung Extern/Testmodus, Testnutzer Dima, Web-Client (Redirect http://localhost:5678/rest/oauth2-credential/callback). Erster Client verlor seinen Schluessel (Google zeigt ihn nur EINMAL), zweiter Client genutzt.
+- n8n-Zugang jackGoogleCal001 "Google Kalender (JACK)": clientId, clientSecret, oauthTokenData mit refresh_token (gemessen, ohne Werte).
+- n8n meldet sich als localhost (N8N_HOST=localhost, N8N_EDITOR_BASE_URL=http://localhost:5678), lauscht weiter nur 127.0.0.1. Tunnel Honor: ssh -N -L 5678:127.0.0.1:5678 xiaomi-jack.
+- Werkzeug jack_n8n_google.py (JACK_TUNE_N8NGOOGLE): fragt Client-ID/Schluessel ab (Schluessel unsichtbar), importiert per n8n-CLI, oeffnet Tunnel + Seite.
+- Stopp-Fix: runit control/t beendet n8n gezielt (vorher traf sv down nur die proot-distro-Huelle!), Notbremse ebenso.
+- ACHTUNG: Testmodus -> Google-Freigabe laeuft laut n8n-Doku nach 7 Tagen ab (ca. 03.11.). Vorher App auf "In Produktion" stellen oder neu verbinden.
+- Offen: Zugang an Workflow haengen, Header-Secret, jack_n8n.py, Testtermin mit Dimas Knopf.
