@@ -17,3 +17,5 @@
 - HONOR jack_xiaomi_notaus.py (JACK_TUNE_XINOTAUS): messen | n8n_aus | n8n_an, alles as_root=False. Claude darf n8n auf Dimas Zuruf selbst stoppen.
 - Skripte im Repo unter deploy/xiaomi_n8n/.
 - Beobachtung: Ollama auf dem Xiaomi lief nach dem Neustart 07:4x nicht (pgrep), nicht angefasst.
+
+**Nachtrag 27.10.2026 08:32:** Kalender-Workflow (N1_workflow_kalender.json) per n8n import:workflow INAKTIV importiert, ID 20oqHGmlPNa6Jawg "JACK N1 - Kalender, Bestaetigung erforderlich". Offen: Header-Auth-Credential (X-JACK-Secret aus webhook.secret) zuordnen, Google-Calendar-Credential nur nach Dimas OAuth-Freigabe, jack_n8n.py (Honor-Client, ChatGPT) pruefen/installieren, E2E-Testtermin.

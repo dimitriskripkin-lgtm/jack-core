@@ -1,0 +1,120 @@
+{
+  "name": "JACK N1 – Kalender, Bestätigung erforderlich",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "jack-kalender",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "jack-n1-webhook",
+      "name": "JACK Webhook Header Auth konfigurieren",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        260,
+        300
+      ],
+      "webhookId": "jack-kalender"
+    },
+    {
+      "parameters": {
+        "jsCode": "const x=$input.first().json.body||{}; const allow=['title','start','end','timezone','request_id','description']; if(Object.keys(x).some(k=>!allow.includes(k)))throw Error('extra_fields'); if(typeof x.title!=='string'||x.title.trim().length<3||x.title.length>160)throw Error('title'); const ts=/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:Z|[+-]\\d{2}:\\d{2})$/; if(typeof x.start!=='string'||typeof x.end!=='string'||!ts.test(x.start)||!ts.test(x.end)||!Number.isFinite(Date.parse(x.start))||!Number.isFinite(Date.parse(x.end))||Date.parse(x.end)<=Date.parse(x.start))throw Error('time'); if(x.timezone!=='Europe/Berlin')throw Error('timezone'); if(typeof x.request_id!=='string'||!/^[a-f0-9-]{16,64}$/i.test(x.request_id))throw Error('request_id'); if(x.description!==undefined&&(typeof x.description!=='string'||x.description.length>300))throw Error('description'); return [{json:{title:x.title.trim(),start:x.start,end:x.end,timezone:x.timezone,request_id:x.request_id,description:x.description||''}}];"
+      },
+      "id": "jack-n1-validation",
+      "name": "Termin validieren",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "primary"
+        },
+        "start": "={{ $json.start }}",
+        "end": "={{ $json.end }}",
+        "additionalFields": {
+          "summary": "={{ $json.title }}",
+          "description": "={{ $json.description + ' | JACK request_id=' + $json.request_id }}"
+        }
+      },
+      "id": "jack-n1-calendar",
+      "name": "Google Calendar – Create Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        760,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: Boolean($json.id), event_id: $json.id || null}) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "jack-n1-response",
+      "name": "Kalender bestaetigt",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1000,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "JACK Webhook Header Auth konfigurieren": {
+      "main": [
+        [
+          {
+            "node": "Termin validieren",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Termin validieren": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar – Create Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar – Create Event": {
+      "main": [
+        [
+          {
+            "node": "Kalender bestaetigt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Berlin"
+  },
+  "active": false,
+  "pinData": {},
+  "tags": []
+}
