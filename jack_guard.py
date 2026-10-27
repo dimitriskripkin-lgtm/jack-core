@@ -41,7 +41,7 @@ def notify(t):
         # RAM-Block = kritisch; Lock-Konflikt = Routine, aber dokumentiert.
         kritisch = "MB frei" in str(t) or "abgelehnt: nur " in str(t)
         _res = send("[JACK Guard] " + str(t), wichtig=kritisch, quelle="guard")
-        if _res.get('status') not in ('GESENDET', 'GEPUFFERT'):
+        if _res.get('status') not in ('GESENDET', 'GEPUFFERT', 'NUR_LOG'):
             _log("GUARD-NOTIFY-FEHLER", _res.get('grund', 'unknown'))
     except Exception as e:
         _log("GUARD-NOTIFY-FEHLER", type(e).__name__)

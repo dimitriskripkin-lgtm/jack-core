@@ -18,3 +18,6 @@ A-010 geklaert: jack_autolearn ist per _d2_rate_ok() absichtlich auf ca. 6 h beg
 ## Offen
 jack_autolearn: nur noch der Log-Prozess startet staendig neu (Ursache unbekannt). seit 14:32 keine Zyklen ins Log (Auftrag A-010, Ursache unbekannt, Stillstand lag vor dem Neustart).
 Umbau der Stellen ausserhalb von jack_xiaomi.py. Waisen (imp 0) zuerst ins Attic statt umbauen, vorher mit Dima klaeren. Ein echter Test des Schalters (Xiaomi aus) steht aus.
+
+**Nachtrag 26.10.2026 (Claude, K1b-Nachzug von ChatGPT)**
+JACK_TUNE_XIPATHSAFE: read_file quotet den Pfad (cat -- + shlex.quote). JACK_TUNE_XIWRITEGATE: write_file laeuft ueber run_shell (Breaker, IP-Wechsel) mit stdin (run_shell/_ssh_ein input_data optional). Live: normal, Leerzeichen und Semikolon im Namen geschrieben und gelesen, kein Befehl ausgefuehrt. Quoting ist kein Zugriffsschutz, Aufrufer pruefen Pfade.

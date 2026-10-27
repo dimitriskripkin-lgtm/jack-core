@@ -33,7 +33,7 @@ def notify(t, wichtig=True):  # JACK_TUNE_TGSEND20B
     try:
         from jack_tg_send import send
         _res = send("[JACK Waechter] " + str(t), wichtig=wichtig, quelle="autonomous")
-        if _res.get("status") not in ("GESENDET", "GEPUFFERT"):
+        if _res.get("status") not in ("GESENDET", "GEPUFFERT", "NUR_LOG"):
             raise RuntimeError(_res.get("grund", "TGSEND_FEHLER"))
     except Exception as e:
         try:

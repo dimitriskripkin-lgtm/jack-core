@@ -47,7 +47,7 @@ def add_to_window(user_msg, jack_reply):
         os.replace(tmp, wp)
     except Exception:
         pass  # JACK_TUNE_WIN1
-def _scrub_out(s):
+def _scrub_baseline(s):  # JACK_TUNE_S2_WAHRHEIT: Originalfilter bleibt erhalten
     s=str(s or "")
     # JACK_TUNE_NOOLLAMA_CLAIM: Ollama ist auf dem Honor hart verboten - jede Behauptung,
     # JACK koenne/wuerde Ollama/lokale Modelle nutzen, ist eine Faehigkeits-Halluzination.
@@ -80,6 +80,15 @@ def _scrub_out(s):
     if keep and sum(len(x) for x in keep)>=40:
         return " ".join(keep)
     return "Das steht in keinem Log. Ich rate nicht."
+def _scrub_out(s):
+    """S2: LLM-Ausgaben duerfen keine ausgefuehrten Aktionen erfinden (JACK_TUNE_TATENWAHRHEIT)."""
+    cleaned = _scrub_baseline(s)
+    try:
+        import jack_tatenwahrheit as _truth
+        return _truth.sanitize(cleaned)  # TALK hat KEINEN vertrauenswuerdigen Aktionsbeleg
+    except Exception:
+        return cleaned  # Claude: Filterfehler darf TALK nicht stummschalten
+
 def get_window_ctx():
     global _ROLLING_WINDOW
     if not _ROLLING_WINDOW:
@@ -268,6 +277,29 @@ def _status_als_text():
     return chr(10).join(z)
 
 
+def _talk_provider_ersatz(system, user_msg, prompt, groq):
+    """JACK_TUNE_TALKERSATZ: Groq erst, danach EIN budgetgepruefter Gemini-Versuch."""
+    fail = "Mein Gespraechsmodell ist gerade nicht verfuegbar. Ich erfinde keinen Ersatz."
+    try:
+        answer = _scrub_out(groq.ask_groq(system, user_msg, timeout=7))
+    except Exception:
+        answer = ""
+    if answer and not str(answer).startswith("[Groq"):
+        return answer, True
+    try:
+        import jack_gemini_bridge as _gm
+        reply = _gm.ask_gemini(
+            user_msg, model="gemini-2.5-flash-lite",
+            system_override=system, timeout=6, max_attempts=1)
+        if reply and not _gm.ist_fehlertext(reply) and not str(reply).startswith(("[Gemini Fehler]", "[Groq")):
+            clean = _scrub_out(reply)
+            if clean:
+                return "(Ersatzstimme) " + clean, True
+    except Exception:
+        pass
+    return fail, False
+
+
 def _talk_to_gemini_impl(prompt):
     try:
         _persona_cached = open(os.path.expanduser('~/jack/jack_persona_kern.md'),encoding='utf-8').read().strip()
@@ -406,14 +438,13 @@ def _talk_to_gemini_impl(prompt):
                 open("/data/data/com.termux/files/home/jack/reports/promptlog.jsonl","a").write(_plj.dumps(_pl,ensure_ascii=False)+"\n")
             except Exception:
                 pass  # JACK_TUNE_PROMPTLOG
-            _w=get_window_ctx(); _v1='JACK_TUNE_VERSATZ1'; _ws=((_w or '')[-(1200-len(prompt)):] if len(prompt)<1200 else ''); _um=(('Frueherer Verlauf (nur Kontext, NICHT beantworten, bei neuem Thema ignorieren):\n'+_ws+'\n\nDIMA JETZT (nur DIESE Nachricht beantworten, nichts Altes wiederholen): '+prompt) if _ws and '(keiner)' not in _ws else prompt)[-1500:]; _r=_scrub_out(_gq.ask_groq(system, _um))  # JACK_TUNE_WIN1 JACK_TUNE_VERSATZ2: ask_groq kappt user_msg vorne auf 1500, aktuelle Frage muss drin bleiben (Kap 294)
-            if _r.startswith("[Groq Limit]") or _r.startswith("[Groq Fehler]"):
-                return talk_to_ollama(prompt, [])  # JACK_TUNE_G2O
-            try: auto_save_to_memory(prompt, _r)
-            except Exception: pass
+            _w=get_window_ctx(); _v1='JACK_TUNE_VERSATZ1'; _ws=((_w or '')[-(1200-len(prompt)):] if len(prompt)<1200 else ''); _um=(('Frueherer Verlauf (nur Kontext, NICHT beantworten, bei neuem Thema ignorieren):\n'+_ws+'\n\nDIMA JETZT (nur DIESE Nachricht beantworten, nichts Altes wiederholen): '+prompt) if _ws and '(keiner)' not in _ws else prompt)[-1500:]; _r, _ist_antwort = _talk_provider_ersatz(system, _um, prompt, _gq)  # JACK_TUNE_WIN1 JACK_TUNE_VERSATZ2 JACK_TUNE_TALKERSATZ
+            if _ist_antwort:
+                try: auto_save_to_memory(prompt, _r)
+                except Exception: pass
             return _r
         except Exception:
-            return talk_to_ollama(prompt, [])  # Groq fail → direkt Ollama, nie Gemini für TALK
+            return "Mein Gespraechsmodell ist gerade nicht verfuegbar. Ich erfinde keinen Ersatz."
     import jack_gemini_bridge
     try:
         mv = get_embedding(prompt)

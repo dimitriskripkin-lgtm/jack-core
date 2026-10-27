@@ -266,3 +266,14 @@ logs/.fahrt-*.tmp
 .fahrmodus
 logs/link_inbox.jsonl
 logs/handy_timer.jsonl
+
+.spotify_token
+logs/spotify_backup/
+logs/spotify_verlauf.jsonl
+logs/spotify_snapshot/
+logs/spotify_tag.log
+logs/.klingel_state*.json
+logs/.tg_m2_seen.json
+logs/crontab_vor_*
+logs/*_vor_S*_*.py
+logs/telegram_nur_log.jsonl

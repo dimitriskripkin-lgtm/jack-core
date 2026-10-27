@@ -42,7 +42,7 @@ def _notify(msg):
         kritisch = str(msg).startswith(("Akku kritisch:", "Temperatur kritisch:",
                                        "RAM knapp:", "Dienste tot:"))
         _res = send("[Monitor] " + str(msg), wichtig=kritisch, quelle="monitor")
-        if _res.get('status') not in ('GESENDET', 'GEPUFFERT'):
+        if _res.get('status') not in ('GESENDET', 'GEPUFFERT', 'NUR_LOG'):
             raise RuntimeError(_res.get('grund', 'TGSEND_FEHLER'))
     except Exception as e:
         try:
@@ -129,10 +129,10 @@ def event_check():
         war_niedrig = state.get("akku_niedrig", False)
         ist_niedrig = akku["prozent"] <= SCHWELLEN["akku_min"]
         if ist_niedrig and not war_niedrig:
-            meldungen.append(f"Akku kritisch: {akku['prozent']}% ({akku['status']})")
+            pass  # JACK_TUNE_AKKUEINER (24.10.): Akku-Warnungen kommen nur noch vom Waechter (Ladealarm Kap 243), sonst doppelt
             _log("MONITOR-AKKU-WARN", str(akku["prozent"]) + "%")
         if not ist_niedrig and war_niedrig:
-            meldungen.append(f"Akku erholt: {akku['prozent']}%")
+            pass  # JACK_TUNE_AKKUEINER
         state["akku_niedrig"] = ist_niedrig
         state["akku_prozent"] = akku["prozent"]
 

@@ -5,9 +5,11 @@ import subprocess, time
 SSH = ['ssh', 'xiaomi-jack']
 
 def _su(cmd, timeout=10):
+    """JACK_TUNE_XIGATE_UNLOCK: Root-Aufruf nur ueber Schutz-Gateway."""
     try:
-        r = subprocess.run(SSH + ['su', '-c', cmd], capture_output=True, text=True, timeout=timeout)
-        return (r.stdout or '') + (r.stderr or '')
+        import jack_xiaomi as _jx
+        r = _jx.run_shell(cmd, as_root=True, timeout=timeout)
+        return (r.get('stdout') or '') + (r.get('stderr') or '')
     except Exception:
         return ''
 

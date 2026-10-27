@@ -9,3 +9,5 @@ Gelesen 03.10.2026, Grok. Kein Umbau.
 **Freigabe:** Kein eigenes Gate in den gelesenen Zeilen. run_plan fuehrt die Schritte der Reihe nach. Wer den Plan baut, liegt ausserhalb.
 
 **Offen:** Ob Telegram den PLAN-Block noch an run_plan gibt. Nicht in dieser Runde am Dispatcher nachgelesen.
+
+**Nachtrag 27.10.2026:** Appstart prueft jack_app_sperre (K1c-P1), siehe Kap 296.

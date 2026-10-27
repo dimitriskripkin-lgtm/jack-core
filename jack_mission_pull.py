@@ -5,7 +5,32 @@ H="/data/data/com.termux/files/home"
 J=H+"/jack/missions"
 R=H+"/jack-missions"
 MAX=10
-OK=set("shadow_report talk_contract fact diag no_chrome_src ui_none classify_is compile_ok explain_ok sv_ok mtime_fresh json_valid no_secret grep_count line_check hb_ok".split())
+OK=set("talk_contract fact diag no_chrome_src classify_is compile_ok explain_ok sv_ok mtime_fresh json_valid no_secret grep_count line_check hb_ok".split())  # JACK_TUNE_PULLSAFE
+def pull_allowed(d):
+    """Nur strikt lesende Git-Missionen; Runner prueft erneut."""
+    try:
+        import jack_acts
+        if not isinstance(d,dict): return False
+        act=d.get("act")
+        return (d.get("src")=="git_pull" and d.get("staged") is True
+                and d.get("expect","PASS")=="PASS"
+                and act in OK and act in jack_acts.ACTS
+                and jack_acts.ACTS[act].get("freigabe") is False)
+    except Exception:
+        return False
+
+def _reject(name, reason):
+    """Abgelehnte Git-Dateien als nachvollziehbaren, sicheren Fehlerfall protokollieren."""
+    import secrets
+    failed=J+"/fail"
+    os.makedirs(failed,exist_ok=True)
+    mid="git_reject_"+str(int(time.time()))+"_"+secrets.token_hex(5)
+    p=os.path.join(failed,mid+".json")
+    with open(p+".tmp","w",encoding="utf-8") as f:
+        json.dump({"id":mid,"src":"git_pull","act":"pull_rejected",
+                   "source_filename":name,"ok":False,
+                   "note":"PULL_GESPERRT: "+str(reason)[:120]},f,ensure_ascii=False)
+    os.replace(p+".tmp",p)
 def git(a,t=30):
     return subprocess.run(["git","-C",R]+a,capture_output=True,text=True,timeout=t)
 def cnt(k):
@@ -30,12 +55,25 @@ def pull():
     for name in sorted(os.listdir(src)):
         if n>=MAX: break
         if not name.endswith(".json"): continue
-        if any(os.path.exists(x) for x in (J+"/missions/pending/"+name,J+"/logs/"+name,J+"/done/"+name,J+"/fail/"+name,J+"/archive/"+name+".fail")): continue
-        try: d=json.load(open(src+"/"+name,encoding="utf-8"))
-        except Exception: continue
-        if str(d.get("act") or "") not in OK: continue
-        if not d.get("staged"): continue
-        shutil.copy2(src+"/"+name,J+"/pending/"+name); n+=1
+        if any(os.path.exists(x) for x in (J+"/pending/"+name,J+"/logs/"+name,J+"/done/"+name,J+"/fail/"+name,J+"/archive/"+name+".fail")): continue
+        if os.path.islink(os.path.join(src,name)):
+            _reject(name,"Symlink gesperrt")
+            continue
+        try:
+            with open(os.path.join(src,name),encoding="utf-8") as _f:
+                d=json.load(_f)
+        except Exception:
+            _reject(name,"JSON ungueltig")
+            continue
+        if not pull_allowed(d):
+            _reject(name,"Act/Quelle/Stufe/Freigabe nicht erlaubt")
+            continue
+        target=os.path.join(J,"pending",name)
+        tmp=target+".gitpull.tmp"
+        with open(tmp,"w",encoding="utf-8") as f:
+            json.dump(d,f,ensure_ascii=False,indent=2)
+        os.replace(tmp,target)
+        n+=1
     return "PULLED "+str(n)
 def push_status():
     st={"ts":time.strftime("%Y-%m-%dT%H:%M:%S"),"pending":cnt("pending"),"done":cnt("done"),"fail":cnt("fail")}

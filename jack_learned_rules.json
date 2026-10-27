@@ -4,13 +4,13 @@
     "fehler": "Cortex Loop-Error: Command ssh , -o , BatchMode=yes , -o , ConnectTimeout=8 , xi",
     "regel": "SSH-Befehle NUR mit Timeout und via su -c. Kein /tmp nutzen.",
     "anzahl": 1,
-    "ts": "2026-10-24T13:53:27.761713"
+    "ts": "2026-10-27T06:22:06.401985"
   },
   {
     "quelle": "jack_cortex/CORTEX_ERR",
     "fehler": "Cortex SSH-Timeout ( 1)",
     "regel": "SSH-Befehle NUR mit Timeout und via su -c. Kein /tmp nutzen.",
     "anzahl": 1,
-    "ts": "2026-10-24T13:53:27.761959"
+    "ts": "2026-10-27T06:22:06.402059"
   }
 ]

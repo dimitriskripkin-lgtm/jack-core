@@ -116,3 +116,6 @@ expect=FAIL invertiert ok und ist nur noch fuer lesende Test-Acts erlaubt (freig
 
 ## Nachtrag 19.10.2026 (JACK_TUNE_COMPILE_NOWRITE)
 compile_ok prueft nur noch per compile() im Runner, schreibt kein __pycache__ mehr (Diff ChatGPT). Live: gueltig OK, Syntaxfehler FAIL mit Zeile, fehlende Datei FAIL, kein __pycache__ entstanden. Einbau mit Auto-Rollback, Backup jack_mission_runner.py.bak_20261019b.
+
+**Nachtrag 26.10.2026 (Claude, K1afix)**
+JACK_TUNE_PULLSAFE in run_act: src git_pull wird bei Ausfuehrung erneut geprueft. Wirkt erst nach jack_missions-Neustart (nur Dima).

@@ -115,14 +115,14 @@ def _quick_ip():
         return ""
 
 
-def _ssh_ein(ip, full_cmd, timeout):
+def _ssh_ein(ip, full_cmd, timeout, input_data=None):  # JACK_TUNE_XIWRITEGATE: optional stdin
     return subprocess.run(
         ["ssh"] + SSH_OPTS + ["-p", str(XIAOMI_SSH_PORT), f"root@{ip}", full_cmd],
-        capture_output=True, text=True, timeout=timeout
+        input=input_data, capture_output=True, text=True, timeout=timeout
     )
 
 
-def run_shell(cmd, as_root=True, timeout=15):
+def run_shell(cmd, as_root=True, timeout=15, input_data=None):
     import time as _tm2
     if _tm2.time() < _BR["until"]:
         return {"success": False, "stdout": "", "stderr": "Xiaomi weg (Schutz 30 s)", "returncode": -2}
@@ -141,11 +141,11 @@ def run_shell(cmd, as_root=True, timeout=15):
         full_cmd = cmd
 
     try:
-        result = _ssh_ein(ip, full_cmd, timeout)
+        result = _ssh_ein(ip, full_cmd, timeout, input_data=input_data)
         if result.returncode == 255:
             _neu = _get_xiaomi_ip()
             if _neu and _neu != ip:
-                result = _ssh_ein(_neu, full_cmd, timeout)
+                result = _ssh_ein(_neu, full_cmd, timeout, input_data=input_data)
         _br_note(result.returncode != 255)
         return {
             "success": result.returncode == 0,
@@ -161,19 +161,23 @@ def run_shell(cmd, as_root=True, timeout=15):
 
 
 def read_file(path):
-    result = run_shell(f"cat {path}")
+    """JACK_TUNE_XIPATHSAFE: Dateipfad nie ungequotet in die Remote-Shell."""
+    import shlex
+    try:
+        remote = "cat -- " + shlex.quote(os.fspath(path))
+    except (TypeError, ValueError):
+        return None
+    result = run_shell(remote, as_root=True)
     return result["stdout"] if result["success"] else None
 
 
 def write_file(path, content):
-    ip = _get_xiaomi_ip()
+    """JACK_TUNE_XIWRITEGATE: gleicher SSH/IP/Breaker-Pfad wie run_shell, stdin bleibt erhalten."""
+    import shlex
     try:
-        result = subprocess.run(
-            ["ssh"] + SSH_OPTS + ["-p", str(XIAOMI_SSH_PORT), f"root@{ip}",
-             "su -c " + __import__("shlex").quote("cat > " + __import__("shlex").quote(path))],  # JACK_TUNE_XWRITEQUOTE (17.10.2026): Pfad quoten
-            input=content, capture_output=True, text=True, timeout=15
-        )
-        return result.returncode == 0
+        cmd = "cat > " + shlex.quote(os.fspath(path))
+        result = run_shell(cmd, as_root=True, timeout=15, input_data=content)
+        return result.get("success", False) is True
     except Exception:
         return False
 

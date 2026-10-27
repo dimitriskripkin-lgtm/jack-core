@@ -27,6 +27,11 @@ def classify(text):
         if _he.erkennt(text): return "NEU"
     except Exception:
         pass
+    try:  # JACK_TUNE_BEFEHLE (24.10.): "Kannst du X?" / "Welche Befehle?" aus fester Liste
+        import jack_befehle as _jb
+        if _jb.erkennt(text): return "NEU"
+    except Exception:
+        pass
     if any(k in t for k in ("aufgefallen","was ist neu","was hat sich veraendert","was hat sich getan","letzten stunden","letzte stunden")):
         return "NEU"
     try:  # JACK_TUNE_AENDERUNG 12.10.2026: Aenderungs-Auskunft (Zeitfenster + Thema), Kap 280
@@ -42,9 +47,16 @@ def classify(text):
     fact=("ist zustand" in t) or t in ("status","/status") or ("kiste" in t and "steht" in t) or t.startswith("wie steht")
     _tw=t.split()  # JACK_TUNE_GATE1WORT (24.10.2026): ganze Woerter statt Teilwort ("log" steckte in "Logik" -> Gespraech landete im Reparatur-Modus)
     _technik=any(w.startswith(("code","modul","datei")) or (w.startswith("dienst") and not w.startswith("dienstag")) or w in ("log","logs","logdatei","logdateien","logfile","py") for w in _tw)
-    diag=any(k in t for k in ("essenz","schau dich","selbst sehen","eigenen code","eigener code","kompletten code","anomalie","nicht erreichbar","graceful","xiaomi offline","murks","guck dir")) or (any(k in t for k in ("analysier","fehler","verbesser","schau mal")) and _technik)  # JACK_TUNE_GATE1
-    expl=("overmind" in t or "deadman" in t) and not fact and not diag
+    # JACK_TUNE_TALKVORDIAG: Meinungsfrage ist kein Auftrag, Code zu pruefen.
+    _meinung = bool(re.search(r"\b(?:gedanken|denkst|meinung|findest|gefaellt|magst|sicht|haeltst|haltung)\b", t))
+    _pruefbitte = bool(re.search(r"\b(?:pruef\w*|ueberpruef\w*|analysier\w*|untersuch\w*|debugg\w*|check\w*|test(?:e|en)|kontrollier\w*|reparier\w*|beheb\w*)\b", t))
+    _fehler_code = bool(re.search(r"\bfehler\b.{0,24}\bcode\b", t))
+    _laeuft_code = bool(re.search(r"\b(?:laeuft|funktioniert)\b.{0,24}\bcode\b", t))
+    _echte_diag = _pruefbitte or _fehler_code or _laeuft_code
     if fact: return "FACT"
+    if _meinung and not _echte_diag: return "TALK"
+    diag=any(k in t for k in ("essenz","schau dich","selbst sehen","eigenen code","eigener code","kompletten code","anomalie","nicht erreichbar","graceful","xiaomi offline","murks","guck dir")) or (any(k in t for k in ("analysier","fehler","verbesser","schau mal")) and _technik) or (_echte_diag and _technik)  # JACK_TUNE_GATE1
+    expl=("overmind" in t or "deadman" in t) and not fact and not diag
     if expl: return "EXPLAIN"
     if diag: return "DIAG"
     return "TALK"
@@ -576,6 +588,12 @@ def neu_antwort(text):
     try:
         import jack_heute as _he
         result = _he.antwort(text)
+        if result is not None: return result
+    except Exception:
+        pass
+    try:  # JACK_TUNE_BEFEHLE
+        import jack_befehle as _jb
+        result = _jb.antwort(text)
         if result is not None: return result
     except Exception:
         pass

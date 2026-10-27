@@ -45,3 +45,12 @@ Ergebnis aus `jack_health_now.json` (eigenes Kapitel offen).
 **Offene Fragen für später:** Genauer Verzweigungspunkt Groq-vs-Gemini. Was prüft
 `JACK_TUNE_NOFAKEACTION` genau (Zeile 351)? Wird `talk_to_ollama()` von irgendwo noch aufgerufen?
 Was ist `jack_health.py`/`jack_health_now.json` im Detail?
+
+**Nachtrag 26.10.2026 (Claude, K3-P1 von ChatGPT)**
+JACK_TUNE_TALKEHRLICH: Groq-Fehler/Limit/leer -> ehrliche Meldung statt talk_to_ollama (Ollama ist gesperrt, kam nur "Ollama aus (Lock)."). Gemini als TALK-Ersatz ist Dimas Entscheidung, offen.
+
+**Nachtrag 26.10.2026 (Claude, K3b von ChatGPT)**
+JACK_TUNE_TALKERSATZ: _talk_provider_ersatz: Groq 7 s, dann EIN Gemini-Flash-Lite-Versuch 6 s ueber ask_gemini (Budget gebucht), Antwort mit Praefix (Ersatzstimme). Beide tot -> ehrliche Meldung. Memory nur bei echter Antwort. Dima-Go 07:40. Claude-Aenderung: Groq-Timeout 7 statt 4 s.
+
+**Nachtrag 27.10.2026 06:29 (Claude, S2 von ChatGPT) JACK_TUNE_S2_WAHRHEIT / TATENWAHRHEIT**
+_scrub_out = _scrub_baseline (alte Filter unveraendert) + jack_tatenwahrheit.sanitize(): unbelegte aktuelle Erfolgssaetze (ich/wir/jack habe|hab ... gestartet/gespeichert/geschlossen/gesendet/geprueft, Passiv nur mit jetzt/gerade/fuer dich/Haken oder JACK-Objekt wie Song/App/Datei) werden durch "Das habe ich hier nicht ausgefuehrt ..." ersetzt. Negation, Frage, Hypothese (wenn/falls), Vergangenheit/Jahreszahl bleiben. Filterfehler -> Originaltext (nicht stumm). Feldfaelle 26./27.10. alle drei abgefangen; Testsatz 24 Faelle 1 bewusster Grenzfall. Claude-Aenderungen ggue. ChatGPT: Satztrennung an ; und ", wenn", hab/habs, Passiv-Einschraenkung (Fakten wie "1945 beendet" bleiben). Wirkt in jack_telegram (neu gestartet); jack_waechter (jack_autonomous) laedt jack_talk erst beim naechsten Neustart. Backup logs/jack_talk_vor_S2_20261027.py. Offen: Wiederholung "dasselbe" mit Beleg (jack_wiederholung, nicht eingebaut), Xiaomi-Spotify-Regex nur bei "auf dem Xiaomi".

@@ -51,3 +51,7 @@ Probe e2e nach Einbau (frisches Selbstbild): heute erledigt -> nur Belegtes (130
 
 
 Graph-Muell 24.10. 14:06 (Dima Go): fakt:decke, fakt:ist_wei, fakt:dir_ein samt Kanten geloescht, Backup graph_backups/jack_graph_vor_muell_20261024.db. JACK_TUNE_UEBERMICH: Ueber-mich-Antwort nimmt nur Fakten mit Kante von person:dima, ohne verworfene und Geraete (vorher die 10 neuesten Knoten jeder Art).
+
+## Schritte 1-3 nach Dimas Go 24.10. 14:11
+Push af06345e (40 Dateien, Geheimnis-Scan sauber, logs/handy_timer.jsonl neu in .gitignore). Neu jack_befehle.py (JACK_TUNE_BEFEHLE): Kannst du X / Welche Befehle aus fester Liste, Router ueber Spur NEU, Selbstbild nur noch Verweis Befehle: alle per /befehle. Tests 14/14 offline.
+JACK_TUNE_AKKUEINER (jack_monitor.event_check): Akku kritisch/erholt nicht mehr gemeldet, Akku-Warnungen nur noch vom Waechter (Ladealarm). Heute waren es 6 Akku-Meldungen aus zwei Modulen.

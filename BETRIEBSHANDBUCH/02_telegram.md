@@ -80,3 +80,5 @@ genau tut und ob er Vorrang vor den oben gelisteten Slash-Befehlen hat, noch nic
 Kapitel zu `jack_cmd_handler.py` nötig. Außerdem aufgelöst: `/vision <frage>` ruft tatsächlich den
 vollen autonomen UI-Agenten auf (`jack_android.run()`, Kapitel 6) — die Fähigkeit hinter den
 Stub-Befehlen `/agent`/`/auto` existiert also, nur unter anderem Namen erreichbar.
+
+**Nachtrag 27.10.2026:** handle(text, s1_chat_id, s1_from_id) faengt Spotify-S1-Befehle als ALLERERSTES ab (vor /find, Router, alten Xiaomi-Spotify-Regex). handle_callback leitet s1:-Knoepfe an jack_spotify_s1.confirm (Thread). Siehe Kap 306.

@@ -14,3 +14,6 @@ Daraus folgt eine harte Regel fuer UI-Steuerung, Tasker und Benachrichtigungen:
 
 ## Nachtrag 21.10. 08:52: Magisk-Toast-Flut
 - Jeder su-Aufruf (JACK/Claude, UID 10069 Termux) erzeugte einen Toast "Superuser-Rechte gewaehrt", hunderte in der Warteschlange. Einstellung muss in der AKTIVEN versteckten Magisk-App (Mamagisk) gesetzt werden: su_notification=0 (Keine) in deren Prefs. Zusaetzlich policies.notification=0 fuer 10069 und 10390. Danach keine neuen Toasts (gemessen).
+
+**Nachtrag 27.10.2026 (Claude, K1c von ChatGPT) JACK_TUNE_APPSPERRE**
+Neu jack_app_sperre.py: gesperrt(paket) liest ~/jack/.sperrliste_apps (24 Eintraege), fail-closed bei fehlender/leerer/kaputter Liste und ungueltigem Paketnamen. Erzwungen in jack_planner.step_open_app (P1) und jack_ui_agent.run_agent-Wrapper vor Unlock (P2). Live-Negativtests: gesperrte App und Muellname in beiden Wegen blockiert, Chrome/Termux/Settings/Spotify erlaubt. P1 wirkt im Missions-Dienst erst nach Neustart jack_missions (nur Dima). NICHT eingebaut: P3 open_url_xiaomi mit Pflicht-Zielpaket (bricht alte Aufrufer). Weiter offen: Tasker-Tasks, skill_run-Intent-Fallback, andere direkte Appstarts.

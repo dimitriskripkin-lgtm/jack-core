@@ -14,3 +14,6 @@ Gelesen 03.10.2026, erste 36 Zeilen. Kein Umbau.
 
 ## Nachtrag 11.10.2026
 - LIMITS text 1000/Tag (Dima, vorher 600, davor 300), vision 40, Wochendeckel 3 EUR unveraendert. Wirksam fuer Prozesse nach Neustart (Import-Zeit).
+
+**Nachtrag 26.10.2026 (Claude, K3-P2/P3)**
+Anzeigetexte nutzen EUR_WEEK (live 8 EUR) statt fest 3 EUR. Grenzlogik unveraendert. Offen (K3): Groq ohne EUR-Buchung, Read/Modify/Write ohne Lock.

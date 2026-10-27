@@ -170,7 +170,7 @@ def notify_xiaomi_state(connected):
         from jack_tg_send import send  # JACK_TUNE_TGSEND20B
         msg = 'Xiaomi ist seit 15 Minuten wieder erreichbar.' if connected else 'Xiaomi ist seit 15 Minuten weg.'
         _res = send(msg, wichtig=not connected, quelle='cortex')
-        if _res.get('status') not in ('GESENDET', 'GEPUFFERT'):
+        if _res.get('status') not in ('GESENDET', 'GEPUFFERT', 'NUR_LOG'):
             log_status('[Cortex] Notify-Fehler: ' + _res.get('grund', 'unknown'))
     except Exception as e:
         log_status('[Cortex] Notify-Fehler: ' + type(e).__name__)

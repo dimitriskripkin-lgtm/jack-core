@@ -34,7 +34,7 @@ def week_ok():
     return _week().get("eur",0)<EUR_WEEK
 def check_and_count(kind="text"):
     if not week_ok():
-        return False, "Wochenlimit 3 EUR"
+        return False, "Wochenlimit %.2f EUR" % EUR_WEEK
     d=_load()
     if d.get(kind,0)>=LIMITS.get(kind,40):
         return False, "Tageslimit "+kind
@@ -81,4 +81,4 @@ def eur_fuer(modell, usage):
 
 def status():
     d=_load(); w=_week()
-    return "Heute %s/%s vis %s/%s tok %s eur %.2f/3"%(d.get("text",0),LIMITS["text"],d.get("vision",0),LIMITS["vision"],d.get("tokens",0),w.get("eur",0))
+    return "Heute %s/%s vis %s/%s tok %s eur %.2f/%.2f"%(d.get("text",0),LIMITS["text"],d.get("vision",0),LIMITS["vision"],d.get("tokens",0),w.get("eur",0),EUR_WEEK)

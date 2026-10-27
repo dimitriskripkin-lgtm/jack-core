@@ -31,6 +31,18 @@ def handle_voice(msg, ctx):
             from jack_voice_processor import process_voice_message
             rw2, heard, ans = process_voice_message(ogg)
             ans=str(ans or "")
+            try:  # JACK_TUNE_SPOTIFY_S1_VOICE (27.10.2026): Spotify-Sprachbefehl zuerst, nur Dimas Privatchat
+                import jack_spotify_s1 as _s1
+                _s1r=_s1.handle_text(heard, (msg.get("chat") or {}).get("id"), (msg.get("from") or {}).get("id"), ctx.get("chat_id"))
+            except Exception as _s1e:
+                _s1r={"text":"Spotify-Sprachbefehl Fehler: "+type(_s1e).__name__,"buttons":None}
+            if _s1r is not None:
+                if _s1r.get("buttons"):
+                    kb("Du: "+str(heard)+"\n\n"+_s1r["text"], _s1r["buttons"])
+                else:
+                    send("Du: "+str(heard)+"\n\nJACK: "+_s1r["text"])
+                _voice_mem(heard, "S1 "+_s1r["text"])
+                return
             if ans.startswith("__APPCMD__:"):
                 pkg=ans.split(":",1)[1].strip()  # JACK_TUNE_APPCMD_SAFE
                 import re as _re

@@ -14,3 +14,6 @@ Gelesen 03.10.2026, erste 70 Zeilen. Kein Umbau.
 - ask_gemini(question, status=None, model=None): model nur aus Whitelist (gemini-2.5-flash, gemini-2.5-flash-lite), sonst Config (gemini.model, steht auf flash-lite). Bei Override thinkingBudget 0 (so in der Arena gemessen, sonst frisst Denken die 1400 Ausgabetokens).
 - Grund: Arena-Messung 11.10.: Flash 50/58, Flash-Lite 41/58 Aufgaben (ARBEITSPLATZ/gemeinsam/arena/claude_regeln_v1.md). Dima hat am 11.10. Flash fuer schwierige Technik-Aufgaben freigegeben.
 - Aufrufer mit Flash: jack_coder.write_code, jack_bugfix_loop. Alle anderen Aufrufer unveraendert (Lite). Live getestet: Flash antwortet, falsches Modell faellt auf Config zurueck.
+
+**Nachtrag 26.10.2026 (Claude, K3b)**
+JACK_TUNE_NOHONOROLLAMA: _ollama_fallback ruft kein Honor-localhost mehr, gibt None + Audit [Gemini Fehler]. CB-Skip ruft nicht mehr Groq. ask_gemini(timeout, max_attempts, system_override) optional, Defaults unveraendert (15 s, 3 Versuche).

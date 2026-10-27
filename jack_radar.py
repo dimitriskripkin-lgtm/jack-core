@@ -53,7 +53,7 @@ def notify(text):
     try:
         from jack_tg_send import send  # JACK_TUNE_TGSEND20B
         _res = send(str(text), wichtig=False, quelle='radar')
-        if _res.get('status') not in ('GESENDET', 'GEPUFFERT'):
+        if _res.get('status') not in ('GESENDET', 'GEPUFFERT', 'NUR_LOG'):
             import jack_log
             jack_log.log_decision("RADAR-NOTIFY-FEHLER", _res.get('grund', 'unknown'))
     except Exception as e:

@@ -73,3 +73,6 @@ Diagnose/Fix ChatGPT danach:
 - Falle gleicher Query, text_eins xyzunmoeglich123: FAIL wie erwartet.
 - Vision 0, Text 0, 0 EUR, Xiaomi danach gesperrt. Diag-Dateien chrome_diag_echt/falle.txt im Buero chatgpt.
 - Status: B abgenommen. Erfolg nur mit Vertrag; ohne Vertrag greift die Card nicht.
+
+**Nachtrag 26.10.2026 (Claude, K1afix F11)**
+JACK_TUNE_CHROMEDIAG10: Diagnose je Lauf als chrome_diag_<zeit>_<zufall>.txt, die neuesten 10 bleiben, chrome_diag_last.txt wird nicht mehr geschrieben.

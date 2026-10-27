@@ -335,7 +335,16 @@ def _check_memory_trigger(text, chat_id):
         return True
     return False
 
-def handle_callback(callback_data, callback_id):
+def handle_callback(callback_data, callback_id, s1_chat_id=None, s1_from_id=None):
+    if str(callback_data).startswith('s1:'):
+        import jack_spotify_s1 as _s1
+        import threading as _threading
+        answer_callback(callback_id, 'Spotify: Auftrag wird geprueft')
+        def _go():
+            reply = _s1.confirm(callback_data, s1_chat_id, s1_from_id, CHAT_ID)
+            if reply: send(reply)
+        _threading.Thread(target=_go, daemon=True).start()
+        return None
     import jack_callback_handler as _jcb
     return _jcb.handle(callback_data, callback_id)
 
@@ -355,10 +364,20 @@ def oracle_sign(cmd, uuid, ts):
         return _h.new(secret.encode(), msg, _hs.sha256).hexdigest()
     except Exception: return ""
 
-def handle(text):
+def handle(text, s1_chat_id=None, s1_from_id=None):
     import jack_exec  # FIX-UNBOUND (Qwen 22.08.): Import oben, sonst UnboundLocalError
     if not text:
         return None
+    # JACK_TUNE_SPOTIFY_S1: bewusst VOR TALK/DIAG/Intent-App-Router
+    import jack_spotify_s1 as _s1
+    _resp = _s1.handle_text(text, s1_chat_id, s1_from_id, CHAT_ID)
+    if _resp is not None:
+        try: _chatlog('dima', text)  # JACK_TUNE_S1LOG: S1-Befehle auch im Chatverlauf
+        except Exception: pass
+        if _resp.get('buttons'):
+            send_keyboard(_resp['text'], _resp['buttons'])
+            return None
+        return _resp['text']
     _chatlog('dima', text)  # JACK_TUNE_CHATLOG
     if str(text).strip().lower().startswith("/vorschlaege"):  # JACK_TUNE_VORSCHLAGFRUEH
         try:
@@ -1459,7 +1478,8 @@ def main():
                     cb_chat = str(cb.get('message', {}).get('chat', {}).get('id', ''))
                     if cb_chat == str(CHAT_ID):
                         vibrate(60)
-                        cb_reply = handle_callback(cb_data, cb_id)
+                        cb_reply = handle_callback(cb_data, cb_id,
+                            s1_chat_id=cb_chat, s1_from_id=(cb.get('from') or {}).get('id'))
                         if cb_reply:
                             send(cb_reply)
                     continue
@@ -1513,7 +1533,8 @@ def main():
                     vibrate(40)
                     if _check_memory_trigger(text, chat_id):  # JACK_TUNE_BUGB_CALL
                         continue
-                    reply = handle(text)
+                    reply = handle(text, s1_chat_id=chat_id,
+                        s1_from_id=(msg.get('from') or {}).get('id'))
                     if reply:
                         import re as _rw
                         _m=_rw.search(r'\[\[WRITE:(.+?)\]\](.*?)\[\[/WRITE\]\]', reply, _rw.S)

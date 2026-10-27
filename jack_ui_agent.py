@@ -2,9 +2,14 @@ import subprocess,os,time,sys
 sys.path.insert(0,os.path.expanduser('~/jack'))
 
 def _ssh(cmd,t=10):
+    """JACK_TUNE_XIGATE_UI: alle UI-SSH-Aufrufe ueber Xiaomi-Gateway."""
     try:
-        return subprocess.run(['ssh','xiaomi-jack',cmd],capture_output=True,text=True,timeout=t)
-    except (subprocess.TimeoutExpired,OSError):  # JACK_TUNE_WORKEROFFLINE: Xiaomi weg -> kein Absturz
+        import jack_xiaomi as _jx
+        r = _jx.run_shell(cmd, as_root=False, timeout=t)
+        return subprocess.CompletedProcess(
+            ['ssh','xiaomi-jack',cmd], r.get('returncode', -1),
+            r.get('stdout') or '', r.get('stderr') or '')
+    except Exception:
         return subprocess.CompletedProcess(['ssh'],255,'','OFFLINE')
 
 def _tap(x,y):
@@ -49,9 +54,13 @@ def _home():
     time.sleep(1)
 
 def _termux_cmd(cmd,t=15):
-    import subprocess
-    r=subprocess.run(['ssh','xiaomi-jack',cmd],capture_output=True,text=True,timeout=t)
-    return ((r.stdout or '')+(r.stderr or '')).strip()[:400]
+    """JACK_TUNE_XIGATE_TERMUX: bestehende _cmd_ok-Aufrufer bleiben Pflicht."""
+    try:
+        import jack_xiaomi as _jx
+        r = _jx.run_shell(cmd, as_root=False, timeout=t)
+        return ((r.get('stdout') or '')+(r.get('stderr') or '')).strip()[:400]
+    except Exception:
+        return 'OFFLINE'
 
 # JACK_TUNE_AGENTSAFE: Befehls-Allowlist, Vordergrund-Pruefung, Festhaenge-Erkennung
 import re as _re
@@ -328,6 +337,13 @@ _run_agent_kern = run_agent
 
 
 def run_agent(ziel, start_app=None, max_schritte=20, send_fn=None, vertrag=None, bild_pruefung=True):
+    if start_app:  # JACK_TUNE_APPSPERRE (K1c-P2)
+        try:
+            import jack_app_sperre as _guard
+            if _guard.gesperrt(start_app):
+                return False, ['ABBRUCH: App durch Sperrliste blockiert']
+        except Exception:
+            return False, ['ABBRUCH: App-Sperrpruefung nicht verfuegbar']
     import jack_xiaomi_unlock as _xu
     try:
         if not _xu.keyguard_showing():

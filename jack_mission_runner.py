@@ -95,6 +95,13 @@ def run_act(m):
     act=m.get("act")
     if act not in ALLOWED:
         return False,"act nicht erlaubt: "+str(act),""
+    if m.get("src") == "git_pull":  # JACK_TUNE_PULLSAFE
+        try:
+            import jack_mission_pull as _pull
+            if not _pull.pull_allowed(m):
+                return False,"PULL_GESPERRT: Gate bei der Ausfuehrung abgelehnt",""
+        except Exception:
+            return False,"PULL_GESPERRT: Pruefung nicht verfuegbar",""
 
     if act in ("sed_replace","py_replace"):
         import os, shutil, subprocess

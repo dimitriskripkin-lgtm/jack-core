@@ -45,3 +45,6 @@ Was ist `jack_learned_rules.md` vs. `reports/korrekturen.jsonl` — führt eins 
 
 **Nachtrag 24.10.2026 (Claude, Kap 303)**
 JACK_TUNE_GATE1WORT: DIAG-Technikwoerter nur noch als ganze Woerter (Logik ist kein Log, Dienstag kein Dienst). Gespraechsfragen landen nicht mehr im Reparatur-Modus.
+
+**Nachtrag 26.10.2026 (Claude, N1 von ChatGPT)**
+JACK_TUNE_TALKVORDIAG: Meinungswoerter (gedanken, denkst, meinung, findest, gefaellt, magst, sicht, haeltst, haltung) ohne echte Pruefbitte -> TALK vor DIAG/EXPLAIN. Echte Pruefbitte (pruef, analysier, debugg, Fehler/laeuft ... Code) bleibt DIAG. Offline 43/43 (alt 27/43), echte Dima-Nachrichten 24 geprueft, 0 geaendert. Nebenwirkung bewusst: "Was denkst du ueber den Overmind" -> TALK statt EXPLAIN.

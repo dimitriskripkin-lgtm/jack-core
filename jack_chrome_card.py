@@ -97,8 +97,11 @@ def run_search(query, vertrag, send_fn=None):
     diag_all = fv.ui_texte(diag_xml)[:200]
     diag_texte = diag_all[:40]
     try:
-        import os
-        pfad = os.path.expanduser("~/jack/ARBEITSPLATZ/BUEROS/chatgpt/chrome_diag_last.txt")
+        import os, secrets
+        from datetime import datetime
+        _d = os.path.expanduser("~/jack/ARBEITSPLATZ/BUEROS/chatgpt")
+        _stamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        pfad = os.path.join(_d, "chrome_diag_" + _stamp + "_" + secrets.token_hex(3) + ".txt")
         tmp = pfad + ".tmp"
         os.makedirs(os.path.dirname(pfad), exist_ok=True)
         with open(tmp, "w", encoding="utf-8") as f:
@@ -113,6 +116,16 @@ def run_search(query, vertrag, send_fn=None):
             for i, t in enumerate(diag_all, 1):
                 f.write("%03d: %s\n" % (i, " ".join(str(t).split())))
         os.replace(tmp, pfad)
+        # JACK_TUNE_CHROMEDIAG10: mehrere parallele Messungen nicht ueberschreiben.
+        # Nur eigene Dateien anfassen, legacy chrome_diag_last.txt bleibt erhalten.
+        try:
+            import glob
+            _files = sorted(glob.glob(os.path.join(_d, "chrome_diag_????????_??????_??????_??????.txt")))
+            for _old in _files[:-10]:
+                try: os.unlink(_old)
+                except OSError: pass
+        except Exception:
+            pass
     except Exception:
         pass
     if send_fn:

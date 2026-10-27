@@ -21,6 +21,12 @@ def step_find_and_tap(p):
     return jg.tap_xiaomi(e['x'],e['y'])+' auf '+e['text'][:40]
 
 def step_open_app(p):
+    try:  # JACK_TUNE_APPSPERRE (K1c-P1)
+        import jack_app_sperre as _guard
+        if _guard.gesperrt(p.get('paket')):
+            return 'FEHLER: App durch Sperrliste blockiert'
+    except Exception:
+        return 'FEHLER: App-Sperrpruefung nicht verfuegbar'
     subprocess.run(['ssh','xiaomi-jack',"su -c 'monkey -p "+p['paket']+" 1'"],capture_output=True,timeout=10)
     time.sleep(2)
     return 'App '+p['paket']+' geoeffnet'

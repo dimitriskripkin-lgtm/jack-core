@@ -15,3 +15,6 @@ Gebaut von ChatGPT (Auftrag 20b/20c), Review und Einbau Claude. Tests auf dem Ho
 - Ablauf: LKW-Bluetooth -> FAHRT, Unwichtiges in logs/telegram_fahrt_queue.jsonl. Trennung -> TRENNUNG, nach >=120 s beim naechsten Takt eine Sammelmeldung (nur Anzahlen), Queue quittiert. Verzoegerung nach dem Aussteigen also 5-10 Min.
 - Bug gefunden und behoben: tick() nahm now VOR der Messung, Messzeit lag manchmal 1 s danach -> immer UNSICHER. Jetzt Toleranz -5 s (Backup .bak_20261021_zeit). Tests 35/35 auch mit Puffer an.
 - Offen: erste echte Fahrt beobachten (jack_log FAHRDIGEST, Queue).
+
+**Nachtrag 26.10.2026 (Claude)**
+Meldestelle davor geschaltet: Kap 304 (JACK_TUNE_MELDEREGELN, Klassen SOFORT/PUFFER/NUR_LOG). quelle fahrdigest bleibt ausgenommen.

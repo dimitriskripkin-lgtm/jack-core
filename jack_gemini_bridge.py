@@ -137,28 +137,17 @@ def _groq_not_ollama(question):
     return _fail("talk: groq leer, ollama bleibt aus")
 
 def _ollama_fallback(question):
-    """Lokaler Honor-Ollama-Fallback mit 10s Timeout."""
-    import requests
-    import jack_log
-    try:
-        r = requests.post("http://localhost:11434/api/generate",
-                         json={"model": "llama3.2:3b", "prompt": question, "stream": False},
-                         timeout=10)
-        if r.status_code == 200:
-            text = r.json().get("response", "").strip()
-            if text and len(text) > 20:
-                jack_log.log_decision("OLLAMA-OK", f"lokal {len(text)} Zeichen")
-                return text
-        jack_log.log_decision("OLLAMA-FAIL", f"HTTP {r.status_code}")
-    except Exception as e:
-        jack_log.log_decision("OLLAMA-FAIL", str(e)[:80])
-    return None
+    """JACK_TUNE_NOHONOROLLAMA: kein Honor-LLM, Fehler als None mit eindeutigem Audit."""
+    return _fail("[Gemini Fehler] Gemini nicht verfuegbar; Honor-Ollama ist deaktiviert")
+
 
 def _load_persona():
     try: return open("/data/data/com.termux/files/home/jack/jack_persona_kern.md",encoding="utf-8").read().strip()  # JACK_TUNE_ONEMOUTH
     except Exception: return "Du kennst Dima gut - Details aus jack_identity.json."
 
-def ask_gemini(question, status=None, model=None):  # JACK_TUNE_FLASHCODE 11.10.2026: model nur Whitelist, Standard = Config
+def ask_gemini(question, status=None, model=None, *, timeout=15, max_attempts=3, system_override=None):  # JACK_TUNE_FLASHCODE + JACK_TUNE_TALKERSATZ
+    timeout = max(1, min(15, int(timeout)))
+    max_attempts = max(1, min(3, int(max_attempts)))
     try:
         import jack_circuit_breaker as _cb
         if _cb.is_open():
@@ -179,12 +168,8 @@ def ask_gemini(question, status=None, model=None):  # JACK_TUNE_FLASHCODE 11.10.
     global _CB_FAILS, _CB_RESET_AT
     import time as _tt2
     if _CB_FAILS >= _CB_THRESHOLD and _tt2.time() < _CB_RESET_AT:
-        import jack_log; jack_log.log_decision("GEMINI-CB-SKIP", f"CB aktiv, nutze Ollama")
-        try:
-            import jack_ollama_gate
-            return _groq_not_ollama(question)
-        except Exception as _e:
-            return _fail("cb aktiv + ollama-fehler: "+str(_e)[:80])
+        import jack_log; jack_log.log_decision("GEMINI-CB-SKIP", "CB aktiv, kein Modellwechsel")
+        return _fail("[Gemini Fehler] Circuit-Breaker aktiv; kein Rueckruf zu Groq")
     elif _tt2.time() >= _CB_RESET_AT and _CB_FAILS > 0:
         _CB_FAILS = 0
     import jack_budget
@@ -230,6 +215,8 @@ def ask_gemini(question, status=None, model=None):  # JACK_TUNE_FLASHCODE 11.10.
     _gcfg = {"maxOutputTokens": 1400, "temperature": 0.7, "topP": 0.95}
     if _override:
         _gcfg["thinkingConfig"] = {"thinkingBudget": 0}  # wie in der Arena gemessen (Denkbudget 0), sonst frisst Denken die 1400 Tokens
+    if system_override is not None:
+        system = str(system_override)  # JACK_TUNE_TALKERSATZ; kein Promptswitch in USER
     payload = {
         "system_instruction": {"parts": [{"text": system}]},
         "contents": [{"parts": [{"text": content}]}],
@@ -243,10 +230,10 @@ def ask_gemini(question, status=None, model=None):  # JACK_TUNE_FLASHCODE 11.10.
         except Exception: pass
         return _ollama_fallback(question)
     import time as _t
-    for _a in range(3):
+    for _a in range(max_attempts):
         try:
             try:
-                _resctx = urllib.request.urlopen(req, timeout=15)
+                _resctx = urllib.request.urlopen(req, timeout=timeout)
             except Exception as _he:
                 if getattr(_he,"code",None)==401:
                     try:
@@ -278,15 +265,17 @@ def ask_gemini(question, status=None, model=None):  # JACK_TUNE_FLASHCODE 11.10.
                         url = url.replace("/models/" + model_name + ":", "/models/" + _neu + ":")
                         model_name = _neu
                         req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
-                        continue
+                        if _a < max_attempts - 1:
+                            continue
+                        return _ollama_fallback(question)
                 except Exception:
                     pass
-            if _code == 429 and _a < 2:
+            if _code == 429 and _a < max_attempts - 1:
                 _t.sleep(4 * (_a + 1)); continue
             if _code == 429:
                 return _ollama_fallback(question)
-            if _a >= 2: _cb_fail()
-            if _a < 2:
+            if _a >= max_attempts - 1: _cb_fail()
+            if _a < max_attempts - 1:
                 _t.sleep(2 ** _a); continue
             return _ollama_fallback(question)
 

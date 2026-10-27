@@ -138,11 +138,35 @@ def send(text, wichtig=True, quelle='system', *, bot_token=None, chat_id=None, r
         return {'status': 'FEHLER', 'grund': 'EMPFAENGER_ROUTE_UNGUELTIG'}
     if route == 'vinted' and (not bot_token or not chat_id):
         return {'status': 'FEHLER', 'grund': 'VINTED_EMPFAENGER_FEHLT'}
+    _m2 = None  # JACK_TUNE_MELDEREGELN N2
+    if route == 'default' and quelle not in ('telegram', 'fahrdigest'):  # fahrdigest nie neu einstufen (Claude 26.10.: sonst puffert sich die Sammelmeldung selbst)
+        try:
+            import jack_melderegel as _mr
+            _m2 = _mr.entscheide_live(text, quelle, wichtig)
+            if _m2['klasse'] == 'NUR_LOG':
+                try:
+                    _record(HOME / 'logs' / 'telegram_nur_log.jsonl',
+                            {'ts': _now(), 'quelle': quelle, 'grund': _m2['grund'],
+                             'klasse': 'NUR_LOG', 'text': text[:500]},
+                            max_size=MAX_LOG, rotate=True)
+                except OSError as _e:
+                    _audit('M2-LOGFEHLER', quelle, type(_e).__name__)
+                    _m2 = None
+                else:
+                    return {'status': 'NUR_LOG', 'grund': _m2['grund']}
+            if _m2 is not None:
+                wichtig = _m2['klasse'] == 'SOFORT'
+        except Exception as _e:
+            _audit('M2-FEHLER', quelle, type(_e).__name__)
+            _m2 = None
     if PUFFER_AKTIV and not wichtig and _buffer_during_drive():
         event = {'v': 1, 'id': uuid.uuid4().hex, 'ts': _now(), 'quelle': quelle,
                  'route': route, 'text': text, 'status': 'GEPUFFERT', 'wichtig': False}
         try:
             _record(QUEUE, event, max_size=MAX_QUEUE)
+            if _m2 is not None:
+                try: _mr.quittiere(_m2)
+                except Exception: pass
             return {'status': 'GEPUFFERT', 'id': event['id']}
         except (OSError, ValueError) as e:
             # Nicht unbemerkt verwerfen; und NICHT bei fahrender Person ersatzweise senden.
@@ -172,4 +196,7 @@ def send(text, wichtig=True, quelle='system', *, bot_token=None, chat_id=None, r
         except OSError as e:
             _audit('LOGFEHLER', quelle, type(e).__name__)
             logged = False
+    if _m2 is not None and sent:
+        try: _mr.quittiere(_m2)
+        except Exception: pass
     return {'status': 'GESENDET', 'teile_gesendet': sent, 'log_ok': logged}

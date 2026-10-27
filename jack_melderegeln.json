@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "description": "JACK_TUNE_MELDEKLASSEN M2, offline Entwurf; erste zutreffende Regel gewinnt. Regex IGNORECASE. SOFORT/PUFFER/NUR_LOG.",
+  "fallback": {
+    "wichtig": "SOFORT",
+    "sonst": "PUFFER",
+    "dedupe_s": 0
+  },
+  "regeln": [
+    {
+      "id": "alarm_hitze",
+      "muster": "\\b(hitze|hitzestopp|heatresume fehler|temperatur kritisch|thermal|ueberhitz|überhitz)\\b",
+      "klasse": "SOFORT",
+      "dedupe_s": 0,
+      "kritisch": true
+    },
+    {
+      "id": "alarm_dienst",
+      "muster": "\\bdienst(?:e)?\\b.{0,70}\\b(tot|gestorben|dead)\\b|\\b(wächter|waechter|service)\\b.{0,70}\\b(tot|dead)\\b",
+      "klasse": "SOFORT",
+      "dedupe_s": 0,
+      "kritisch": true
+    },
+    {
+      "id": "alarm_tunnel",
+      "muster": "\\b(tunnel|cloudflared|origincheck)\\b.*\\b(kaputt|down|tot|ausfall|defekt|fehler|nicht erreichbar)\\b|\\b(tunnel-ausfall|origincheck-fehler)\\b",
+      "klasse": "SOFORT",
+      "dedupe_s": 0,
+      "kritisch": true
+    },
+    {
+      "id": "alarm_laden",
+      "muster": "\\b(ladeton|ladealarm|ladegeraet|ladegerät|akku kritisch)\\b|\\bakku\\s+(?:unter|bei)\\s*(?:[0-9]|1[0-5])\\s*%",
+      "klasse": "SOFORT",
+      "dedupe_s": 0,
+      "kritisch": true
+    },
+    {
+      "id": "alarm_guard",
+      "muster": "\\b(ram knapp|guard-ram|ram-block|speicher kritisch|mb frei)\\b",
+      "klasse": "SOFORT",
+      "dedupe_s": 0,
+      "kritisch": true
+    },
+    {
+      "id": "alarm_mcp",
+      "muster": "\\b(mcp|auth)\\b.*\\b(angriff|fail.open|keine authentifizierung|unberechtigt)\\b",
+      "klasse": "SOFORT",
+      "dedupe_s": 0,
+      "kritisch": true
+    },
+    {
+      "id": "graceful_ruhera",
+      "muster": "\\bgraceful\\s*:\\s*xiaomi\\b",
+      "klasse": "NUR_LOG",
+      "dedupe_s": 0
+    },
+    {
+      "id": "quota_routine",
+      "muster": "\\bjack[- ]ordner\\b.*\\bwarnschwelle\\b|\\bjack speicher\\b",
+      "klasse": "NUR_LOG",
+      "dedupe_s": 0
+    },
+    {
+      "id": "heartbeat_xiaomi",
+      "muster": "\\bheartbeat\\s*3x\\s*rot\\s*:\\s*xiaomi\\b",
+      "klasse": "NUR_LOG",
+      "dedupe_s": 0
+    },
+    {
+      "id": "xiaomi_wieder",
+      "muster": "\\bxiaomi\\b.*\\b(wieder da|wieder erreichbar|fortgesetzt)\\b",
+      "klasse": "PUFFER",
+      "dedupe_s": 10800
+    },
+    {
+      "id": "xiaomi_weg",
+      "muster": "\\bxiaomi\\b.*\\b(nicht mehr erreichbar|seit 15 minuten weg|offline|nicht erreichbar|ssh weiterhin nicht erreichbar)\\b",
+      "klasse": "PUFFER",
+      "dedupe_s": 10800
+    },
+    {
+      "id": "heartbeat_sonst",
+      "muster": "\\bheartbeat\\s*3x\\s*rot\\b",
+      "klasse": "SOFORT",
+      "dedupe_s": 0,
+      "kritisch": true
+    },
+    {
+      "id": "akku_info",
+      "muster": "\\bakku\\s+bei\\s+\\d+\\s*%",
+      "klasse": "PUFFER",
+      "dedupe_s": 7200
+    },
+    {
+      "id": "morgenstatus",
+      "muster": "\\bmoin dima\\b|\\bmorgen[- ]?status\\b",
+      "klasse": "PUFFER",
+      "dedupe_s": 43200
+    },
+    {
+      "id": "briefing",
+      "quelle": "briefing",
+      "muster": ".",
+      "klasse": "PUFFER",
+      "dedupe_s": 43200
+    },
+    {
+      "id": "fahrdigest",
+      "quelle": "fahrdigest",
+      "muster": ".",
+      "klasse": "PUFFER",
+      "dedupe_s": 0
+    },
+    {
+      "id": "audit_skill",
+      "muster": "\\b(skill-builder|woechentlicher audit|wöchentlicher audit|radar)\\b",
+      "klasse": "PUFFER",
+      "dedupe_s": 3600
+    }
+  ]
+}
