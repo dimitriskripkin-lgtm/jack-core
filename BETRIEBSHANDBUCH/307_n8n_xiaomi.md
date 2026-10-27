@@ -36,3 +36,8 @@
 - n8n-Neustart dauert ~3,5 Min wenn per Kill (finish-Pause 120 s greift, weil rc != TERM-Signal).
 
 **Nachtrag 27.10.2026 10:12: ENDE-ZU-ENDE NACHGEWIESEN.** Dima drueckte "Ja, eintragen" -> JACK meldete event_id gh716nq0... -> Claude hat den Termin unabhaengig ueber den Google-Kalender-Connector gefunden (28.10. 11:00-11:15, Beschreibung mit request_id). Testtermin darf Dima loeschen.
+
+**Nachtrag 27.10.2026 10:16 (Claude) Termin per Text/Sprache (JACK_TUNE_TERMINTEXT)**
+- jack_termin_parse.erkenne(): Tag (heute/morgen/uebermorgen/Wochentag/am TT.MM.) + Uhrzeit (um elf, um 11 Uhr, 9:30, halb/viertel nach/vor) noetig; ausgeloest nur wenn Satz mit Tag beginnt oder Termin/Kalender/eintragen vorkommt; Fragen ignoriert. 1-6 Uhr ohne morgens/frueh/nachts -> Nachmittag. Dauer 1 h. Zeitzone per zoneinfo (pip tzdata 2026.5 auf dem Honor installiert; ohne tzdata kein Vorschlag).
+- Telegram handle() direkt nach S1 und Sprach-Handler nach S1: erkannter Termin -> jack_termin.vorschlag(..., send_kb) -> Knopf. Eingetragen erst nach Dimas Ja.
+- Bekannte Grenze: "Ich muss morgen um elf zur Werkstatt" wird NICHT erkannt (beginnt nicht mit Tag, kein Termin-Wort) -> "Termin morgen um elf Werkstatt" sagen. Unsinnige Saetze wie "Morgen um elf bin ich muede" koennen einen Knopf erzeugen -> Abbrechen.

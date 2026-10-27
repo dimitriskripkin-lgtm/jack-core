@@ -9,3 +9,5 @@ Gelesen 03.10.2026, erste 55 Zeilen. Kein Umbau.
 **Offen:** Transkription hinter dem Schnitt.
 
 **Nachtrag 27.10.2026:** Transkript geht zuerst an jack_spotify_s1 (JACK_TUNE_SPOTIFY_S1_VOICE), siehe Kap 306.
+
+**Nachtrag 27.10.2026:** Transkript -> nach S1 auch Termin-Erkennung (JACK_TUNE_TERMINTEXT), Kap 307.

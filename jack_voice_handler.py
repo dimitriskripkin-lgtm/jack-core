@@ -43,6 +43,18 @@ def handle_voice(msg, ctx):
                     send("Du: "+str(heard)+"\n\nJACK: "+_s1r["text"])
                 _voice_mem(heard, "S1 "+_s1r["text"])
                 return
+            try:  # JACK_TUNE_TERMINTEXT (27.10.2026): gesprochener Termin -> Kalender-Knopf
+                import jack_termin_parse as _tp
+                _ok = str((msg.get("chat") or {}).get("id")) == str((msg.get("from") or {}).get("id")) == str(ctx.get("chat_id"))
+                _tv = _tp.erkenne(heard) if _ok else None
+            except Exception:
+                _tv = None
+            if _tv:
+                import jack_termin as _tm
+                send("Du: "+str(heard)+"\n\nJACK: Termin erkannt, Knopf kommt.")
+                _tm.vorschlag(_tv["titel"], _tv["start"], _tv["ende"], "per JACK (Sprache) aus: "+str(heard)[:200], send_kb=kb)
+                _voice_mem(heard, "TERMIN "+_tv["titel"])
+                return
             if ans.startswith("__APPCMD__:"):
                 pkg=ans.split(":",1)[1].strip()  # JACK_TUNE_APPCMD_SAFE
                 import re as _re

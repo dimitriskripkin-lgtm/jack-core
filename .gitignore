@@ -280,3 +280,4 @@ logs/telegram_nur_log.jsonl
 .n8n_webhook_secret
 logs/termin_pending.json
 logs/*_vor_TERMIN_*.py
+logs/*_vor_TERMINTEXT_*.py

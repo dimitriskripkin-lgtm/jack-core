@@ -152,3 +152,5 @@ Was geändert wurde, in die Betriebshandbuch-Kapitel eintragen. Offene Punkte ne
 - Neu 27.10.: n8n auf dem Xiaomi (Kap 307). WICHTIG: jack_xiaomi.run_shell ist standardmaessig ROOT - fuer Termux-Arbeit as_root=False setzen.
 
 - Neu 27.10.: Xiaomi heiss/haengt? python3 jack_xiaomi_notaus.py messen | n8n_aus (Kap 307). Nach jedem Arbeitsblock Doku + Commit/Push (Dima-Regel).
+
+- Neu 27.10.: Kalender per JACK: "Morgen Werkstatt um elf" (Text/Sprache) -> Knopf -> n8n (Xiaomi) -> Google. Google-App im Testmodus: Freigabe laeuft ca. 03.11. ab (Kap 307).

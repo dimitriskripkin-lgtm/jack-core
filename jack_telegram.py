@@ -387,6 +387,18 @@ def handle(text, s1_chat_id=None, s1_from_id=None):
             send_keyboard(_resp['text'], _resp['buttons'])
             return None
         return _resp['text']
+    # JACK_TUNE_TERMINTEXT (27.10.2026, Kap 307): "Morgen Werkstatt um elf" -> Kalender-Knopf
+    try:
+        import jack_termin_parse as _tp
+        _tv = _tp.erkenne(text) if s1_chat_id is not None and str(s1_chat_id) == str(s1_from_id) == str(CHAT_ID) else None
+    except Exception:
+        _tv = None
+    if _tv:
+        try: _chatlog('dima', text)
+        except Exception: pass
+        import jack_termin as _tm
+        _tr = _tm.vorschlag(_tv['titel'], _tv['start'], _tv['ende'], 'per JACK aus: ' + text[:200], send_kb=send_keyboard)
+        return None if str(_tr).startswith('Knopf') else _tr
     _chatlog('dima', text)  # JACK_TUNE_CHATLOG
     if str(text).strip().lower().startswith("/vorschlaege"):  # JACK_TUNE_VORSCHLAGFRUEH
         try:

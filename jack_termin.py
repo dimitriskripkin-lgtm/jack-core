@@ -30,7 +30,7 @@ def _authed(chat, user, trusted):
     return None not in (chat, user, trusted) and str(chat) == str(user) == str(trusted)
 
 
-def vorschlag(titel, start, ende, beschreibung=""):
+def vorschlag(titel, start, ende, beschreibung="", send_kb=None):  # send_kb: im Telegram-Prozess dessen send_keyboard
     titel = str(titel).strip()
     if not (3 <= len(titel) <= 160) or not _TS.match(start) or not _TS.match(ende):
         return "Termin ungueltig (Titel 3-160 Zeichen, Zeiten wie 2026-10-28T11:00:00+01:00)."
@@ -40,8 +40,10 @@ def vorschlag(titel, start, ende, beschreibung=""):
                 "payload": {"title": titel, "start": start, "end": ende, "timezone": "Europe/Berlin",
                             "request_id": uuid.uuid4().hex, "description": str(beschreibung)[:300]}}
     _speichern(d)
-    import jack_telegram as tg
-    tg.send_keyboard("Kalender: \"%s\"\n%s bis %s\nEintragen? (10 Minuten gueltig)" % (titel, start.replace("T", " ")[:16], ende[11:16]),
+    if send_kb is None:
+        import jack_telegram as tg
+        send_kb = tg.send_keyboard
+    send_kb("Kalender: \"%s\"\n%s bis %s\nEintragen? (10 Minuten gueltig)" % (titel, start.replace("T", " ")[:16], ende[11:16]),
                      [[("Ja, eintragen", "tm:ok:" + nonce), ("Abbrechen", "tm:no:" + nonce)]])
     return "Knopf an Dima geschickt."
 
