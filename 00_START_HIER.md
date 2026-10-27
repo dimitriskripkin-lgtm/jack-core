@@ -148,3 +148,7 @@ Was geändert wurde, in die Betriebshandbuch-Kapitel eintragen. Offene Punkte ne
 - Neu 26.10.: `~/jack/.klingel_off` = Briefkasten-Klingel aus (Kap 305), Cron */5 jack_klingel.py.
 
 - Neu 26.10. (Umgang mit Dima, Dima: "exakt so"): Anleitungen in kleinen nummerierten Teilen. Alles fuer Termux als fertiger Befehl; Dima baut nie selbst Werte/Keys in Befehle ein. Werte holt der Befehl per Abfrage ("X einfuegen:"), ein Befehl pro Wert: Befehl rein, Enter, Wert rein, Enter. Jeder Befehl meldet sichtbar Erfolg.
+
+- Neu 27.10.: n8n auf dem Xiaomi (Kap 307). WICHTIG: jack_xiaomi.run_shell ist standardmaessig ROOT - fuer Termux-Arbeit as_root=False setzen.
+
+- Neu 27.10.: Xiaomi heiss/haengt? python3 jack_xiaomi_notaus.py messen | n8n_aus (Kap 307). Nach jedem Arbeitsblock Doku + Commit/Push (Dima-Regel).

@@ -12,7 +12,7 @@ Entstanden ist das Projekt weitgehend im Alleingang: Dima, LKW-Fahrer und Autodi
 
 > **Kontrolle-first statt Cloud-versprechen.** JACK läuft als Runtime auf eigener Hardware. Für Sprache, Planung oder Bildverstehen werden teilweise Cloud-Modelle eingesetzt. Offline-Betrieb aller Funktionen wird ausdrücklich **nicht** behauptet.
 
-**Stand dieser Übersicht: 21. Oktober 2026.** Quelle: aktuelle Geräte-Dokumentation und überprüfte Betriebsabläufe. Der Code auf GitHub kann dem Live-Stand hinterherliegen.
+**Stand dieser Übersicht: 27. Oktober 2026.** Quelle: aktuelle Geräte-Dokumentation und überprüfte Betriebsabläufe. Der Code auf GitHub kann dem Live-Stand hinterherliegen.
 
 ## In 30 Sekunden
 
@@ -71,8 +71,33 @@ JACK kann auf dem Xiaomi freigegebene Tasker-Testaufgaben auslösen und deren Qu
 
 Für Timer und Mediensteuerung existieren direkte Android-Wege, die ohne visuelle UI-Automation auskommen. Timer konnten über einen Android-Intent gesetzt und anhand einer Benachrichtigung belegt werden; Medienbefehle prüfen den Zustand einer aktiven Sitzung.
 
-**Grenzen:** Das Abbrechen eines Timers funktionierte auf MIUI nicht zuverlässig über den getesteten Intent. Medien-`play` kann nichts starten, wenn zwar Spotify geöffnet, aber noch keine Wiedergabe vorbereitet ist. Die einfache Bedienung über Telegram ist noch in Arbeit.
+**Grenzen:** Das Abbrechen eines Timers funktionierte auf MIUI nicht zuverlässig über den getesteten Intent. Medien-`play` kann nichts starten, wenn zwar Spotify geöffnet, aber noch keine Wiedergabe vorbereitet ist. Für Spotify gibt es inzwischen Telegram- und Sprachbefehle (siehe 7); Timer und allgemeine Medienbefehle per Telegram sind noch in Arbeit.
 
+
+### 7. Spotify: Playlisten, Lieblinge und „Spiel X“
+
+JACK spricht seit dem 26. Oktober direkt mit der **Spotify-Web-API** (eigene Entwickler-App, PKCE-Login, Token nur lokal).
+
+- **Lesen:** Playlisten, mit Herz markierte Songs, Toplisten (vier Wochen, sechs Monate, Jahre), Hörverlauf alle 30 Minuten.
+- **Automatische Playlist** „JACK – Lieblinge nach Hördauer“: Herz-Songs, oben am meisten gehört. Wird jede Nacht neu sortiert, zusammen mit einer Sicherung aller Playlisten.
+- **„Spiel X“ per Telegram und Sprache:** JACK sucht den Titel, startet ihn auf dem HONOR und meldet „läuft“ **nur**, wenn Android die Wiedergabe tatsächlich bestätigt. Sonst sagt er ehrlich „nicht bestätigt“.
+- Sortieren, Zurücksetzen und Neuaufbau von Playlisten nur mit **Bestätigungsknopf** (Einmal-Code, 10 Minuten gültig, nur Dimas Privatchat).
+
+**Grenzen:** Spotify liefert keine Abspielzahlen, nur Ranglisten. Die Reihenfolge ist oben echt und unten geschätzt. Die Spracherkennung verhört Songtitel teils deutlich. Der ältere Xiaomi-UI-Weg existiert parallel noch und ist nicht zusammengelegt.
+
+### 8. Ehrlichkeitsfilter für behauptete Taten
+
+Am 26./27. Oktober behauptete JACK im Gesprächsmodus mehrfach Aktionen, die nie passiert waren (zum Beispiel „Track gestartet“). Seit dem 27. Oktober prüft ein **deterministischer Filter** jede Gesprächsantwort: Erfolgsbehauptungen ohne echten Aktionsbeleg werden ersetzt durch „Das habe ich hier nicht ausgeführt“. Fragen, Verneinungen, Hypothesen und historische Fakten bleiben stehen.
+
+**Status:** Alle drei echten Feldfälle werden abgefangen. Es ist eine Heuristik, keine vollständige Lösung.
+
+### 9. App-Sperrliste
+
+Ein zentraler Wächter prüft vor jedem App-Start durch Planer und UI-Agenten eine private Sperrliste (Banking, Bezahlen und Ähnliches). Fehlt die Liste oder ist sie defekt, ist **alles gesperrt** (fail-closed). Noch nicht abgedeckt sind Tasker-Aufgaben und einige ältere Intent-Wege.
+
+### 10. Im Aufbau: n8n als Werkzeugkasten
+
+Seit dem 27. Oktober läuft ein selbst gehostetes **n8n** auf dem Xiaomi. Es ist nur lokal erreichbar und hat eine eigene Notbremse bei Hitze oder Absturzschleifen. Ziel: JACK bleibt die Urteilsschicht, n8n übernimmt Anbindungen wie den Kalender. **Status: installiert, noch kein Ende-zu-Ende-Ablauf nachgewiesen.**
 
 ## Architektur: Modell und Ausführung bleiben getrennt
 
