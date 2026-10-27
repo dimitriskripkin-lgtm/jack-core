@@ -89,7 +89,7 @@ def erkenne(text, jetzt=None):
     if not (0 <= h <= 23 and 0 <= mi <= 59):
         return None
     titel = t
-    for rx in (tag_rx, re.escape(zeit_txt), r"\b(jack|termin|kalender|bitte|eintragen|trag\w*|ein|einen|einer|im|in den|abends|nachmittags|morgens|früh|frueh|uhr)\b"):
+    for rx in (tag_rx, re.escape(zeit_txt), r"\b(jack|termin|kalender|bitte|eintragen|trag\w*|ein|eine|einen|einer|im|in den|abends|nachmittags|morgens|früh|frueh|uhr|stell\w*|mach\w*|leg\w*|setz\w*|erstell\w*|mir|mich|uns|für|fuer|an|neue|neuen)\b"):
         titel = re.sub(rx, " ", titel, flags=re.I)
     titel = re.sub(r"[\s,.:!]+", " ", titel).strip(" ,.:!")
     if len(titel) < 3:
