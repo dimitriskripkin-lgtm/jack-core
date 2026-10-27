@@ -97,7 +97,7 @@ Ein zentraler Wächter prüft vor jedem App-Start durch Planer und UI-Agenten ei
 
 ### 10. Im Aufbau: n8n als Werkzeugkasten
 
-Seit dem 27. Oktober läuft ein selbst gehostetes **n8n** auf dem Xiaomi. Es ist nur lokal erreichbar und hat eine eigene Notbremse bei Hitze oder Absturzschleifen. Ziel: JACK bleibt die Urteilsschicht, n8n übernimmt Anbindungen wie den Kalender. **Status: installiert, noch kein Ende-zu-Ende-Ablauf nachgewiesen.**
+Seit dem 27. Oktober läuft ein selbst gehostetes **n8n** auf dem Xiaomi. Es ist nur lokal erreichbar und hat eine eigene Notbremse bei Hitze oder Absturzschleifen. Ziel: JACK bleibt die Urteilsschicht, n8n übernimmt Anbindungen wie den Kalender. **Status (27.10.):** erster Ende-zu-Ende-Ablauf nachgewiesen: Telegram-Knopf -> JACK -> n8n -> Google-Kalender, Termin unabhaengig im Kalender bestaetigt. Google-Freigabe noch im Testmodus (laeuft nach 7 Tagen ab).
 
 ## Architektur: Modell und Ausführung bleiben getrennt
 

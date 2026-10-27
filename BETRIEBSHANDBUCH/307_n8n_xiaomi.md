@@ -34,3 +34,5 @@
 - jack_n8n.py (Honor, JACK_TUNE_N8N, Entwurf ChatGPT, Timeouts 20/30 s) + Secret ~/jack/.n8n_webhook_secret (0600, gitignored). Tests ohne echten Termin: falscher Schluessel 403, ungueltiger Termin 500 (abgelehnt), ohne Knopf PermissionError.
 - jack_termin.py (JACK_TUNE_TERMIN): vorschlag() schickt Telegram-Knopf, confirm() nur Dimas Privatchat, Einmal-Code 10 Min, offene Freigaben logs/termin_pending.json (0600, gitignored). jack_telegram handle_callback: tm:-Knoepfe -> Thread. Backup logs/jack_telegram_vor_TERMIN_20261027.py.
 - n8n-Neustart dauert ~3,5 Min wenn per Kill (finish-Pause 120 s greift, weil rc != TERM-Signal).
+
+**Nachtrag 27.10.2026 10:12: ENDE-ZU-ENDE NACHGEWIESEN.** Dima drueckte "Ja, eintragen" -> JACK meldete event_id gh716nq0... -> Claude hat den Termin unabhaengig ueber den Google-Kalender-Connector gefunden (28.10. 11:00-11:15, Beschreibung mit request_id). Testtermin darf Dima loeschen.
