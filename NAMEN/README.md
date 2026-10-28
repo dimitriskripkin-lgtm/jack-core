@@ -75,6 +75,26 @@ Alle fünf Repos stehen unter MIT-Lizenz. Übernommen wurden nur Konzepte, der C
 - [matthiasroder/grok-bot-learning](https://github.com/matthiasroder/grok-bot-learning) (MIT): jeder Eintrag braucht einen Beleg, Kurator-Freigabe für geteilte Lehren, Rückrollen ohne Verlust des Belegs. Hier: `universell` startet `vorgeschlagen`, Kurator ist Dimitri, `zurueckrollen` markiert `widerrufen`. Nicht übernommen: SQLite/FTS5, Flotten-Konfiguration, Review-Routine.
 - LUCI Core von Memories.ai ([Release-Repo](https://github.com/Memories-ai-labs/luci-core-releases), Quellcode nicht öffentlich, keine Lizenz im Release-Repo angegeben): zeichnet auf, was auf dem Bildschirm des Bot-Computers zu sehen ist (unter `/workspace/.luci`). **Nicht übernommen:** Bildschirmverläufe können private Inhalte enthalten und gehören nicht in ein öffentliches Repo. Auf dem Assistenten-Computer ist es nicht installiert.
 
+## Tägliche Action (`.github/workflows/namen-schreibrechte.yml`)
+
+Die Action läuft jeden Tag um 04:17 UTC, also um 05:17 Uhr Berliner Winterzeit bzw. 06:17 Uhr Sommerzeit (GitHub startet geplante Läufe manchmal etwas später). Von Hand geht es unter Actions > NAMEN Schreibrechte > Run workflow.
+
+Was sie macht:
+- ruft `python NAMEN/schreibrechte/schreibrechte.py --gedaechtnis` auf, mit dem Token aus dem Secret `JACK_SCHREIBRECHTE_TOKEN`,
+- hat sich etwas geändert, committet sie nur `NAMEN/schreibrechte/verlauf.jsonl` und `NAMEN/Jack/erinnerungen.jsonl` als `github-actions[bot]` auf den Standard-Branch,
+- ohne Änderung committet sie nichts. Sie löscht nichts und gibt den Token nie aus,
+- fehlt das Secret, bricht sie mit einer klaren Fehlermeldung ab.
+
+Secret einrichten (geht auch am Handy im Browser):
+1. github.com > Profilbild > Settings > Developer settings > Personal access tokens > Fine-grained tokens > Generate new token.
+2. Repository access: Only select repositories > `jack-core`.
+3. Repository permissions: **Administration: Read-only** (für offene Einladungen). **Metadata: Read-only** ist automatisch dabei (für die Mitarbeiterliste). Sonst nichts.
+4. Ablaufdatum wählen, Token erzeugen und kopieren.
+5. Im Repo `jack-core`: Settings > Secrets and variables > Actions > New repository secret. Name: `JACK_SCHREIBRECHTE_TOKEN`, Wert: der Token. Speichern.
+6. Läuft der Token ab, einfach einen neuen erzeugen und das Secret aktualisieren.
+
+Die Mitarbeiterliste zeigt GitHub nur, wenn der Token-Besitzer Schreibrechte am Repo hat. Als Besitzer hat Dima die.
+
 ## Grundsätze
 
 - GitHub ist Archiv und Spiegel, **kein Befehlsbus**: Daten gehen raus, Befehle kommen nie rein.
