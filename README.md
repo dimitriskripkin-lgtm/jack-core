@@ -4,6 +4,8 @@
 
 **Your AI. Your devices. Your rules.**
 
+![JACK Architecture](docs/JACK_architecture_readme.svg)
+
 *A personal, safety-first AI agent runtime built on Android phones — with persistent memory, verified actions and role-based MCP collaboration.*
 
 JACK ist ein experimenteller persönlicher KI-Assistent, der nicht nur antwortet, sondern **Geräte beobachten, begrenzte Aufgaben planen und überprüfbare Aktionen ausführen** kann. Das Sprachmodell liefert Vorschläge und Sprache; **JACK behält die Kontrolle über Werkzeuge, Rechte, Ausführung und Erfolgskriterien**.
