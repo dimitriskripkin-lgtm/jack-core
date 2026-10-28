@@ -106,6 +106,30 @@ class SchreibrechteTest(unittest.TestCase):
         self.assertIn("a=admin", aus)
         self.assertIn("+ a bekommt Rolle admin", aus)
 
+    def test_gedaechtnis_haken(self):
+        basis = os.path.join(self.ordner, "namen")
+        ok = s.gedaechtnis_melden("o/r", [{"art": "hinzugefuegt",
+                                           "login": "a", "neu": "write"}],
+                                  "2026-10-28T12:00:00Z", basis=basis)
+        self.assertTrue(ok)
+        with open(os.path.join(basis, "Jack", "erinnerungen.jsonl"),
+                  encoding="utf-8") as f:
+            zeile = json.loads(f.readline())
+        self.assertEqual(zeile["quelle"], "schreibrechte.py")
+        self.assertIn("a bekommt Rolle write", zeile["text"])
+
+    def test_haken_fehler_stoppt_nicht(self):
+        alt = sys.modules.get("gedaechtnis")
+        sys.modules["gedaechtnis"] = None
+        try:
+            with redirect_stderr(io.StringIO()):
+                self.assertFalse(s.gedaechtnis_melden("o/r", [], "x"))
+        finally:
+            if alt is not None:
+                sys.modules["gedaechtnis"] = alt
+            else:
+                sys.modules.pop("gedaechtnis", None)
+
 
 if __name__ == "__main__":
     unittest.main()

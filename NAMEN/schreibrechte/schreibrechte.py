@@ -233,6 +233,9 @@ def lauf(argv=None, pfad=None, holer=None):
                         help="Verlauf lesbar anzeigen und beenden")
     parser.add_argument("--ohne-einladungen", action="store_true",
                         help="Offene Einladungen nicht abfragen")
+    parser.add_argument("--gedaechtnis", action="store_true",
+                        help="Aenderungen zusaetzlich als Jack-Beobachtung "
+                             "in NAMEN/Jack/erinnerungen.jsonl merken")
     args = parser.parse_args(argv)
     pfad = pfad or VERLAUF_DATEI
 
@@ -262,7 +265,26 @@ def lauf(argv=None, pfad=None, holer=None):
     print("Verlauf ergaenzt: %d Aenderung(en)." % len(aenderungen))
     for a in aenderungen:
         print(aenderung_text(a))
+    if args.gedaechtnis and aenderungen:
+        gedaechtnis_melden(args.repo, aenderungen, eintrag["zeit_utc"])
     return 0
+
+
+def gedaechtnis_melden(repo, aenderungen, zeit, basis=None):
+    """Optionaler Haken: klappt es nicht, laeuft das Skript trotzdem weiter."""
+    try:
+        sys.path.insert(0, os.path.dirname(SKRIPT_ORDNER))
+        import gedaechtnis
+        g = gedaechtnis.Gedaechtnis("Jack", basis=basis)
+        text = "Schreibrechte %s geaendert: %s" % (
+            repo, "; ".join(aenderung_text(a).strip() for a in aenderungen))
+        g.merken(text, beleg="schreibrechte/verlauf.jsonl " + zeit,
+                 quelle="schreibrechte.py", ebene="konkret", wichtigkeit=4)
+        return True
+    except Exception as e:  # Haken darf nie den Lauf stoppen
+        sys.stderr.write("Hinweis: Gedaechtnis-Haken uebersprungen: %s\n"
+                         % e.__class__.__name__)
+        return False
 
 
 def main():
