@@ -1,0 +1,56 @@
+# Taeglicher Lauf: Schreibrechte von jack-core sichern (NAMEN/schreibrechte).
+# Liest nur die GitHub-API, haengt nur an, loescht nichts.
+name: NAMEN Schreibrechte
+
+on:
+  schedule:
+    # 04:17 UTC = 05:17 Uhr Berlin (Winterzeit) bzw. 06:17 Uhr (Sommerzeit)
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: namen-schreibrechte
+  cancel-in-progress: false
+
+jobs:
+  schreibrechte:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repo auschecken
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Python einrichten
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+
+      - name: Schreibrechte abrufen und Verlauf ergaenzen
+        env:
+          GITHUB_TOKEN: ${{ secrets.JACK_SCHREIBRECHTE_TOKEN }}
+        run: |
+          if [ -z "${GITHUB_TOKEN}" ]; then
+            echo "::error::Secret JACK_SCHREIBRECHTE_TOKEN fehlt. Bitte unter Settings > Secrets and variables > Actions > New repository secret anlegen (siehe NAMEN/README.md). Ohne dieses Secret sieht die Action die Schreibrechte nicht."
+            exit 1
+          fi
+          python NAMEN/schreibrechte/schreibrechte.py --gedaechtnis
+
+      - name: Verlauf sichern (nur bei Aenderung)
+        env:
+          ZIEL: ${{ github.event.repository.default_branch }}
+        run: |
+          DATEIEN="NAMEN/schreibrechte/verlauf.jsonl NAMEN/Jack/erinnerungen.jsonl"
+          if git diff --quiet -- $DATEIEN; then
+            echo "Keine Aenderung, nichts zu sichern."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- $DATEIEN
+          git commit -m "NAMEN: Schreibrechte-Verlauf $(date -u +%Y-%m-%d)" -- $DATEIEN
+          git pull --rebase origin "$ZIEL"
+          git push origin "HEAD:$ZIEL"
