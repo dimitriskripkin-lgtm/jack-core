@@ -121,8 +121,13 @@ def run_act(m):
         content=open(fp,errors="ignore").read()
 
         if m.get("staged") or m.get("shadow"):
-            ok2, info2 = _run_fix_shadow(m, fp, content, bak=None)
-            return ok2, info2, ""
+            # JACK_TUNE_SHADOWAUS (28.10.2026, Claude, Kap 01): alter Shadow-Freigabeweg stillgelegt (30 Tage ungenutzt).
+            # staged/shadow-Fixes werden ein normaler Vorschlag (/vorschlaege, /freigeben mit Dima-Signatur). _run_fix_shadow bleibt nur als Archiv.
+            import json as _sj
+            _inner = {k: v for k, v in m.items() if k not in ("staged", "shadow", "id", "act", "src", "expect", "quittung")}
+            return run_act({"act": "propose_fix",
+                            "problem": "Aus Shadow umgeleitet (" + str(m.get("cat") or m.get("src") or "staged") + "): " + str(act) + " " + os.path.basename(fp),
+                            "proposed_act": act, "proposed_extra": _sj.dumps(_inner, ensure_ascii=False)})
 
         if old not in content:
             return False,"fix: old nicht gefunden: "+old[:40],""
