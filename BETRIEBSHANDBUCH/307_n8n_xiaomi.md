@@ -51,3 +51,5 @@
 - YouTube-Quote 10.000/Tag, insert = 50 -> ~190/Tag, Reset Mitternacht Pazifikzeit (08:00/09:00 Bremen). HONOR-Cron 15 9 * * * (Marker JACK_TUNE_MUSIKGUT) bis fertig, danach Zeile entfernen.
 - Feldbefund: Video ohne Titel (geloescht/privat) -> 400 failedPrecondition. v2: 1x nach 4 s wiederholen, dann ueberspringen; 8 Fehler am Stueck -> Stopp.
 - Grenze: Google-Freigabe im Testmodus laeuft ~03.11. ab -> danach FEHLER token; dann App in Produktion stellen oder YouTube neu verbinden.
+
+**Nachtrag 28.10.2026 (Claude, Inventur I15, Entwurf ChatGPT):** jack_termin Pending-Datei jetzt unter fcntl-Lock (_pending_lock) fuer vorschlag und confirm, kein Telegram/n8n-Aufruf unter Lock. Live: Lock ok. Telegram neu gestartet 13:31.

@@ -15,30 +15,39 @@ def _cmd_ok(c):
     return not any(b in cl for b in BLOCK)
 
 def _run_plan(plan):
-    ev = []
-    for st in plan.get('steps', []):
-        t = st.get('type')
-        if t == 'wait':
-            time.sleep(min(float(st.get('sec', st.get('seconds', 1))), 10))
-            ev.append('wait'); continue
-        cmd = st.get('cmd', '')
-        if not _cmd_ok(cmd):
-            return False, 'BLOCKIERT: ' + cmd[:60]
-        r = subprocess.run(cmd, shell=True, capture_output=True, text=True,
-                           timeout=30, cwd=os.path.expanduser('~/jack'))
-        ev.append(r.stdout.strip()[:200])
-        if r.returncode != 0:
-            return False, 'rc=' + str(r.returncode) + ' ' + r.stderr.strip()[:120]
-    return True, ' | '.join(ev)[:300]
+    """JACK_TUNE_SKILLFAILCLOSED: kein shell=True aus Datenbankplaenen."""
+    steps = plan.get('steps', []) if isinstance(plan, dict) else []
+    if not isinstance(steps, list) or not steps:
+        return False, 'SKILL_NO_EFFECT_PROOF:empty'
+    for st in steps:
+        if not isinstance(st, dict):
+            return False, 'SKILL_NO_EFFECT_PROOF:invalid-step'
+        if 'cmd' in st:
+            return False, 'SKILL_CMD_BLOCK:manual-approval-required'
+        if st.get('type') != 'wait':
+            return False, 'SKILL_NO_EFFECT_PROOF:unsupported-step'
+    return False, 'SKILL_NO_EFFECT_PROOF:wait-only'
 
 def _check(plan, evidence):
-    crits = plan.get('success_criteria') or []
-    if not crits:
-        return True
+    """Unbekannte oder fehlende Kriterien sind kein Erfolg."""
+    if not isinstance(plan, dict) or not isinstance(evidence, str) or not evidence.strip():
+        return False
+    crits = plan.get('success_criteria')
+    if not isinstance(crits, list) or not crits:
+        return False
     for c in crits:
-        v = str(c.get('value', ''))
-        if c.get('type') == 'contains' and v not in evidence: return False
-        if c.get('type') == 'not_empty' and not evidence.strip(): return False
+        if not isinstance(c, dict):
+            return False
+        kind = c.get('type')
+        if kind == 'contains':
+            value = str(c.get('value', ''))
+            if not value or value not in evidence:
+                return False
+        elif kind == 'not_empty':
+            if not evidence.strip():
+                return False
+        else:
+            return False
     return True
 
 def run(max_skills=3):

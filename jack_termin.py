@@ -3,12 +3,27 @@ vorschlag(titel, start, ende) schickt Dima einen Knopf. Erst sein "Ja" (confirm)
 Einmal-Code 128 Bit, 10 Minuten gueltig, nur Dimas Privatchat (chat.id == from.id == CHAT_ID).
 Offene Freigaben liegen in logs/termin_pending.json (0600), damit der Telegram-Dienst sie sieht.
 """
-import json, os, re, secrets, time, uuid
+import fcntl, json, os, re, secrets, time, uuid
+from contextlib import contextmanager
 from pathlib import Path
 
 _P = Path("/data/data/com.termux/files/home/jack/logs/termin_pending.json")
 _TTL = 600
 _TS = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$")
+
+@contextmanager
+def _pending_lock():
+    """JACK_TUNE_TERMINLOCK: stabiler Lock-Inode, auch nach os.replace."""
+    fd = os.open(str(_P) + ".lock", os.O_CREAT | os.O_RDWR, 0o600)
+    try:
+        os.fchmod(fd, 0o600)
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        yield
+    finally:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        finally:
+            os.close(fd)
 
 
 def _laden():
@@ -35,11 +50,12 @@ def vorschlag(titel, start, ende, beschreibung="", send_kb=None):  # send_kb: im
     if not (3 <= len(titel) <= 160) or not _TS.match(start) or not _TS.match(ende):
         return "Termin ungueltig (Titel 3-160 Zeichen, Zeiten wie 2026-10-28T11:00:00+01:00)."
     nonce = secrets.token_hex(16)
-    d = {k: v for k, v in _laden().items() if v.get("expires", 0) > time.time()}
-    d[nonce] = {"expires": time.time() + _TTL,
-                "payload": {"title": titel, "start": start, "end": ende, "timezone": "Europe/Berlin",
-                            "request_id": uuid.uuid4().hex, "description": str(beschreibung)[:300]}}
-    _speichern(d)
+    with _pending_lock():
+        d = {k: v for k, v in _laden().items() if v.get("expires", 0) > time.time()}
+        d[nonce] = {"expires": time.time() + _TTL,
+                    "payload": {"title": titel, "start": start, "end": ende, "timezone": "Europe/Berlin",
+                                "request_id": uuid.uuid4().hex, "description": str(beschreibung)[:300]}}
+        _speichern(d)
     if send_kb is None:
         import jack_telegram as tg
         send_kb = tg.send_keyboard
@@ -55,9 +71,11 @@ def confirm(data, chat, user, trusted):
     if not _authed(chat, user, trusted):
         return "Termin: fremder Absender, abgelehnt"
     art, nonce = m.groups()
-    d = _laden()
-    item = d.pop(nonce, None)
-    _speichern(d)
+    with _pending_lock():
+        d = _laden()
+        item = d.pop(nonce, None)
+        if item is not None:
+            _speichern(d)
     if not item:
         return "Termin: Knopf nicht mehr gueltig"
     if item.get("expires", 0) <= time.time():

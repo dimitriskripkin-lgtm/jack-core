@@ -43,3 +43,6 @@ Dateianfang, noch nicht gelesen)? Was ist `jack_memory_pruning.py` im Detail?
 
 **Nachtrag 24.10.2026 (Claude, Kap 303)**
 JACK_TUNE_XIDOWNSTALE: Xiaomi-Ausfallmeldung nur noch, wenn jack_heartbeat.is_xiaomi_alive() jetzt False ist. .xi_hb_down ist ein 3-h-Abkuehlstempel, kein Zustand.
+
+**Nachtrag 28.10.2026 (Claude, Inventur I13/V01/V02/V12, Entwurf ChatGPT Runde 2b) JACK_TUNE_SKILLFAILCLOSED**
+DB-Skill-Plaene werden nie mehr per shell=True ausgefuehrt: autolearn _skill_cmd_allowed sperrt alles, test_candidate_skills nur noch Inventur (log, keine Verifikation); skill_trainer _run_plan blockt cmd-Schritte und zaehlt reine wait/UI-Schritte nicht als Erfolg, _check: fehlende/unbekannte Kriterien = kein Erfolg. skill_run/plan_try (Runner, validate_safe) unberuehrt. Live-Tests ok, Backups *.bak_runde2b. Autolearn neu gestartet 13:31.

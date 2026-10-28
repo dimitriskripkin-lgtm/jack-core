@@ -24,17 +24,8 @@ from datetime import datetime
 
 
 def _skill_cmd_allowed(cmd):
-    """SSH_SKILL_WHITELIST: nur xiaomi-jack oder lokal-safe."""
-    c = (cmd or "").strip()
-    low = c.lower()
-    for d in ("rm -rf", "mkfs", "dd if=", "drop table", "reboot", "shutdown", "jack_secrets", "id_jack", "wget ", "curl http"):
-        if d in low:
-            return False, "DENY:" + d
-    if "ssh " in low or low.startswith("ssh"):
-        if ("xiaomi-jack" in c or "10.229.239.131" in c) and not any(x in low for x in (";", "&&", "||", "`", "$(")):
-            return True, "OK-ssh-xiaomi"
-        return False, "DENY:ssh-nur-xiaomi-jack"
-    return True, "OK-local"
+    """JACK_TUNE_SKILLFAILCLOSED: DB-Shellschritte niemals automatisch ausfuehren."""
+    return False, "DENY:DB-Shellschritt-nur-manuell"
 
 
 def detect_futile_skills():
@@ -210,48 +201,25 @@ def genesis_skills():
     return created
 
 def test_candidate_skills():
-    """Testet CANDIDATE-Skills automatisch. Bei Erfolg -> VERIFIED."""
+    """JACK_TUNE_SKILLFAILCLOSED: Inventur ohne Ausfuehrung oder Verifikation."""
     conn = sqlite3.connect(DB_SKILLS)
-    c = conn.cursor()
-    c.execute("SELECT name, plan_json FROM skills WHERE state='CANDIDATE' LIMIT 3")
-    rows = c.fetchall()
-    tested = 0
-    
+    try:
+        rows = conn.execute("SELECT name, plan_json FROM skills WHERE state='CANDIDATE' LIMIT 3").fetchall()
+    finally:
+        conn.close()
     for name, plan_json in rows:
         try:
             plan = json.loads(plan_json)
-            steps = plan.get('steps', [])
-            if not steps: continue
-            
-            # Führe ersten Schritt aus
-            cmd = steps[0].get('cmd', '')
-            if cmd:
-                log(f"TESTE SKILL: {name} -> {cmd[:30]}...")
-                try:
-                    ok_c, why = _skill_cmd_allowed(cmd)
-                    if not ok_c:
-                        print("SKILL_CMD_BLOCK", name, why, cmd[:80])
-                        continue
-                    result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
-                    out_text = (str(result.stdout) + str(result.stderr)).lower()
-                    bad = ["command not found", "permission denied", "syntax error", "traceback", "fatal"]
-                    has_err = any(b in out_text for b in bad)
-                    c.execute("UPDATE skills SET executions=executions+1 WHERE name=?", (name,))
-                    if result.returncode == 0 and not has_err:
-                        c.execute("UPDATE skills SET successes=successes+1, state=? WHERE name=?", ("VERIFIED", name,))
-                        log(f"SKILL VERIFIED: {name}")
-                    else:
-                        log(f"SKILL FAILED: {name} (rc={result.returncode}, err_text={has_err})")
-                except subprocess.TimeoutExpired:
-                    c.execute("UPDATE skills SET executions=executions+1 WHERE name=?", (name,))
-                    log(f"SKILL TIMEOUT: {name} (>10s)")
-                tested += 1
-        except Exception as e:
-            log(f"TEST FEHLER {name}: {e}")
-            
-    conn.commit()
-    conn.close()
-    return tested
+            steps = plan.get('steps', []) if isinstance(plan, dict) else []
+            if not isinstance(steps, list) or not steps:
+                log(f"SKILL NICHT VERIFIZIERT: {name} (kein pruefbarer Plan)")
+            elif any(isinstance(st, dict) and 'cmd' in st for st in steps):
+                log(f"SKILL CMD GESPERRT: {name} (manuelle Freigabe erforderlich)")
+            else:
+                log(f"SKILL NICHT VERIFIZIERT: {name} (kein Wirkungsbeleg)")
+        except (ValueError, TypeError, AttributeError):
+            log(f"SKILL NICHT VERIFIZIERT: {name} (Plan ungueltig)")
+    return 0
 
 def health_check_faehigkeiten(cycle_num):
     # P3: alle 6 Zyklen drei R0/R1-Faehigkeiten live pruefen
