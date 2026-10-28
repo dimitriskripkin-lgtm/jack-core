@@ -17,3 +17,6 @@
 ## Offen
 - ~/svlogger.broken_20261010 spaeter loeschen. Manueller cloudflared-Prozess 22668 beendet sich selbst.
 - jack_autolearn: wurde 11:32 und ca. 16:50 gestoppt, wer ist ungeklaert; laeuft seit ca. 22:50 wieder.
+
+**Nachtrag 28.10.2026 (Claude, Entwurf ChatGPT runde4_logs.md, Dima-Go 15:53) JACK_TUNE_SVLOG**
+svlogd fuer jack_cortex, jack_focus_monitor, jack_honor_watch, jack_telegram: service/<d>/log/run -> svlogd -tt ~/logs/<d> (0700, config s1048576 n20 t86400). run: exec 2>&1 + PYTHONUNBUFFERED=1 vor exec python3 (Backup run.bak_20261028). Einbau: sv stop + runsv beenden, runsvdir startet runsv mit log neu. Gemessen 15:54: je 1 Prozess, Herzschlaege frisch, Logs schreiben. NICHT: jack_missions (nur Dima, Entwurf liegt bereit), jack_waechter (schreibt ~/jack/waechter.log, ohne Rotation).

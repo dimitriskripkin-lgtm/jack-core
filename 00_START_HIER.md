@@ -154,3 +154,5 @@ Was geändert wurde, in die Betriebshandbuch-Kapitel eintragen. Offene Punkte ne
 - Neu 27.10.: Xiaomi heiss/haengt? python3 jack_xiaomi_notaus.py messen | n8n_aus (Kap 307). Nach jedem Arbeitsblock Doku + Commit/Push (Dima-Regel).
 
 - Neu 27.10.: Kalender per JACK: "Morgen Werkstatt um elf" (Text/Sprache) -> Knopf -> n8n (Xiaomi) -> Google. Google-App im Testmodus: Freigabe laeuft ca. 03.11. ab (Kap 307).
+
+- Neu 28.10.: Dienst-Logs (svlogd, rotiert) fuer cortex/focus_monitor/honor_watch/telegram unter ~/logs/<dienst>/current (Kap 272, JACK_TUNE_SVLOG). Grok-Briefkasten + Tesla-Gedaechtnis: Kap 308.
