@@ -230,3 +230,5 @@ diag_snapshot, jack_bug_fixer, jack_error_door, jack_intent_parser, jack_pyflake
 | wirkungs_check | Bibliothek (1 Aufrufer) | import subprocess, os, time |
 
 MODULKARTE.md — Nachtrag 15.10.2026, C2/T01: jack_ghost.hol_xiaomi_ui() lieferte bei gescheitertem uiautomator dump eine vorhandene /sdcard/jack_ui.xml erneut. Beleg: fg com.android.settings/MainSettings, Snapshot-Text aus Chrome P08 'GitHub OpenAI'. Kritischer Fix durch Claude: JACK_TUNE_GHOSTFRESH entfernt /sdcard/jack_ui.xml vor jedem Dump. Live-Code bestätigt; Backup jack_ghost.py.bak_20261015, compile OK, Telegram neu gestartet und Live-Dump OK laut Claude. Frische UI-Daten sind Sicherheitsvoraussetzung für Finish-Verifier und Phone-Arena; XML-Parsebarkeit allein reicht nicht. C3 prüft zusätzlich Foreground/Text-Plausibilität im separaten Offline-Audit. C2 Gate NICHT BESTANDEN (T01 SETUP_FAIL, 3/4 Fallen).
+
+**Nachtrag 28.10.2026 (Claude, Runde 4 ChatGPT):** jack_curiosity, jack_error_door, jack_ui nach Attic/20261028_waisen_runde4 (kein Import/Cron/runit/Boot/Prozess, gegengeprueft). 38 weitere Kandidaten bleiben (Werkzeuge/indirekt), Beleg BUEROS/chatgpt/runde4_waisen.md.
