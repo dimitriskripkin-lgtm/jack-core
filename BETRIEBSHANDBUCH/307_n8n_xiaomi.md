@@ -43,3 +43,11 @@
 - Bekannte Grenze: "Ich muss morgen um elf zur Werkstatt" wird NICHT erkannt (beginnt nicht mit Tag, kein Termin-Wort) -> "Termin morgen um elf Werkstatt" sagen. Unsinnige Saetze wie "Morgen um elf bin ich muede" koennen einen Knopf erzeugen -> Abbrechen.
 
 **Nachtrag 27.10.2026 10:22:** Feldtest Dima "Stelle mir einen Termin fuer morgen um 16 Uhr" -> Titel war "Stelle mir fuer" (Fuellwoerter). Fix: stell/mach/leg/setz/erstell, mir/mich/uns, fuer/an, eine/neue(n) werden entfernt, sonst Titel "Termin". Eingetragener Termin per Google-Kalender-Connector auf "Termin" umbenannt. Doppelter Knopfdruck -> "Knopf nicht mehr gueltig" (Einmal-Code wirkt).
+
+**Nachtrag 28.10.2026 (Claude) Playlist-Rettung "Musik gut" (JACK_TUNE_MUSIKGUT), Freigabe Dima 03:47 "Go"**
+- Quelle: Google Takeout Teil 1 (YouTube-Wiedergabeverlauf.html, 48.712 Eintraege 19.04.2024-25.10.2026). Rest des Takeouts (146 GB) unnoetig.
+- Befund: Hoerbruch ~10.08.2025 (Playlist geloescht). Auswahl: vor Bruch >= 8x gehoert UND 01.04.-10.08.2025 >= 2x -> 817 Videos, meistgehoert zuerst (Top: Tiesto Mockingbird 54x). Auswertung: ARBEITSPLATZ/BUEROS/claude/musik_gut_auswahl.py.txt -> logs/musik_gut_ids.txt (gitignored, sha 3e2470656726ddcd).
+- jack_musik_gut.py (HONOR) -> Xiaomi as_root=False: schreibt ids.txt + fuell.js (deploy/xiaomi_n8n/musik_gut_fuell.js) nach Container ~n8n/yt_rettung, node holt Zugang aus n8n-Credential jackYouTube00001 (Export sofort geloescht), Token-Refresh, private Playlist "Musik gut (wiederhergestellt)", fuellt bis Quote. Zustand ~n8n/yt_rettung/state.json (pos, ok, skip, playlistId). Log logs/musik_gut.log.
+- YouTube-Quote 10.000/Tag, insert = 50 -> ~190/Tag, Reset Mitternacht Pazifikzeit (08:00/09:00 Bremen). HONOR-Cron 15 9 * * * (Marker JACK_TUNE_MUSIKGUT) bis fertig, danach Zeile entfernen.
+- Feldbefund: Video ohne Titel (geloescht/privat) -> 400 failedPrecondition. v2: 1x nach 4 s wiederholen, dann ueberspringen; 8 Fehler am Stueck -> Stopp.
+- Grenze: Google-Freigabe im Testmodus laeuft ~03.11. ab -> danach FEHLER token; dann App in Produktion stellen oder YouTube neu verbinden.

@@ -281,3 +281,4 @@ logs/telegram_nur_log.jsonl
 logs/termin_pending.json
 logs/*_vor_TERMIN_*.py
 logs/*_vor_TERMINTEXT_*.py
+logs/musik_gut_*
