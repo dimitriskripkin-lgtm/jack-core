@@ -12,3 +12,9 @@
 **Erster Lauf 13:14:** 11/11 Dienste, Honor 94 %/34 C, Xiaomi 44,3 C, n8n laeuft, 2 Fails/24 h, Playlist 386/817, Push 1170bd0.
 
 **Offen:** Grok-Bot braucht Lesezugriff auf das private Repo (Dima im Grok-GitHub-Connector). Rueckweg von_dima.md -> Claude-Pruefung noch manuell. Branch-Schutz fuer private Repos ist bei GitHub Free nicht verfuegbar, und Grok schreibt mit Dimas Identitaet (Admin) -> Schutz waere ohnehin umgehbar; Regel "nur anhaengen" + Git-Historie als Sicherung.
+
+**Nachtrag 28.10.2026 14:27 (Claude, Dima-Go 14:22) Grok-Briefkasten JACK_TUNE_GROKBRIEF**
+- Grok legt NUR NEUE Dateien in jack-gedaechtnis/auftraege/<id>.md an (typ: frage|hinweis|vorschlag, text max 500, Format auftraege/LIESMICH.txt). jack_fahrtlage (Cron 2 h) holt per git pull --rebase, meldet max 3 je Lauf: hinweis ueber jack_tg_send, frage/vorschlag per send_keyboard mit Knopf ga:ja|nein:<nonce> (128 Bit, 48 h, logs/grok_pending.json 0600, Lock).
+- jack_telegram.handle_callback ga: -> jack_fahrtlage.antwort (nur Dimas Privatchat, Einmal-Code) -> status/<id>.json -> commit/push. Ein gemeinsamer Git-Lock logs/.gedaechtnis_git.lock fuer Cron und Knopf. Antwort ist NUR Antwort, JACK fuehrt nichts aus.
+- Lagebild jetzt mit Fail-Acts (Name x Anzahl) und Zahl offener Grok-Fragen.
+- E2E 14:25-14:26: Testfrage 2026-10-28_000 -> Knopf bei Dima -> Ja -> status antwort=ja, auf GitHub bestaetigt (2b460b3). Gleichzeitiger Grok-Commit wurde per rebase sauber eingemischt.

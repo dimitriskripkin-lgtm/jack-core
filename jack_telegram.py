@@ -336,6 +336,15 @@ def _check_memory_trigger(text, chat_id):
     return False
 
 def handle_callback(callback_data, callback_id, s1_chat_id=None, s1_from_id=None):
+    if str(callback_data).startswith('ga:'):  # JACK_TUNE_GROKBRIEF: Antwort auf Grok-Frage (Kap 308), fuehrt nichts aus
+        import jack_fahrtlage as _ga
+        import threading as _threading
+        answer_callback(callback_id, 'Antwort wird gespeichert ...')
+        def _go_ga():
+            reply = _ga.antwort(callback_data, s1_chat_id, s1_from_id, CHAT_ID)
+            if reply: send(reply)
+        _threading.Thread(target=_go_ga, daemon=True).start()
+        return None
     if str(callback_data).startswith('tm:'):  # JACK_TUNE_TERMIN: Kalender-Knopf (Kap 307)
         import jack_termin as _tm
         import threading as _threading

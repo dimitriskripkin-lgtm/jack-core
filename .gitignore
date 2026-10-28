@@ -283,3 +283,5 @@ logs/*_vor_TERMIN_*.py
 logs/*_vor_TERMINTEXT_*.py
 logs/musik_gut_*
 logs/fahrtlage.log
+logs/grok_pending.json*
+logs/.gedaechtnis_git.lock

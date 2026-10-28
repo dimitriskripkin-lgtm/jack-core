@@ -84,3 +84,5 @@ Stub-Befehlen `/agent`/`/auto` existiert also, nur unter anderem Namen erreichba
 **Nachtrag 27.10.2026:** handle(text, s1_chat_id, s1_from_id) faengt Spotify-S1-Befehle als ALLERERSTES ab (vor /find, Router, alten Xiaomi-Spotify-Regex). handle_callback leitet s1:-Knoepfe an jack_spotify_s1.confirm (Thread). Siehe Kap 306.
 
 **Nachtrag 27.10.2026:** handle() erkennt nach S1 Termine (jack_termin_parse) -> Kalender-Knopf; Callback tm: -> jack_termin.confirm. Kap 307.
+
+**Nachtrag 28.10.2026:** handle_callback ga: -> jack_fahrtlage.antwort (Grok-Briefkasten, Kap 308).
