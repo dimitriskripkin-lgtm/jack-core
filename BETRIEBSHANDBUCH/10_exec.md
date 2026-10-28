@@ -22,3 +22,6 @@ Gelesen 03.10.2026, Grok, live per read_file. Kein Umbau.
 
 ## Nachtrag 19.10.2026 (F12, JACK_TUNE_OBSLINE)
 jack_observer prueft stderr wie bisher komplett, stdout aber nur noch an Zeilenanfaengen mit echten Fehlermeldungen (Traceback, XyzError:, XyzException, fatal:, bash command not found / permission denied). Vorher blockte jedes Wort exception im Quelltext-Lesen (cat/sed/grep) mit rc 99. 12/12 Offline-Faelle. Backup jack_observer.py.bak_20261019. Wirkt im Runner nach Neustart, im Telegram-Dienst erst nach dessen naechstem Neustart.
+
+**Nachtrag 28.10.2026 (Claude, Inventur I05, Entwurf ChatGPT) JACK_TUNE_I05 + I05B**
+_guard_ready ist jetzt fail-closed. Fund beim Live-Test: ensure_ready() liefert ein dict, die alte Entpackung ok,why warf IMMER -> der Guard war nie aktiv (immer fail-open). I05B wertet das dict aus (ok, locked, package). Live: echt (True, guard:locked=False ...), Importfehler (False, guard_unavailable). Telegram neu gestartet 10:57.

@@ -16,13 +16,16 @@ def pruefe(cmd):
 
 
 def _guard_ready():
-    """Optional: step_guard Preflight (BLOCK6). Fail-open wenn Modul fehlt."""
+    """Step-Guard Preflight (BLOCK6). JACK_TUNE_I05 (28.10.2026, Entwurf ChatGPT, Claude): fail-closed, bei Ausfall keine UI-Aktion."""
     try:
         from ui_agent.step_guard import ensure_ready
-        ok, why = ensure_ready()
-        return ok, why
+        st = ensure_ready()
+        if isinstance(st, dict):  # JACK_TUNE_I05B: ensure_ready liefert ein dict (alte 2er-Entpackung warf immer -> Guard war nie aktiv)
+            return bool(st.get("ok")), "guard:locked=" + str(st.get("locked")) + " pkg=" + str(st.get("package"))[:60]
+        ok, why = st
+        return bool(ok), why
     except Exception as e:
-        return True, "guard_unavailable:" + str(e)[:80]
+        return False, "guard_unavailable:" + str(e)[:80]
 
 def tap_text(query, partial=True):
     ok_g, why_g = _guard_ready()

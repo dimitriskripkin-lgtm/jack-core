@@ -834,7 +834,7 @@ def start_consolidated():
         _th.Thread(target=_jt.loop, daemon=True, name="telemetrie").start()
     except Exception as _te:
         _jlog and _jlog.fehler("autonomous", "telemetrie", _te)
-    print("[Konsolidiert] Autolearn+Publisher+Missionen als Threads gestartet")
+    print("[Konsolidiert] Threads: scout, monitor, tunnel_watch, sanity, lerner, proaktiv, fahrdigest (+telemetrie optional; autolearn-Thread stillgelegt, laeuft als Dienst)")  # JACK_TUNE_I09
 
 if __name__=="__main__":
     start_consolidated()

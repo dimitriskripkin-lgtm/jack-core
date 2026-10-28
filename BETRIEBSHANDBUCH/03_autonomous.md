@@ -60,3 +60,5 @@ gebraucht. Backup: `Attic/jack_autonomous.py.bak_20261006_deadthreads`.
 
 **Offene Fragen für später:** Was tun `jack_scout`, `jack_monitor`, `jack_sanity`, `jack_lerner`
 im Detail? Was ist `jack_queue.TaskQueue` genau (RAM-Drosselung)?
+
+**Nachtrag 28.10.2026 (Claude, Inventur I09):** Statuszeile start_consolidated nennt nur noch echte Threads (scout, monitor, tunnel_watch, sanity, lerner, proaktiv, fahrdigest, telemetrie optional). Waechter neu gestartet 10:57.
