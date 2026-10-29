@@ -9,8 +9,8 @@ except Exception:
 import jack_config as _jc; XIAOMI=_jc.get_param("NETWORK","xiaomi_ip"); PORT=_jc.get_param("NETWORK","ssh_port"); KEY=os.path.expanduser("~/.ssh/id_jack")
 
 def _ssh(cmd, timeout=30):
-    full=["ssh","-i",KEY,"-o","BatchMode=yes","-o","StrictHostKeyChecking=no",
-          "-o","UserKnownHostsFile=/dev/null","-o","ConnectTimeout=6","-p",PORT,
+    from jack_xiaomi import SSH_OPTS  # JACK_TUNE_I23B_PIN
+    full=["ssh", "-o", "ConnectTimeout=6"] + SSH_OPTS + ["-p", PORT,
           "xiaomi-jack", cmd]
     try:
         r=subprocess.run(full,capture_output=True,text=True,timeout=timeout)

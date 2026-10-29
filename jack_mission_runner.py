@@ -472,7 +472,8 @@ def run_act(m):
                 return False,"xiaomi_ssh_check: ip ungueltig",""
             _key=_osc.path.expanduser("~/.ssh/id_jack")
             try:
-                r2=_spc.run(["ssh","-i",_key,"-o","BatchMode=yes","-o","StrictHostKeyChecking=accept-new","-o","UserKnownHostsFile=/dev/null","-o","ConnectTimeout=6","-p","8022","root@"+_ip,"echo ok"],capture_output=True,text=True,timeout=10)
+                # JACK_TUNE_I23B_PIN: zentrale Optionen, bisherigen ConnectTimeout voranstellen
+                r2=_spc.run(["ssh", "-o", "ConnectTimeout=6"] + _jx.SSH_OPTS + ["-p", "8022", "root@"+_ip, "echo ok"],capture_output=True,text=True,timeout=10)
                 dt=round(_tm2.time()-t0,2)
                 if r2.returncode==0 and "ok" in (r2.stdout or ""):
                     return True,"xiaomi_ssh_check(ip="+_ip+"): erreichbar in "+str(dt)+"s",""
