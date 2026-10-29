@@ -21,3 +21,10 @@ Nachtrag 22.10. 02:01 (v2, sha a036f36d, Backup .bak_20261022_jacktimer):
 Nachtrag 22.10. 02:42: am broadcast ueber rish scheitert auf dem HONOR immer (Failed transaction 2147483646), am start ueber rish geht. am broadcast aus Termux selbst geht. Tasker-Weg deshalb ueber Profil Intent Received (Action jack.honor.MEDIA, Extra cmd), gesendet aus Termux, nicht ACTION_TASK. Auftrag 21b an ChatGPT. Spotify-Bevorzugung (JACK_TUNE_MUSIKAPP) live 02:13, 31/31 Tests.
 
 Nachtrag 22.10. 03:13 (JACK_TUNE_RISHTMP, Backup jack_lagebild.py.bak_20261022_rishtmp): am broadcast/appops ueber rish meldeten Failed transaction, weil der cmd-Dienst nicht direkt in die /sdcard-Datei schreiben darf. _rish schreibt jetzt erst nach /data/local/tmp/<name> (stdin </dev/null), kopiert nach /sdcard/Download/.jack_rish_<pid>.txt und loescht. Gemessen: Broadcast completed result=0, appops liest, Fahrmodus 5/5 stabil. Neustart jack_telegram + jack_waechter 03:13. Damit ist ACTION_TASK an Tasker auch auf dem Honor moeglich.
+
+Nachtrag 29.10.2026 16:46 (Claude, JACK_TUNE_MUSIKVORNE + JACK_TUNE_MUSIKFREI, Backups *.bak_20261029_musikvorne / _musikfrei):
+- Fehler: "Mach Spotify play" ging in den TALK-Lane, das Modell antwortete "Spiele jetzt Spotify." ohne Aktion (erfundene Tat).
+- Gemessen: Media button session lag bei app.morphe.android.youtube (STOPPED), Spotify PAUSED. Taste ging an YouTube.
+- Fix 1 jack_handy.medien: play auf Honor und Tasten-App != Musik-App -> monkey startet Musik-App nach vorn, 1,5 s, input keyevent 126. Live gemessen PAUSED -> PLAYING. Sonst wie bisher cmd media_session dispatch. Beleg bleibt PlaybackState.
+- Fix 2 jack_telegram.handle vor HANDYCMD: Freitext "(jack) (mach) (mal) (die) spotify|musik play|an|los|weiter|pause|aus|stop" -> /musik play|pause. "spiel X" (S1) unberuehrt.
+- pyflakes sauber, Neustart jack_telegram 16:46. Offen: TALK erfindet weiter Taten (S2 fing "Spiele jetzt" nicht) -> Z1b/S2 nachziehen.

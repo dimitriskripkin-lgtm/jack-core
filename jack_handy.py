@@ -151,8 +151,15 @@ def medien(aktion, geraet='honor'):
         return {'ok': True, 'app': app, 'zustand': NAMEN.get(z, 'unbekannt(%s)' % z), 'geraet': geraet}
     if aktion not in MEDIEN:
         return {'ok': False, 'grund': 'erlaubt: ' + ', '.join(list(MEDIEN) + ['status'])}
-    _, z0, taste = _lage(geraet)
-    _sh('cmd media_session dispatch %s >/dev/null 2>&1' % MEDIEN[aktion], 10, geraet)
+    app0, z0, taste = _lage(geraet)
+    if geraet == 'honor' and aktion == 'play' and app0 and taste and taste != app0:
+        # JACK_TUNE_MUSIKVORNE (29.10.2026, Kap 301): Taste lag bei anderer App (z. B. YouTube).
+        # Musik-App nach vorn, dann Taste ans Vordergrundfenster (gemessen PAUSED -> PLAYING).
+        _sh('monkey -p %s -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1' % app0, 10, geraet)
+        time.sleep(1.5)
+        _sh('input keyevent 126 >/dev/null 2>&1', 10, geraet)
+    else:
+        _sh('cmd media_session dispatch %s >/dev/null 2>&1' % MEDIEN[aktion], 10, geraet)
     erwartet = {'play': '3', 'pause': '2'}.get(aktion)
     app, z = None, None
     for warte in (0.3, 0.5, 0.7):  # JACK_TUNE_HANDYFAST: kurz pollen statt fest 1,2 s warten
