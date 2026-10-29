@@ -137,9 +137,11 @@ def scan_ssh_verbindungen():
         if not os.path.exists(cfg["key"]):
             ergebnisse[name] = "key_fehlt"
             continue
-        ok = _check(
-            f"ssh -i {cfg['key']} -o BatchMode=yes -o StrictHostKeyChecking=no "
-            f"-o ConnectTimeout=5 -p {cfg['port']} {cfg['user']}@{cfg['host']} true",
+        from jack_xiaomi import SSH_OPTS  # JACK_TUNE_I23C_PIN
+        import shlex
+        ok = _check(shlex.join(
+            ['ssh', '-o', 'ConnectTimeout=5'] + SSH_OPTS + [
+                '-p', str(cfg['port']), f"{cfg['user']}@{cfg['host']}", 'true']),
             timeout=10
         )
         ergebnisse[name] = "erreichbar" if ok else "nicht_erreichbar"

@@ -238,9 +238,9 @@ def detect(text, gemini_fallback=True):
 def _ssh(cmd, timeout=10):
     import jack_config as _jc
     ip = _jc.get_param('NETWORK', 'xiaomi_ip')
-    return subprocess.run(['ssh','-i',os.path.expanduser('~/.ssh/id_jack'),
-        '-o','BatchMode=yes','-o','StrictHostKeyChecking=no',
-        '-o','ConnectTimeout=4','-p','8022',f'root@{ip}',cmd],
+    from jack_xiaomi import SSH_OPTS  # JACK_TUNE_I23C_PIN
+    return subprocess.run(['ssh', '-o', 'ConnectTimeout=4'] + SSH_OPTS + [
+        '-p', '8022', f'root@{ip}', cmd],
         capture_output=True, text=True, timeout=timeout)
 
 def execute(d):

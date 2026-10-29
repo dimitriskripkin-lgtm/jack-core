@@ -39,9 +39,9 @@ def xiaomi_ssh():
         ip = jc.get_param('NETWORK','xiaomi_ip')
     except Exception:
         return False, 'config nicht lesbar'
-    r = _run(['ssh','-i',os.path.expanduser('~/.ssh/id_jack'),'-o','BatchMode=yes',
-              '-o','StrictHostKeyChecking=no','-o','ConnectTimeout=4','-p','8022',
-              'root@'+str(ip),'true'], timeout=8)
+    from jack_xiaomi import SSH_OPTS  # JACK_TUNE_I23C_PIN
+    r = _run(['ssh', '-o', 'ConnectTimeout=4'] + SSH_OPTS + [
+              '-p', '8022', 'root@'+str(ip), 'true'], timeout=8)
     if r is None:
         return False, 'ssh timeout'
     if r.returncode == 0:

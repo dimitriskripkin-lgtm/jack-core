@@ -25,11 +25,9 @@ XIAOMI_PORT = "8022"
 XIAOMI_KEY = os.path.expanduser("~/.ssh/id_jack")
 
 def ssh_cmd(args, timeout=10):
-    cmd = [
-        "ssh", "-i", XIAOMI_KEY, "-p", XIAOMI_PORT,
-        "-o", "ConnectTimeout=3",
-        "-o", "StrictHostKeyChecking=no",
-        f"root@{XIAOMI_HOST}"
+    from jack_xiaomi import SSH_OPTS  # JACK_TUNE_I23C_PIN
+    cmd = ["ssh", "-o", "ConnectTimeout=3"] + SSH_OPTS + [
+        "-p", XIAOMI_PORT, f"root@{XIAOMI_HOST}"
     ] + args
     try:
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
