@@ -12,14 +12,21 @@ import jack_config
 
 XIAOMI_SSH_PORT = 8022
 SSH_KEY = os.path.expanduser("~/.ssh/id_jack")
-SSH_OPTS = [
+SSH_OPTS = [  # JACK_TUNE_I23_PIN: nur vorher lokal bestaetigter Xiaomi-Hostkey
     "-i", SSH_KEY,
     "-o", "BatchMode=yes",
-    "-o", "StrictHostKeyChecking=accept-new",
-    "-o", "UserKnownHostsFile=/dev/null",
+    "-o", "HostKeyAlias=xiaomi-jack",
+    "-o", "StrictHostKeyChecking=yes",
+    "-o", "UserKnownHostsFile="+os.path.expanduser("~/.ssh/known_hosts_xiaomi"),
+    "-o", "GlobalKnownHostsFile=/dev/null",
+    "-o", "KnownHostsCommand=none",
+    "-o", "VerifyHostKeyDNS=no",
+    "-o", "UpdateHostKeys=no",
+    "-o", "HostKeyAlgorithms=ssh-ed25519",
+    "-o", "CheckHostIP=no",
     "-o", "ConnectTimeout=5",
     "-o", "ControlMaster=auto",
-    "-o", "ControlPath="+os.path.expanduser("~/.ssh/sockets/%r@%h:%p"),
+    "-o", "ControlPath="+os.path.expanduser("~/.ssh/xi23/%C"),
     "-o", "ControlPersist=120",
 ]
 
