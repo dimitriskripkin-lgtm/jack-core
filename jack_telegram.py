@@ -496,12 +496,11 @@ def handle(text, s1_chat_id=None, s1_from_id=None):
         pass
     if text.strip().startswith('/ssh '):
         return 'Zu. /ssh schickt nichts mehr roh an das Xiaomi.'  # JACK_TUNE_SSHZU
-    try:  # JACK_TUNE_MUSIKFREI (29.10.2026, Kap 301): 'Mach Spotify play' landete im TALK, Modell log 'Spiele jetzt Spotify'
-        import re as _re_mf
-        _mf = _re_mf.fullmatch(r'(?i)\s*(?:jack[\s,!:]*)?(?:(?:mach|mache|bitte)\s+)?(?:mal\s+)?(?:die\s+)?(?:spotify|musik)\s+'
-                            r'(play|an|los|weiter|weiterspielen|pause|aus|stop|stopp)(?:\s+bitte)?[\s.!]*', text or '')
+    try:  # JACK_TUNE_MUSIKFREI + JACK_TUNE_MUSIKWORTE (29.10.2026, Kap 301): Freitext -> /musik (sonst erfand TALK die Tat)
+        import jack_handy as _jh_frei
+        _mf = _jh_frei.frei(text)
         if _mf:
-            text = '/musik ' + ('pause' if _mf.group(1).lower() in ('pause', 'aus', 'stop', 'stopp') else 'play')
+            text = _mf
     except Exception:
         pass
     if text.strip().lower().startswith(('/timer', '/musik')):  # JACK_TUNE_HANDYCMD (Kap 301): Timer/Musik, Standard Honor

@@ -203,6 +203,37 @@ def parse_timer(rest):
     return int(round(n * f)), (m.group(3) or '').strip()
 
 
+def frei(text):
+    """JACK_TUNE_MUSIKWORTE (29.10.2026, Kap 301): Freitext -> '/musik play|pause|weiter|zurueck' oder None."""
+    t = str(text or '').lower()
+    for a, b in (('ä', 'ae'), ('ö', 'oe'), ('ü', 'ue'), ('ß', 'ss')):
+        t = t.replace(a, b)
+    t = ' '.join(re.findall(r'[a-z0-9]+', t))
+    geraet = ' xiaomi' if re.search(r'\bxiaomi\b', t) else ''
+    t = re.sub(r'\s*\b(?:auf |am )?(?:dem )?(?:honor|xiaomi|handy)\b', '', t).strip()
+    t = re.sub(r'^(?:jack )?(?:bitte )?(?:(?:mach|mache|spring|springe|geh|gehe|schalt|schalte|spiel|spiele) )?(?:mal )?(?:die )?', '', t)
+    t = re.sub(r'(?: bitte| mal| jetzt)+$', '', t).strip()
+    if not t or len(t.split()) > 6:
+        return None
+    m = r'(?:spotify|musik)'
+    n = r'(?:lied|song|titel|track)'
+    regeln = (
+        ('weiter', (r'(?:%s )?(?:zum |zu dem )?(?:das )?naechste[nrs]? %s' % (m, n),
+                    r'(?:%s )?(?:ein(?:en)? )?%s (?:weiter|vor|nach vorne|vorwaerts|ueberspringen)' % (m, n),
+                    r'%s (?:vor|nach vorne|vorwaerts|skip|next|naechster|naechstes|ueberspringen)' % m,
+                    r'(?:skip|next)')),
+        ('zurueck', (r'(?:%s )?(?:zum |zu dem )?(?:das )?(?:vorherige[nrs]?|letzte[nrs]?) %s' % (m, n),
+                     r'(?:%s )?(?:ein(?:en)? )?%s (?:zurueck|davor|nochmal)' % (m, n),
+                     r'%s (?:zurueck|back|vorheriges|vorheriger)' % m)),
+        ('pause', (r'%s (?:pause|pausieren|aus|ausmachen|stop|stopp|anhalten)' % m,)),
+        ('play', (r'%s (?:play|an|anmachen|los|start|starten|abspielen|weiter|weiterspielen|fortsetzen)' % m,)),
+    )
+    for aktion, muster in regeln:
+        if any(re.fullmatch(p, t) for p in muster):
+            return '/musik ' + aktion + geraet
+    return None
+
+
 def telegram(text):
     t = str(text).strip()
     geraet = 'xiaomi' if re.search(r'(?i)\bxiaomi\b', t) else 'honor'
