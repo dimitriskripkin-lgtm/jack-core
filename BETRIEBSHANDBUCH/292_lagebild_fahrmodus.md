@@ -31,3 +31,5 @@ Datei: ~/jack/jack_lagebild.py (JACK_TUNE_LAGEBILD), nur lesen, kein Dienst, kei
 - Ausloesen (root): am broadcast -a net.dinglisch.android.tasker.ACTION_TASK -e task_name <NAME>. JACK_TEST_DATEI schrieb /sdcard/Tasker/JACK/outbox/datei_<ms>.json mit result DONE (Weg Tasker->JACK ueber Datei bewiesen).
 
 Nachtrag 22.10. 03:13 (JACK_TUNE_RISHTMP, Backup jack_lagebild.py.bak_20261022_rishtmp): am broadcast/appops ueber rish meldeten Failed transaction, weil der cmd-Dienst nicht direkt in die /sdcard-Datei schreiben darf. _rish schreibt jetzt erst nach /data/local/tmp/<name> (stdin </dev/null), kopiert nach /sdcard/Download/.jack_rish_<pid>.txt und loescht. Gemessen: Broadcast completed result=0, appops liest, Fahrmodus 5/5 stabil. Neustart jack_telegram + jack_waechter 03:13. Damit ist ACTION_TASK an Tasker auch auf dem Honor moeglich.
+
+**Nachtrag 29.10.2026 (Claude):** SHIZUKU UNTERWEGS - Xiaomi-Hotspot-Trick siehe 00_START_HIER Abschnitt 5 Ende. Gemessen 05:33 ohne rish: honor() None, fahrmodus unsicher=True, Spotify verweigert. Nach Trick 05:47: rish uid 2000, Akku 93 %.

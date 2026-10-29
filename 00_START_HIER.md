@@ -156,3 +156,5 @@ Was geändert wurde, in die Betriebshandbuch-Kapitel eintragen. Offene Punkte ne
 - Neu 27.10.: Kalender per JACK: "Morgen Werkstatt um elf" (Text/Sprache) -> Knopf -> n8n (Xiaomi) -> Google. Google-App im Testmodus: Freigabe laeuft ca. 03.11. ab (Kap 307).
 
 - Neu 28.10.: Dienst-Logs (svlogd, rotiert) fuer cortex/focus_monitor/honor_watch/telegram unter ~/logs/<dienst>/current (Kap 272, JACK_TUNE_SVLOG). Grok-Briefkasten + Tesla-Gedaechtnis: Kap 308.
+
+- SHIZUKU UNTERWEGS (Dima 29.10.): Nach Honor-Neustart ohne WLAN ist rish weg (Spotify, Fahrmodus, Honor-Werte im Lagebild fallen aus; JACK meldet "Shizuku/rish ist nicht bereit"). Loesung ohne Kabel: Hotspot am XIAOMI an, HONOR verbindet sich per WLAN damit, WLAN-Debugging + Shizuku starten, dann HONOR raus aus dem Xiaomi-Hotspot, eigener Hotspot wieder an, Xiaomi-Hotspot aus. Shizuku laeuft bis zum naechsten Neustart weiter. Danach ggf. sv restart cloudflared (Tunnel haengt nach Netzwechsel).
