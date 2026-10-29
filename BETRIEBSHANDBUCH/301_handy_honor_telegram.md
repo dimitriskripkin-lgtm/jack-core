@@ -28,3 +28,5 @@ Nachtrag 29.10.2026 16:46 (Claude, JACK_TUNE_MUSIKVORNE + JACK_TUNE_MUSIKFREI, B
 - Fix 1 jack_handy.medien: play auf Honor und Tasten-App != Musik-App -> monkey startet Musik-App nach vorn, 1,5 s, input keyevent 126. Live gemessen PAUSED -> PLAYING. Sonst wie bisher cmd media_session dispatch. Beleg bleibt PlaybackState.
 - Fix 2 jack_telegram.handle vor HANDYCMD: Freitext "(jack) (mach) (mal) (die) spotify|musik play|an|los|weiter|pause|aus|stop" -> /musik play|pause. "spiel X" (S1) unberuehrt.
 - pyflakes sauber, Neustart jack_telegram 16:46. Offen: TALK erfindet weiter Taten (S2 fing "Spiele jetzt" nicht) -> Z1b/S2 nachziehen.
+
+Nachtrag 29.10.2026 16:52 (JACK_TUNE_MUSIKTASTE ersetzt MUSIKVORNE): Dima-Test "Spotify pause" scheiterte, Taste lag weiter bei YouTube (Morphe); Taste an Spotify-Vordergrund wirkt bei Pause NICHT (gemessen 127 und 85). Neu: haelt eine YouTube-App die Medientaste und spielt sie NICHT, dann am force-stop dieser App -> Media button session null -> cmd media_session dispatch erreicht Spotify. Gemessen: pause PLAYING->PAUSED, play PAUSED->PLAYING, Livetest telegram("/musik pause") -> pausiert. Neustart jack_telegram 16:51.
