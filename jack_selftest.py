@@ -8,14 +8,15 @@ sys.path.insert(0, JACK)
 
 results = {}
 
-def chk(name, fn):
+def chk(name, fn, target=None):
+    dest = results if target is None else target
     try:
         t0 = time.time()
         ok, info = fn()
         ms = int((time.time()-t0)*1000)
-        results[name] = {"ok": ok, "info": str(info)[:80], "ms": ms}
+        dest[name] = {"ok": ok, "info": str(info)[:80], "ms": ms}
     except Exception as e:
-        results[name] = {"ok": False, "info": str(e)[:80], "ms": 0}
+        dest[name] = {"ok": False, "info": str(e)[:80], "ms": 0}
 
 # Services
 def _svcs():
@@ -106,6 +107,78 @@ def _config():
     cfg = os.path.join(JACK,"config.ini")
     return os.path.exists(cfg), "vorhanden" if os.path.exists(cfg) else "FEHLT"
 
+def _extended():  # JACK_TUNE_SELFTEST_W3: nur expliziter Tageslauf
+    import subprocess, stat, shutil
+    out = {}
+    def add(name, fn):
+        chk(name, fn, target=out)
+    def command(args, timeout=6):
+        return subprocess.run(args, capture_output=True, text=True, timeout=timeout)
+    def service(name):
+        r = command(['sv', 'status', '/data/data/com.termux/files/usr/var/service/' + name])
+        return r.returncode == 0 and r.stdout.startswith('run:'), 'Hauptprozess geprueft'
+    def private_config():
+        s = os.lstat(os.path.join(JACK, 'config.ini'))
+        return stat.S_ISREG(s.st_mode) and s.st_uid == os.getuid() and not s.st_mode & 0o077, 'nur Rechte'
+    def queue():
+        p = os.path.join(JACK, 'missions', 'pending')
+        ages = [time.time()-os.stat(os.path.join(p,n)).st_mtime for n in os.listdir(p) if n.endswith('.json')]
+        return not ages or max(ages) <= 900, 'Queue-Alter <=15min'
+    def pin():
+        r = command(['ssh', '-G', 'xiaomi-jack'])
+        d = dict(l.split(None,1) for l in r.stdout.splitlines() if ' ' in l)
+        good = r.returncode == 0 and d.get('stricthostkeychecking') in ('yes','true')
+        good = good and d.get('hostkeyalias') == 'xiaomi-jack' and d.get('checkhostip') in ('no','false')
+        good = good and d.get('userknownhostsfile') == os.path.expanduser('~/.ssh/known_hosts_xiaomi')
+        good = good and d.get('hostkeyalgorithms') == 'ssh-ed25519' and '/xi23/' in d.get('controlpath','')
+        return bool(good), 'Policy; kein frischer Handshake'
+    def n8n():
+        import jack_xiaomi
+        r = jack_xiaomi.run_shell("python3 -c \"import urllib.request; r=urllib.request.urlopen('http://127.0.0.1:5678/healthz',timeout=4); print(r.status)\"", as_root=False, timeout=8)
+        return r.get('success') is True and r.get('stdout','').strip() == '200', 'HTTP healthz; kein Kalender-Test'
+    def spotify():
+        import jack_spotify_s1_play
+        err = jack_spotify_s1_play._vorpruefung()
+        return err is None, 'Vorpruefung OK' if err is None else 'Vorpruefung fehlgeschlagen'
+    def rish():
+        r = command(['rish','-c','id -u'],timeout=6)
+        return r.returncode == 0 and r.stdout.strip() == '2000', 'UID-Pruefung'
+    def lage():
+        p = os.path.expanduser('~/jack-gedaechtnis/lage/aktuell.md')
+        age = time.time()-os.stat(p).st_mtime
+        return 0 <= age <= 10800, 'Dateialter <=3h'
+    def playlist():
+        r = command(['crontab','-l'])
+        if r.returncode: return None, 'Crontab nicht pruefbar'
+        active = any('jack_musik_gut.py' in l and not l.lstrip().startswith('#') for l in r.stdout.splitlines())
+        return (True,'Cron vorhanden; kein Fortschrittsbeweis') if active else (None,'Cron fehlt; Abschluss lokal pruefen')
+    def logs():
+        names = ['jack_cortex','jack_focus_monitor','jack_honor_watch','jack_telegram','jack_mcp','cloudflared']
+        checks = [service(n+'/log')[0] for n in names]
+        return all(checks), str(sum(checks))+'/6 Logprozesse'
+    def skills():
+        s = os.lstat(os.path.join(JACK,'jack_skills.db'))
+        return stat.S_ISREG(s.st_mode) and s.st_size > 0, 'Datei vorhanden; keine Wirkungspruefung'
+    for name in ['jack_mcp','cloudflared','crond']:
+        add(name,lambda n=name:service(n))
+    add('disk',lambda:(shutil.disk_usage(JACK).free >= 1073741824,'frei >=1GiB'))
+    add('config_rights',private_config)
+    add('queue_age',queue)
+    add('xiaomi_pin_policy',pin)
+    add('xiaomi_pin_fresh',lambda:(None,'SKIP: separater frischer Handshake erforderlich'))
+    add('n8n_health',n8n)
+    add('calendar_dryrun',lambda:(None,'SKIP: kein seiteneffektfreier Dryrun vorhanden'))
+    add('spotify_preflight',spotify)
+    add('rish',rish)
+    add('lage_fresh',lage)
+    add('playlist_cron',playlist)
+    add('svlogd',logs)
+    add('backup_restore',lambda:(None,'SKIP: W2 echte Restore-Abnahme offen'))
+    add('google_oauth',lambda:(None,'SKIP: Google-Produktionsstatus separat pruefen'))
+    add('skills_file',skills)
+    return out
+
+
 chk("services", _svcs)
 chk("xiaomi_ssh", _xiaomi)
 chk("ollama", _ollama)
@@ -133,6 +206,13 @@ snap = {
     "nodes": results
 }
 if __name__ == "__main__":
+    if '--extended' in sys.argv:  # JACK_TUNE_SELFTEST_W3
+        snap['extended'] = _extended()
+        vals = list(snap['extended'].values())
+        counts = [sum(v['ok'] is state for v in vals) for state in (True, False, None)]
+        print('TAGESCHECK: PASS=%d FAIL=%d SKIP=%d' % tuple(counts))
+        for name, value in snap['extended'].items():
+            print('  %s: %s' % (name, 'SKIP' if value['ok'] is None else ('PASS' if value['ok'] else 'FAIL')))
     json.dump(snap, open(os.path.join(JACK,"jack_diag_snapshot.json"),"w"), indent=2)
     print("Snapshot: ~/jack/jack_diag_snapshot.json")
-    sys.exit(0 if score==100 else 1)
+    sys.exit(0 if score==100 and not any(v['ok'] is False for v in snap.get('extended', {}).values()) else 1)

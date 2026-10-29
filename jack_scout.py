@@ -21,11 +21,11 @@ def _run(cmd, timeout=8):
     except Exception:
         return None
 
-def _check(cmd, timeout=5):
-    """True wenn Befehl ohne Fehler laeuft und Output liefert."""
+def _check(cmd, timeout=5, require_output=True):
+    """JACK_TUNE_SCOUT_RC: Ausgabe standardmaessig Pflicht, SSH true nur Exitcode."""
     try:
         r = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
-        return r.returncode == 0 and bool(r.stdout.strip())
+        return r.returncode == 0 and (not require_output or bool(r.stdout.strip()))
     except Exception:
         return False
 
@@ -142,7 +142,7 @@ def scan_ssh_verbindungen():
         ok = _check(shlex.join(
             ['ssh', '-o', 'ConnectTimeout=5'] + SSH_OPTS + [
                 '-p', str(cfg['port']), f"{cfg['user']}@{cfg['host']}", 'true']),
-            timeout=10
+            timeout=10, require_output=False
         )
         ergebnisse[name] = "erreichbar" if ok else "nicht_erreichbar"
     return ergebnisse

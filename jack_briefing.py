@@ -126,6 +126,14 @@ def run():
 
     # Vollscan immer mit dabei
     meldungen.append(scan_snapshot())
+    try:  # JACK_TUNE_SELFTEST_W3: nur im bestehenden Tagesbriefing
+        r = subprocess.run(['python3', os.path.expanduser('~/jack/jack_selftest.py'), '--extended'],
+                           capture_output=True, text=True, timeout=180)
+        summary = next((l for l in r.stdout.splitlines() if l.startswith('TAGESCHECK:')), None)
+        meldungen.append((summary + (' | Basis/Erweiterung nicht komplett gruen' if r.returncode else ''))
+                         if summary else 'TAGESCHECK: unvollstaendig, kein Ergebnis')
+    except Exception:
+        meldungen.append('TAGESCHECK: abgebrochen/Timeout, nicht bestanden')
 
     # Nur wenn was nicht stimmt: Dienste
     d = dienste_status()

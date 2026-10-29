@@ -55,3 +55,5 @@ Graph-Muell 24.10. 14:06 (Dima Go): fakt:decke, fakt:ist_wei, fakt:dir_ein samt 
 ## Schritte 1-3 nach Dimas Go 24.10. 14:11
 Push af06345e (40 Dateien, Geheimnis-Scan sauber, logs/handy_timer.jsonl neu in .gitignore). Neu jack_befehle.py (JACK_TUNE_BEFEHLE): Kannst du X / Welche Befehle aus fester Liste, Router ueber Spur NEU, Selbstbild nur noch Verweis Befehle: alle per /befehle. Tests 14/14 offline.
 JACK_TUNE_AKKUEINER (jack_monitor.event_check): Akku kritisch/erholt nicht mehr gemeldet, Akku-Warnungen nur noch vom Waechter (Ladealarm). Heute waren es 6 Akku-Meldungen aus zwei Modulen.
+
+**Nachtrag 29.10.2026 (Claude, Entwurf ChatGPT W3) JACK_TUNE_SELFTEST_W3:** jack_selftest.py --extended = 18 Zusatzchecks (mcp, cloudflared, crond, disk, config_rights, queue_age, xiaomi_pin, n8n, calendar_dryrun, spotify_preflight, rish, lage_fresh, playlist_cron, svlogd, backup_restore, google_oauth, skills_file). Laeuft im Tagesbriefing (Cron 07:55) mit Zeile TAGESCHECK. Erstlauf 07:56: Basis 7/7, erweitert PASS 14 FAIL 0 SKIP 4. Scout-Fix JACK_TUNE_SCOUT_RC: ssh true ohne Ausgabe zaehlt jetzt als erreichbar (live: xiaomi erreichbar).
