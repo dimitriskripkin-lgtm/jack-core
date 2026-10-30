@@ -81,13 +81,18 @@ def _scrub_baseline(s):  # JACK_TUNE_S2_WAHRHEIT: Originalfilter bleibt erhalten
         return " ".join(keep)
     return "Das steht in keinem Log. Ich rate nicht."
 def _scrub_out(s):
-    """S2: LLM-Ausgaben duerfen keine ausgefuehrten Aktionen erfinden (JACK_TUNE_TATENWAHRHEIT)."""
+    """S2+Z1: TALK-Ausgabe gegen Aktions- und Wirkungsbehauptungen filtern."""
     cleaned = _scrub_baseline(s)
     try:
         import jack_tatenwahrheit as _truth
-        return _truth.sanitize(cleaned)  # TALK hat KEINEN vertrauenswuerdigen Aktionsbeleg
+        cleaned = _truth.sanitize(cleaned)
     except Exception:
-        return cleaned  # Claude: Filterfehler darf TALK nicht stummschalten
+        pass  # Bestehender S2-Ausfall; Z1 davon unabhaengig
+    try:  # JACK_TUNE_Z1_WIRKUNG (Z1c, 30.10.2026)
+        import jack_wirkungsfilter as _wirkung
+        return _wirkung.sanitize(cleaned)
+    except Exception:
+        return cleaned  # TALK bei Filterfehler nicht stummschalten
 
 def get_window_ctx():
     global _ROLLING_WINDOW

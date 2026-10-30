@@ -38,6 +38,11 @@ def _classify(sentence):
     # Explizit verneinte Aktionen sind gerade KEINE Erfolgsbehauptung.
     if _NEGATION.search(t):return None
     if _GENERIC.search(t) or _DONE.search(t):return 'generic'
+    # JACK_TUNE_Z1C_S2MUSIK: unbelegte Musik-Imperative nicht als erledigt melden.
+    if (re.match(r'^\s*(?:spiel(?:e)?|start(?:e)?|spring(?:e)?|skip(?:pe)?|wechsel(?:e)?|ueberspring(?:e)?|überspring(?:e)?)\b', t, re.I)
+            and re.search(r'\b(?:spotify|musik|titel|track|song|lied|playlist)\b', t, re.I)
+            and (_NOW.search(t) or re.search(r'\berledigt\b', t, re.I))):
+        return 'play'
     _pas = _PASSIVE.search(t) and (_NOW.search(t) or _ITEM.search(t))  # Claude: Passiv nur mit Jetzt-Bezug oder JACK-Geraete-/App-Objekt
     if not (_FIRST.search(t) or _INVERT.search(t) or _pas):
         return None
