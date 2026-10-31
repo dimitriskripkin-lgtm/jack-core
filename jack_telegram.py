@@ -409,23 +409,12 @@ def handle(text, s1_chat_id=None, s1_from_id=None):
         _tr = _tm.vorschlag(_tv['titel'], _tv['start'], _tv['ende'], 'per JACK aus: ' + text[:200], send_kb=send_keyboard)
         return None if str(_tr).startswith('Knopf') else _tr
     _chatlog('dima', text)  # JACK_TUNE_CHATLOG
-    if str(text).strip().lower().startswith("/vorschlaege"):  # JACK_TUNE_VORSCHLAGFRUEH
+    if str(text).strip().lower().startswith("/vorschlaege"):  # JACK_TUNE_VORSCHLAGFRUEH / Z2b
         try:
-            import json as _tj, os as _to
-            pdir = "/data/data/com.termux/files/home/jack/missions/proposals/pending"
-            items = []
-            if _to.path.isdir(pdir):
-                for fn in sorted(_to.listdir(pdir)):
-                    if fn.endswith(".json"):
-                        items.append(_tj.load(open(_to.path.join(pdir, fn), encoding="utf-8")))
-            if not items:
-                return "VORSCHLAEGE: keine offen"
-            lines = ["VORSCHLAEGE (%d offen):" % len(items)]
-            for it in items[:5]:
-                lines.append("- %s: %s" % (it.get("id","?"), str(it.get("problem",""))[:120]))
-            return chr(10).join(lines)
-        except Exception as e:
-            return "VORSCHLAEGE Fehler: " + str(e)[:120]
+            import jack_befehle as _jb
+            return _jb.vorschlaege_kurzliste()  # gemeinsame, read-only Kurzliste
+        except Exception:
+            return "VORSCHLAEGE: Liste gerade nicht lesbar."
     if text.startswith("/find "):
         target = text[6:].strip()
         send(f'🔍 Suche "{target}" auf dem Screen...')
@@ -993,26 +982,11 @@ def handle(text, s1_chat_id=None, s1_from_id=None):
             return 'acts_liste Fehler: ' + str(_e)[:150]
 
     if _rt.startswith('/vorschlaege') or _rt.startswith('/vorschläge'):
-        import json as _tj, os as _to
-        pdir = "/data/data/com.termux/files/home/jack/missions/proposals/pending"
-        if not _to.path.isdir(pdir):
-            return "VORSCHLAEGE: keine offen"
-        items = []
-        for fn in sorted(_to.listdir(pdir)):
-            if fn.endswith(".json"):
-                try:
-                    with open(_to.path.join(pdir, fn), encoding="utf-8") as f:
-                        items.append(_tj.load(f))
-                except Exception:
-                    pass
-        if not items:
-            return "VORSCHLAEGE: keine offen"
-        lines = [f"VORSCHLAEGE ({len(items)} offen):"]
-        for it in items:
-            lines.append(f"- {it.get('id')}: {it.get('problem','')[:100]}")
-        lines.append("Vorschau mit: /vorschau <id>, danach /freigeben <id>")
-        return chr(10).join(lines)
-
+        try:  # JACK_TUNE_Z2B_KURZLISTE: gleicher Weg wie natuerliche Frage
+            import jack_befehle as _jb
+            return _jb.vorschlaege_kurzliste()
+        except Exception:
+            return "VORSCHLAEGE: Liste gerade nicht lesbar."
     if _rt.startswith('/vorschau '):
         import json as _tj, os as _to
         pid = text.strip()[len('/vorschau '):].strip()
