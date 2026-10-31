@@ -88,3 +88,10 @@ Stub-Befehlen `/agent`/`/auto` existiert also, nur unter anderem Namen erreichba
 **Nachtrag 28.10.2026:** handle_callback ga: -> jack_fahrtlage.antwort (Grok-Briefkasten, Kap 308).
 
 Nachtrag 31.10.2026 17:06 (Claude, JACK_TUNE_VORSCHAUHILFE): "/vorschau" ohne ID lieferte "Unbekannter Befehl"; jetzt zeigt es die Vorschlags-Kurzliste (jack_befehle.vorschlaege_kurzliste, Z2b). "/vorschau <id>" unveraendert.
+
+## Stand 31.10.2026 (W5, ChatGPT-Entwurf, von Claude gegen LIVE geprueft) – gilt VOR den aelteren Abschnitten oben
+- Groesse: 1581 Zeilen (wc -l 31.10.), nicht mehr 1367.
+- Reihenfolge in handle(text, s1_chat_id, s1_from_id) heute: zuerst S1-Spotify (jack_spotify_s1.handle_text), dann Kalender-Parser (jack_termin_parse) mit Bestaetigungsknopf, Musik-Freitext (jack_handy.frei, Kap 301) vor /timer//musik, erst danach /find, klassische Befehle, Chat-Router (FACT/EXPLAIN/DIAG/NEU), Xiaomi-UI-Regexwege (rufen jack_ui_type weiter DIREKT, nicht ueber die Missions-Queue), LLM mit Filtern S2+Z1 (Kap 04). Die Reihenfolge ist sicherheitsrelevant.
+- handle_callback: ga: -> jack_fahrtlage.antwort, tm: -> jack_termin.confirm, s1: -> jack_spotify_s1.confirm, sonst jack_callback_handler.
+- main prueft Chat-ID fuer Text und Callback; S1/Termin-Bestaetigungen zusaetzlich from.id.
+- Die "vollstaendige Slash-Befehlsliste" oben ist eine historische Stichprobe vom 02.10., keine aktuelle Vollstaendigkeit.

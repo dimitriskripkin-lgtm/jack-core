@@ -46,3 +46,9 @@ JACK_TUNE_XIDOWNSTALE: Xiaomi-Ausfallmeldung nur noch, wenn jack_heartbeat.is_xi
 
 **Nachtrag 28.10.2026 (Claude, Inventur I13/V01/V02/V12, Entwurf ChatGPT Runde 2b) JACK_TUNE_SKILLFAILCLOSED**
 DB-Skill-Plaene werden nie mehr per shell=True ausgefuehrt: autolearn _skill_cmd_allowed sperrt alles, test_candidate_skills nur noch Inventur (log, keine Verifikation); skill_trainer _run_plan blockt cmd-Schritte und zaehlt reine wait/UI-Schritte nicht als Erfolg, _check: fehlende/unbekannte Kriterien = kein Erfolg. skill_run/plan_try (Runner, validate_safe) unberuehrt. Live-Tests ok, Backups *.bak_runde2b. Autolearn neu gestartet 13:31.
+
+## Stand 31.10.2026 (W5, von Claude gegen LIVE geprueft) – gilt VOR den aelteren Abschnitten oben
+- Groesse: 460 Zeilen, nicht 480.
+- Pause zwischen Zyklen: aus jack_tune.json busy 300 s / idle 600 s; PAUSE_SECONDS=120 ist nur Fallback.
+- Vor main() begrenzt _d2_rate_ok die Startfrequenz auf 6 h (.autolearn_last, 21600 s); der Dienst kann deshalb stundenlang schlafen. Laufender Prozess heisst nicht arbeitender Zyklus (vgl. V06, kein Bug).
+- test_candidate_skills ist seit JACK_TUNE_SKILLFAILCLOSED nur Inventur/Log, fuehrt keine DB-Shellschritte aus; promote_candidate_skills setzt successes>0 auf VERIFIED ohne neuen Testlauf (Altlast, beobachten).

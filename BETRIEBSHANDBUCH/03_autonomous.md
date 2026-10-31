@@ -62,3 +62,9 @@ gebraucht. Backup: `Attic/jack_autonomous.py.bak_20261006_deadthreads`.
 im Detail? Was ist `jack_queue.TaskQueue` genau (RAM-Drosselung)?
 
 **Nachtrag 28.10.2026 (Claude, Inventur I09):** Statuszeile start_consolidated nennt nur noch echte Threads (scout, monitor, tunnel_watch, sanity, lerner, proaktiv, fahrdigest, telemetrie optional). Waechter neu gestartet 10:57.
+
+## Stand 31.10.2026 (W5, von Claude gegen LIVE geprueft) – gilt VOR den aelteren Abschnitten oben
+- Groesse: 844 Zeilen, nicht 728.
+- Die alte Aussage "_publisher_loop und _missions_loop laufen wirklich" ist seit 06.10. FALSCH: start_consolidated() startet sie nicht mehr (JACK_TUNE_DEADTHREADS); die Funktionen existieren aber noch, daher keine loeschbaren Waisen. _autolearn_loop endet sofort (JACK_TUNE_D2ONE), Lernen laeuft nur als eigener Dienst jack_autolearn.
+- Wirksame Dauerschleifen: scout, monitor, tunnel_watch (Kap 285), sanity, lerner, proaktiv, fahrdigest, optional telemetrie.
+- _heartbeat_sv_check ueberwacht jack_telegram, jack_cortex, jack_publisher, jack_autolearn (Fallback 22000 s) und beachtet Schlafmarker; alter Heartbeat allein ist kein Beweis fuer einen toten Dienst.
