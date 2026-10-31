@@ -77,7 +77,9 @@ def _origin_ok(http_fn=None):
 
 def _restart_cloudflared():
     try:
-        r = subprocess.run(["sv", "restart", "cloudflared"], capture_output=True, text=True, timeout=20)
+        # JACK_TUNE_TUNNELGRACE (31.10.2026, Kap 285): cloudflared beendet sich erst nach seiner Grace-Period
+        # (Standard 30 s). sv wartet sonst nur 7 s, meldet timeout -> Waechter schrieb UNKNOWN trotz Neustart.
+        r = subprocess.run(["sv", "-w", "45", "restart", "cloudflared"], capture_output=True, text=True, timeout=60)
         return r.returncode == 0, int(r.returncode)
     except Exception:
         return False, -1
