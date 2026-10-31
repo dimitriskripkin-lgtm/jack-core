@@ -86,3 +86,5 @@ Stub-Befehlen `/agent`/`/auto` existiert also, nur unter anderem Namen erreichba
 **Nachtrag 27.10.2026:** handle() erkennt nach S1 Termine (jack_termin_parse) -> Kalender-Knopf; Callback tm: -> jack_termin.confirm. Kap 307.
 
 **Nachtrag 28.10.2026:** handle_callback ga: -> jack_fahrtlage.antwort (Grok-Briefkasten, Kap 308).
+
+Nachtrag 31.10.2026 17:06 (Claude, JACK_TUNE_VORSCHAUHILFE): "/vorschau" ohne ID lieferte "Unbekannter Befehl"; jetzt zeigt es die Vorschlags-Kurzliste (jack_befehle.vorschlaege_kurzliste, Z2b). "/vorschau <id>" unveraendert.

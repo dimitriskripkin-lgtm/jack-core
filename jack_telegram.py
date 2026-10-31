@@ -987,6 +987,12 @@ def handle(text, s1_chat_id=None, s1_from_id=None):
             return _jb.vorschlaege_kurzliste()
         except Exception:
             return "VORSCHLAEGE: Liste gerade nicht lesbar."
+    if _rt.strip() == '/vorschau':  # JACK_TUNE_VORSCHAUHILFE (31.10.2026): ohne ID nicht 'Unbekannter Befehl'
+        try:
+            import jack_befehle as _jb
+            return _jb.vorschlaege_kurzliste()
+        except Exception:
+            return 'Nutze /vorschau <id>. Die IDs zeigt /vorschlaege.'
     if _rt.startswith('/vorschau '):
         import json as _tj, os as _to
         pid = text.strip()[len('/vorschau '):].strip()
