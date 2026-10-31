@@ -492,6 +492,13 @@ def handle(text, s1_chat_id=None, s1_from_id=None):
             text = _mf
     except Exception:
         pass
+    try:  # JACK_TUNE_E_FREITEXT: vor bestehenden Slash-Handlern, nach Musik; kein Side-Effect im Parser
+        import jack_befehl_frei as _jbf
+        _frei = _jbf.frei(text)
+        if _frei:
+            text = _frei
+    except Exception:
+        pass
     if text.strip().lower().startswith(('/timer', '/musik')):  # JACK_TUNE_HANDYCMD (Kap 301): Timer/Musik, Standard Honor
         import jack_handy as _jh
         return _jh.telegram(text.strip())
