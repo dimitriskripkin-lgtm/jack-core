@@ -10,6 +10,7 @@ DOMAIN = re.compile(
     r'fehler|fehlerquote|erfolgsquote|ausfallrate|bug|problem|patch|fix|aenderung|änderung|'
     r'system|funktion|skript|script|mission|prozess|code|'
     r'workflow|schnittstelle|verbindung|tunnel|datenbank|'
+    r'modul(?:e|en)?|einsatz|'
     r'ssh|routen?|konnektivitaet|konnektivität|netz|leistung|performance|geschwindigkeit)\b', re.I)
 CURRENT = re.compile(r'\b(?:jetzt|nun|ab\s+sofort|seit\s+dem\s+fix|'
                      r'ab\s+heute|wieder|inzwischen|dadurch|damit)\b', re.I)
@@ -49,8 +50,22 @@ def unverified_effect(sentence):
     t = sentence.strip()
     if not t or t.endswith('?') or t.startswith(('>', '„', '"', "'")):
         return False
-    if EXCLUDE.search(t) or HISTORIC.search(t) or not DOMAIN.search(t):
+    if EXCLUDE.search(t) or HISTORIC.search(t) or re.search(r'\b(?:könnten|koennten|sollten)\b', t, re.I):
         return False
+    # JACK_TUNE_Z1D: pauschale, aktuelle Erfolgsaussage ohne Messbeleg
+    # bewusst keine Einzelfall-Statussaetze wie "Musik pause ... pausiert".
+    if (re.search(r'\b(?:alles|komplett|ueberall|überall)\b', t, re.I)
+            and re.search(r'\b(?:laeuft|läuft|funktioniert)\b', t, re.I)
+            and re.search(r'\b(?:stabil|einwandfrei|perfekt)\b', t, re.I)):
+        return True
+    if not DOMAIN.search(t):
+        return False
+    # Objektiver Zugewinn an Zuverlaessigkeit/Stabilitaet/Sicherheit
+    # ohne bestaetigenden Test ist keine belegte Wirkung.
+    if (re.search(r'\b(?:modul(?:e|en)?|einsatz)\b', t, re.I)
+            and re.search(r'\b(?:erhoehen|erhöhen|erhoeht|erhöht|steigern|steigert)\b', t, re.I)
+            and re.search(r'\b(?:zuverlaessigkeit|zuverlässigkeit|stabilitaet|stabilität|sicherheit)\b', t, re.I)):
+        return True
     if re.search(r'\b100\s*%\s*(?:sicher|fehlerfrei|zuverlaessig|zuverlässig)\b', t, re.I):
         return True
     if re.search(r'\bist\s+jetzt\s+sicher\b', t, re.I):
