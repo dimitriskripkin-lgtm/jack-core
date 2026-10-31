@@ -9,6 +9,10 @@ CLI (nur im Termux auf dem Honor):
   python3 jack_mcp_auth.py drop ROLLE     -> Rolle entfernen (z.B. legacy)
 """
 import hmac, json, os, sys, time, secrets
+from contextvars import ContextVar  # JACK_TUNE_PROVENANCE_SHADOW
+_MCP_AUTH_ROLE = ContextVar('jack_authenticated_mcp_role', default=None)
+def request_role():
+    return _MCP_AUTH_ROLE.get()
 
 J = os.environ.get("JACK_HOME", "/data/data/com.termux/files/home/jack")
 TOKFILE = os.path.join(J, ".jack_mcp_tokens")
@@ -306,7 +310,11 @@ class RoleMiddleware:
                 sent["d"] = True
                 return {"type": "http.request", "body": body, "more_body": False}
             return await receive()
-        return await self.app(scope, replay, send)
+        _token = _MCP_AUTH_ROLE.set(role)  # JACK_TUNE_PROVENANCE_SHADOW; keine globale last_role-Variable
+        try:
+            return await self.app(scope, replay, send)
+        finally:
+            _MCP_AUTH_ROLE.reset(_token)
 
 def _write_all(m):
     lines = ["%s=%s" % (r, t) for r, t in m.items() if r != "legacy"]

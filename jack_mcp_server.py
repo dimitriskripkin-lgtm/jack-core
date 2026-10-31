@@ -196,7 +196,7 @@ def create_mission(act: str, description: str, extra: str = "{}", wait_seconds: 
     # extra wurde nach der Rollen- und Gate-Pruefung in die Mission gemergt und konnte act/id/src ueberschreiben.
     if not isinstance(extra_d, dict):
         return _j.dumps({"error": "extra muss ein JSON-Objekt sein"})
-    _bad = sorted(k for k in extra_d if k in ("id", "act", "src", "ts", "description", "dima_sig"))
+    _bad = sorted(k for k in extra_d if k in ("id", "act", "src", "ts", "description", "dima_sig", "_provenance"))  # JACK_TUNE_PROVENANCE_SHADOW
     if _bad:
         return _j.dumps({"error": "reservierte Felder in extra verboten: " + ", ".join(_bad)}, ensure_ascii=False)
     try:  # JACK_TUNE_HBGATE: Handbuch-Pflicht (fail-closed seit 19.10.2026)
@@ -223,6 +223,13 @@ def create_mission(act: str, description: str, extra: str = "{}", wait_seconds: 
         mission = {"id": mid, "act": act, "src": "claude_mcp",
                    "ts": _dt.now().isoformat()[:19], "description": description}
         mission.update(extra_d)
+        try:  # JACK_TUNE_PROVENANCE_SHADOW: nur signieren/loggen, NIE ablehnen
+            import jack_mcp_auth as _auth
+            import jack_provenance_shadow as _ps
+            mission, _shadow_code = _ps.attach(mission, _auth.request_role())
+            _ps.note_attach(_shadow_code, mission)
+        except Exception:
+            pass  # Shadow darf den bestehenden Queue-Weg niemals unterbrechen
         _tmp = _os.path.join(PENDING, "." + mid + ".tmp")  # Runner liest nur *.json
         with open(_tmp, "w", encoding="utf-8") as fp:
             _j.dump(mission, fp, ensure_ascii=False, indent=2)

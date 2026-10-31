@@ -1452,6 +1452,11 @@ h1{font-size:20px;margin:0 0 4px;} .stand{font-size:12px;color:#999;margin:0 0 2
 def one(path):
     _hb()
     m=load(path)
+    try:  # JACK_TUNE_PROVENANCE_SHADOW: Audit ohne Einfluss auf run_act/rec.ok
+        import jack_provenance_shadow as _ps
+        _ps.shadow_check_path(path, m)
+    except Exception:
+        pass
     mid=str(m.get("id") or os.path.basename(path))
     # dedup: schon erledigt -> pending entfernen, nicht nochmal
     for _d in (D,F):
