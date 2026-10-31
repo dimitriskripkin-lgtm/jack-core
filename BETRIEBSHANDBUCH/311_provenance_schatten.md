@@ -10,3 +10,5 @@ Entwurf ChatGPT (runde8_provenance_schatten_teil1/2 + helper + test), Review/Ein
 - Wirksam erst nach Neustart jack_missions + jack_mcp (nur Dima).
 - Grenzen: nur Beobachtung, kein Gate. Keine Replay-Sperre (Nonce wird nur protokolliert). Gleiche Android-UID = keine echte Prozessisolation. Loest I04 (freier Shellpfad) NICHT. ContextVar-Weitergabe ASGI -> synchrones Tool live noch unbewiesen: falls ROLE_CONTEXT_MISSING im Audit, Rollenweitergabe nachbessern, nie Rolle raten.
 - Vor scharfem Modus: alle Autoren erfassen, Batch/Approval-Kinder, persistentes Nonce-Journal, I04-Verengung.
+
+Livebeleg 31.10.2026 17:41: Neustart jack_missions 17:38, jack_mcp 17:41 (alter Prozess ignorierte TERM, sv kill + kill -9 noetig). Erste MCP-Mission m_exec_proposed_20261031_174133: MCP attach SHADOW_OK role=claude, Runner verify SHADOW_OK. ContextVar-Weitergabe damit live belegt.
