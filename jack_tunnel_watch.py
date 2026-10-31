@@ -77,10 +77,11 @@ def _origin_ok(http_fn=None):
 
 def _restart_cloudflared():
     try:
-        # JACK_TUNE_TUNNELGRACE (31.10.2026, Kap 285): cloudflared beendet sich erst nach seiner Grace-Period
-        # (Standard 30 s). sv wartet sonst nur 7 s, meldet timeout -> Waechter schrieb UNKNOWN trotz Neustart.
-        r = subprocess.run(["sv", "-w", "45", "restart", "cloudflared"], capture_output=True, text=True, timeout=60)
-        return r.returncode == 0, int(r.returncode)
+        # JACK_TUNE_TUNNELGRACE + JACK_TUNE_SVNEUSTART (31.10.2026, Kap 285/312): wartet die cloudflared-
+        # Grace-Period ab, beendet einen haengenden alten Prozess hart, Erfolg nur mit neuer PID.
+        import jack_svneustart as _svn
+        r = _svn.neustart("cloudflared", warte_s=45)
+        return bool(r.get("ok")), (0 if r.get("ok") else 1)
     except Exception:
         return False, -1
 
